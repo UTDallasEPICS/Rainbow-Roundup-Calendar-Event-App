@@ -6,13 +6,17 @@ export default defineNuxtConfig({
     BASEURL: '',
     ISSUER: ''
   },
+
   devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
+
   postcss: {
     plugins: {
       tailwindcss: {},
       autoprefixer: {},
     },
   },
-  modules: ['tailwindcss']
+
+  modules: ['tailwindcss'],
+  compatibilityDate: '2024-10-24'
 })
