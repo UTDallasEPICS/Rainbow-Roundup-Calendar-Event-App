@@ -1,9 +1,8 @@
 import { getCalendarClient } from "~/server/utils/googleCalendar";
 import { CalendarEvent } from "~/types/calendar";
 import { formatEventForGoogle, formatEventForResponse } from "~/server/utils/eventFormatter.ts";
-import { H3Event } from 'h3'
 
-export default defineEventHandler(async (event: H3Event) => {
+export default defineEventHandler(async (event) => {
   try {
     const calendar = getCalendarClient();
     const body = await readBody<CalendarEvent>(event);
