@@ -21,6 +21,27 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ['tailwindcss'],
-  compatibilityDate: '2024-10-24'
-})
+  modules: ['tailwindcss', "@vite-pwa/nuxt"],
+  compatibilityDate: '2024-10-24',
+
+  pwa: {
+    manifest: {
+      name: "Rainbow Roundup",
+      short_name: "Rainbow Roundup",
+      description: "Event calendar app for Rainbow Roundup",
+      icons: [
+        {}
+        {}
+        {}
+      ]
+
+    },
+    workbox: {
+      navigateFallback: "/",
+    },
+    devOptions: {
+      enabled: true,
+      type: "module",
+    }
+  },
+});
