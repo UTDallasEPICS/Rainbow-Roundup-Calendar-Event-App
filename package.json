@@ -10,7 +10,9 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxtjs/dotenv": "^1.4.2",
     "@prisma/client": "^5.19.0",
+    "googleapis": "^144.0.0",
     "nuxt": "^3.13.0",
     "vue": "latest"
   },
