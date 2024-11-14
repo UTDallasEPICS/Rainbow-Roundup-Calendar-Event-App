@@ -29,12 +29,28 @@ export default defineNuxtConfig({
       name: "Rainbow Roundup",
       short_name: "Rainbow Roundup",
       description: "Event calendar app for Rainbow Roundup",
+      theme_color: "#ffffff",
       icons: [
-        {}
-        {}
-        {}
+        {
+          src: "images/icons/pwa_logo_64.png",
+          sizes: "64x64",
+          type: "image/png"
+        },
+        {
+          src: "images/icons/pwa_logo_144.png",
+          sizes: "144x144",
+          type: "image/png"
+        },{
+          src: "images/icons/pwa_logo_192.png",
+          sizes: "192x192",
+          type: "image/png"
+        },
+        {
+          src: "images/icons/pwa_logo_512.png",
+          sizes: "512x512",
+          type: "image/png"
+        },
       ]
-
     },
     workbox: {
       navigateFallback: "/",
