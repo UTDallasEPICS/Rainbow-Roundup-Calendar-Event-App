@@ -23,8 +23,8 @@ export default defineNuxtConfig({
 
   modules: ['tailwindcss', "@vite-pwa/nuxt"],
   compatibilityDate: '2024-10-24',
-
   pwa: {
+    registerType: 'autoUpdate',
     manifest: {
       name: "Rainbow Roundup",
       short_name: "Rainbow Roundup",
