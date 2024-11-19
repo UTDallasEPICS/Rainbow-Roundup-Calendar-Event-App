@@ -7,9 +7,70 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model Person {
+  id       String  @id @default(uuid())
+  email    String  @unique
+  password String
+  firstname String
+  lastname String
+  type     String  // "User" or "Admin" to distinguish roles
+
+  // Relations to User and Admin models
+  user     User?
+  admin    Admin?
+}
+
 model User {
-  id  String   @id
-  email    String   @unique
-  first_name String
-  last_name String
+  id         String  @id @default(uuid())
+  personId   String  @unique
+  phoneNum   String?
+  profilePic String?
+
+  // Foreign key to Person
+  person     Person  @relation(fields: [personId], references: [id])
+
+  // Relation to SignUps
+  signUps    SignUp[]
+}
+
+model Admin {
+  id       String  @id @default(uuid())
+  personId String  @unique
+
+  // Foreign key to Person
+  person   Person  @relation(fields: [personId], references: [id])
+
+  // Relation to Events created by this Admin
+  events   Event[]
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  description String
+  adminId     String   // References Admin who created the event
+  date        DateTime
+  location    String
+  startTime   DateTime
+  endTime     DateTime
+  timezone    String
+  capacity    Int?
+
+  // Foreign key to Admin
+  admin       Admin    @relation(fields: [adminId], references: [id])
+
+  // Relation to SignUps
+  signUps     SignUp[]
+}
+
+model SignUp {
+  id             String  @id @default(uuid())
+  userId         String
+  eventId        String
+  sendNotification Boolean
+
+  // Foreign keys to User and Event
+  user           User    @relation(fields: [userId], references: [id])
+  event          Event   @relation(fields: [eventId], references: [id])
+
+  @@unique([userId, eventId]) // Ensure a unique pair of user-event sign-ups
 }
