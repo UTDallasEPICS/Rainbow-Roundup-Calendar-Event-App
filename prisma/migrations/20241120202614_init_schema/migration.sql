@@ -1,27 +1,21 @@
 -- CreateTable
-CREATE TABLE "Person" (
+CREATE TABLE "User" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "firstname" TEXT NOT NULL,
     "lastname" TEXT NOT NULL,
-    "type" TEXT NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "User" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "personId" TEXT NOT NULL,
     "phoneNum" TEXT,
-    "profilePic" TEXT,
-    CONSTRAINT "User_personId_fkey" FOREIGN KEY ("personId") REFERENCES "Person" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "profilePic" TEXT
 );
 
 -- CreateTable
 CREATE TABLE "Admin" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "personId" TEXT NOT NULL,
-    CONSTRAINT "Admin_personId_fkey" FOREIGN KEY ("personId") REFERENCES "Person" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "firstname" TEXT NOT NULL,
+    "lastname" TEXT NOT NULL
 );
 
 -- CreateTable
@@ -49,13 +43,10 @@ CREATE TABLE "SignUp" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Person_email_key" ON "Person"("email");
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_personId_key" ON "User"("personId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Admin_personId_key" ON "Admin"("personId");
+CREATE UNIQUE INDEX "Admin_email_key" ON "Admin"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "SignUp_userId_eventId_key" ON "SignUp"("userId", "eventId");
