@@ -1,4 +1,3 @@
-// components/Calendar.vue
 <template>
   <div class="calendar-container">
     <ClientOnly>
@@ -15,11 +14,6 @@ import { ref } from 'vue'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
-
-// Make sure to import the required CSS
-import '@fullcalendar/core/index.css'
-import '@fullcalendar/daygrid/index.css'
-import '@fullcalendar/timegrid/index.css'
 
 const calendarOptions = ref({
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
