@@ -12,7 +12,13 @@ export default defineNuxtConfig({
   },
 
   devtools: { enabled: true },
-  css: ['~/assets/css/main.css'],
+  css: [
+    '~/assets/css/main.css',
+    // '@fullcalendar/core/main.css',
+    // '@fullcalendar/daygrid/main.css',
+    // '@fullcalendar/list/main.css',
+    // '@fullcalendar/interaction/main.css',
+  ],
 
   postcss: {
     plugins: {
@@ -22,5 +28,11 @@ export default defineNuxtConfig({
   },
 
   modules: ['tailwindcss'],
-  compatibilityDate: '2024-10-24'
+  compatibilityDate: '2024-10-24',
+
+  plugins: ['~/plugins/fullcalendar.client'],
+  build: {
+    transpile: ['@fullcalendar']
+  }
+
 })
