@@ -1,21 +1,31 @@
 import { PrismaClient } from '@prisma/client';
-import { defineEventHandler } from 'h3';
+import { defineEventHandler, readBody } from 'h3';
 
-
+const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
-  try {
-    
-    const { userId } = event.context.params!;
+  const body = await readBody(event);
 
-    // Creating a new Admin record associated with this user
-    const promotedAdmin = await event.context.prisma.admin.create({
-      data: { personId: userId },
+  try {
+    const updatedAdmin = await prisma.admin.update({
+      where: { id: body.id },
+      data: {
+        email: body.email,
+        password: body.password,
+        firstname: body.firstname,
+        lastname: body.lastname,
+      },
     });
 
-    return { message: "User promoted to admin", promotedAdmin };
+    return {
+      success: true,
+      data: updatedAdmin,
+    };
   } catch (error) {
-    console.error((error as Error).message);
-    throw new Error("Failed to promote user to admin");
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    return {
+      success: false,
+      error: `Error updating admin: ${errorMessage}`,
+    };
   }
 });

@@ -1,15 +1,25 @@
 import { PrismaClient } from '@prisma/client';
-import { defineEventHandler } from 'h3';
+import { defineEventHandler, getQuery } from 'h3';
+
+const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
+  const { id } = getQuery(event);
+
   try {
-    const { userId } = event.context.params!;
-    const deletedUser = await event.context.prisma.user.delete({
-      where: { id: userId },
+    await prisma.user.delete({
+      where: { id: String(id) },
     });
-    return { message: "User deleted successfully", deletedUser };
+
+    return {
+      success: true,
+      message: 'User deleted successfully',
+    };
   } catch (error) {
-    console.error((error as Error).message);
-    throw new Error("Failed to delete user");
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    return {
+      success: false,
+      error: `Error deleting user: ${errorMessage}`,
+    };
   }
 });

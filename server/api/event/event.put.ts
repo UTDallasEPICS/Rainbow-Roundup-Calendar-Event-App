@@ -1,15 +1,17 @@
 import { PrismaClient } from '@prisma/client';
 import { defineEventHandler, readBody } from 'h3';
 
-export default defineEventHandler(async (event) => {
-  try {
-    const { eventId } = event.context.params!;
-    const body = await readBody(event);
+const prisma = new PrismaClient();
 
-    const updatedEvent = await event.context.prisma.event.update({
-      where: { id: eventId },
+export default defineEventHandler(async (event) => {
+  const body = await readBody(event);
+
+  try {
+    const updatedEvent = await prisma.event.update({
+      where: { id: body.id },
       data: {
         description: body.description,
+        adminId: body.adminId,
         date: new Date(body.date),
         location: body.location,
         startTime: new Date(body.startTime),
@@ -19,9 +21,15 @@ export default defineEventHandler(async (event) => {
       },
     });
 
-    return updatedEvent;
+    return {
+      success: true,
+      data: updatedEvent,
+    };
   } catch (error) {
-    console.error((error as Error).message);
-    throw new Error("Failed to update event");
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    return {
+      success: false,
+      error: `Error updating event: ${errorMessage}`,
+    };
   }
 });

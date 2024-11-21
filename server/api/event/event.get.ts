@@ -1,20 +1,39 @@
 import { PrismaClient } from '@prisma/client';
-import { defineEventHandler } from 'h3';
+import { defineEventHandler, getQuery } from 'h3';
+
+const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
+  const { id } = getQuery(event);
+
   try {
-    const { eventId } = event.context.params!;
-    const eventDetails = await event.context.prisma.event.findUnique({
-      where: { id: eventId },
-    });
+    if (id) {
+      // Get a single event by ID
+      const singleEvent = await prisma.event.findUnique({
+        where: { id: String(id) },
+        include: { admin: true, signUps: true },
+      });
 
-    if (!eventDetails) {
-      throw new Error("Event not found");
+      return {
+        success: true,
+        data: singleEvent,
+      };
+    } else {
+      // Get all events
+      const allEvents = await prisma.event.findMany({
+        include: { admin: true, signUps: true },
+      });
+
+      return {
+        success: true,
+        data: allEvents,
+      };
     }
-
-    return eventDetails;
   } catch (error) {
-    console.error((error as Error).message);
-    throw new Error("Failed to retrieve event details");
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    return {
+      success: false,
+      error: `Error fetching events: ${errorMessage}`,
+    };
   }
 });

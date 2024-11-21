@@ -1,11 +1,13 @@
 import { PrismaClient } from '@prisma/client';
 import { defineEventHandler, readBody } from 'h3';
 
+const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
+  const body = await readBody(event);
+
   try {
-    const body = await readBody(event);
-    const newEvent = await event.context.prisma.event.create({
+    const newEvent = await prisma.event.create({
       data: {
         description: body.description,
         adminId: body.adminId,
@@ -17,9 +19,17 @@ export default defineEventHandler(async (event) => {
         capacity: body.capacity,
       },
     });
-    return newEvent;
+
+    return {
+      success: true,
+      data: newEvent,
+    };
   } catch (error) {
-    console.error((error as Error).message);
-    throw new Error("Failed to create event");
+    // Use a type guard to ensure `error` is an instance of `Error`
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    return {
+      success: false,
+      error: `Error creating event: ${errorMessage}`,
+    };
   }
 });
