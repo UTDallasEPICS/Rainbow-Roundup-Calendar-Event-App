@@ -12,13 +12,6 @@ export default defineNuxtConfig({
   },
 
   devtools: { enabled: true },
-  css: [
-    '~/assets/css/main.css',
-    // '@fullcalendar/core/main.css',
-    // '@fullcalendar/daygrid/main.css',
-    // '@fullcalendar/list/main.css',
-    // '@fullcalendar/interaction/main.css',
-  ],
 
   postcss: {
     plugins: {
@@ -33,6 +26,14 @@ export default defineNuxtConfig({
   plugins: ['~/plugins/fullcalendar.client'],
   build: {
     transpile: ['@fullcalendar']
-  }
+  },
+
+  // something about the fullcalendar styles aren't importing correctly
+  css: [
+    // 'fullcalendar/core/main.css',
+    // 'fullcalendar/daygrid/main.css',
+    // 'fullcalendar/timegrid/main.css'
+  ]
+
 
 })
