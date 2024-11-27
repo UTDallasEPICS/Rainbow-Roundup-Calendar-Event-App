@@ -3,7 +3,10 @@ import { google, calendar_v3 } from 'googleapis';
 import type { GoogleCalendarEvent, CalendarEvent } from '../../types/calendar';
 
 export const formatEventForGoogle = (event: CalendarEvent): Partial<calendar_v3.Schema$Event> => ({
-  summary: event.title,
+  summary: event.title, // NOTE on outdated or out of sync google documentation regarding 'summary':
+                        // in the body of any request to POST or PATCH/PUT, pass event title to 'title' instead of 'summary'
+                        // calendar v3 schema doesn't recognize 'title', but just pass title as 'title' when making actual requests
+                        // for now, just keep 'summary' in this formatter
   description: event.description,
   start: {
     dateTime: event.start,

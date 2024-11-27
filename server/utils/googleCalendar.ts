@@ -8,15 +8,15 @@ let calendarClient: calendar_v3.Calendar | null = null;
 export const getCalendarClient = (): calendar_v3.Calendar => {
   if (!calendarClient) {
     const auth = new JWT({
-      email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      key: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      email: process.env.NUXT_GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      key: process.env.NUXT_GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, '\n'),
       scopes: [ // set the right scope
         'https://www.googleapis.com/auth/calendar',
         'https://www.googleapis.com/auth/calendar.events',
       ],
     });
 
-    calendarClient = google.calendar({ version: 'v3' });
+    calendarClient = google.calendar({ version: 'v3', auth });
   }
   return calendarClient;
 };
