@@ -16,7 +16,7 @@
     "dotenv": "^16.4.5",
     "googleapis": "^144.0.0",
     "sass": "^1.81.0",
-    "vuetify": "^3.7.0-beta.1"
+    "vuetify": "^3.7.0-beta.1",
     "nuxt": "^3.14.1592",
     "vue": "latest"
   },
