@@ -1,10 +1,31 @@
 <template>
-    <div class="p-8">
-        <p>Calendar</p>
-        <CalendarComponent :events="events" />
+    <div class="mb-16 p-8">
+      <p>Calendar</p>
+      <CalendarComponent :events="events" />
+      <div class="mt-6">
+        <h2 class="text-lg font-medium">Upcoming Events</h2>
+        <ul class="space-y-4 mt-4">
+          <li v-for="event in events" :key="event.id" class="border rounded p-4">
+            <h3 class="text-lg font-medium">{{ event.title }}</h3>
+            <p class="text-sm text-gray-600">
+              <template v-if="event.allDay">
+                {{ formatEventDate(event.start) }}
+                <span v-if="!sameDay(event.start, event.end)">- {{ formatEventDate(event.end) }}</span>
+              </template>
+              <template v-else>
+                {{ formatEventTime(event.start) }} - {{ formatEventTime(event.end) }}
+                <span>on {{ formatEventDate(event.start) }}</span>
+                <span v-if="!sameDay(event.start, event.end)">- {{ formatEventDate(event.end) }}</span>
+              </template>
+            </p>
+            <p v-if="event.description" class="text-gray-700">{{ event.description }}</p>
+            <p v-if="event.location" class="text-gray-700">{{ event.location }}</p>
+          </li>
+        </ul>
+      </div>
     </div>
-</template>
-
+  </template>
+      
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useDate } from 'vuetify'
@@ -36,8 +57,8 @@ const fetchEvents = async (start: any, end: any) => {
     try {
         const response = await $fetch<RawEvent[]>('/api/google/calendar/', {
             params: {
-                start: start.toISOString(),
-                end: end.toISOString()
+                timeMin: start.toISOString(),
+                timeMax: end.toISOString()
             }
         })
 
@@ -88,6 +109,30 @@ const cleanIfAllDay = (event: RawEvent): RawEvent & { allDay: boolean } => {
 
     return { ...event, allDay: false }
 }
+
+const formatEventDate = (date: Date) => {
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'America/Chicago'
+  }).format(date);
+};
+
+const formatEventTime = (date: Date) => {
+  return new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: 'numeric',
+    timeZone: 'America/Chicago'
+  }).format(date);
+};
+
+const sameDay = (start: Date, end: Date) => {
+  return start.getFullYear() === end.getFullYear() &&
+         start.getMonth() === end.getMonth() &&
+         start.getDate() === end.getDate();
+};
+
 onMounted(() => {
     const adapter = useDate()
     const startOfMonth = adapter.startOfDay(adapter.startOfMonth(new Date()))
