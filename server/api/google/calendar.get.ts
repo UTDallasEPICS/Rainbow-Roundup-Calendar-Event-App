@@ -5,6 +5,7 @@ interface QueryParams {
   timeMin?: string; // ISO 8601 format, optional. Specifies the minimum start time for the events to retrieve.
   timeMax?: string; // ISO 8601 format, optional. Specifies the maximum end time for the events to retrieve.
   maxResults?: string; // Optional. Maximum number of events to retrieve. Defaults to '100'.
+  eventRange?: 'all' | 'latest' | 'upcoming'; // parameter to specify event retrieval strategy
 }
 
 /**
@@ -17,6 +18,7 @@ interface QueryParams {
  * - `timeMin` (string, optional): Minimum start time for events, in ISO 8601 format (e.g., `"2024-12-01T00:00:00Z"`).
  * - `timeMax` (string, optional): Maximum end time for events, in ISO 8601 format (e.g., `"2024-12-31T23:59:59Z"`).
  * - `maxResults` (string, optional): Maximum number of events to return. Defaults to `"100"`.
+ * - `eventRange` ('all' | 'latest' | 'upcoming'): parameter to specify event retrieval strategy
  * 
  * The response will return a list of event objects, each with the following structure:
  * - `id` (string): Unique identifier for the event.
@@ -38,16 +40,52 @@ export default defineEventHandler(async (event) => {
     const calendar = getCalendarClient();
 
     // Parse and validate the request query parameters
-    const { timeMin, timeMax, maxResults = '100' } = getQuery<QueryParams>(event);
+    const { 
+      timeMin, 
+      timeMax, 
+      maxResults = '100', 
+      eventRange = 'all' 
+    } = getQuery<QueryParams>(event);
+
+    // Get the current time in ISO 8601 format
+    const now = new Date().toISOString();
+
+    let finalTimeMin: string | undefined;
+    let finalTimeMax: string | undefined;
+    let finalMaxResults: number;
+
+    // Adjust query parameters based on eventRange
+    switch (eventRange) {
+      case 'latest':
+        // Fetch the most recent past event
+        finalTimeMin = undefined; // No lower time bound
+        finalTimeMax = now; // Up to current time
+        finalMaxResults = 1;
+        break;
+      
+      case 'upcoming':
+        // Fetch the earliest upcoming event
+        finalTimeMin = now; // From current time onward
+        finalTimeMax = undefined; // No upper time bound
+        finalMaxResults = 1;
+        break;
+      
+      case 'all':
+      default:
+        // Use provided or default parameters
+        finalTimeMin = timeMin;
+        finalTimeMax = timeMax;
+        finalMaxResults = parseInt(maxResults);
+    }
 
     // Fetch events from Google calendar
     const response = await calendar.events.list({
       calendarId: process.env.NUXT_GOOGLE_CALENDAR_ID!,
-      timeMin: timeMin || new Date().toISOString(),
-      timeMax,
-      maxResults: parseInt(maxResults),
+      timeMin: finalTimeMin,
+      timeMax: finalTimeMax,
+      maxResults: finalMaxResults,
       singleEvents: true,
-      orderBy: 'startTime',
+      orderBy: eventRange === 'latest' ? 'startTime' : 'startTime',
     });
 
     // Format and return the list of events
