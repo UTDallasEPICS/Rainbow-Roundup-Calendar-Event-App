@@ -24,7 +24,6 @@ export const formatEventForResponse = (event: calendar_v3.Schema$Event): Calenda
   id: event.id!,
   title: event.summary!,
   description: event.description || undefined,
-  // TODO: for all day events, start and end need to be suffixed with the proper time and timezone offset, default to CST's "-06:00"
   start: event.start?.dateTime || event.start?.date!, 
   end: event.end?.dateTime || event.end?.date!,
   timeZone: event.start?.timeZone || "America/Chicago",

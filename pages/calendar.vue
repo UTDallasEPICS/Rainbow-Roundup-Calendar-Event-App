@@ -52,15 +52,12 @@ interface RawEvent {
 
 const events = ref<Event[]>([])
 
-const fetchEvents = async (start: any, end: any) => {
+// TODO:  (small nitpick, but for the future) adjust this to only request for the current month chosen to be displayed
+//        reduce client memory usage in the long term
+const fetchEvents = async () => {
 
     try {
-        const response = await $fetch<RawEvent[]>('/api/google/calendar/', {
-            params: {
-                timeMin: start.toISOString(),
-                timeMax: end.toISOString()
-            }
-        })
+        const response = await $fetch<RawEvent[]>('/api/google/calendar/')
 
         events.value = response.map(cleanIfAllDay).map(event => ({
             id: event.id,
@@ -138,7 +135,7 @@ onMounted(() => {
     const startOfMonth = adapter.startOfDay(adapter.startOfMonth(new Date()))
     const endOfMonth = adapter.endOfDay(adapter.endOfMonth(new Date()))
 
-    fetchEvents(startOfMonth, endOfMonth)
+    fetchEvents()
 })
 
 </script>
