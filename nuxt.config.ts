@@ -24,10 +24,13 @@ export default defineNuxtConfig({
   modules: ['tailwindcss', "@vite-pwa/nuxt"],
   compatibilityDate: '2024-10-24',
   pwa: {
+    strategies: "injectManifest",
+    srcDir: "service-worker",
+    filename: "sw.ts",
     registerType: 'autoUpdate',
     manifest: {
       name: "Rainbow Roundup",
-      short_name: "Rainbow Roundup",
+      short_name: "RR",
       description: "Event calendar app for Rainbow Roundup",
       theme_color: "#ffffff",
       icons: [
@@ -54,10 +57,17 @@ export default defineNuxtConfig({
     },
     workbox: {
       navigateFallback: "/",
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}']
     },
     devOptions: {
       enabled: true,
-      type: "module",
+      suppressWarnings: true,
+      navigateFallback: '/',
+      navigateFallbackAllowlist: [/^\/$/],
+      type: 'module',
+    },
+    injectManifest: {
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}']
     }
   },
 });
