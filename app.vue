@@ -3,6 +3,7 @@
 
   </h1>
   <div>
+    <NuxtPwaManifest />
     <NuxtRouteAnnouncer />
     <NuxtPage />
   </div>
