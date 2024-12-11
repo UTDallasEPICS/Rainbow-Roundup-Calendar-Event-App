@@ -7,20 +7,24 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "start": "nuxt start"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
     "@nuxtjs/dotenv": "^1.4.2",
     "@prisma/client": "^5.22.0",
-    "dotenv": "^16.4.5",
+    "@vite-pwa/nuxt": "^0.10.6",
+    "dotenv": "^16.4.7",
     "googleapis": "^144.0.0",
-    "sass": "^1.81.0",
-    "vuetify": "^3.7.0-beta.1",
     "nuxt": "^3.14.1592",
-    "vue": "latest"
+    "sass": "^1.81.0",
+    "vite": "^5.4.11",
+    "vue": "latest",
+    "vuetify": "^3.7.0-beta.1"
   },
   "devDependencies": {
+    "@vite-pwa/nuxt": "workspace:*",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.41",
     "prisma": "^5.22.0",
