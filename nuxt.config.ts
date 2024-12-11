@@ -40,6 +40,7 @@ export default defineNuxtConfig({
     manifest: {
       name: "Rainbow Roundup",
       short_name: "RR",
+      start_url: "/",
       description: "Event calendar app for Rainbow Roundup",
       theme_color: "#ffffff",
       icons: [
@@ -62,6 +63,13 @@ export default defineNuxtConfig({
           sizes: "512x512",
           type: "image/png"
         },
+      ],
+      screenshots: [
+        {
+          src: "images/icons/pwa_logo_mb_ss.png",
+          sizes: "600x400",
+          type: "image/png"
+        }
       ]
     },
     workbox: {
