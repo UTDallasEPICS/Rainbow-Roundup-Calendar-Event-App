@@ -34,13 +34,13 @@ import { useFetch } from '#app';
 const router = useRouter();
 
 const signupModel = ref({
-    userId: "sample",
-    firstname: "first name",
-    lastname: "Last name",
-    email: "test@email.com",
-    phoneNum: "+1 000 000 0000",
-    password: "pass",
-    confirmPassword: "pass"
+    // userId: "sample",
+    // firstname: "first name",
+    // lastname: "Last name",
+    // email: "test@email.com",
+    // phoneNum: "+1 000 000 0000",
+    // password: "pass",
+    // confirmPassword: "pass"
 })
 const errors = ref({});
 const submitSignupForm = async () => {

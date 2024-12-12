@@ -32,8 +32,8 @@
 import { useFetch } from '#app';
 
 const loginModel = ref({
-    email: "test@email.com",
-    password: "pass",
+    // email: "test@email.com",
+    // password: "pass",
 });
 const errors = ref({});
 const submitLoginForm = async () => {
