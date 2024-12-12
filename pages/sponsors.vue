@@ -92,24 +92,24 @@ export default {
   name: "SponsorsPage",
   data() {
     return {
-      sponsorLink: 'https://rrup.org/contact-us/', // Set to the specific link
+      sponsorLink: 'https://rrup.org/contact-us/', 
       goldSponsors: [
-        { name: "Gold Sponsor 1", image: "gold1.png", link: "https://www.dugganfamilylaw.com/" },
-        { name: "Gold Sponsor 2", image: "gold2.png", link: "https://burch-law.com/" },
-        { name: "Gold Sponsor 3", image: "gold3.png", link: "https://brookscannon.com/" },
-        { name: "Gold Sponsor 4", image: "gold4.png", link: "https://teddybearparty.org/" },
+        { name: "Gold Sponsor 1", image: "/images/gold1.png", link: "https://www.dugganfamilylaw.com/" },
+        { name: "Gold Sponsor 2", image: "/images/gold2.png", link: "https://burch-law.com/" },
+        { name: "Gold Sponsor 3", image: "/images/gold3.png", link: "https://brookscannon.com/" },
+        { name: "Gold Sponsor 4", image: "/images/gold4.png", link: "https://teddybearparty.org/" },
       ],
       silverSponsors: [
-        { name: "Silver Sponsor 1", image: "silver1.png", link: "https://theweteam.preproperties.com/" },
+        { name: "Silver Sponsor 1", image: "/images/silver1.png", link: "https://theweteam.preproperties.com/" },
       ],
       bronzeSponsors: [
-        { name: "Bronze Sponsor 1", image: "bronze1.png", link: "https://www.kleinfertilitylaw.com/" },
-        { name: "Bronze Sponsor 2", image: "bronze2.png", link: "https://conceivefertilitycenter.com/" },
-        { name: "Bronze Sponsor 3", image: "bronze3.png", link: "https://www.mytruedental.com/" },
-        { name: "Bronze Sponsor 4", image: "bronze4.png", link: "https://www.debnamrust.com/" },
-        { name: "Bronze Sponsor 5", image: "bronze5.png", link: "https://www.joinampmd.com/" },
-        { name: "Bronze Sponsor 6", image: "bronze6.png", link: "https://www.fertilitytexas.com/" },
-        { name: "Bronze Sponsor 7", image: "bronze7.png", link: "https://www.edwardjones.com/us-en/financial-advisor/ashley-bloom" },
+        { name: "Bronze Sponsor 1", image: "/images/bronze1.png", link: "https://www.kleinfertilitylaw.com/" },
+        { name: "Bronze Sponsor 2", image: "/images/bronze2.png", link: "https://conceivefertilitycenter.com/" },
+        { name: "Bronze Sponsor 3", image: "/images/bronze3.png", link: "https://www.mytruedental.com/" },
+        { name: "Bronze Sponsor 4", image: "/images/bronze4.png", link: "https://www.debnamrust.com/" },
+        { name: "Bronze Sponsor 5", image: "/images/bronze5.png", link: "https://www.joinampmd.com/" },
+        { name: "Bronze Sponsor 6", image: "/images/bronze6.png", link: "https://www.fertilitytexas.com/" },
+        { name: "Bronze Sponsor 7", image: "/images/bronze7.png", link: "https://www.edwardjones.com/us-en/financial-advisor/ashley-bloom" },
       ],
       communityPartners: [
         { name: "Community Partner 1", image: "community1.png", link: "https://www.helpusadopt.org/" },
