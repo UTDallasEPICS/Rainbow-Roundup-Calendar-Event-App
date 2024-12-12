@@ -1,4 +1,5 @@
 <template>
+
     <form @submit.prevent="submitSignupForm">
         <div class="flex flex-col items-center">
             <h2 class="sign">Sign Up</h2>
@@ -16,10 +17,11 @@
         </div>
         <div class="flex flex-col items-center">
             <br>
-            <!-- <button class="button button1"><a href="./profile">Create Account</a></button>
-        -->
             <button type="submit" class="button button1">Create Account</button>
         </div>
+        <div v-if="errors?.error" class="error-message">
+        <span><b>{{ errors.error }}</b></span>
+    </div>
     </form>
     <div class="flex flex-col items-center">
         <br>
@@ -40,8 +42,9 @@ const signupModel = ref({
     password: "pass",
     confirmPassword: "pass"
 })
-
+const errors = ref({});
 const submitSignupForm = async () => {
+    errors.value={};
     try {
         const { data, error } = await useFetch('/api/user', {
             method: "POST",
@@ -51,14 +54,10 @@ const submitSignupForm = async () => {
 
         if(data?.value?.success){
             router.push("login");
+        }else {
+            errors.value={error:data?.value?.error};
         }
-console.log("data.value.... ",data.value);
-          if (error) {
-            console.error(error);
-            // errorMessage=error.value;
-        } else {
-            console.log("Form submitted sucessfully ", data.value);
-        }
+
     } catch (error) {
         console.error("Error in submitting sihnup form", err);
     }
@@ -110,5 +109,11 @@ console.log("data.value.... ",data.value);
 
 .button1 {
     background-color: #70D6FF;
+}
+.error-message {
+    color: red;
+    text-align: center;
+    /* Adjust the margin to control the downward shift */
+
 }
 </style>

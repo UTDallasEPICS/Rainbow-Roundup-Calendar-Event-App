@@ -1,19 +1,14 @@
 <template>
-    <!--
-    <div>
 
-        <div v-if="data?.value?.success">
-            Login Sucessful
-        </div>
-        <div v-else>
-            <div>
-                <p>{{ data.value.error }}</p>
-            </div>
-        </div>
-    </div>
-    -->
+
+
     <form @submit.prevent="submitLoginForm">
         <div>
+
+
+
+
+
             <h2 class="signIn-message">Sign In</h2>
             <input type="email" class="username" v-model="loginModel.email" id="email" placeholder="Email Id" />
             <input type="passWord" class="password" v-model="loginModel.password" id="passWord"
@@ -24,6 +19,9 @@
         <div class="flex flex-col items-center">
             <button type="submit" class="button button1">Log In</button>
         </div>
+        <div v-if="errors?.error" class="error-message">
+            <span><b>{{ errors.error }}</b></span>
+        </div>
         <div class="flex flex-col items-center">
             <br>
             <p><b><a href="./signUp">Don't have an account? Sign Up</a></b></p>
@@ -32,19 +30,27 @@
 </template>
 <script setup>
 import { useFetch } from '#app';
+
 const loginModel = ref({
     email: "test@email.com",
     password: "pass",
 });
+const errors = ref({});
 const submitLoginForm = async () => {
+    errors.value = {}; // reset errors
     try {
         const { data, error } = await useFetch('/api/login', {
             method: "POST",
             body: loginModel.value,
             watch: false
         });
+        const value = data.value;
 
-        console.log("data...", JSON.stringify(data.value));
+        if (!value.success) {
+            errors.value = { error: value.error };
+        }
+
+
         if (error) {
             console.error(error);
             // errorMessage=error.value;
@@ -81,7 +87,7 @@ const submitLoginForm = async () => {
 
 }
 
-.passWord {
+.password {
     margin-top: 2.5%;
     margin-left: 40px;
     border-radius: 10px;
@@ -108,5 +114,12 @@ const submitLoginForm = async () => {
 
 .button1 {
     background-color: #70D6FF;
+}
+
+.error-message {
+    color: red;
+    text-align: center;
+    /* Adjust the margin to control the downward shift */
+
 }
 </style>
