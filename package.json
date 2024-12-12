@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "@nuxt/ui": "^2.20.0",
     "@nuxtjs/dotenv": "^1.4.2",
     "@prisma/client": "^5.22.0",
     "@vite-pwa/nuxt": "^0.10.6",

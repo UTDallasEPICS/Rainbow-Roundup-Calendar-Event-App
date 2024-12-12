@@ -1,47 +1,28 @@
 <template>
-    <div class="flex flex-col justify-center items-center min-h-screen bg-gray-100">
-      <!-- Install App Button -->
-      <button
-        @click="promptInstall"
-        class="px-6 py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition duration-300 ease-in-out mb-4"
-      >
-        Install App
-      </button>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        deferredPrompt: null,
-      };
-    },
-    mounted() {
-      // Listen for beforeinstallprompt event to handle PWA install
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        this.deferredPrompt = e;
-      });
-    },
-    methods: {
-      // Handle PWA install prompt
-      promptInstall() {
-        if (this.deferredPrompt) {
-          this.deferredPrompt.prompt();
-          this.deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === 'accepted') {
-              console.log('User accepted the install prompt');
-            } else {
-              console.log('User dismissed the install prompt');
-            }
-            this.deferredPrompt = null;
-          });
-        } else {
-          console.log('Install prompt not available');
-        }
-      },
-    },
-  };
-  </script>
-  
+  <div class="py-4">
+  <UCarousel v-slot="{ item }" :items="items" :ui="{ item: 'basis-full' }" class="w-96 mx-auto rounded-md overflow-hidden" arrows>
+    <img :src="item" class="w-full" draggable="false">
+  </UCarousel>
+  </div>
+
+  <div class="flex flex-col items-center max-w-96 mx-auto text-center mt-4">
+    <h1 class="text-xl font-bold mb-2">Our Mission</h1> <!-- Larger heading with margin-bottom -->
+    <p class="text-sm leading-relaxed px-4">Rainbow Roundup is a non-profit organization that promotes acceptance in all aspects of lesbian, gay, bisexual and transgender families and allies, to serve and strengthen the community through social activities, education and connecting resources to individuals.</p>
+  </div>
+
+
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      items: [
+        'images/carousel_3.png',
+        'images/carousel_2.png',
+        'images/carousel_1.png'
+      ],
+    };
+  },
+};
+</script>

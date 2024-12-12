@@ -27,7 +27,6 @@ clientsClaim()
 
 self.addEventListener('install', (event) => {
   console.log('Service Worker installed');
-  // Optional: perform some install work (e.g., cache assets)
 });
 
 self.addEventListener('activate', (event) => {

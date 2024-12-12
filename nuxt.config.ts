@@ -37,7 +37,7 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ['tailwindcss', "@vite-pwa/nuxt"],
+  modules: ['tailwindcss', "@vite-pwa/nuxt", "@nuxt/ui"],
   compatibilityDate: '2024-10-24',
 
   build: {

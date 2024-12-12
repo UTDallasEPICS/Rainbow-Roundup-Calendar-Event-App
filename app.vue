@@ -46,6 +46,7 @@
           <li><NuxtLink to="/about" @click="navigate('About Us')" class="block px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md">About Us</NuxtLink></li>
           <li><NuxtLink to="/calendar" @click="navigate('Calendar')" class="block px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md">Calendar</NuxtLink></li>
           <li><NuxtLink to="/donate" @click="navigate('Donate')" class="block px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md">Donate</NuxtLink></li>
+          <li @click="promptInstall" class="block px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md">Install App</li>
         </ul>
       </div>
     </div>
@@ -61,11 +62,16 @@ export default {
     return {
       dropdownOpen: false,
       isSubscribed: false, // Track subscription status
+      deferredPrompt: null,
     };
   },
   mounted() {
     // Check if the user is already subscribed (i.e., notification permission granted)
     this.updateSubscriptionStatus();
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        this.deferredPrompt = e;
+      });
   },
   methods: {
     // Toggle dropdown menu visibility
@@ -78,6 +84,22 @@ export default {
       console.log(`Navigating to ${page}`);
       this.dropdownOpen = false; // Close the dropdown after selection
     },
+
+    promptInstall() {
+        if (this.deferredPrompt) {
+          this.deferredPrompt.prompt();
+          this.deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+              console.log('User accepted the install prompt');
+            } else {
+              console.log('User dismissed the install prompt');
+            }
+            this.deferredPrompt = null;
+          });
+        } else {
+          console.log('Install prompt not available');
+        }
+      },
 
     updateSubscriptionStatus() {
       if (Notification.permission === 'granted') {
@@ -120,6 +142,7 @@ export default {
         console.log('Notification API or Service Worker is not supported');
       }
     },
+
   },
 };
 
