@@ -40,7 +40,7 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ['tailwindcss', "@vite-pwa/nuxt", "@nuxt/ui"],
+  modules: ['tailwindcss', "@vite-pwa/nuxt", "@nuxt/ui", "@nuxt/eslint"],
   compatibilityDate: '2024-10-24',
 
   plugins: ['~/plugins/fullcalendar.client'],
