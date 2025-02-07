@@ -1,12 +1,21 @@
 import { PrismaClient } from '@prisma/client';
-import { defineEventHandler, getQuery } from 'h3';
+import { defineEventHandler } from 'h3';
 
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
-  const { id } = getQuery(event);
+  const params = event.context.params as Record<string, string> | undefined;
+  const { id } = params || {}; // Extract id from URL params
+
+  if (!id) {
+    return {
+      success: false,
+      error: 'User ID is required to delete the user.',
+    };
+  }
 
   try {
+    // Attempt to delete the user from the database
     await prisma.user.delete({
       where: { id: String(id) },
     });

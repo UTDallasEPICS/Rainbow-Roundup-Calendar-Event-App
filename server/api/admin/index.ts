@@ -1,8 +1,8 @@
-import { defineEventHandler, getMethod } from 'h3';
-import adminGet from './admin.get';
+import { defineEventHandler} from 'h3';
+import adminGet from './[id]';
 import adminPost from './admin.post';
-import adminPut from './admin.put';
-import adminDelete from './admin.delete';
+import adminPut from './[id].put';
+import adminDelete from './[id].delete';
 
 export default defineEventHandler(async (event) => {
   const method = event.method; // Get the HTTP method (GET, POST, PUT, DELETE)

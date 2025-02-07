@@ -13,10 +13,13 @@ export default defineNuxtConfig({
 
   devtools: { enabled: true },
   css: [
-    '~/assets/css/main.css', // tailwind css styles imports
+    '~/assets/css/main.css',
+    // '@fullcalendar/core/main.css',
+    // '@fullcalendar/daygrid/main.css',
+    // '@fullcalendar/list/main.css',
+    // '@fullcalendar/interaction/main.css',
     'vuetify/lib/styles/main.sass', // vuetify sass styles imports
     '@mdi/font/css/materialdesignicons.min.css' // vuetify material design styles imports
-
   ],
 
   app: {
@@ -40,6 +43,7 @@ export default defineNuxtConfig({
   modules: ['tailwindcss', "@vite-pwa/nuxt", "@nuxt/ui"],
   compatibilityDate: '2024-10-24',
 
+  plugins: ['~/plugins/fullcalendar.client'],
   build: {
     transpile: ['vuetify'],
   },
