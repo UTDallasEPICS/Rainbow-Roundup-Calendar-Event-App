@@ -29,7 +29,7 @@
     "vuetify": "^3.7.0-beta.1"
   },
   "devDependencies": {
-    "@vite-pwa/nuxt": "workspace:*",
+    "@vite-pwa/nuxt": "0.10.6",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.41",
     "prisma": "^5.22.0",
