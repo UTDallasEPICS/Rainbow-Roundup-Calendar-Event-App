@@ -1,12 +1,21 @@
 import { PrismaClient } from '@prisma/client';
-import { defineEventHandler, getQuery } from 'h3';
+import { defineEventHandler } from 'h3';
 
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
-  const { id } = getQuery(event);
+  const params = event.context.params as Record<string, string> | undefined;
+  const { id } = params || {}; // Extract id from URL params
+
+  if (!id) {
+    return {
+      success: false,
+      error: 'Admin ID is required to delete the admin.',
+    };
+  }
 
   try {
+    // Attempt to delete the admin from the database
     await prisma.admin.delete({
       where: { id: String(id) },
     });

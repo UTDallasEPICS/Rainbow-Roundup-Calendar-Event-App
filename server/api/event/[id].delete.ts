@@ -1,14 +1,23 @@
 import { PrismaClient } from '@prisma/client';
-import { defineEventHandler, getQuery } from 'h3';
+import { defineEventHandler } from 'h3';
 
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
-  const { id } = getQuery(event);
+  // Access the dynamic route parameters to get the event ID
+  const params = event.context.params as Record<string, string> | undefined;
+  const id = params?.id; // Extract the ID from the dynamic route
+
+  if (!id) {
+    return {
+      success: false,
+      error: 'Event ID is required.',
+    };
+  }
 
   try {
     await prisma.event.delete({
-      where: { id: String(id) },
+      where: { id }, // Use the ID from the URL
     });
 
     return {

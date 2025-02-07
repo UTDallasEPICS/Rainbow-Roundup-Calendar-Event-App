@@ -1,25 +1,34 @@
 import { PrismaClient } from '@prisma/client';
-import { defineEventHandler, getQuery } from 'h3';
+import { defineEventHandler } from 'h3';
 
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
-  const { id } = getQuery(event);
+  // Access the dynamic route parameters
+  const params = event.context.params as Record<string, string> | undefined;
+  const id = params?.id; // Safely extract the ID
 
   try {
     if (id) {
-      // Get a single event by ID
+      // Fetch a single event by ID with relations (admin and signUps)
       const singleEvent = await prisma.event.findUnique({
-        where: { id: String(id) },
+        where: { id },
         include: { admin: true, signUps: true },
       });
+
+      if (!singleEvent) {
+        return {
+          success: false,
+          error: `No event found with ID: ${id}`,
+        };
+      }
 
       return {
         success: true,
         data: singleEvent,
       };
     } else {
-      // Get all events
+      // Fetch all events with relations (admin and signUps)
       const allEvents = await prisma.event.findMany({
         include: { admin: true, signUps: true },
       });
