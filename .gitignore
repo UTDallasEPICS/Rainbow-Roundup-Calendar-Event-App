@@ -17,8 +17,12 @@ logs
 .DS_Store
 .fleet
 .idea
+/.vscode
 
 # Local env files
 .env
 .env.*
 !.env.example
+
+# Database
+dev.db

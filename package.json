@@ -10,12 +10,16 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@mdi/font": "^7.4.47",
     "@nuxtjs/dotenv": "^1.4.2",
     "@prisma/client": "^5.22.0",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "googleapis": "^144.0.0",
     "nuxt": "^3.14.1592",
-    "vue": "latest"
+    "sass": "^1.81.0",
+    "vue": "latest",
+    "vuetify": "^3.7.0-beta.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
