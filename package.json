@@ -11,6 +11,12 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "@fullcalendar/core": "^6.1.15",
+    "@fullcalendar/daygrid": "^6.1.15",
+    "@fullcalendar/interaction": "^6.1.15",
+    "@fullcalendar/list": "^6.1.15",
+    "@fullcalendar/timegrid": "^6.1.15",
+    "@fullcalendar/vue3": "^6.1.15",
     "@nuxtjs/dotenv": "^1.4.2",
     "@prisma/client": "^5.22.0",
     "crypto": "^1.0.1",
