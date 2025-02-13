@@ -107,9 +107,6 @@ const submitSignupForm = async () => {
     border-radius: 10px;
 }
 
-.button1 {
-    background-color: #70D6FF;
-}
 .error-message {
     color: red;
     text-align: center;
