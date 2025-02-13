@@ -35,47 +35,50 @@
       </div>
       <span class="text-sm md:text-base mt-2">Latest Event</span>
     </div>
-
-    <!-- Latest Event Section -->
-    <div class="flex flex-col items-center w-full">
-      <div class="w-4/5 h-[20vh] md:h-[30vh] bg-green-500"></div>
-      <span class="text-sm md:text-base mt-2">Upcoming Event</span>
-    </div>
-
-    <!-- Upcoming Event Section -->
-    <div class="flex flex-col items-center w-full">
-      <div class="w-4/5 h-[20vh] md:h-[30vh] bg-blue-500"></div>
-    </div>
-
-    <!-- Sign Up Section -->
-    <div class="w-full flex justify-center">
-      <NuxtLink to="/signup" class="bg-yellow-400 px-6 py-2 rounded-md text-sm md:text-base">
-        Sign Up Here
-      </NuxtLink>
-    </div>
-
-    <!-- Contact Section -->
-    <div class="w-4/5 mx-auto">
-      <h3 class="text-sm md:text-base mb-2">Contact Us</h3>
-      <div class="space-y-2 text-sm md:text-base">
-        <div class="flex items-center gap-2">
-          <div class="w-4 h-4 md:w-5 md:h-5 bg-gray-300 rounded"></div>
-          <span>xxx-xxx-xxxx</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <div class="w-4 h-4 md:w-5 md:h-5 bg-gray-300 rounded"></div>
-          <span>xxxx@xxx.xxx</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <div class="w-4 h-4 md:w-5 md:h-5 bg-gray-300 rounded"></div>
-          <span>xxx-xxx-xxxx</span>
+  
+      <!-- Latest Event Section -->
+      <div class="flex flex-col items-center w-full">
+        <div class="w-4/5 h-[20vh] md:h-[30vh] bg-green-500"></div>
+        <span class="text-sm md:text-base mt-2">Upcoming Event</span>
+      </div>
+  
+      <!-- Upcoming Event Section -->
+      <div class="flex flex-col items-center w-full">
+        <div class="w-4/5 h-[20vh] md:h-[30vh] bg-blue-500"></div>
+      </div>
+  
+      <!-- Sign Up Section -->
+      <div class="w-full flex justify-center">
+        <NuxtLink
+          to="/signup"
+          class="bg-yellow-400 px-6 py-2 rounded-md text-sm md:text-base"
+        >
+          Sign Up Here
+        </NuxtLink>
+      </div>
+  
+      <!-- Contact Section -->
+      <div class="w-4/5 mx-auto">
+        <h3 class="text-sm md:text-base mb-2">Contact Us</h3>
+        <div class="space-y-2 text-sm md:text-base">
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 md:w-5 md:h-5 bg-gray-300 rounded"></div>
+            <span>xxx-xxx-xxxx</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 md:w-5 md:h-5 bg-gray-300 rounded"></div>
+            <span>xxxx@xxx.xxx</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 md:w-5 md:h-5 bg-gray-300 rounded"></div>
+            <span>xxx-xxx-xxxx</span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</template>
-
-<script>
+  </template>
+  
+  <script>
 export default {
   name: 'IndexPage',
   data() {
