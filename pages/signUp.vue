@@ -1,34 +1,41 @@
 <template>
 
-    <form @submit.prevent="submitSignupForm">
-        <div class="flex flex-col items-center">
-            <h2 class="sign">Sign Up</h2>
+    <form @submit.prevent="submitSignupForm" class="flex flex-col items-center w-full">
+            <h2 class="sign">Sign up</h2>
 
-        </div>
-        <div>
-            <input class="textField" v-model="signupModel.firstname" id="firstname" placeholder="First Name" />
-            <input class="textField" v-model="signupModel.lastname" id="lastname" placeholder="Last Name" />
-            <input class="textField" v-model="signupModel.email" id="email" placeholder="Email" />
-            <input class="textField" v-model="signupModel.phoneNum" id="phoneNum" placeholder="Phone Number" />
-            <input type="passWord" class="textField" v-model="signupModel.password" id="password"
-                placeholder="Password" />
-            <input type="passWord" class="textField" v-model="signupModel.confirmPassword" id="confirmPassword"
-                placeholder="Confirm Password" />
-        </div>
-        <div class="flex flex-col items-center">
+            <div class="flex flex-col items-center py-5"> 
+                <input class="textField" v-model="signupModel.firstname" id="firstname" placeholder="First Name" />
+                <input class="textField" v-model="signupModel.lastname" id="lastname" placeholder="Last Name" />
+                <input class="textField" v-model="signupModel.email" id="email" placeholder="Email" />
+                <input class="textField" v-model="signupModel.phoneNum" id="phoneNum" placeholder="Phone Number" />
+                <input type="passWord" class="textField" v-model="signupModel.password" id="password"
+                    placeholder="Password" />
+                <input type="passWord" class="textField" v-model="signupModel.confirmPassword" id="confirmPassword"
+                    placeholder="Confirm Password" />
+            </div>
+
+            <div class="flex flex-col items-center mt-2">
+                <p><b><a href="./login">Already have an account? Sign in</a></b></p>
+            </div>
+
             <br>
+<<<<<<< Updated upstream
             <button type="submit" class="button bg-rose-400">Create Account</button>
         </div>
         <div v-if="errors?.error" class="error-message">
         <span><b>{{ errors.error }}</b></span>
     </div>
+=======
+            <button type="submit" class="button w-full bg-rose-500 hover:bg-rose-700">Create Account</button>
+
+            <div v-if="errors?.error" class="error-message">
+                <span><b>{{ errors.error }}</b></span>
+             </div>
+>>>>>>> Stashed changes
     </form>
-    <div class="flex flex-col items-center">
-        <br>
-        <p><b><a href="./login">Already have an account? Sign In</a></b></p>
-    </div>
 
 </template>
+
 <script setup>
 import { useFetch } from '#app';
 const router = useRouter();
@@ -59,7 +66,7 @@ const submitSignupForm = async () => {
         }
 
     } catch (error) {
-        console.error("Error in submitting sihnup form", err);
+        console.error("Error in submitting signup form", err); /* fixed typo */
     }
 }
 </script>
@@ -67,14 +74,22 @@ const submitSignupForm = async () => {
 <style scoped>
 .sign {
     font-size: 35px;
-    margin-top: 40%;
+    margin-top: 5%; /* fixed awkward space issue*/
+    text-align: center;
+    width: 100%;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
 }
 
 .textField {
-    margin-top: 10%;
-    margin-left: 40px;
+    margin-top: 5%;
     border-radius: 10px;
-    border: 2px solid #000000;
+    border: 2px solid #969696;
     padding: 25px;
     width: 355px;
     height: 20px;
@@ -95,21 +110,27 @@ const submitSignupForm = async () => {
 }
 
 .button {
+    width: 355px;
     border: none;
     color: white;
-    padding: 15px 120px;
+    padding: 15px 0;
     text-align: center;
-    text-decoration: none;
-    display: inline-block;
     font-size: 16px;
-    margin: 10px 2px;
+    margin-top: 20px;
     cursor: pointer;
     border-radius: 10px;
 }
 
+<<<<<<< Updated upstream
+=======
+.button1 {
+    background-color: #ff5e5e; /* changed button color*/
+}
+>>>>>>> Stashed changes
 .error-message {
     color: red;
     text-align: center;
+    margin-top: 10px;
     /* Adjust the margin to control the downward shift */
 
 }
