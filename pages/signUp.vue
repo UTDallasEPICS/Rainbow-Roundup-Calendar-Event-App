@@ -19,19 +19,11 @@
             </div>
 
             <br>
-<<<<<<< Updated upstream
-            <button type="submit" class="button bg-rose-400">Create Account</button>
-        </div>
-        <div v-if="errors?.error" class="error-message">
-        <span><b>{{ errors.error }}</b></span>
-    </div>
-=======
             <button type="submit" class="button w-full bg-rose-500 hover:bg-rose-700">Create Account</button>
 
             <div v-if="errors?.error" class="error-message">
                 <span><b>{{ errors.error }}</b></span>
              </div>
->>>>>>> Stashed changes
     </form>
 
 </template>
@@ -121,12 +113,6 @@ form {
     border-radius: 10px;
 }
 
-<<<<<<< Updated upstream
-=======
-.button1 {
-    background-color: #ff5e5e; /* changed button color*/
-}
->>>>>>> Stashed changes
 .error-message {
     color: red;
     text-align: center;
