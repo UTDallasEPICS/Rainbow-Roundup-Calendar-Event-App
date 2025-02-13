@@ -17,7 +17,7 @@
         </div>
         <div class="flex flex-col items-center">
             <br>
-            <button type="submit" class="button button1">Create Account</button>
+            <button type="submit" class="button bg-rose-400">Create Account</button>
         </div>
         <div v-if="errors?.error" class="error-message">
         <span><b>{{ errors.error }}</b></span>
