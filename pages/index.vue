@@ -11,7 +11,7 @@
       </NuxtLink>
 
       <NuxtLink
-        to="/donate"
+        to="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
         class="bg-[#84CC16] text-black px-4 py-1.5 rounded-md min-w-[100px] text-center whitespace-nowrap"
       >
         Donate Here
