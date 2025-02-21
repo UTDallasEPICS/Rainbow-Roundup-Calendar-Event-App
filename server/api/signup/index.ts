@@ -1,8 +1,8 @@
 import { defineEventHandler, getMethod } from 'h3';
-import signupGet from './signup.get';
+import signupGet from './[id]';
 import signupPost from './signup.post';
 //import signupPut from './signup.put';
-import signupDelete from './signup.delete';
+import signupDelete from './[id].delete';
 
 export default defineEventHandler(async (event) => {
   const method = event.method; // Get the HTTP method (GET, POST, PUT, DELETE)

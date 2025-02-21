@@ -4,11 +4,23 @@ import { defineEventHandler, readBody } from 'h3';
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
+  // Access the dynamic route parameters to get the event ID
+  const params = event.context.params as Record<string, string> | undefined;
+  const id = params?.id; // Extract the ID from the dynamic route
+
+  if (!id) {
+    return {
+      success: false,
+      error: 'Event ID is required.',
+    };
+  }
+
+  // Read the body to get the data to update
   const body = await readBody(event);
 
   try {
     const updatedEvent = await prisma.event.update({
-      where: { id: body.id },
+      where: { id }, // Use the ID from the URL
       data: {
         description: body.description,
         adminId: body.adminId,
