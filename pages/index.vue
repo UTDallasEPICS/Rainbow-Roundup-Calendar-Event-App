@@ -3,13 +3,17 @@
     <!-- Navigation Buttons -->
     <!-- Navigation Buttons -->
     <div class="flex justify-between w-full mt-8">
-      <NuxtLink to="/sponsors"
-        class="bg-[#3B82F6] text-black px-4 py-1.5 rounded-md min-w-[100px] text-center whitespace-nowrap">
+      <NuxtLink
+        to="/sponsors"
+        class="bg-[#3B82F6] text-black px-4 py-1.5 rounded-md min-w-[100px] text-center whitespace-nowrap"
+      >
         Sponsor Us
       </NuxtLink>
 
-      <NuxtLink to="/donate"
-        class="bg-[#84CC16] text-black px-4 py-1.5 rounded-md min-w-[100px] text-center whitespace-nowrap">
+      <NuxtLink
+        to="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
+        class="bg-[#84CC16] text-black px-4 py-1.5 rounded-md min-w-[100px] text-center whitespace-nowrap"
+      >
         Donate Here
       </NuxtLink>
     </div>
@@ -77,13 +81,13 @@
 
 <script>
 export default {
-  name: 'IndexPage',
+  name: "IndexPage",
   data() {
     return {
       images: [
         "/images/ProfileImage.png",
         "/images/backArrow.png",
-        "/images/ProfileImage.png"
+        "/images/ProfileImage.png",
       ],
       currentIndex: 0,
       intervalId: null
@@ -109,7 +113,7 @@ export default {
     },
     nextSlide() {
       this.currentIndex = (this.currentIndex + 1) % this.images.length;
-    }
-  }
+    },
+  },
 };
 </script>
