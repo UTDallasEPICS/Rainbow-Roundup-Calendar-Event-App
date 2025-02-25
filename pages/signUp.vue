@@ -1,35 +1,32 @@
 <template>
-
     <form @submit.prevent="submitSignupForm" class="flex flex-col items-center w-full">
-            <h2 class="sign">Sign up</h2>
+        <h2 class="text-3xl font-bold mt-5 text-center w-full">Sign up</h2>
 
-            <div class="flex flex-col items-center py-5"> 
-                <input class="textField" v-model="signupModel.firstname" id="firstname" placeholder="First Name" />
-                <input class="textField" v-model="signupModel.lastname" id="lastname" placeholder="Last Name" />
-                <input class="textField" v-model="signupModel.email" id="email" placeholder="Email" />
-                <input class="textField" v-model="signupModel.phoneNum" id="phoneNum" placeholder="Phone Number" />
-                <input type="passWord" class="textField" v-model="signupModel.password" id="password"
-                    placeholder="Password" />
-                <input type="passWord" class="textField" v-model="signupModel.confirmPassword" id="confirmPassword"
-                    placeholder="Confirm Password" />
-            </div>
+        <div class="flex flex-col items-center py-5"> 
+            <input class="textField" v-model="signupModel.firstname" id="firstname" placeholder="First Name" />
+            <input class="textField" v-model="signupModel.lastname" id="lastname" placeholder="Last Name" />
+            <input class="textField" v-model="signupModel.email" id="email" placeholder="Email" />
+            <input class="textField" v-model="signupModel.phoneNum" id="phoneNum" placeholder="Phone Number" />                
+            <input type="passWord" class="textField" v-model="signupModel.password" id="password" placeholder="Password" />
+            <input type="passWord" class="textField" v-model="signupModel.confirmPassword" id="confirmPassword" placeholder="Confirm Password" />
+        </div>
 
-            <div class="flex flex-col items-center mt-2">
-                <p><b><a href="./login">Already have an account? Sign in</a></b></p>
-            </div>
+        <div class="flex flex-col items-center mt-2 text-neutral-400">
+            <p><b>Already have an account? <a href="./login" class="text-red-700 no-underline hover:underline">Sign in</a></b></p>
+        </div>
 
-            <br>
-            <button type="submit" class="button w-full bg-rose-500 hover:bg-rose-700">Create Account</button>
+        <br>
+        <button type="submit" class="button w-full bg-rose-500 hover:bg-rose-700">Create Account</button>
 
-            <div v-if="errors?.error" class="error-message">
-                <span><b>{{ errors.error }}</b></span>
-             </div>
+        <div v-if="errors?.error" class="\error-message">
+            <span><b>{{ errors.error }}</b></span>
+        </div>
     </form>
-
 </template>
 
 <script setup>
 import { useFetch } from '#app';
+
 const router = useRouter();
 
 const signupModel = ref({
@@ -40,8 +37,9 @@ const signupModel = ref({
     // phoneNum: "+1 000 000 0000",
     // password: "pass",
     // confirmPassword: "pass"
-})
+});
 const errors = ref({});
+
 const submitSignupForm = async () => {
     errors.value={};
     try {
@@ -53,20 +51,20 @@ const submitSignupForm = async () => {
 
         if(data?.value?.success){
             router.push("login");
-        }else {
+        } else {
             errors.value={error:data?.value?.error};
         }
 
-    } catch (error) {
+    } catch (err) {
         console.error("Error in submitting signup form", err); /* fixed typo */
     }
-}
+};
 </script>
 
 <style scoped>
 .sign {
     font-size: 35px;
-    margin-top: 5%; /* fixed awkward space issue*/
+    margin-top: 5%;
     text-align: center;
     width: 100%;
 }
@@ -81,7 +79,7 @@ form {
 .textField {
     margin-top: 5%;
     border-radius: 10px;
-    border: 2px solid #969696;
+    border: 2px solid #000000;
     padding: 25px;
     width: 355px;
     height: 20px;
