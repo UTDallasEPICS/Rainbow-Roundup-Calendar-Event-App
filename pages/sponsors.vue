@@ -94,7 +94,7 @@ export default {
     return {
       sponsorLink: 'https://rrup.org/contact-us/', 
       goldSponsors: [
-        { name: "Gold Sponsor 1", image: "/images/gold1.png", link: "https://www.dugganfamilylaw.com/" },
+        { name: "Gold Sponsor 1", image: "/images/sponsor1.png", link: "https://www.dugganfamilylaw.com/" },
         { name: "Gold Sponsor 2", image: "/images/gold2.png", link: "https://burch-law.com/" },
         { name: "Gold Sponsor 3", image: "/images/gold3.png", link: "https://brookscannon.com/" },
         { name: "Gold Sponsor 4", image: "/images/gold4.png", link: "https://teddybearparty.org/" },

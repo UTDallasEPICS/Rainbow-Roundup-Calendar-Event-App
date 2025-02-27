@@ -43,7 +43,7 @@
         <ul class="space-y-2 py-2">
           <li><NuxtLink to="/" @click="navigate('Home')" class="block px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md">Home</NuxtLink></li>
           <li><NuxtLink to="/signup" @click="navigate('Sign Up')" class="block px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md">Sign Up</NuxtLink></li>
-          <li><NuxtLink to="/about" @click="navigate('About Us')" class="block px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md">About Us</NuxtLink></li>
+          <li><NuxtLink to="/aboutUs" @click="navigate('About Us')" class="block px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md">About Us</NuxtLink></li>
           <li><NuxtLink to="/calendar" @click="navigate('Calendar')" class="block px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md">Calendar</NuxtLink></li>
           <li><NuxtLink to="/donate" @click="navigate('Donate')" class="block px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md">Donate</NuxtLink></li>
           <li @click="promptInstall" class="block px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md">Install App</li>
