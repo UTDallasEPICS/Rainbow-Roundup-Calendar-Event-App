@@ -1,4 +1,3 @@
-/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     "./components/**/*.{js,vue,ts}",
@@ -9,8 +8,11 @@ module.exports = {
     "./error.vue",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        lavenderPurple: "#D9A2FF",
+      },
+    },
   },
   plugins: [],
-}
-
+};

@@ -20,27 +20,28 @@
     </form>
 </template>
 <script setup>
-import { useFetch } from '#app';
+import { useFetch } from "#app";
 
 const loginModel = ref({
-    // email: "test@email.com",
-    // password: "pass",
+  // email: "test@email.com",
+  // password: "pass",
 });
 const errors = ref({});
 const submitLoginForm = async () => {
-    errors.value = {}; // reset errors
-    try {
-        const { data, error } = await useFetch('/api/login', {
-            method: "POST",
-            body: loginModel.value,
-            watch: false
-        });
-        const value = data.value;
+  errors.value = {}; // reset errors
+  try {
+    const { data, error } = await useFetch("/api/login", {
+      method: "POST",
+      body: loginModel.value,
+      watch: false,
+    });
+    const value = data.value;
+    console.log(error);
+    console.log(value);
 
-        if (!value.success) {
-            errors.value = { error: value.error };
-        }
-
+    if (!value.success) {
+      errors.value = { error: value.error };
+    }
 
         if (error) {
             console.error(error);
@@ -51,7 +52,10 @@ const submitLoginForm = async () => {
     } catch (error) {
         console.error("Error in submitting login form", err);
     }
-}
+  } catch (error) {
+    console.error("Error in submitting Login form", error);
+  }
+};
 </script>
 
 <style scoped>
@@ -79,29 +83,24 @@ const submitLoginForm = async () => {
     padding: 25px;
     width: 355px;
     height: 20px;
-
-
 }
 
 .button {
-    border: none;
-    color: white;
-    padding: 15px 150px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 10px 2px;
-    cursor: pointer;
-    border-radius: 10px;
+  border: none;
+  color: white;
+  padding: 15px 150px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 10px 2px;
+  cursor: pointer;
+  border-radius: 10px;
 }
 
-
-
 .error-message {
-    color: red;
-    text-align: center;
-    /* Adjust the margin to control the downward shift */
-
+  color: red;
+  text-align: center;
+  /* Adjust the margin to control the downward shift */
 }
 </style>

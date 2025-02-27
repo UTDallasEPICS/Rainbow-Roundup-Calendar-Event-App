@@ -1,14 +1,17 @@
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   runtimeConfig: {
-    AUTH0_CLIENTID: '',
-    AUTH0_SECRET: '',
-    BASEURL: '',
-    ISSUER: '',
+    public: {
+      STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
+    },
+    AUTH0_CLIENTID: "",
+    AUTH0_SECRET: "",
+    BASEURL: "",
+    ISSUER: "",
   },
 
   devtools: { enabled: true },
