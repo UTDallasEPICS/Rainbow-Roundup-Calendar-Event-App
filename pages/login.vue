@@ -1,6 +1,6 @@
 <template>
     <form @submit.prevent="submitLoginForm">
-            <h2 class="signIn-message text-3xl font-bold mt-5 text-center w-full">Sign in</h2>
+            <h2 class="signIn-message text-3xl font-bold mt-5 text-center w-full">Sign In</h2>
             <div class="flex flex-col items-center py-5">
                 <input type="email" class="username" v-model="loginModel.email" id="email" placeholder="Email" />
                 <input type="passWord" class="password" v-model="loginModel.password" id="passWord"
@@ -9,7 +9,7 @@
 
             </div>
         <div class="flex flex-col items-center">
-            <button type="submit" class="button bg-rose-500 hover:bg-rose-700">Log in</button>
+            <button type="submit" class="button bg-rose-500 hover:bg-rose-700">Log In</button>
         </div>
         <div v-if="errors?.error" class="error-message">
             <span><b>{{ errors.error }}</b></span>
@@ -43,19 +43,16 @@ const submitLoginForm = async () => {
       errors.value = { error: value.error };
     }
 
-        if (error) {
-            console.error(error);
-            // errorMessage=error.value;
-        } else {
-            console.log("Form submitted sucessfully ", data.value);
-        }
-    } catch (error) {
-        console.error("Error in submitting login form", err);
+    if (error) {
+      console.error(error);
+       // errorMessage=error.value;
+    } else {
+      console.log("Form submitted sucessfully ", data.value);
     }
-  } catch (error) {
-    console.error("Error in submitting Login form", error);
-  }
-};
+    } catch (error) {
+        console.error("Error in submitting login form", error);
+    }
+  };
 </script>
 
 <style scoped>

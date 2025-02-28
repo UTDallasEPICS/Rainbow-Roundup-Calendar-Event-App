@@ -1,6 +1,6 @@
 <template>
     <form @submit.prevent="submitSignupForm" class="flex flex-col items-center w-full">
-        <h2 class="text-3xl font-bold mt-5 text-center w-full">Sign up</h2>
+        <h2 class="text-3xl font-bold mt-5 text-center w-full">Sign Up</h2>
 
         <div class="flex flex-col items-center py-5"> 
             <input class="textField" v-model="signupModel.firstname" id="firstname" placeholder="First Name" />
@@ -12,7 +12,7 @@
         </div>
 
         <div class="flex flex-col items-center mt-2 text-neutral-400">
-            <p><b>Already have an account? <a href="./login" class="text-red-700 no-underline hover:underline">Sign in</a></b></p>
+            <p><b>Already have an account? <a href="./login" class="text-red-700 no-underline hover:underline">Sign In</a></b></p>
         </div>
 
         <br>
