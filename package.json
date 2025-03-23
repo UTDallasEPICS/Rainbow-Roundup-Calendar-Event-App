@@ -13,20 +13,20 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@heroicons/vue": "^2.2.0",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
     "@fullcalendar/interaction": "^6.1.15",
     "@fullcalendar/list": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
     "@fullcalendar/vue3": "^6.1.15",
+    "@heroicons/vue": "^2.2.0",
     "@mdi/font": "^7.4.47",
     "@nuxt/eslint": "^1.0.1",
     "@nuxt/ui": "^2.21.0",
     "@nuxtjs/dotenv": "^1.4.2",
+    "@prisma/client": "^6.2.1",
     "@stripe/stripe-js": "^5.6.0",
     "@vue-stripe/vue-stripe": "^4.5.0",
-    "@prisma/client": "^6.2.1",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "eslint": "^9.19.0",
@@ -43,7 +43,7 @@
     "@vite-pwa/nuxt": "0.10.6",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.41",
-    "prisma": "^6.2.1",
+    "prisma": "^6.5.0",
     "tailwindcss": "^3.4.10"
   }
 }
