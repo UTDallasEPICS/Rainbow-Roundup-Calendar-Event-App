@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
       // Fetch a single event by ID with relations (admin and signUps)
       const singleEvent = await prisma.event.findUnique({
         where: { id },
-        include: { admin: true, signUps: true },
+        include: { User: true, SignUps: true },
       });
 
       if (!singleEvent) {
@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
     } else {
       // Fetch all events with relations (admin and signUps)
       const allEvents = await prisma.event.findMany({
-        include: { admin: true, signUps: true },
+        include: { User: true, SignUps: true },
       });
 
       return {

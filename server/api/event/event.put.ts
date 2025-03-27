@@ -23,12 +23,12 @@ export default defineEventHandler(async (event) => {
       where: { id }, // Use the ID from the URL
       data: {
         description: body.description,
-        adminId: body.adminId,
+        userId: body.userId,
         date: new Date(body.date),
-        location: body.location,
+        eventLat: body.eventLat,
+        eventLong: body.eventLong,
         startTime: new Date(body.startTime),
         endTime: new Date(body.endTime),
-        timezone: body.timezone,
         capacity: body.capacity,
       },
     });

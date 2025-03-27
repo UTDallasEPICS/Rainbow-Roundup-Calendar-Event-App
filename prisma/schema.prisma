@@ -8,24 +8,21 @@ generator client {
 }
 
 model User {
-  id         String  @id @default(uuid())
-  email      String  @unique
-  firstname  String
-  lastname   String
-  role       Role @default(USER)
-  phoneNum   String?
-  profilePic String?
+  id               String   @id @default(uuid())
+  email            String   @unique
+  firstname        String
+  lastname         String
+  role             Role     @default(USER)
+  phoneNum         String?
+  profilePic       String?
 
-  // Relation to SignUps
-  SignUps       SignUp[]
-  // Relation to Notification
-  Notifications Notification[]
-  // Relation to Event
-  CreatedEvents        Event[]
-  // Relation to Reports made on other users
-  Reports              Report[]
-  // Relation to Reports made on this user
-  PotentialOffenses    Report[]
+  SignUps           SignUp[]
+  Notifications     Notification[]
+  CreatedEvents     Event[]
+  
+  // Report relations
+  Reports           Report[] @relation("ReporterUser")       // Reports this user has made
+  PotentialOffenses Report[] @relation("ReportedUser")       // Reports this user has received
 }
 
 model Event {
@@ -75,8 +72,8 @@ model Notification {
 
 model Report {
   id                  String @id @default(uuid())
-  reportedAccount     String  //account being reported
-  madeReport          String  //account making report
+  reportedUserId      String  //account being reported
+  reporterUserId      String  //account making report
   isUsername          Boolean // is the report username related
   isProfilePic        Boolean // is the report profilePic related
   isOther             Boolean // is something else
@@ -84,11 +81,12 @@ model Report {
   reportTime          DateTime @default(now())
 
   // Foreign Keys
-   ReportedUser       User      @relation(fields: [reportedAccount], references: [id])
-   ReportingUser      User      @relation(fields: [madeReport], references: [id])
+  ReportedUser            User     @relation("ReportedUser", fields: [reportedUserId], references: [id])
+  ReporterUser            User     @relation("ReporterUser", fields: [reporterUserId], references: [id])
+
   
   // A single report by a user on another user
-  @@unique([reportedAccount, madeReport])
+  @@unique([reportedUserId, reporterUserId])
 }
 
 enum Role {
