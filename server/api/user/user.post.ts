@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 import { defineEventHandler, readBody } from 'h3';
-import { encryptPassword } from '~/server/utils/login';
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
@@ -28,12 +27,11 @@ export default defineEventHandler(async (event) => {
       };
     }
 
-    const encryptedPassword = encryptPassword(body.password);
 
     const newUser = await prisma.user.create({
       data: {
         email: body.email,
-        password: encryptedPassword,
+        password: "", // password set to "" as a band-aid. This will be overwritten when a merge conflict inevitably happens because password in general is being deleted. 
         firstname: body.firstname,
         lastname: body.lastname,
         phoneNum: body.phoneNum || null,
