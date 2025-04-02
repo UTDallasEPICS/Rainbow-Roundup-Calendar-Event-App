@@ -5,42 +5,35 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700">First Name</label>
                 <div class="flex space-x-6 mt-1 border-b border-gray-700">
-                    <input type="text" id="first-name" class="px-3 py-2 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
+                    <input type="text" id="first-name" class="px-3 py-2 rounded-md focus:outline-none"/>
                 </div>
             </div>
 
             <div>
                 <label class="block mt-4 text-sm font-medium text-gray-700">Last Name</label>
                 <div class="flex space-x-6 mt-1 border-b border-gray-700">
-                    <input type="text" id="last-name" class="px-3 py-2 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
+                    <input type="text" id="last-name" class="px-3 py-2 rounded-md focus:outline-none"/>
                 </div>
             </div>
 
             <div>
                 <label class="block mt-4 text-sm font-medium text-gray-700">Email</label>
                 <div class="flex space-x-6 mt-1 border-b border-gray-700">
-                    <input type="text" id="email" class="px-3 py-2 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
+                    <input type="text" id="email" class="px-3 py-2 rounded-md focus:outline-none"/>
                 </div>
             </div>
 
             <div>
                 <label class="block mt-4 text-sm font-medium text-gray-700">Phone Number</label>
                 <div class="flex space-x-6 mt-1 border-b border-gray-700">
-                    <input type="tel" class="px-3 py-2 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
+                    <input type="tel" class="px-3 py-2 rounded-md focus:outline-none"/>
                 </div>
             </div>
 
             <div>
                 <label class="block mt-4 text-sm font-medium text-gray-700">Password</label>
                 <div class="flex space-x-6 mt-1 border-b border-gray-700">
-                    <input type="password" id="password" class="px-3 py-2 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
-                </div>
-            </div>
-
-            <div>
-                <label class="block mt-4 text-sm font-medium text-gray-700">Confirm Password</label>
-                <div class="flex space-x-6 mt-1 border-b border-gray-700">
-                    <input type="password" id="password" class="px-3 py-2 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
+                    <input type="password" id="password" class="px-3 py-2 rounded-md focus:outline-none"/>
                 </div>
             </div>
 
@@ -49,9 +42,9 @@
             </div>
         </div>
         <br>
-        <button type="submit" class="w-[320px] border-none text-white text-center cursor-pointer mt-3 py-4 rounded-xl bg-lavenderPurple hover:bg-purple-400">Register</button>
+        <button type="submit" class="w-[280px] border-none text-white text-center cursor-pointer mt-3 py-4 rounded-xl bg-lavenderPurple hover:bg-purple-400">Register</button>
 
-        <div v-if="errors?.error" class="\error-message">
+        <div v-if="errors?.error" class="error-message">
             <span><b>{{ errors.error }}</b></span>
         </div>
     </form>
@@ -93,47 +86,3 @@ const submitSignupForm = async () => {
     }
 };
 </script>
-
-<style scoped>
-
-/*.textField {
-    margin-top: 5%;
-    border-radius: 10px;
-    border: 2px solid #000000;
-    padding: 25px;
-    width: 355px;
-    height: 20px;
-}*/
-
-/*#passWord {
-    margin-top: 2.5%;
-    margin-left: 40px;
-    border-radius: 10px;
-    border: 2px solid #000000;
-    padding: 25px;
-    width: 355px;
-    height: 20px;
-
-
-}*/
-
-/*.button {
-    width: 355px;
-    border: none;
-    color: white;
-    padding: 15px 0;
-    text-align: center;
-    font-size: 16px;
-    margin-top: 20px;
-    cursor: pointer;
-    border-radius: 10px;
-}*/
-
-.error-message {
-    color: red;
-    text-align: center;
-    margin-top: 10px;
-    /* Adjust the margin to control the downward shift */
-
-}
-</style>
