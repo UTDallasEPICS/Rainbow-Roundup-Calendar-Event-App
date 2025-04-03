@@ -9,14 +9,6 @@
                 </div>
             </div>
 
-            <div>
-                <label class="block mt-4 text-sm font-medium text-gray-700">Password</label>
-                <div class="flex space-x-6 mt-1 border-b border-gray-700">
-                    <input type="password" id="password" class="px-3 py-2 rounded-md focus:outline-none"/>
-                </div>
-            </div>
-        </div>
-
         <br>
         <button type="submit" class="w-[264px] border-none text-white text-center cursor-pointer mt-3 py-4 rounded-xl bg-lavenderPurple hover:bg-purple-400">Login</button>
 
@@ -25,6 +17,7 @@
         </div>
         <div class="flex flex-col items-center mt-2 text-neutral-400">
             <p><b>Don't have an account? <a href="./signUp" class="text-[#D9A2FF] no-underline hover:underline">Sign Up</a></b></p>
+        </div>
         </div>
     </form>
 </template>
