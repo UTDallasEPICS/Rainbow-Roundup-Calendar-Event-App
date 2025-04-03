@@ -1,6 +1,6 @@
 import { defineEventHandler, getMethod } from 'h3';
 import signupGet from './[id]';
-import signupPost from './signup.post';
+import signupPost from './[id].post';
 //import signupPut from './signup.put';
 import signupDelete from './[id].delete';
 

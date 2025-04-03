@@ -1,5 +1,5 @@
 import { defineEventHandler} from 'h3';
-import userGet from './[id]';
+import userGet from './[id].get';
 import userPost from './user.post';
 import userPut from './[id].put';
 import userDelete from './[id].delete';

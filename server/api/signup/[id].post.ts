@@ -11,6 +11,7 @@ export default defineEventHandler(async (event) => {
         sendNotification: body.sendNotification,
       },
     });
+    
     return newSignUp;
   } catch (error) {
     console.error((error as Error).message);

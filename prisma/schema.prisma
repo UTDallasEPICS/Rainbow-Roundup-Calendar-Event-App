@@ -29,10 +29,9 @@ model Event {
   id               String   @id @default(uuid())
   description      String
   userId           String   // References Admin who created the event
-  date             DateTime
   eventLat         Float
   eventLong        Float
-  startTime        DateTime
+  startTime        DateTime // Datetime, includes date and time
   endTime          DateTime
   capacity         Int?
   currentCapacity  Int?

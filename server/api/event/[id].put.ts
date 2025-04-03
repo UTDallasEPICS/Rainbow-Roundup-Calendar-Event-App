@@ -1,13 +1,11 @@
 import { PrismaClient } from '@prisma/client';
-import { defineEventHandler, readBody } from 'h3';
-
-const prisma = new PrismaClient();
+import { defineEventHandler, getRouterParam, readBody, setResponseStatus } from 'h3';
 
 export default defineEventHandler(async (event) => {
+  const prisma = event.context.prisma
   // Access the dynamic route parameters to get the event ID
-  const params = event.context.params as Record<string, string> | undefined;
-  const id = params?.id; // Extract the ID from the dynamic route
-
+  const id = getRouterParam(event, 'id'); // Extract the ID from the dynamic route
+  
   if (!id) {
     return {
       success: false,
@@ -24,7 +22,6 @@ export default defineEventHandler(async (event) => {
       data: {
         description: body.description,
         userId: body.userId,
-        date: new Date(body.date),
         eventLat: body.eventLat,
         eventLong: body.eventLong,
         startTime: new Date(body.startTime),
