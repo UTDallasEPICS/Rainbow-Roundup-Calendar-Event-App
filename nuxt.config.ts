@@ -14,7 +14,7 @@ export default defineNuxtConfig({
     ISSUER: "",
   },
 
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   css: [
     '~/assets/css/main.css',
     // '@fullcalendar/core/main.css',

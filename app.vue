@@ -52,7 +52,7 @@
     </div>
 
     <!-- Nuxt Page Component to display content -->
-    <NuxtPage />
+    <NuxtPage class="min-h-screen"/> <!-- NuxtPage was given min-h-screen to make it actually fill the screen-->>
   </div>
 </template>
 
