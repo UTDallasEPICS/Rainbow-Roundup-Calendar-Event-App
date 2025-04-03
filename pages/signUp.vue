@@ -1,6 +1,6 @@
 <template>
     <form @submit.prevent="submitSignupForm" class="w-full flex flex-col items-center justify-center bg-white">
-        <h2 class="text-3xl font-bold mt-5 text-center text-[#022150] w-full">Hello and Welcome!</h2>
+        <h2 class="text-3xl font-bold mt-2 text-center text-[#022150] w-full">Hello and Welcome!</h2>
         <div class="mt-6">
             <div>
                 <label class="block text-sm font-medium text-gray-700">First Name</label>
@@ -35,7 +35,7 @@
             </div>
         </div>
         <br>
-        <button type="submit" class="w-[280px] border-none text-white text-center cursor-pointer mt-3 py-4 rounded-xl bg-lavenderPurple hover:bg-purple-400">Register</button>
+        <button type="submit" class="w-[280px] border-none text-white text-lg text-center cursor-pointer mt-3 py-4 rounded-xl bg-lavenderPurple hover:bg-purple-400">Register</button>
 
         <div v-if="errors?.error" class="error-message">
             <span><b>{{ errors.error }}</b></span>
