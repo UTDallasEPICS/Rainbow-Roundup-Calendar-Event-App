@@ -15,9 +15,7 @@ model User {
   lastname   String
   phoneNum   String?
   profilePic String?
-  emailVerified DateTime?
-
-
+  
   // Relation to SignUps
   signUps    SignUp[]
 }
