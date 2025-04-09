@@ -8,10 +8,11 @@ export default defineNuxtConfig({
     public: {
       STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
     },
-    AUTH0_CLIENTID: process.env.NUXT_AUTH0_CLIENTID,
-    AUTH0_SECRET: process.env.NUXT_AUTH0_SECRET,
-    BASEURL: process.env.NUXT_BASEURL,
-    ISSUER: process.env.NUXT_ISSUER,
+    smtpHost: process.env.SMTP_HOST,
+    smtpPort: process.env.SMTP_PORT,
+    smtpUser: process.env.SMTP_USER,
+    smtpPass: process.env.SMTP_PASS,
+    smtpFrom: process.env.SMTP_FROM,
   },
 
   devtools: { enabled: true },
@@ -51,10 +52,12 @@ export default defineNuxtConfig({
     "@sidebase/nuxt-auth",
   ],
   auth: {
+    isEnabled: true,
+    baseURL: "http://localhost:3000/api/auth",
     provider: {
       type: "authjs",
       trustHost: false,
-      defaultProvider: "auth0",
+      defaultProvider: "email",
       addDefaultCallbackUrl: true,
     },
   },
