@@ -12,7 +12,7 @@ const prisma = new PrismaClient();
 export default NuxtAuthHandler({
   adapter: PrismaAdapter(prisma),
   session: {
-    strategy: "jwt", // 👈 use JWTs instead of DB sessions
+    strategy: "jwt",
   },
   providers: [
     EmailProvider.default({
