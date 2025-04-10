@@ -8,6 +8,7 @@ const { status, data, signOut } = useAuth();
 
 <template>
   <div v-if="data">
+    {{ data.user }}
     Hello {{ data.user?.email }}! Admin Page Only I am protected! You are
     currently {{ status }}.
     <button @click="() => signOut({ callbackUrl: '/login' })">

@@ -15,7 +15,7 @@ model User {
   lastname   String
   phoneNum   String?
   profilePic String?
-  
+  emailVerified DateTime?
   // Relation to SignUps
   signUps    SignUp[]
 }
@@ -60,6 +60,14 @@ model SignUp {
   event           Event    @relation(fields: [eventId], references: [id])
 
   @@unique([userId, eventId]) // Ensure a unique pair of user-event sign-ups
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
 
 
