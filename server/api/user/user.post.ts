@@ -1,28 +1,19 @@
 import { PrismaClient } from '@prisma/client';
 import { defineEventHandler, readBody } from 'h3';
 
-
-const prisma = new PrismaClient();
-
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
+  const prisma = event.context.prisma
 
   try {
-
-    if(body.password !== body.confirmPassword){
-      return {
-        success: false,
-        error: "Password and Confirm password are not same.",
-      };
-    }
-
-    const existinguser = await prisma.user.findUnique({
+    const existingUser = await prisma.user.findUnique({
       where: {
         email: body.email
       },
     });
 
-    if(existinguser){
+    if(existingUser){
+      setResponseStatus(event, 400)
       return {
         success: false,
         error: "User with this email already exists",
@@ -35,8 +26,10 @@ export default defineEventHandler(async (event) => {
         email: body.email,
         firstname: body.firstname,
         lastname: body.lastname,
+        role: body.role,
         phoneNum: body.phoneNum || null,
         profilePic: body.profilePic || null,
+        GlobalNotif: body.GlobalNotif || false,
       },
     });
 

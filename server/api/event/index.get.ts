@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
         include: {
         User: true,            // Event creator
         SignUps: true,         // Who signed up
-        Notifications: true,   // Any related notifications
+        Anouncements: true,   // Any related notifications // previously called notifications, now called announcements
         },
         orderBy: {
         startTime: 'asc',           // Optional: sort upcoming events first

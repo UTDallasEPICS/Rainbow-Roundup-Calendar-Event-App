@@ -15,9 +15,11 @@ model User {
   role             Role     @default(USER)
   phoneNum         String?
   profilePic       String?
+  GlobalNotif      Boolean // Global notifications (annoncements)
+  
 
   SignUps           SignUp[]
-  Notifications     Notification[]
+  Announcements     Announcement[] // references announcements created by user
   CreatedEvents     Event[]
   
   // Report relations
@@ -41,26 +43,30 @@ model Event {
 
   // Relation to SignUps
   SignUps          SignUp[]
-  // Relation to Notifications
-  Notifications    Notification[]
+
+  // Announcements
+  Anouncements     Announcement[]
+
 }
 
 model SignUp {
   id              String   @id @default(uuid())
   userId          String
   eventId         String
+  Notifications   Boolean
 
   // Foreign keys to User and Event
   User            User     @relation(fields: [userId], references: [id])
-  Event           Event    @relation(fields: [eventId], references: [id])
+  Event           Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@unique([userId, eventId]) // Ensure a unique pair of user-event sign-ups
 }
 
-model Notification {
+model Announcement {
   id              String @id @default(uuid())
-  userId          String
-  eventId         String
+  userId          String //user creating announcement
+  eventId         String //related event
+  announceBody    String // actual announcement
 
   // Foreign Keys
   User            User     @relation(fields: [userId], references: [id])

@@ -7,6 +7,7 @@ export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id'); // Extract the ID from the dynamic route
   
   if (!id) {
+    setResponseStatus(event, 400);
     return {
       success: false,
       error: 'Event ID is required.',
@@ -16,7 +17,31 @@ export default defineEventHandler(async (event) => {
   // Read the body to get the data to update
   const body = await readBody(event);
 
+  // validate that new startTime/endTime (if changed) are in the right order
+  if (body.startTime && body.endTime) {
+    if (new Date(body.startTime) >= new Date(body.endTime)) {
+      setResponseStatus(event, 400);
+      return {
+        success: false,
+        error: 'EndTime must be after StartTime'
+      };
+    }
+  }
+
   try {
+    // check if the event exists
+    const existingEvent = await prisma.event.findUnique({
+      where: { id },
+    });
+
+    if (!existingEvent) {
+      setResponseStatus(event, 404);
+      return {
+        success: false,
+        error: `No event found with ID: ${id}`,
+      };
+    }
+
     const updatedEvent = await prisma.event.update({
       where: { id }, // Use the ID from the URL
       data: {
@@ -29,12 +54,13 @@ export default defineEventHandler(async (event) => {
         capacity: body.capacity,
       },
     });
-
+    setResponseStatus(event, 200)
     return {
       success: true,
       data: updatedEvent,
     };
   } catch (error) {
+    setResponseStatus(event, 500);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return {
       success: false,
