@@ -9,15 +9,13 @@
     </div>
     <div class= "flex flex-col items-center">
          <img class="prof-icon" src="../public/images/ProfileImage.png" alt="Profile Page ">
-         <p class="text">Change Profile</p>
-         <p class="text">Picture</p>
+         <p class="text">Change Profile Picture</p>
     
-         
     </div>
     <div>   
         <br>  
         <br>
-        <input type="name" id="name" placeholder = "Full Name"/>
+        <input type="name" id="name" placeholder = "First Name"/>
         <br>
         <br><br>
         <input type="name" id="name" placeholder = "User Name"/>
@@ -28,7 +26,7 @@
     </div>
     <div class="flex flex-col items-center">
         <br>
-    <button class="button button1"><a href="./profile">Save Changes</a></button>
+    <button class="w-[264px] border-none text-white text-lg text-center cursor-pointer mt-3 py-4 rounded-xl bg-lavenderPurple hover:bg-purple-400"><a href="./profile">Save Changes</a></button>
     </div>
         
     </template>
