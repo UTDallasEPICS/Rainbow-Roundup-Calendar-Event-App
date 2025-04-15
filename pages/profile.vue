@@ -1,126 +1,99 @@
-
-
 <template>
-<div class="flex flex-row items-center">
-    <h1 class="profile "><b>Profile Page</b></h1>
-    <p class= "edit "><a href="./edit">Edit</a></p>
-</div>
-<div class= "flex flex-col items-center">
-     <img class="prof-icon" src="../public/images/ProfileImage.png" alt="Profile Page ">
-     <p class="text">NAME OF PERSON</p>
-     <p class="text">email@gmail.com | +1 232-323-2323</p>
-     <br>
+    <div class="flex flex-col items-center">
+        <h1 class="text-3xl font-bold text-[#022150] mt-6"><b>Account Settings</b></h1>
+    <div class= "flex flex-col items-center mt-4 mb-6">
+        <img class="w-40 h-40 rounded-full object-cover" src="../public/images/ProfileImage.png" alt="Profile Page">
+    </div>
 
-     
+    <button class = "mb-6 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition"
+        @click = "editMode =!editMode">
+        {{ editMode ? 'Save' : 'Edit' }}
+    </button>
+
+    <div>   
+        <label class = "block text-sm font-medium text-gray-700">First Name</label>
+        <div class = "flex space-x-6 mt-1 border-solid border-gray-700">
+            <input
+                type = "text"
+                id = "first-name"
+                v-model = "firstName"
+                :readonly = "!editMode"
+                :class = "inputClass"
+            />
+        </div>
+    </div>
+
+    <div>   
+        <label class = "block mt-4 text-sm font-medium text-gray-700">Last Name</label>
+        <div class = "flex space-x-6 mt-1 border-solid border-gray-700">
+            <input
+                type = "text"
+                id = "last-name"
+                v-model = "lastName"
+                :readonly = "!editMode"
+                :class = "inputClass"
+            />
+        </div>
+    </div>
+
+    <div>   
+        <label class = "block mt-4 text-sm font-medium text-gray-700">Phone Number</label>
+        <div class = "flex space-x-6 mt-1 border-solid border-gray-700">
+            <input
+                type = "tel"
+                id = "phone-number"
+                v-model = "phoneNumber"
+                :readonly = "!editMode"
+                :class = "inputClass"
+            />
+        </div>
+    </div>
+
+    <div>   
+        <label class = "block mt-4 text-sm font-medium text-gray-700">Email</label>
+        <div class = "flex space-x-6 mt-1 border-solid border-gray-700">
+            <input
+                type = "email"
+                id = "email"
+                v-model = "email"
+                :readonly = "!editMode"
+                :class = "inputClass"
+            />
+        </div>
+    </div>
+
+<div v-if = "editMode" class = "mt-10 max-w-xl">
+    <div class = "bg-red-50 p-4 rounded-xl mb-4 border border-red-200">
+        <div>
+            <p class="text-md font-bold text-red-700">Delete this account?</p>
+            <p class="text-sm text-red-500 mb-2">This action is permanent and cannot be undone.</p>
+        </div>
+    <button
+        class="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-xl"
+        @click="deleteAccount"
+      >
+        Delete
+    </button>
+    </div>
 </div>
-<div>   
-    <br>  
-    <br>
-    <input type="text" id="about" placeholder = "About"/>
-    
-     <br><br><br>
-     <input type="text" id="tag"placeholder = "Tag"/>
-     <br><br>
-     <br><br>
-     <input type="text" id="waiver"placeholder = "Upload Waiver"/>
-</div>
+
 <div class="flex flex-col items-center">
-    <br>
-<button class="button button1"><a href="./login">Log Out</a></button>
+<br>
+<button class="w-[264px] border-none text-white text-lg text-center cursor-pointer mt-3 py-4 rounded-xl bg-red-500 hover:bg-red-600"><a href="./login">Log Out</a></button>
+</div>
+
 </div>
     
 </template>
 
 <script setup>
+import { ref, computed } from 'vue'
 
+const editMode = ref(false)
+
+const inputClass = computed(() =>
+  editMode.value
+    ? 'px-3 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 border border-gray-400'
+    : 'px-3 py-2 rounded-xl focus:outline-none bg-gray-100 text-gray-600 cursor-not-allowed'
+)
 </script>
-
-<style scoped>
-    .flex{
-        margin-top: 20px;
-    }
-    .text{
-        text-align: center;
-    }
-    h2{
-        margin-top: 50px;
-        margin-bottom: 20px;
-        font-size: 36px;
-
-        text-align: center;
-    }
-
-    .prof-icon{
-        width: 170px;
-        display:block;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    .section{
-        margin-left:40px;
-        width: 200;
-        height: 50;
-        margin: 3;
-    }
-    .profile{
-        margin-left: auto;
-        margin-right: 22%;
-        font-size: 25px;
-
-    }
-    .edit{
-        margin-right: 20px;
-    }
-    .button {
-  border: none;
-  color: white;
-  padding: 15px 150px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-  border-radius: 10px;
-    }
-    .button1 {
-        background-color: #70D6FF;} 
-    #about
-    {
-    margin-left:40px;
-    border-radius: 10px;
-    border: 2px solid #000000;
-    padding: 50px; 
-    width: 355px;
-    height: 20px;  
-    }
-    #tag
-    {
-    margin-left:40px;
-    border-radius: 10px;
-    border: 2px solid #000000;
-    padding: 25px; 
-    width: 355px;
-    height: 20px;  
-    }
-    #waiver
-    {
-    margin-left:40px;
-    border-radius: 10px;
-    border: 2px solid #000000;
-    padding: 25px; 
-    width: 355px;
-    height: 20px;  
-    }
-    input::placeholder{
-        position:absolute;
-        left:20px;
-        top:12.5px;
-        background-color: white;
-        padding: 0 2px;
-    }
-
-
-
-
-</style>

@@ -11,6 +11,7 @@ module.exports = {
     extend: {
       colors: {
         lavenderPurple: "#D9A2FF",
+        
       },
     },
   },
