@@ -1,40 +1,46 @@
 import { PrismaClient } from '@prisma/client';
-import { defineEventHandler } from 'h3';
-
-const prisma = new PrismaClient();
+import { defineEventHandler, setResponseHeader } from 'h3';
 
 export default defineEventHandler(async (event) => {
-  const params = event.context.params as Record<string, string> | undefined; // Type cast to ensure correct type
-  const id = params?.id; // Safely access the ID
+  const prisma = event.context.prisma;
+  const id = getRouterParam(event, 'id')
 
   try {
     if (id) {
       // Fetch a single user by ID
       const singleUser = await prisma.user.findUnique({
         where: { id },
+        include: {
+          CreatedEvents: true,
+          SignUps: true,
+          Announcements: true,
+          Reports: true,
+          PotentialOffenses: true
+        }
       });
 
       if (!singleUser) {
+        setResponseStatus(event, 404)
         return {
           success: false,
           error: `No user found with ID: ${id}`,
         };
       }
-
+      setResponseStatus(event, 200)
       return {
         success: true,
-        data: singleUser,
-      };
-    } else {
-      // Fetch all users if no ID is provided
-      const allUsers = await prisma.user.findMany();
-
-      return {
-        success: true,
-        data: allUsers,
+        User: singleUser,
       };
     }
+    else{
+      setResponseStatus(event, 400)
+      return{
+      success: false,
+      error: 'include an ID in your query next time dipshit'
+    }
+    }
   } catch (error) {
+    setResponseStatus(event, 500)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return {
       success: false,

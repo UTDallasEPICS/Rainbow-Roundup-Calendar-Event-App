@@ -1,26 +1,19 @@
 import { PrismaClient } from '@prisma/client';
 import { defineEventHandler, readBody } from 'h3';
-const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
+  const prisma = event.context.prisma
 
   try {
-
-    if(body.password !== body.confirmPassword){
-      return {
-        success: false,
-        error: "Password and Confirm password are not same.",
-      };
-    }
-
-    const existinguser = await prisma.user.findUnique({
+    const existingUser = await prisma.user.findUnique({
       where: {
         email: body.email
       },
     });
 
-    if(existinguser){
+    if(existingUser){
+      setResponseStatus(event, 400)
       return {
         success: false,
         error: "User with this email already exists",
@@ -31,11 +24,12 @@ export default defineEventHandler(async (event) => {
     const newUser = await prisma.user.create({
       data: {
         email: body.email,
-        password: "", // password set to "" as a band-aid. This will be overwritten when a merge conflict inevitably happens because password in general is being deleted. 
         firstname: body.firstname,
         lastname: body.lastname,
+        role: body.role,
         phoneNum: body.phoneNum || null,
         profilePic: body.profilePic || null,
+        GlobalNotif: body.GlobalNotif || false,
       },
     });
 
@@ -45,7 +39,7 @@ export default defineEventHandler(async (event) => {
       data: newUser,
     };
   } catch (error) {
-
+    setResponseStatus(event, 500)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return {
       success: false,
