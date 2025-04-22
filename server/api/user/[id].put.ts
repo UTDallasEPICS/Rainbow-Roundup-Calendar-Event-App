@@ -1,26 +1,21 @@
 import { PrismaClient } from '@prisma/client';
 import { defineEventHandler, readBody } from 'h3';
 
-const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
-  const params = event.context.params as Record<string, string> | undefined;
-  const { id } = params || {}; // Safely extract the ID from params
-
+  const prisma = event.context.prisma
   // Debugging: Log the params to verify the URL structure
-  console.log('Params:', params); 
+  const id = getRouterParam(event, 'id')
 
   if (!id) {
+    setResponseStatus(event, 400)
     return {
       success: false,
       error: 'User ID is required to update the user.',
     };
   }
 
-  console.log('hello');
-
   const body = await readBody(event);
-  console.log("Received data to update:", body); // Debugging: Log the body to ensure it is correctly received
 
   try {
     // Fetch the existing user before updating
@@ -29,32 +24,38 @@ export default defineEventHandler(async (event) => {
     });
 
     if (!existingUser) {
+      setResponseStatus(event, 404)
       return {
         success: false,
         error: `User with ID ${id} not found.`,
       };
     }
 
-    console.log("Existing user before update:", existingUser); // Debugging: Log the existing user data
-
+    const updateData: any = {};
+    if(body.email) 
+      updateData.email = body.email
+    if(body.firstname) 
+      updateData.firstname = body.firstname
+    if(body.lastname) 
+      updateData.lastname = body.lastname
+    if(body.phoneNum) 
+      updateData.phoneNum = body.phoneNum
+    if(body.profilePic)
+      updateData.profilePic = body.profilePic
+    if(body.GlobalNotif)
+      updateData.GlobalNotif = body.GlobalNotif
     // Perform the update
     const updatedUser = await prisma.user.update({
       where: { id },
-      data: {
-        email: body.email,
-        password: body.password,
-        firstname: body.firstname,
-        lastname: body.lastname,
-        phoneNum: body.phoneNum || null,
-        profilePic: body.profilePic || null,
-      },
+      data: updateData
     });
-
+    setResponseStatus(event, 200)
     return {
       success: true,
-      data: updatedUser,
+      user: updatedUser,
     };
   } catch (error) {
+    setResponseStatus(event, 500)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return {
       success: false,

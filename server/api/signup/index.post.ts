@@ -27,12 +27,17 @@ export default defineEventHandler(async (event) => {
   });
   //check existence of event
   if(targetEvent){
-    if(targetEvent.capacity != null && targetEvent.currentCapacity != null && targetEvent.currentCapacity >= targetEvent.capacity)
-      setResponseStatus(event, 400)
-      return{
-        success: false,
-        error: 'event is full'
+    if(targetEvent.capacity != null && targetEvent.currentCapacity != null){
+      if((targetEvent.currentCapacity >= targetEvent.capacity)){
+        setResponseStatus(event, 400)
+        return{
+          success: false,
+          error: 'event is full',
+          capacity: 'this is the current capacity' + targetEvent.currentCapacity,
+          maxCap: 'this is the max capacity' + targetEvent.capacity
+        }
       }
+    }
   }
   else if (!targetEvent){
     setResponseStatus(event, 404)

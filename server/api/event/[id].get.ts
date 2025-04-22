@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
     setResponseStatus(event, 400)
     return{
       success: false,
-      error: 'include an ID in your query next time dipshit'
+      error: 'include an ID in your query next time dipshit' //never gonna see this in actual use case
     }
   }
   } catch (error) {

@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
         currentCapacity: 0,
       },
     });
-
+    setResponseStatus(event, 200)
     return {
       success: true,
       data: newEvent,

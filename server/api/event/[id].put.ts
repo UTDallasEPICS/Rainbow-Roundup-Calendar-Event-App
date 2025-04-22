@@ -42,22 +42,25 @@ export default defineEventHandler(async (event) => {
       };
     }
 
+    const updateData: any = {};
+    if (body.description != null) updateData.description = body.description;
+    if (body.userId != null) updateData.userId = body.userId;
+    if (body.startTime != null) updateData.startTime = new Date(body.startTime);
+    if (body.endTime != null) updateData.endTime = new Date(body.endTime);
+    if (body.eventLat != null) updateData.eventLat = body.eventLat;
+    if (body.eventLong != null) updateData.eventLong = body.eventLong;
+    if (body.capacity != null) updateData.capacity = body.capacity;
+
     const updatedEvent = await prisma.event.update({
-      where: { id }, // Use the ID from the URL
-      data: {
-        description: body.description,
-        userId: body.userId,
-        eventLat: body.eventLat,
-        eventLong: body.eventLong,
-        startTime: new Date(body.startTime),
-        endTime: new Date(body.endTime),
-        capacity: body.capacity,
+      where: {
+        id: id,
       },
+      data: updateData,
     });
     setResponseStatus(event, 200)
     return {
       success: true,
-      data: updatedEvent,
+      event: updatedEvent,
     };
   } catch (error) {
     setResponseStatus(event, 500);

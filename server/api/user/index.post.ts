@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
       data: newUser,
     };
   } catch (error) {
-
+    setResponseStatus(event, 500)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return {
       success: false,

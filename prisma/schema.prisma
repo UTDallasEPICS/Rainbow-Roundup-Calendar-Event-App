@@ -57,7 +57,7 @@ model SignUp {
 
   // Foreign keys to User and Event
   User            User     @relation(fields: [userId], references: [id])
-  Event           Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  Event           Event    @relation(fields: [eventId], references: [id])
 
   @@unique([userId, eventId]) // Ensure a unique pair of user-event sign-ups
 }

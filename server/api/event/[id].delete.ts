@@ -29,6 +29,9 @@ export default defineEventHandler(async (event) => {
       };
     }
 
+    await prisma.announcement.deleteMany({ where: { eventId: id } });
+    await prisma.signUp.deleteMany({ where: { eventId: id } });
+    
     await prisma.event.delete({
       where: { id },
     });
