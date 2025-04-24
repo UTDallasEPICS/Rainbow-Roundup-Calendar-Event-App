@@ -1,9 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { defineEventHandler, readBody } from 'h3';
 
-
 export default defineEventHandler(async (event) => {
-  const prisma = event.context.prisma
+  const prisma = event.context.prisma;
   // Debugging: Log the params to verify the URL structure
   const id = getRouterParam(event, 'id')
 
