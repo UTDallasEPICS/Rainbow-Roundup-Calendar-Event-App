@@ -19,6 +19,7 @@
     "@fullcalendar/list": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
     "@fullcalendar/vue3": "^6.1.15",
+    "@heroicons/react": "^2.2.0",
     "@heroicons/vue": "^2.2.0",
     "@mdi/font": "^7.4.47",
     "@nuxt/eslint": "^1.0.1",

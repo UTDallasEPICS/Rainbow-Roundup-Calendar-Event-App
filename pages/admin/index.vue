@@ -1,140 +1,217 @@
 <template>
-  <div id="app">
-    <header>
-      <h1>Rainbow Roundup</h1>
-      <p>
-        Rainbow Roundup is a non-profit organization that promotes acceptance in all aspects of lesbian,
-        gay, bisexual and transgender families and allies, to serve and strengthen the community through
-        social activities, education, and connecting resources to individuals.
-      </p>
-    </header>
-    <div class="bio-list">
-      <div v-for="person in people" :key="person.name" class="bio-card">
-        <div class="bio-header" @click="toggleBio(person)">
-          <img :src="person.image" alt="Profile picture" class="profile-pic" />
-          <div>
-            <h2>{{ person.name }}</h2>
-            <p>{{ person.title }}</p>
-          </div>
-          <button class="toggle-button">{{ person.showBio ? "\u25B2" : "\u25BC" }}</button>
+    <div class="min-h-screen  bg-gray-100 w-full flex flex-col items-center justify-center">
+      <!-- Main content -->
+      <div class="max-w-4xl p-6 space-y-6">
+
+        <header class="mb-6">
+          <h1 class="w-36 h-6 justify-center text-zinc-700 text-xl font-bold capitalize">Hello (name)!</h1>
+        </header>
+  
+        <div class="w-36 h-6 justify-center text-zinc-700 text-xs font-extrabold uppercase">Your Calendar</div>
+
+        <!-- Temporary card -->
+        <div class="bg-white rounded-lg shadow-md p-6 max-w-md">
+          <h2 class="text-2xl font-semibold mb-2">Temporary Calendar Card</h2>
+          <p class="text-gray-600 mb-4">This is a placeholder card for the calendar.</p>
+          <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Action</button>
         </div>
-        <div v-if="person.showBio" class="bio-details">
-          <p>{{ person.bio }}</p>
+
+         <!-- User Management -->
+        <div class="w-36 h-6 justify-center text-zinc-700 text-xs font-extrabold uppercase">Manage Users</div>
+        <NuxtLink to="/admin/userList" class="w-40 h-12 relative bg-lime-300 rounded-[20px] overflow-hidden flex items-center justify-center">
+                <span class="absolute justify-center text-zinc-600 text-xs font-extrabold uppercase">All Users</span>
+        </NuxtLink>
+
+         <!-- Events Cards -->
+        <div class="flex items-center mt-[33px] space-x-4">
+            <div class="w-36 h-6 justify-center text-zinc-700 text-xs font-extrabold uppercase">Upcoming Events</div>
+            <!-- See All Events -->
+            <NuxtLink to="/eventsPage" class="w-20 h-6 relative bg-white rounded-[50px] outline outline-1 outline-offset-[-1px] outline-zinc-600 overflow-hidden flex items-center justify-center no-underline">
+                <span class="text-zinc-600 text-xs font-semibold capitalize">See All</span>
+            </NuxtLink>
+            <!-- Make New Events -->
+            <button @click="openNewEventForm" class="px-3 py-1 bg-white/50 rounded-full outline outline-1 outline-green-600 text-xs">
+                New
+            </button>
         </div>
+
+        <!-- hard‑coded EventCard for visuals -->
+        <div class="flex space-x-4 overflow-x-auto">
+            <EventCard
+            date-day="10"
+            date-month="June"
+            title="Event No 1"
+            :going="20"
+            :avatars="[
+                'https://placehold.co/24x24',
+                'https://placehold.co/24x24',
+                'https://placehold.co/24x24'
+            ]"
+            location="Somewhere, Dallas"
+            :saved="false"
+            @update:saved="val => console.log('saved?', val)"
+            @expand="onExpand"/>
+
+            <EventCard
+            date-day="10"
+            date-month="June"
+            title="pryde"
+            :going="20"
+            :avatars="[
+                'https://placehold.co/24x24',
+                'https://placehold.co/24x24',
+                'https://placehold.co/24x24'
+            ]"
+            location="Somewhere, Dallas"
+            :saved="false"
+            @update:saved="val => console.log('saved?', val)"
+            @expand="onExpand"/>
+        </div>
+
+        <!-- 2) Horizontally scrollable event cards -->
+        <div class="overflow-x-auto flex space-x-4 py-4 snap-x snap-mandatory">
+    <EventCard
+      v-for="e in events"
+      :key="e.id"
+      v-bind="e"
+      class="snap-start flex-shrink-0"
+      @expand="openEditForm(e)"
+      @update:saved="e.saved = $event"
+    />
+  </div>
+
+
+        <!-- Popup overlay for Make/Edit form -->
+        <teleport to="body">
+            <div
+            v-if="showForm"
+            @scroll="onScroll"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+            >
+            <MakeEventCard
+                v-model="editingEvent"
+                @save="onSaveEvent"
+                @cancel="showForm = false"
+            />
+            </div>
+        </teleport>
+
+        <!-- Image Gallery -->
+        <div class="w-36 h-6 justify-center text-zinc-700 text-xs font-extrabold uppercase">Image Gallery</div>
+        <!-- Scrollable placards -->
+        <div
+            ref="gallery"
+            @scroll="onScroll"
+            class="w-80 overflow-x-auto flex space-x-4 snap-x snap-mandatory scrollbar-none pb-">
+            <div
+            v-for="n in 3"
+            :key="n"
+            class="flex-shrink-0 w-80 h-56 bg-amber-300 rounded-[20px] shadow-[0px_4px_0px_0px_rgba(80,85,136,0.25)] snap-start flex items-center justify-center">
+                Placeholder {{ n }}
+            </div>
+        </div>
+
+        <!-- Support our Families card -->
+        <div class="block mt-6">
+                <div class="w-80 h-28 relative rounded-[20px] shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] bg-lime-300">
+                <!-- Title -->
+                <div class="absolute left-[27px] top-[16px] text-slate-900 text-lg font-medium leading-loose">
+                    Support our Families!
+                </div>
+                <!-- Description -->
+                <div class="absolute left-[27px] top-[50px] text-slate-600 text-xs font-normal">
+                    somethingsomething
+                </div>
+                <!-- Button -->
+                <a href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
+                    target="_blank" rel="noopener noreferrer"  @click.stop
+                    class="absolute left-[26px] bottom-2.5 w-16 h-8 bg-lime-600 rounded-[5px] flex items-center justify-center"
+                    >
+                    <span class="text-white text-xs font-medium uppercase leading-snug">
+                        Donate
+                    </span>
+                </a>   
+                </div>
+        </div>
+
+        <!-- Our Mission card -->
+        <div class="block mt-6">
+                <div class="w-80 h-28 relative rounded-[20px] shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] overflow-hidden bg-blue-300">
+                <div class="absolute left-[27px] top-[16px] text-slate-900 text-lg font-medium leading-loose">
+                    Our Mission
+                </div>
+                <div class="absolute left-[27px] top-[50px] text-slate-600 text-xs font-normal">
+                    somethingsomething
+                </div>
+                <button class="absolute left-[26px] bottom-2.5 w-16 h-8 bg-slate-500 rounded-[5px] flex items-center justify-center">
+                    <span class="text-white text-xs font-medium uppercase leading-snug">Read</span>
+                </button>
+                </div>
+        </div>
+
+        <!-- Buy our Merchandise card -->
+        <div class="block mt-6">
+                <div class="w-80 h-28 relative rounded-[20px] shadow-[0px_4px_4px_0px_rgba(80,85,136,0.20)] overflow-hidden bg-fuchsia-400">
+                <div class="absolute left-[27px] top-[16px] text-white text-lg font-medium leading-loose">
+                    Buy our Merchandise!
+                </div>
+                <div class="absolute left-[27px] top-[50px] text-white text-xs font-normal">
+                    somethingsomething
+                </div>
+                <button class="absolute left-[26px] bottom-2.5 w-16 h-8 bg-fuchsia-800 rounded-[5px] flex items-center justify-center">
+                    <span class="text-white text-xs font-medium uppercase leading-snug">Buy</span>
+                </button>
+                </div>
+        </div>
+
+        <!-- Sponsors Section-->
+        <div class="flex items-center mt-[33px] space-x-4">
+            <!-- Our Sponsors title https://rrup.org/contact-us/ -->
+            <div class="w-36 h-6 flex items-center justify-center text-zinc-700 text-xl font-bold  capitalize">
+                Our Sponsors
+            </div>
+            <!-- Become a Sponsor button -->
+            <a href="https://rrup.org/contact-us/" target="_blank" rel="noopener noreferrer"  @click.stop
+                class="w-36 h-6 relative bg-white rounded-[50px] outline outline-1 outline-offset-[-1px] outline-zinc-600 overflow-hidden flex items-center justify-center no-underline">
+                <span class="text-zinc-600 text-xs font-semibold capitalize">
+                Become a Sponsor</span>
+            </a>
+        </div>
+
       </div>
     </div>
-  </div>
-</template>
-
-<script>
-export default {
-  name: "App",
-  data() {
-    return {
-      people: [
-        {
-          name: "Kimberly Kantor",
-          title: "Executive Director",
-          bio: "Kimberly Kantor is an Adapted Physical Education Consultant for school districts across North Texas (Region X). Focusing on students with special needs in physical education and recreation, she dedicates time to helping students celebrate their accomplishments and showcase their athletic abilities.",
-          image: "/images/kimberly.png",
-          showBio: false,
-        },
-        {
-          name: "Melody Smith",
-          title: "President",
-          bio: "Melody Smith has been an active leader in promoting LGBTQ+ inclusion and awareness in communities across the state.",
-          image: "/images/melody.png",
-          showBio: false,
-        },
-        {
-          name: "Ashley",
-          title: "Vice President",
-          bio: "Hello All! My name is Ashley, I am married to the love of my life, Elsa and we have 3 beautiful kids. I am a Bachelor prepared RN of 16 years and am currently a Nurse Manager at Parkland Hospital in critical care services. My family and I love the mission and values of Rainbow Roundup and love all the memories we have made. ",
-          image: "/images/ashley.png",
-          showBio: false,
-        },
-        {
-          name: "Ragan McCoy",
-          title: "Treasurer",
-          bio: "Ragan is a trusted tax advisor and leads Rainbow Roundup in all financial matters. She has a long history of providing guidance to businesses and individuals in making important decisions related to limiting tax exposure and maximizing cash flow.",
-          image: "/images/ragan.png",
-          showBio: false,
-        },
-        {
-          name: "Laura Hogan",
-          title: "Secretary",
-          bio: "Laura is a trusted leader in the LGBT community and was named a Future Pioneer by the Dallas Voice. Since 2004, she has owned and operated Benchmark Legal Media, which provides creative and practical solutions for litigation technology. Laura has worked with many high profile clients, including Disney, Oprah Winfrey, GM, Viacom and MTV.",
-          image: "/images/laura.png",
-          showBio: false,
-        },
-      ],
-    };
-  },
-  methods: {
-    toggleBio(person) {
-      person.showBio = !person.showBio;
-    },
-  },
-};
-</script>
-
-<style>
-#app {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-  color: black;
-  background-color: #f0f0f0; 
-}
-
-header {
-  text-align: center;
-  margin-bottom: 20px;
-  color: black;
-  background-color: #e6e6e6; 
-  padding: 20px;
-}
-
-.bio-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background-color: #f0f0f0; 
-}
-
-.bio-card {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
-  background-color: #f9f9f9;
-  color: black;
-}
-
-.bio-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  color: black;
-}
-
-.profile-pic {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
-.toggle-button {
-  border: none;
-  background: none;
-  font-size: 18px;
-  cursor: pointer;
-  color: black;
-}
-
-.bio-details {
-  margin-top: 10px;
-  color: black;
-}
-</style>
-
+  </template>
+  
+  <script setup>
+  import { ref } from 'vue'
+  import EventCard from '@/components/EventCard.vue'
+  import MakeEventCard from '@/components/MakeEventCard.vue'
+  
+  const events = ref([
+    { id: 1, dateDay: '10', dateMonth: 'June', title: 'Event No 1', location: 'Somewhere, Dallas', description: '', going: 20, avatars: [], saved: false }
+  ])
+  
+  const showForm = ref(false)
+  const editingEvent = ref({})
+  
+  function openNewEventForm() {
+    editingEvent.value = { id: null, dateDay: '', dateMonth: '', title: '', location: '', description: '', going: 0, avatars: [], saved: false }
+    showForm.value = true
+  }
+  
+  function openEditForm(event) {
+    editingEvent.value = { ...event }
+    showForm.value = true
+  }
+  
+  function onSaveEvent(eventData) {
+    if (!eventData.id) {
+      eventData.id = Date.now()
+      events.value.push(eventData)
+    } else {
+      const idx = events.value.findIndex(e => e.id === eventData.id)
+      events.value[idx] = eventData
+    }
+    showForm.value = false
+  }
+  </script>
