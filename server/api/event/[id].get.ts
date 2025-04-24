@@ -1,8 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { defineEventHandler, getRouterParam, setResponseStatus } from 'h3';
 
-
-
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
   const id = getRouterParam(event, 'id');

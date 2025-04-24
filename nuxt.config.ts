@@ -15,7 +15,7 @@ export default defineNuxtConfig({
     smtpFrom: process.env.SMTP_FROM,
   },
 
-  devtools: { enabled: false },
+  devtools: { enabled: true },
   css: [
     "~/assets/css/main.css",
     // '@fullcalendar/core/main.css',

@@ -3,7 +3,7 @@ import { defineEventHandler, getRouterParam, setResponseStatus } from 'h3';
 
 export default defineEventHandler(async (event) => {
   // Access the dynamic route parameters to get the signup ID
-  const prisma = event.context.prisma
+  const prisma = event.context.prisma;
   const id = getRouterParam(event, 'id'); // Extract the ID from the dynamic route
 
   if (!id) {
