@@ -8,56 +8,94 @@ generator client {
 }
 
 model User {
-  id         String  @id @default(uuid())
-  email      String  @unique
-  password   String
-  firstname  String
-  lastname   String
-  phoneNum   String?
-  profilePic String?
+  id               String   @id @default(uuid())
+  email            String   @unique
+  firstname        String
+  lastname         String
+  role             Role     @default(USER)
+  phoneNum         String?
+  profilePic       String?
+  GlobalNotif      Boolean // Global notifications (annoncements)
+  
 
-  // Relation to SignUps
-  signUps    SignUp[]
-}
-
-model Admin {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  firstname String
-  lastname  String
-
-  // Relation to Events created by this Admin
-  events    Event[]
+  SignUps           SignUp[]
+  Announcements     Announcement[] // references announcements created by user
+  CreatedEvents     Event[]
+  
+  // Report relations
+  Reports           Report[] @relation("ReporterUser")       // Reports this user has made
+  PotentialOffenses Report[] @relation("ReportedUser")       // Reports this user has received
 }
 
 model Event {
-  id          String   @id @default(uuid())
-  description String
-  adminId     String   // References Admin who created the event
-  date        DateTime
-  location    String
-  startTime   DateTime
-  endTime     DateTime
-  timezone    String
-  capacity    Int?
+  id               String   @id @default(uuid())
+  description      String
+  userId           String   // References Admin who created the event
+  eventLat         Float
+  eventLong        Float
+  startTime        DateTime // Datetime, includes date and time
+  endTime          DateTime
+  capacity         Int?
+  currentCapacity  Int?
 
-  // Foreign key to Admin
-  admin       Admin    @relation(fields: [adminId], references: [id])
+  //Foreign Keys
+  User             User      @relation(fields: [userId], references: [id])
 
   // Relation to SignUps
-  signUps     SignUp[]
+  SignUps          SignUp[]
+
+  // Announcements
+  Anouncements     Announcement[]
+
 }
 
 model SignUp {
   id              String   @id @default(uuid())
   userId          String
   eventId         String
-  sendNotification Boolean
+  Notifications   Boolean
 
   // Foreign keys to User and Event
-  user            User     @relation(fields: [userId], references: [id])
-  event           Event    @relation(fields: [eventId], references: [id])
+  User            User     @relation(fields: [userId], references: [id])
+  Event           Event    @relation(fields: [eventId], references: [id])
 
   @@unique([userId, eventId]) // Ensure a unique pair of user-event sign-ups
+}
+
+model Announcement {
+  id              String @id @default(uuid())
+  userId          String //user creating announcement
+  eventId         String //related event
+  announceBody    String // actual announcement
+
+  // Foreign Keys
+  User            User     @relation(fields: [userId], references: [id])
+  Event           Event    @relation(fields: [eventId], references: [id])
+
+  @@unique([userId, eventId])
+}
+
+model Report {
+  id                  String @id @default(uuid())
+  reportedUserId      String  //account being reported
+  reporterUserId      String  //account making report
+  isUsername          Boolean // is the report username related
+  isProfilePic        Boolean // is the report profilePic related
+  isOther             Boolean // is something else
+  description         String?
+  reportTime          DateTime @default(now())
+
+  // Foreign Keys
+  ReportedUser            User     @relation("ReportedUser", fields: [reportedUserId], references: [id])
+  ReporterUser            User     @relation("ReporterUser", fields: [reporterUserId], references: [id])
+
+  
+  // A single report by a user on another user
+  @@unique([reportedUserId, reporterUserId])
+}
+
+enum Role {
+  USER 
+  ADMIN 
+  SUPER
 }

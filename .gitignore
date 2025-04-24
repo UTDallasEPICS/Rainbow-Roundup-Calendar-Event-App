@@ -26,3 +26,7 @@ logs
 
 # Database
 dev.db
+dev.db-journal
+
+# Yarn
+yarn.lock

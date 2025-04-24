@@ -1,44 +1,41 @@
 import { PrismaClient } from '@prisma/client';
-import { defineEventHandler } from 'h3';
+import { defineEventHandler, getRouterParam, setResponseStatus } from 'h3';
 
-const prisma = new PrismaClient();
+
 
 export default defineEventHandler(async (event) => {
-  // Access the dynamic route parameters
-  const params = event.context.params as Record<string, string> | undefined;
-  const id = params?.id; // Safely extract the ID
+  const prisma = event.context.prisma;
+  const id = getRouterParam(event, 'id');
 
-  try {
-    if (id) {
-      // Fetch a single event by ID with relations (admin and signUps)
+  try {   
+    if (id){   // Fetch a single event by ID with relations (admin and signUps)
       const singleEvent = await prisma.event.findUnique({
-        where: { id },
-        include: { admin: true, signUps: true },
+        where: { id }, //getRouterParam already defines id as a string no need to cast
+        include: { User: true, SignUps: true, Anouncements: true },
       });
 
       if (!singleEvent) {
+        setResponseStatus(event, 404);
         return {
           success: false,
           error: `No event found with ID: ${id}`,
         };
       }
-
+      setResponseStatus(event, 200);
       return {
         success: true,
-        data: singleEvent,
-      };
-    } else {
-      // Fetch all events with relations (admin and signUps)
-      const allEvents = await prisma.event.findMany({
-        include: { admin: true, signUps: true },
-      });
-
-      return {
-        success: true,
-        data: allEvents,
+        Event: singleEvent,
       };
     }
+  else{
+    setResponseStatus(event, 400)
+    return{
+      success: false,
+      error: 'include an ID in your query next time dipshit' //never gonna see this in actual use case
+    }
+  }
   } catch (error) {
+    setResponseStatus(event, 500);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return {
       success: false,
@@ -46,3 +43,13 @@ export default defineEventHandler(async (event) => {
     };
   }
 });
+/*
+  if (id)
+    const eventData = getUnique (id)
+      if(!eventdata)
+        return 404
+      else
+        return eventData
+  else 
+    return all events
+*/
