@@ -37,13 +37,23 @@
       <span class="text-sm md:text-base mt-2">Latest Event</span>
     </div> -->
 
-    <!-- Events Cards -->
-    <div class="flex items-center mt-[33px] space-x-4">
-        <div class="w-36 h-6 justify-center text-zinc-700 text-xs font-extrabold uppercase">Upcoming Events</div>
+        <!-- User Management -->
+        <div class="w-36 h-6 justify-center text-zinc-700 text-xs font-extrabold uppercase">Manage Users</div>
+            <NuxtLink to="/admin/userList" class="w-40 h-12 relative bg-lime-300 rounded-[20px] overflow-hidden flex items-center justify-center">
+                    <span class="absolute justify-center text-zinc-600 text-xs font-extrabold uppercase">All Users</span>
+            </NuxtLink>
+
+         <!-- Events Cards -->
+        <div class="flex items-center mt-[33px] space-x-4">
+            <div class="w-36 h-6 justify-center text-zinc-700 text-xs font-extrabold uppercase">Upcoming Events</div>
             <!-- See All Events -->
             <NuxtLink to="/eventsPage" class="w-20 h-6 relative bg-white rounded-[50px] outline outline-1 outline-offset-[-1px] outline-zinc-600 overflow-hidden flex items-center justify-center no-underline">
                 <span class="text-zinc-600 text-xs font-semibold capitalize">See All</span>
             </NuxtLink>
+            <!-- Make New Events -->
+            <button @click="openNewEventForm" class="px-3 py-1 bg-white/50 rounded-full outline outline-1 outline-green-600 text-xs">
+                New
+            </button>
         </div>
 
         <!-- hard‑coded EventCard for visuals -->
