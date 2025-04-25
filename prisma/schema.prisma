@@ -16,7 +16,7 @@ model User {
   phoneNum         String?
   profilePic       String?
   GlobalNotif      Boolean // Global notifications (annoncements)
-  
+  emailVerified DateTime?
 
   SignUps           SignUp[]
   Announcements     Announcement[] // references announcements created by user
@@ -92,6 +92,13 @@ model Report {
   
   // A single report by a user on another user
   @@unique([reportedUserId, reporterUserId])
+}
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
 
 enum Role {

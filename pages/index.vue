@@ -20,18 +20,32 @@
     <div class="flex flex-col items-center w-full">
       <div class="w-4/5 relative">
         <div class="overflow-hidden h-[20vh] md:h-[30vh]">
-          <div class="flex transition-transform duration-300 h-full"
-            :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
-            <div v-for="(image, index) in images" :key="index" class="min-w-full h-full flex-shrink-0">
-              <img :src="image" class="w-full h-full object-cover" alt="carousel image" />
+          <div
+            class="flex transition-transform duration-300 h-full"
+            :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
+          >
+            <div
+              v-for="(image, index) in images"
+              :key="index"
+              class="min-w-full h-full flex-shrink-0"
+            >
+              <img
+                :src="image"
+                class="w-full h-full object-cover"
+                alt="carousel image"
+              />
             </div>
           </div>
         </div>
 
         Dots
         <div class="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
-          <div v-for="(_, index) in images" :key="index" class="w-2 h-2 rounded-full transition-colors duration-200"
-            :class="currentIndex === index ? 'bg-white' : 'bg-white/50'"></div>
+          <div
+            v-for="(_, index) in images"
+            :key="index"
+            class="w-2 h-2 rounded-full transition-colors duration-200"
+            :class="currentIndex === index ? 'bg-white' : 'bg-white/50'"
+          ></div>
         </div>
       </div>
       <span class="text-sm md:text-base mt-2">Latest Event</span>
@@ -211,7 +225,7 @@ export default {
         "/images/ProfileImage.png",
       ],
       currentIndex: 0,
-      intervalId: null
+      intervalId: null,
     };
   },
   mounted() {
