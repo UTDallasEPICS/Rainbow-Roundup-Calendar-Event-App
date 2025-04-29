@@ -4,7 +4,7 @@ import { defineEventHandler, readBody, setResponseStatus } from 'h3';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
-  const prisma = event.context.prisma
+  const prisma = event.context.prisma;
 
 
   // validate that event starts before it ends

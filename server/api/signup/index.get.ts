@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 export default defineEventHandler(async (event) =>{
-    const prisma = event.context.prisma
+    const prisma = event.context.prisma;
     try{
         const SignUps = await prisma.signUp.findMany({
             include: {

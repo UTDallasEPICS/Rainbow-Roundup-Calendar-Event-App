@@ -1,139 +1,160 @@
 <template>
-  <div id="app">
-    <header>
-      <h1>Rainbow Roundup</h1>
-      <p>
-        Rainbow Roundup is a non-profit organization that promotes acceptance in all aspects of lesbian,
-        gay, bisexual and transgender families and allies, to serve and strengthen the community through
-        social activities, education, and connecting resources to individuals.
-      </p>
-    </header>
-    <div class="bio-list">
-      <div v-for="person in people" :key="person.name" class="bio-card">
-        <div class="bio-header" @click="toggleBio(person)">
-          <img :src="person.image" alt="Profile picture" class="profile-pic" />
-          <div>
-            <h2>{{ person.name }}</h2>
-            <p>{{ person.title }}</p>
+  <div class="min-h-screen bg-gray-100 flex items-start justify-center p-6">
+    <div class="w-full max-w-4xl space-y-4">
+      <!-- 1) Back link -->
+      <NuxtLink to="/" class="inline-flex items-center text-zinc-700 hover:text-zinc-900">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+      </NuxtLink>
+
+
+      <div
+        class="bg-white rounded-[20px]
+               shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)]
+               overflow-hidden"
+      >
+        <div class="p-6">
+          <h1 class="text-2xl font-bold text-zinc-700 mb-4">User List</h1>
+            <!-- 2) Search box -->
+            <input
+              v-model="searchTerm"
+              type="text"
+              placeholder="Search by name…"
+              class="w-full p-2 border border-gray-300 rounded mb-4"
+            />
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <!-- existing sortable columns -->
+                  <th @click="sortBy('firstName')" class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none">
+                    First Name <span v-if="sortKey==='firstName'">{{ sortAsc ? '▲' : '▼' }}</span>
+                  </th>
+                  <th @click="sortBy('lastName')" class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none">
+                    Last Name <span v-if="sortKey==='lastName'">{{ sortAsc ? '▲' : '▼' }}</span>
+                  </th>
+                  <th @click="sortBy('email')" class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none">
+                    Email <span v-if="sortKey==='email'">{{ sortAsc ? '▲' : '▼' }}</span>
+                  </th>
+                  <th @click="sortBy('phone')" class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none">
+                    Phone <span v-if="sortKey==='phone'">{{ sortAsc ? '▲' : '▼' }}</span>
+                  </th>
+                  <th @click="sortBy('status')" class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none">
+                    Status <span v-if="sortKey==='status'">{{ sortAsc ? '▲' : '▼' }}</span>
+                  </th>
+                  <!-- new columns -->
+                  <th class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700">
+                    Warning
+                  </th>
+                  <th class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700">
+                    Reason
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <tr v-for="user in displayedUsers" :key="user.email">
+                  <td class="px-4 py-3 text-sm text-gray-800">{{ user.firstName }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-800">{{ user.lastName }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-800">{{ user.email }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-800">{{ user.phone }}</td>
+                  <td
+                    class="px-4 py-3 text-sm"
+                    :class="user.status === 'Admin' 
+                      ? 'text-red-500 font-bold' 
+                      : 'text-green-600'"
+                  >
+                    {{ user.status }}
+                  </td>
+                  <!-- Warning column -->
+                  <td class="px-4 py-3 text-sm" :class="user.hasWarning ? 'text-red-500 font-semibold' : 'text-gray-600'">
+                    {{ user.hasWarning ? 'Yes' : 'No' }}
+                  </td>
+                  <!-- Reason column -->
+                  <td class="px-4 py-3 text-sm text-gray-800">
+                    {{ user.hasWarning ? user.warningReason : '—' }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-          <button class="toggle-button">{{ person.showBio ? "\u25B2" : "\u25BC" }}</button>
-        </div>
-        <div v-if="person.showBio" class="bio-details">
-          <p>{{ person.bio }}</p>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: "App",
-  data() {
-    return {
-      people: [
-        {
-          name: "Kimberly Kantor",
-          title: "Executive Director",
-          bio: "Kimberly Kantor is an Adapted Physical Education Consultant for school districts across North Texas (Region X). Focusing on students with special needs in physical education and recreation, she dedicates time to helping students celebrate their accomplishments and showcase their athletic abilities.",
-          image: "/images/kimberly.png",
-          showBio: false,
-        },
-        {
-          name: "Melody Smith",
-          title: "President",
-          bio: "Melody Smith has been an active leader in promoting LGBTQ+ inclusion and awareness in communities across the state.",
-          image: "/images/melody.png",
-          showBio: false,
-        },
-        {
-          name: "Ashley",
-          title: "Vice President",
-          bio: "Hello All! My name is Ashley, I am married to the love of my life, Elsa and we have 3 beautiful kids. I am a Bachelor prepared RN of 16 years and am currently a Nurse Manager at Parkland Hospital in critical care services. My family and I love the mission and values of Rainbow Roundup and love all the memories we have made. ",
-          image: "/images/ashley.png",
-          showBio: false,
-        },
-        {
-          name: "Ragan McCoy",
-          title: "Treasurer",
-          bio: "Ragan is a trusted tax advisor and leads Rainbow Roundup in all financial matters. She has a long history of providing guidance to businesses and individuals in making important decisions related to limiting tax exposure and maximizing cash flow.",
-          image: "/images/ragan.png",
-          showBio: false,
-        },
-        {
-          name: "Laura Hogan",
-          title: "Secretary",
-          bio: "Laura is a trusted leader in the LGBT community and was named a Future Pioneer by the Dallas Voice. Since 2004, she has owned and operated Benchmark Legal Media, which provides creative and practical solutions for litigation technology. Laura has worked with many high profile clients, including Disney, Oprah Winfrey, GM, Viacom and MTV.",
-          image: "/images/laura.png",
-          showBio: false,
-        },
-      ],
-    };
+<script setup>
+import { ref, computed } from 'vue'
+
+// just as filler until the database is fixed :p
+const users = ref([
+  {
+    firstName: 'Alice', lastName: 'Smith',
+    email: 'alice@example.com', phone: '123‑456‑7890',
+    status: 'Admin',
+    hasWarning: false,
+    warningReason: ''
   },
-  methods: {
-    toggleBio(person) {
-      person.showBio = !person.showBio;
-    },
+  {
+    firstName: 'Bob', lastName: 'Jones',
+    email: 'bob@example.com', phone: '987‑654‑3210',
+    status: 'User',
+    hasWarning: true,
+    warningReason: 'TOS violation'
   },
-};
+  {
+    firstName: 'Carol', lastName: 'Taylor',
+    email: 'carol@example.com', phone: '555‑123‑4567',
+    status: 'User',
+    hasWarning: false,
+    warningReason: ''
+  },
+  {
+    firstName: 'Kimblrf', lastName: 'hfhsdh',
+    email: 'moingus@example.com', phone: '555‑123‑4567',
+    status: 'Admin',
+    hasWarning: true,
+    warningReason: 'Spam activity'
+  }
+])
+
+// 2) Search term
+const searchTerm = ref('')
+const sortKey = ref(null)
+const sortAsc = ref(true)
+
+function sortBy(key) {
+  if (sortKey.value === key) {
+    sortAsc.value = !sortAsc.value
+  } else {
+    sortKey.value = key
+    sortAsc.value = true
+  }
+}
+
+const sortedUsers = computed(() => {
+  let list = [...users.value]
+
+  // filter first
+  if (searchTerm.value.trim()) {
+    const q = searchTerm.value.toLowerCase()
+    list = list.filter(u =>
+      u.firstName.toLowerCase().includes(q) ||
+      u.lastName.toLowerCase().includes(q)
+    )
+  }
+
+  // then sort
+  if (!sortKey.value) return list
+  return list.sort((a, b) => {
+    const A = String(a[sortKey.value]).toLowerCase()
+    const B = String(b[sortKey.value]).toLowerCase()
+    return sortAsc.value ? A.localeCompare(B) : B.localeCompare(A)
+  })
+})
+
+// final displayed list
+const displayedUsers = sortedUsers
 </script>
-
-<style>
-#app {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-  color: black;
-  background-color: #f0f0f0; 
-}
-
-header {
-  text-align: center;
-  margin-bottom: 20px;
-  color: black;
-  background-color: #e6e6e6; 
-  padding: 20px;
-}
-
-.bio-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background-color: #f0f0f0; 
-}
-
-.bio-card {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
-  background-color: #f9f9f9;
-  color: black;
-}
-
-.bio-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  color: black;
-}
-
-.profile-pic {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
-.toggle-button {
-  border: none;
-  background: none;
-  font-size: 18px;
-  cursor: pointer;
-  color: black;
-}
-
-.bio-details {
-  margin-top: 10px;
-  color: black;
-}
-</style>

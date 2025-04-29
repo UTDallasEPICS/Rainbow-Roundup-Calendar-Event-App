@@ -3,7 +3,7 @@ import { defineEventHandler, readBody, setResponseStatus } from 'h3';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
-  const prisma = event.context.prisma
+  const prisma = event.context.prisma;
 
   //prevent duplicate signups
   const existingSignUp = await prisma.signUp.findUnique({
