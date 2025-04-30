@@ -6,40 +6,58 @@
 
     <Teleport to="body">
       <div v-if="showModal" class="modal-backdrop">
-        <div class="modal">
+        <div class="modal horizontal-modal overflow-y-auto bg-red-500">
           <h3>Add Event</h3>
-          <form @submit.prevent="submitEvent">
-            <input v-model="eventForm.title" placeholder="Title" required />
-            <textarea
-              v-model="eventForm.description"
-              placeholder="Description"
-            ></textarea>
-            <input v-model="eventForm.location" placeholder="Location" />
-            <label>
-              Start Time:
-              <input
-                type="datetime-local"
-                :value="eventForm.start?.slice(0, 16)"
-                @input="eventForm.start = $event.target.value"
-              />
-            </label>
-            <label>
-              End Time:
-              <input
-                type="datetime-local"
-                :value="eventForm.end?.slice(0, 16)"
-                @input="eventForm.end = $event.target.value"
-              />
-            </label>
-            <select v-model="eventForm.timeZone">
-              <option value="UTC">UTC</option>
-              <option value="CST">CST</option>
-              <option value="PST">PST</option>
-              <!-- Add more timezones as needed -->
-            </select>
-            <div class="modal-actions">
-              <button type="submit">Add Event</button>
-              <button @click="showModal = false" type="button">Cancel</button>
+          <form @submit.prevent="submitEvent" class="form-horizontal">
+            <div class="form-content">
+              <div class="form-row">
+                <input v-model="eventForm.title" placeholder="Title" required />
+                <input
+                  type="number"
+                  min="1"
+                  v-model="eventForm.capacity"
+                  placeholder="Capacity"
+                  required
+                />
+              </div>
+
+              <div class="form-row">
+                <textarea
+                  v-model="eventForm.description"
+                  placeholder="Description"
+                  rows="2"
+                ></textarea>
+              </div>
+
+              <div class="form-row">
+                <input v-model="eventForm.location" placeholder="Location" />
+              </div>
+
+              <Map @update:location="updateLocation" />
+
+              <div class="form-row">
+                <label>
+                  Start:
+                  <input
+                    type="datetime-local"
+                    :value="eventForm.start?.slice(0, 16)"
+                    @input="eventForm.start = $event.target.value"
+                  />
+                </label>
+                <label>
+                  End:
+                  <input
+                    type="datetime-local"
+                    :value="eventForm.end?.slice(0, 16)"
+                    @input="eventForm.end = $event.target.value"
+                  />
+                </label>
+              </div>
+
+              <div class="form-row modal-actions">
+                <button type="submit">Add</button>
+                <button @click="showModal = false" type="button">Cancel</button>
+              </div>
             </div>
           </form>
         </div>
@@ -84,6 +102,7 @@
           </div>
 
           <div class="modal-actions">
+            <button @click="editEvent" type="button">Edit</button>
             <button @click="showEventModal = false" type="button">Close</button>
           </div>
         </div>
@@ -98,8 +117,9 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 
-const { status } = useAuth();
+const { data, status } = useAuth();
 const isAuthenticated = computed(() => status.value === "authenticated");
+const props = defineProps(["user"]);
 
 const showModal = ref(false);
 const eventForm = ref({
@@ -107,9 +127,13 @@ const eventForm = ref({
   description: "",
   start: "",
   end: "",
-  timeZone: "UTC",
+  capacity: 0,
   location: "",
+  address: "",
+  lat: null,
+  lng: null,
 });
+
 const selectedEvent = ref(null);
 const showEventModal = ref(false);
 const rsvpResponse = ref(null);
@@ -135,69 +159,14 @@ const calendarOptions = ref({
     right: "dayGridMonth,timeGridWeek,timeGridDay",
   },
   editable: true,
-  selectable: isAuthenticated,
+  selectable: isAuthenticated.value,
   select: (info) => {
     // Prefill form with selected time
     showModal.value = true;
     eventForm.value.start = info.startStr; // for datetime-local input
     eventForm.value.end = info.endStr;
   },
-  events: [
-    {
-      id: "m294f9m6ttfuj5oq1nd6rel51c",
-      title: "Test",
-      description: "test",
-      start: "2025-04-04T13:18:00-05:00",
-      end: "2025-04-05T13:18:00-05:00",
-      timeZone: "UTC",
-      location: "test",
-    },
-    {
-      id: "1p9vi7eq8o5cm9ffvra3uki9t8",
-      title: "Test",
-      description: "Test",
-      start: "2025-04-09T13:20:00-05:00",
-      end: "2025-04-09T17:20:00-05:00",
-      timeZone: "UTC",
-      location: "Test",
-    },
-    {
-      id: "ts15e3ffthkluf7hu6i3rhlggc",
-      title: "Test with server protection but now authenticateda",
-      description: "Test with server protection but now authenticateda",
-      start: "2025-04-10T07:30:00-05:00",
-      end: "2025-04-10T14:00:00-05:00",
-      timeZone: "UTC",
-      location: "Test with server protection but now authenticateda",
-    },
-    {
-      id: "q942rkg7ibcgq5mb0k85nfj7f4",
-      title: "Team Meeting",
-      description: "Discussion about project progress and next steps.",
-      start: "2025-04-10T10:00:00-05:00",
-      end: "2025-04-10T11:00:00-05:00",
-      timeZone: "America/Chicago",
-      location: "Conference Room 1",
-    },
-    {
-      id: "eu22onb882qbk29ofqgroq601s",
-      title: "Test",
-      description: "Test",
-      start: "2025-04-10T11:30:00-05:00",
-      end: "2025-04-10T14:00:00-05:00",
-      timeZone: "UTC",
-      location: "Test",
-    },
-    {
-      id: "96qac9n4lt5mlfeklojc01ascc",
-      title: "Team Meeting",
-      description: "Discussion about project progress and next steps.",
-      start: "2025-04-11T10:00:00-05:00",
-      end: "2025-04-11T11:00:00-05:00",
-      timeZone: "America/Chicago",
-      location: "Conference Room 1",
-    },
-  ],
+
   eventClick: (info) => {
     selectedEvent.value = {
       id: info.event.id,
@@ -255,13 +224,35 @@ const submitEvent = async () => {
       end: formattedEnd,
     };
 
-    await $fetch("/api/google/calendar", {
+    const googleEvent = await $fetch("/api/google/calendar", {
       method: "POST",
       body: newEvent,
     });
 
+    const result = await $fetch("/api/event", {
+      method: "POST",
+      body: {
+        id: googleEvent.id,
+        description: newEvent.description,
+        userId: "97af366b-7c06-4707-a0f5-4fa154b57fee",
+        eventLat: newEvent.lat,
+        eventLong: newEvent.lng,
+        startTime: new Date(newEvent.start),
+        endTime: new Date(newEvent.end),
+        capacity: newEvent.capacity,
+      },
+    });
+
     // Add event to calendar view
-    calendarOptions.value.events.push({ ...newEvent });
+    calendarOptions.value.events.push({
+      id: googleEvent.id,
+      title: newEvent.title,
+      start: newEvent.start,
+      end: newEvent.end,
+      description: newEvent.description,
+      location: newEvent.location,
+      timeZone: newEvent.timeZone,
+    });
 
     showModal.value = false;
     // Reset form
@@ -272,15 +263,60 @@ const submitEvent = async () => {
       end: "",
       timeZone: "UTC",
       location: "",
+      lat: null,
+      lng: null,
     };
   } catch (error) {
     console.error("Failed to submit event:", error);
   }
 };
 
-const respondToEvent = (response) => {
+const respondToEvent = async (response) => {
   rsvpResponse.value = response;
-  console.log(`User responded: ${response}`);
+
+  const userId = props.user.id; // Replace with actual user ID from auth
+  const eventId = selectedEvent.value.id;
+
+  if (response === "yes") {
+    try {
+      const result = await $fetch("/api/signup", {
+        method: "POST",
+        body: {
+          userId,
+          eventId,
+          notifications: true, // or false based on your UI
+        },
+      });
+      console.log("RSVP success:", result);
+    } catch (err) {
+      console.error("RSVP failed:", err);
+    }
+  } else if (response === "no") {
+    try {
+      // Step 1: Get the signup ID
+      const signup = await $fetch(`/api/signup/lookup`, {
+        method: "POST",
+        body: {
+          userId,
+          eventId,
+        },
+      });
+
+      if (!signup || !signup.id) {
+        console.warn("No RSVP found to remove.");
+        return;
+      }
+
+      // Step 2: Delete the RSVP using the ID
+      const result = await $fetch(`/api/signup/${signup.id}`, {
+        method: "DELETE",
+      });
+
+      console.log("RSVP removed successfully:", result);
+    } catch (err) {
+      console.error("Failed to remove RSVP:", err);
+    }
+  }
 };
 
 watch(showEventModal, (newVal) => {
@@ -288,6 +324,43 @@ watch(showEventModal, (newVal) => {
     rsvpResponse.value = null; // Reset RSVP when modal opens
   }
 });
+
+function updateLocation(location) {
+  eventForm.value.lat = location.lat;
+  eventForm.value.lng = location.lng;
+
+  // If we have a name/address from Autocomplete, use them.
+  if (location.name || location.address) {
+    eventForm.value.location = location.name || location.address || "";
+    eventForm.value.address = location.address || "";
+  } else {
+    // If no name/address, default to coordinates
+    const coordsString = `Lat: ${location.lat.toFixed(
+      6
+    )}, Lng: ${location.lng.toFixed(6)}`;
+    eventForm.value.location = coordsString;
+    eventForm.value.address = coordsString;
+  }
+}
+
+const editEvent = () => {
+  eventForm.value = {
+    title: selectedEvent.value.title || "",
+    description: selectedEvent.value.description || "",
+    start: new Date(selectedEvent.value.start).toISOString().slice(0, 16),
+    end: new Date(selectedEvent.value.end).toISOString().slice(0, 16),
+    location: selectedEvent.value.location || "",
+    lat: selectedEvent.value.lat || null,
+    lng: selectedEvent.value.lng || null,
+    capacity: selectedEvent.value.capacity || 0,
+    timeZone: selectedEvent.value.timeZone || "UTC",
+    address: selectedEvent.value.address || "",
+    userId: selectedEvent.value.userId || 0, // if available
+  };
+
+  showModal.value = true;
+  showEventModal.value = false;
+};
 </script>
 
 <style scoped>
@@ -320,6 +393,8 @@ watch(showEventModal, (newVal) => {
   border-radius: 8px;
   width: 400px;
   max-width: 95%;
+  max-height: 90vh;
+  overflow-y: scroll;
 }
 
 .modal-actions {
@@ -406,5 +481,68 @@ watch(showEventModal, (newVal) => {
 
 .event-btn.no:hover {
   background-color: #d93025;
+}
+.form-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-content input,
+.form-content textarea,
+.form-content select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.form-content h4 {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.25rem;
+  color: #333;
+}
+
+.modal label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.horizontal-modal {
+  width: 90%;
+  max-width: 900px;
+}
+
+.form-horizontal {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+textarea {
+  flex: 1;
+  min-width: 100%;
+  resize: vertical;
+}
+
+input,
+select,
+label {
+  flex: 1;
+  min-width: 200px;
+}
+
+.modal-actions {
+  justify-content: flex-end;
 }
 </style>

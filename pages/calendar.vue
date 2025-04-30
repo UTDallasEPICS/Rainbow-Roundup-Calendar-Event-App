@@ -1,10 +1,20 @@
-<template>
-  <div>
-    <h1>My FullCalendar</h1>
-    <Calendar />
-  </div>
-</template>
+<script lang="ts" setup>
+definePageMeta({
+  middleware: "sidebase-auth",
+});
 
-<script setup>
-// import Calendar from '~/components/Calendar.vue';
+const { status, data, signOut } = useAuth();
 </script>
+
+<template>
+  <div v-if="data">
+    {{ data.user }}
+    Hello {{ data.user?.email }}! Admin Page Only I am protected! You are
+    currently {{ status }}.
+    <button @click="() => signOut({ callbackUrl: '/login' })">
+      Signout with redirect
+    </button>
+    <Calendar :user="data.user" />
+  </div>
+  <div v-else>You are not logged in.</div>
+</template>

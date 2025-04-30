@@ -28,7 +28,7 @@ model User {
 }
 
 model Event {
-  id               String   @id @default(uuid())
+  id               String   @id 
   description      String
   userId           String   // References Admin who created the event
   eventLat         Float

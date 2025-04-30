@@ -42,6 +42,7 @@
     "stripe": "^17.6.0",
     "vue": "latest",
     "vue-stripe-js": "^2.0.2",
+    "vue3-google-map": "^0.21.1",
     "vuetify": "^3.7.0-beta.1"
   },
   "devDependencies": {
