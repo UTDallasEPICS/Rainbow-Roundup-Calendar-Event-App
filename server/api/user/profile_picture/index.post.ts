@@ -2,14 +2,6 @@
 // import  S3  from "aws-sdk";
 // import { v4 as uuidv4 } from "uuid";
 
-// const s3 = new S3({
-//   region: "us-east-1",
-//   accessKeyId: process.env.AWS_ACCESS_KEY_ID || "AKIAY6JTA67UEUCS3BPX",
-//   secretAccessKey:
-//     process.env.AWS_SECRET_ACCESS_KEY ||
-//     "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",
-// });
-
 // const bucketName = "rainbow-round-up";
 
 // export default defineEventHandler(async (event) => {
