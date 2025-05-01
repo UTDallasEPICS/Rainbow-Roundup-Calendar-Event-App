@@ -6,7 +6,7 @@
       <!-- Greeting -->
       <header class="text-center">
         <h1 class="text-xl md:text-2xl font-bold text-zinc-700 capitalize">
-          Hello {{ user?.firstname || "" }}!
+          Helloiausdisagd {{ user?.firstname || "" }}!
         </h1>
       </header>
 
