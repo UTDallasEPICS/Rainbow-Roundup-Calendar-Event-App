@@ -1,78 +1,113 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100 p-8">
-    <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md space-y-4">
-      <!-- If loading -->
-      <div v-if="isLoading" class="text-center text-gray-500">
-        Loading event...
+  <div
+    class="min-h-screen flex items-center justify-center bg-gray-50 p-4 sm:p-6"
+  >
+    <div
+      class="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg bg-white rounded-2xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden font-sans"
+    >
+      <!-- Gradient header -->
+      <div class="h-20 bg-[#FFE166] relative">
+        <div class="absolute inset-0 opacity-10 bg-[url('/pattern.svg')]"></div>
       </div>
 
-      <!-- If loaded -->
-      <div v-else-if="event">
-        <h1 class="text-2xl font-bold text-gray-800">{{ event.title }}</h1>
+      <div class="p-6 space-y-6">
+        <!-- Title & metadata -->
+        <div class="space-y-1">
+          <h1 class="text-2xl font-semibold text-gray-800">
+            {{ event?.title || "Loading…" }}
+          </h1>
+          <p v-if="!isLoading" class="text-sm text-gray-500">
+            {{ formatDateTime(event.start) }} – {{ formatDateTime(event.end) }}
+            <span
+              class="ml-2 uppercase bg-gray-100 px-2 py-0.5 rounded-full text-xs font-medium"
+            >
+              {{ event.timeZone }}
+            </span>
+          </p>
+        </div>
 
-        <div class="space-y-2 text-gray-600 text-sm">
+        <!-- Description -->
+        <p v-if="!isLoading" class="text-sm text-gray-700 leading-relaxed">
+          {{ event.description }}
+        </p>
+        <div v-else class="text-center text-gray-500">Loading event…</div>
+
+        <!-- Details grid -->
+        <div
+          v-if="!isLoading"
+          class="grid grid-cols-2 gap-4 text-sm text-gray-600"
+        >
           <div>
-            <span class="font-semibold">Description:</span>
-            {{ event.description }}
+            <span class="font-medium text-gray-800">Location:</span><br />
+            {{ event.location }}
           </div>
           <div>
-            <span class="font-semibold">Location:</span> {{ event.location }}
-          </div>
-          <div>
-            <span class="font-semibold">Capacity:</span>
+            <span class="font-medium text-gray-800">Capacity:</span><br />
             {{ event.capacity ?? "N/A" }}
           </div>
           <div>
-            <span class="font-semibold">Current Going:</span>
+            <span class="font-medium text-gray-800">Going:</span><br />
             {{ event.currentCapacity ?? 0 }}
           </div>
           <div>
-            <span class="font-semibold">Start:</span>
-            {{ formatDateTime(event.start) }}
-          </div>
-          <div>
-            <span class="font-semibold">End:</span>
-            {{ formatDateTime(event.end) }}
-          </div>
-          <div>
-            <span class="font-semibold">Timezone:</span> {{ event.timeZone }}
-          </div>
-          <div>
-            <span class="font-semibold">Tags:</span>
-            {{ event.tags?.join(", ") || "None" }}
-          </div>
-
-          <!-- 🧑‍🤝‍🧑 List of Users Going -->
-          <div v-if="event.signUps && event.signUps.length" class="pt-4">
-            <span class="font-semibold">People Going:</span>
-            <ul class="list-disc list-inside text-gray-700 mt-2">
-              <li v-for="signup in event.signUps" :key="signup.id">
-                {{ signup.id }} {{ signup.user?.lastname }} ({{
-                  signup.user?.email
-                }})
-              </li>
-            </ul>
-          </div>
-          <div v-else class="pt-4 text-gray-400 italic">
-            No one has signed up yet.
+            <span class="font-medium text-gray-800">Tags:</span><br />
+            <template v-if="event.tags?.length">
+              <span
+                v-for="tag in event.tags"
+                :key="tag"
+                class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full mr-1 mb-1"
+              >
+                {{ tag }}
+              </span>
+            </template>
+            <span v-else class="text-gray-400 italic">None</span>
           </div>
         </div>
 
-        <!-- RSVP Section -->
-        <div class="rsvp-section pt-6">
-          <p class="rsvp-label font-semibold text-gray-700">Are you going?</p>
-          <div class="rsvp-buttons flex gap-4 pt-2">
+        <!-- Divider -->
+        <div class="border-t border-gray-200"></div>
+
+        <!-- Who’s going -->
+        <div v-if="!isLoading">
+          <h2 class="text-sm font-medium text-gray-800 mb-2">People Going</h2>
+          <ul class="space-y-2 max-h-32 overflow-y-auto pr-2">
+            <li
+              v-for="signup in event.signUps"
+              :key="signup.id"
+              class="flex items-center space-x-3 text-gray-700"
+            >
+              <div class="w-6 h-6 bg-gray-200 rounded-full flex-shrink-0"></div>
+              <div>
+                <p class="font-medium">
+                  {{ userMap[signup.userId]?.firstname || "Unknown" }}
+                  {{ userMap[signup.userId]?.lastname || "" }}
+                </p>
+                <p class="text-xs text-gray-500">
+                  {{ userMap[signup.userId]?.email || "No email" }}
+                </p>
+              </div>
+            </li>
+            <li v-if="!event.signUps.length" class="text-gray-400 italic">
+              No one has signed up yet.
+            </li>
+          </ul>
+        </div>
+
+        <!-- RSVP buttons -->
+        <div class="mt-4 space-y-2">
+          <p class="text-sm font-medium text-gray-800">Will you attend?</p>
+          <div class="flex gap-3">
             <button
-              class="event-btn px-4 py-2 rounded bg-green-200"
-              :class="{ 'selected bg-green-400': rsvpResponse === 'yes' }"
+              class="flex-1 py-2 text-sm font-semibold rounded-full shadow-sm bg-green-200 hover:bg-green-300 transition"
+              :class="{ 'bg-green-500 text-white': rsvpResponse === 'yes' }"
               :disabled="isResponding"
               @click="respondToEvent('yes')"
             >
               Yes
             </button>
             <button
-              class="event-btn px-4 py-2 rounded bg-red-200"
-              :class="{ 'selected bg-red-400': rsvpResponse === 'no' }"
+              class="flex-1 py-2 text-sm font-semibold rounded-full shadow-sm bg-red-200 hover:bg-red-300 transition"
+              :class="{ 'bg-red-500 text-white': rsvpResponse === 'no' }"
               :disabled="isResponding"
               @click="respondToEvent('no')"
             >
@@ -81,11 +116,11 @@
           </div>
         </div>
 
-        <div class="text-xs text-gray-400 pt-4">Event ID: {{ event.id }}</div>
+        <!-- Event ID -->
+        <p v-if="!isLoading" class="text-[10px] text-gray-400 text-center">
+          ID: {{ event.id }}
+        </p>
       </div>
-
-      <!-- Optional: If event failed to load -->
-      <div v-else class="text-center text-red-500">Failed to load event.</div>
     </div>
   </div>
 </template>
@@ -94,20 +129,35 @@
 import { ref, onMounted } from "vue";
 import { useAuth } from "#imports";
 import { fetchCombinedEventById } from "../server/utils/fetchCombinedEvents";
+import { useRoute } from "vue-router";
 
 const { data: user } = useAuth();
+const route = useRoute();
+const router = useRouter();
+const eventId = route.params.id;
+
 const event = ref(null);
 const isLoading = ref(true); // NEW loading state
 const rsvpResponse = ref(null);
 const isResponding = ref(false); // disables buttons during RSVP API call
+const userMap = ref({});
 
 async function loadEvent() {
   try {
-    const eventdata = await fetchCombinedEventById(
-      "6tneot2ng4ibl6b0pprfke0nvk"
-    );
+    const eventdata = await fetchCombinedEventById(eventId);
     console.log("Fetched Event:", eventdata);
     event.value = eventdata;
+
+    if (event.value.signUps) {
+      const userIds = [...new Set(eventdata.signUps.map((s) => s.userId))];
+      console.log(userIds);
+      const users = await $fetch("/api/user/batch", {
+        method: "POST",
+        body: { ids: userIds },
+      });
+
+      userMap.value = Object.fromEntries(users.map((u) => [u.id, u]));
+    }
   } catch (error) {
     console.error("Failed to fetch event:", error);
   } finally {
@@ -135,6 +185,10 @@ function formatDateTime(isoString) {
 const respondToEvent = async (response) => {
   if (isResponding.value) return; // Prevent spamming by blocking clicks
   isResponding.value = true;
+
+  if (!user.value || !user.value.user?.id) {
+    router.push("/login"); // Or use router.push("/") if using Vue Router directly
+  }
 
   rsvpResponse.value = response;
   console.log(`User responded: ${response}`);
@@ -174,8 +228,8 @@ const respondToEvent = async (response) => {
     console.error("RSVP action failed:", err);
   } finally {
     setTimeout(() => {
-      isResponding.value = false; // add a slight delay before re-enabling
-    }, 1500); // ⏱️ 1.5 seconds delay
+      isResponding.value = false;
+    }, 1500);
   }
 };
 </script>

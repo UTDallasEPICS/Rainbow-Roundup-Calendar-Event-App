@@ -8,7 +8,7 @@ const markerPosition = ref({ lat: 0, lng: 0 });
 const autocompleteInput = ref(null);
 const emit = defineEmits(["update:location"]);
 const config = useRuntimeConfig();
-const apiKey = config.public.googlePlacesApiKey;
+const apiKey = config.public.NUXT_GOOGLE_PLACES;
 let autocomplete;
 
 function getUserLocation() {
@@ -92,7 +92,7 @@ function placeMarker(event) {
     />
 
     <GoogleMap
-      api-key="apiKey"
+      :api-key="apiKey"
       :libraries="['places']"
       style="width: 100%; height: 500px"
       :center="center"

@@ -25,7 +25,6 @@ logs
 !.env.example
 
 # Database
-dev.db
 dev.db-journal
 
 # Yarn

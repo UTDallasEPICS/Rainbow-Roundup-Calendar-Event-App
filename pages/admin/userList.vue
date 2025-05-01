@@ -98,7 +98,12 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200">
-                <tr v-for="user in displayedUsers" :key="user.email">
+                <tr
+                  v-for="user in displayedUsers"
+                  :key="user.email"
+                  @click="openModal(user)"
+                  class="hover:bg-gray-100 cursor-pointer"
+                >
                   <td class="px-4 py-3 text-sm text-gray-800">
                     {{ user.firstname }}
                   </td>
@@ -150,12 +155,137 @@
       </div>
     </div>
   </div>
+  <Teleport to="body">
+    <div
+      v-if="isModalOpen"
+      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+    >
+      <div class="bg-white rounded-xl shadow-lg w-full max-w-lg p-6 relative">
+        <!-- Close Button -->
+        <button
+          @click="closeModal"
+          class="absolute top-3 right-4 text-gray-400 hover:text-red-500 text-xl"
+        >
+          ×
+        </button>
+
+        <h2 class="text-xl font-bold text-zinc-800 mb-4">Edit User</h2>
+
+        <div class="space-y-4">
+          <!-- Editable Fields -->
+          <div>
+            <label class="block font-medium mb-1">First Name</label>
+            <input
+              v-model="selectedUser.firstname"
+              class="w-full border border-gray-300 rounded px-3 py-2"
+            />
+          </div>
+
+          <div>
+            <label class="block font-medium mb-1">Last Name</label>
+            <input
+              v-model="selectedUser.lastname"
+              class="w-full border border-gray-300 rounded px-3 py-2"
+            />
+          </div>
+
+          <div>
+            <label class="block font-medium mb-1">Email</label>
+            <input
+              v-model="selectedUser.email"
+              class="w-full border border-gray-300 rounded px-3 py-2"
+            />
+          </div>
+
+          <div>
+            <label class="block font-medium mb-1">Phone</label>
+            <input
+              v-model="selectedUser.phoneNum"
+              class="w-full border border-gray-300 rounded px-3 py-2"
+            />
+          </div>
+
+          <div>
+            <label class="block font-medium mb-1">Profile Picture URL</label>
+            <input
+              v-model="selectedUser.profilePic"
+              class="w-full border border-gray-300 rounded px-3 py-2"
+            />
+          </div>
+
+          <div>
+            <label class="block font-medium mb-1">Global Notification</label>
+            <input
+              type="checkbox"
+              v-model="selectedUser.GlobalNotif"
+              class="mr-2"
+            />
+            <span>{{ selectedUser.GlobalNotif ? "Enabled" : "Disabled" }}</span>
+          </div>
+
+          <!-- Admin status (read-only) -->
+          <div>
+            <label class="block font-medium mb-1">Admin Status</label>
+            <p
+              class="px-3 py-2 border border-gray-200 rounded text-sm font-semibold"
+              :class="
+                selectedUser.role === 'Admin'
+                  ? 'text-red-500'
+                  : 'text-green-600'
+              "
+            >
+              {{ selectedUser.role }}
+            </p>
+          </div>
+
+          <!-- Warning Toggle -->
+          <div>
+            <label class="block font-medium mb-1">Warning</label>
+            <select
+              v-model="hasWarning"
+              class="w-full border border-gray-300 rounded px-3 py-2"
+            >
+              <option :value="true">Yes</option>
+              <option :value="false">No</option>
+            </select>
+          </div>
+
+          <!-- Warning Reason -->
+          <div v-if="hasWarning">
+            <label class="block font-medium mb-1">Reason</label>
+            <input
+              v-model="selectedUser.PotentialOffenses[0].reason"
+              class="w-full border border-gray-300 rounded px-3 py-2"
+            />
+          </div>
+
+          <!-- Buttons -->
+          <div class="flex justify-between pt-4 border-t">
+            <button
+              @click="deleteUser"
+              class="text-red-600 hover:underline font-medium"
+            >
+              Delete User
+            </button>
+
+            <button
+              @click="saveUserEdits"
+              class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Teleport>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useFetch } from "#app"; // Nuxt 3's fetch composable
-
+const { data } = useAuth();
+console.log(data.value.user);
 const users = ref([]); // empty initially
 
 const searchTerm = ref("");
@@ -205,4 +335,81 @@ const sortedUsers = computed(() => {
 });
 
 const displayedUsers = sortedUsers;
+
+const selectedUser = ref(null);
+const isModalOpen = ref(false);
+const hasWarning = ref(false);
+
+function openModal(user) {
+  selectedUser.value = JSON.parse(JSON.stringify(user)); // deep clone
+  hasWarning.value = user.PotentialOffenses?.length > 0;
+  if (!selectedUser.value.PotentialOffenses) {
+    selectedUser.value.PotentialOffenses = [{ reason: "" }];
+  }
+  isModalOpen.value = true;
+}
+
+function closeModal() {
+  selectedUser.value = null;
+  isModalOpen.value = false;
+  hasWarning.value = false;
+}
+
+async function saveUserEdits() {
+  const updateData = {};
+  const body = selectedUser.value;
+
+  if (body.email) updateData.email = body.email;
+  if (body.firstname) updateData.firstname = body.firstname;
+  if (body.lastname) updateData.lastname = body.lastname;
+  if (body.phoneNum) updateData.phoneNum = body.phoneNum;
+  if (body.profilePic) updateData.profilePic = body.profilePic;
+  if (typeof body.GlobalNotif !== "undefined")
+    updateData.GlobalNotif = body.GlobalNotif;
+
+  if (hasWarning.value && body.PotentialOffenses?.[0]?.reason) {
+    updateData.PotentialOffenses = [
+      { reason: body.PotentialOffenses[0].reason },
+    ];
+  } else {
+    updateData.PotentialOffenses = [];
+  }
+
+  // TODO: replace with your actual API endpoint
+  await fetch(`/api/user/${body.id}`, {
+    method: "PATCH",
+    body: JSON.stringify(updateData),
+    headers: { "Content-Type": "application/json" },
+  });
+
+  await fetch(`/api/user/${body.id}`, {
+    method: "PATCH",
+    body: JSON.stringify(updateData),
+    headers: { "Content-Type": "application/json" },
+  });
+
+  const { data } = await useFetch("/api/user", { key: "refresh-users" });
+  if (data.value?.success) {
+    users.value = data.value.Users;
+  }
+
+  closeModal();
+}
+
+async function deleteUser() {
+  if (!selectedUser.value?.id) return;
+  const confirmed = confirm("Are you sure you want to delete this user?");
+  if (!confirmed) return;
+
+  await fetch(`/api/user/${selectedUser.value.id}`, {
+    method: "DELETE",
+  });
+
+  const { data } = await useFetch("/api/user", { key: "refresh-users" });
+  if (data.value?.success) {
+    users.value = data.value.Users;
+  }
+
+  closeModal();
+}
 </script>

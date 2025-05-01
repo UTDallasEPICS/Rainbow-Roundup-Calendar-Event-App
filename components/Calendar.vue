@@ -116,11 +116,10 @@ import { ref, computed } from "vue";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-
+const router = useRouter();
 const { data, status } = useAuth();
 const isAuthenticated = computed(() => status.value === "authenticated");
 const props = defineProps(["user"]);
-
 const showModal = ref(false);
 const eventForm = ref({
   title: "",
@@ -159,7 +158,8 @@ const calendarOptions = ref({
     right: "dayGridMonth,timeGridWeek,timeGridDay",
   },
   editable: true,
-  selectable: isAuthenticated.value,
+  selectable:
+    props.user?.role === "ADMIN" || props.user?.role === "SUPER" || false,
   select: (info) => {
     // Prefill form with selected time
     showModal.value = true;
@@ -234,7 +234,7 @@ const submitEvent = async () => {
       body: {
         id: googleEvent.id,
         description: newEvent.description,
-        userId: "97af366b-7c06-4707-a0f5-4fa154b57fee",
+        userId: props.user.id || "-1",
         eventLat: newEvent.lat,
         eventLong: newEvent.lng,
         startTime: new Date(newEvent.start),

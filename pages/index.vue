@@ -1,154 +1,123 @@
 <template>
   <div
-    class="min-h-screen bg-gray-100 w-full flex flex-col items-center justify-center"
+    class="min-h-screen bg-gray-100 w-full flex flex-col items-center justify-center px-4 md:px-8"
   >
-    <!-- Main content -->
-    <div class="max-w-4xl p-6 space-y-6">
-      <header class="mb-6">
-        <h1
-          class="w-36 h-6 justify-center text-zinc-700 text-xl font-bold capitalize"
-          v-if="user"
-        >
-          Hello {{ user.firstname }}!
+    <div class="w-full max-w-6xl space-y-8 py-8">
+      <!-- Greeting -->
+      <header class="text-center">
+        <h1 class="text-xl md:text-2xl font-bold text-zinc-700 capitalize">
+          Hello {{ user?.firstname || "" }}!
         </h1>
       </header>
 
-      <div
-        class="w-36 h-6 justify-center text-zinc-700 text-xs font-extrabold uppercase"
-      >
-        Your Calendar
-      </div>
-
-      <!-- Temporary card -->
-      <Calendar />
-      <!-- <div class="bg-white rounded-lg shadow-md p-6 max-w-md">
-        <h2 class="text-2xl font-semibold mb-2">Temporary Calendar Card</h2>
-        <p class="text-gray-600 mb-4">
-          This is a placeholder card for the calendar.
-        </p>
-        <button
-          class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      <!-- Calendar Section -->
+      <div class="text-center">
+        <div
+          class="text-xs md:text-sm font-extrabold uppercase text-zinc-700 mb-2"
         >
-          Action
-        </button>
-      </div> -->
-
-      <!-- Image Carousel Section
-    <div class="flex flex-col items-center w-full">
-      <div class="w-4/5 relative">
-        <div class="overflow-hidden h-[20vh] md:h-[30vh]">
-          <div
-            class="flex transition-transform duration-300 h-full"
-            :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
-          >
-            <div
-              v-for="(image, index) in images"
-              :key="index"
-              class="min-w-full h-full flex-shrink-0"
+          Your Calendar
+        </div>
+      </div>
+      <div
+        class="flex flex-col md:flex-row bg-white rounded-lg shadow-md p-6 max-w-6xl mx-auto space-y-6 md:space-y-0 md:space-x-6"
+      >
+        <!-- Calendar Grid -->
+        <div class="w-full md:w-2/3">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-semibold">May 2025</h2>
+            <button
+              @click="showEvents = !showEvents"
+              class="text-sm text-blue-600 underline hover:text-blue-800 transition"
             >
-              <img
-                :src="image"
-                class="w-full h-full object-cover"
-                alt="carousel image"
-              />
-            </div>
+              {{ showEvents ? "Hide" : "Show" }} Events
+            </button>
+          </div>
+
+          <div
+            class="grid grid-cols-7 gap-2 text-center text-sm text-gray-700 font-semibold mb-2"
+          >
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+          </div>
+
+          <div class="grid grid-cols-7 gap-2 text-center">
+            <template v-for="day in 31" :key="day">
+              <div
+                class="h-20 border rounded-lg p-2 hover:bg-blue-100 cursor-pointer flex flex-col items-start"
+              >
+                <span class="text-sm font-bold text-gray-700">{{ day }}</span>
+                <div class="text-xs text-blue-500 truncate w-full">+ Event</div>
+              </div>
+            </template>
           </div>
         </div>
 
-        Dots
-        <div class="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
-          <div
-            v-for="(_, index) in images"
-            :key="index"
-            class="w-2 h-2 rounded-full transition-colors duration-200"
-            :class="currentIndex === index ? 'bg-white' : 'bg-white/50'"
-          ></div>
+        <!-- Events Panel -->
+        <div
+          v-show="showEvents"
+          class="w-full md:w-1/3 bg-gray-50 border border-gray-200 rounded-lg p-4 transition-all duration-300 ease-in-out"
+        >
+          <h3 class="text-lg font-semibold mb-3">Events for May 15</h3>
+          <ul class="space-y-2 text-sm">
+            <li class="p-2 rounded bg-white border border-gray-200">
+              <p class="font-medium">Team Meeting</p>
+              <p class="text-gray-600">10:00 AM - 11:00 AM</p>
+            </li>
+            <li class="p-2 rounded bg-white border border-gray-200">
+              <p class="font-medium">Lunch w/ Client</p>
+              <p class="text-gray-600">1:00 PM - 2:00 PM</p>
+            </li>
+          </ul>
         </div>
       </div>
-      <span class="text-sm md:text-base mt-2">Latest Event</span>
-    </div> -->
 
-      <!-- User Management -->
-      <div v-if="user && (user.role === 'ADMIN' || user.role === 'SUPER')">
-        <div
-          class="w-36 h-6 justify-center text-zinc-700 text-xs font-extrabold uppercase"
-        >
+      <!-- Admin Section -->
+      <div
+        v-if="user && (user.role === 'ADMIN' || user.role === 'SUPER')"
+        class="text-center space-y-2"
+      >
+        <div class="text-xs font-extrabold uppercase text-zinc-700">
           Manage Users
         </div>
         <NuxtLink
           to="/admin/userList"
-          class="w-40 h-12 relative bg-lime-300 rounded-[20px] overflow-hidden flex items-center justify-center"
+          class="bg-lime-300 text-zinc-600 text-xs font-extrabold uppercase px-4 py-2 rounded-full inline-block"
         >
-          <span
-            class="absolute justify-center text-zinc-600 text-xs font-extrabold uppercase"
-            >All Users</span
-          >
+          All Users
         </NuxtLink>
       </div>
 
-      <!-- Events Cards -->
-      <div class="flex items-center mt-[33px] space-x-4">
-        <div
-          class="w-36 h-6 justify-center text-zinc-700 text-xs font-extrabold uppercase"
-        >
+      <!-- Events Controls -->
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="text-md font-extrabold uppercase text-zinc-700">
           Upcoming Events
         </div>
-        <!-- See All Events -->
-        <NuxtLink
-          to="/eventsPage"
-          class="w-20 h-6 relative bg-white rounded-[50px] outline outline-1 outline-offset-[-1px] outline-zinc-600 overflow-hidden flex items-center justify-center no-underline"
-        >
-          <span class="text-zinc-600 text-xs font-semibold capitalize"
-            >See All</span
+        <div class="flex gap-2">
+          <NuxtLink
+            to="/eventsPage"
+            class="bg-white text-zinc-600 text-xs font-semibold capitalize px-4 py-1 rounded-full border border-zinc-600"
           >
-        </NuxtLink>
-        <!-- Make New Events -->
-        <NuxtLink to="/calendar">
-          <button
-            class="px-3 py-1 bg-white/50 rounded-full outline outline-1 outline-green-600 text-xs"
+            See All
+          </NuxtLink>
+          <NuxtLink
+            to="/calendar"
             v-if="user && (user.role === 'ADMIN' || user.role === 'SUPER')"
           >
-            New
-          </button>
-        </NuxtLink>
+            <button
+              class="bg-white/50 text-green-600 text-xs px-4 py-1 rounded-full border border-green-600"
+            >
+              New
+            </button>
+          </NuxtLink>
+        </div>
       </div>
 
-      <!-- hard‑coded EventCard for visuals -->
-      <!-- <div class="flex space-x-4 overflow-x-auto">
-        <EventCard
-          date-day="10"
-          date-month="June"
-          title="Event No 1"
-          :going="20"
-          :avatars="[
-            'https://placehold.co/24x24',
-            'https://placehold.co/24x24',
-            'https://placehold.co/24x24',
-          ]"
-          location="Somewhere, Dallas"
-          :saved="false"
-          @update:saved="(val) => console.log('saved?', val)"
-          @expand="onExpand"
-        />
-
-        <EventCard
-          date-day="10"
-          date-month="June"
-          title="pryde"
-          :going="20"
-          :avatars="[
-            'https://placehold.co/24x24',
-            'https://placehold.co/24x24',
-            'https://placehold.co/24x24',
-          ]"
-          location="Somewhere, Dallas"
-          :saved="false"
-          @update:saved="(val) => console.log('saved?', val)"
-          @expand="onExpand"
-        />
-      </div> -->
-
-      <!-- 2) Horizontally scrollable event cards -->
+      <!-- Event Cards Scrollable -->
       <div class="overflow-x-auto flex space-x-4 py-4 snap-x snap-mandatory">
         <EventCard
           v-for="e in events"
@@ -160,11 +129,10 @@
         />
       </div>
 
-      <!-- Popup overlay for Make/Edit form -->
+      <!-- Event Form Modal -->
       <teleport to="body">
         <div
           v-if="showForm"
-          @scroll="onScroll"
           class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
         >
           <MakeEventCard
@@ -176,127 +144,78 @@
       </teleport>
 
       <!-- Image Gallery -->
-      <div
-        class="w-32 h-6 justify-center text-zinc-700 text-xs font-extrabold uppercase"
-      >
+      <div class="text-md font-extrabold uppercase text-zinc-700">
         Image Gallery
       </div>
-      <!-- Scrollable placards -->
       <div
         ref="gallery"
         @scroll="onScroll"
-        class="w-80 overflow-x-auto flex space-x-4 snap-x snap-mandatory scrollbar-none pb-"
+        class="w-full overflow-x-auto flex space-x-4 snap-x snap-mandatory scrollbar-none"
       >
         <div
           v-for="n in 3"
           :key="n"
-          class="flex-shrink-0 w-80 h-56 bg-amber-300 rounded-[20px] shadow-[0px_4px_0px_0px_rgba(80,85,136,0.25)] snap-start flex items-center justify-center"
+          class="flex-shrink-0 w-64 sm:w-80 h-56 bg-amber-300 rounded-[20px] shadow-md snap-start flex items-center justify-center"
         >
           Placeholder {{ n }}
         </div>
       </div>
 
-      <!-- Support our Families card -->
-      <div class="block mt-6">
-        <div
-          class="w-80 h-28 relative rounded-[20px] shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] bg-lime-300"
-        >
-          <!-- Title -->
-          <div
-            class="absolute left-[27px] top-[16px] text-slate-900 text-lg font-medium leading-loose"
-          >
+      <!-- Support Cards Section -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <!-- Support Families -->
+        <div class="relative h-28 rounded-[20px] shadow-md bg-lime-300 p-4">
+          <div class="text-slate-900 text-lg font-medium">
             Support our Families!
           </div>
-          <!-- Description -->
-          <div
-            class="absolute left-[27px] top-[50px] text-slate-600 text-xs font-normal"
-          >
-            somethingsomething
-          </div>
-          <!-- Button -->
+          <div class="text-slate-600 text-xs mt-2">somethingsomething</div>
           <a
             href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
             target="_blank"
             rel="noopener noreferrer"
-            @click.stop
-            class="absolute left-[26px] bottom-2.5 w-16 h-8 bg-lime-600 rounded-[5px] flex items-center justify-center"
+            class="absolute left-4 bottom-2 w-16 h-8 bg-lime-600 text-white text-xs font-medium uppercase rounded-[5px] flex items-center justify-center"
           >
-            <span class="text-white text-xs font-medium uppercase leading-snug">
-              Donate
-            </span>
+            Donate
           </a>
         </div>
-      </div>
 
-      <!-- Our Mission card -->
-      <div class="block mt-6">
-        <div
-          class="w-80 h-28 relative rounded-[20px] shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] overflow-hidden bg-blue-300"
-        >
-          <div
-            class="absolute left-[27px] top-[16px] text-slate-900 text-lg font-medium leading-loose"
-          >
-            Our Mission
-          </div>
-          <div
-            class="absolute left-[27px] top-[50px] text-slate-600 text-xs font-normal"
-          >
-            somethingsomething
-          </div>
+        <!-- Our Mission -->
+        <div class="relative h-28 rounded-[20px] shadow-md bg-blue-300 p-4">
+          <div class="text-slate-900 text-lg font-medium">Our Mission</div>
+          <div class="text-slate-600 text-xs mt-2">somethingsomething</div>
           <button
-            class="absolute left-[26px] bottom-2.5 w-16 h-8 bg-slate-500 rounded-[5px] flex items-center justify-center"
+            class="absolute left-4 bottom-2 w-16 h-8 bg-slate-500 text-white text-xs font-medium uppercase rounded-[5px] flex items-center justify-center"
           >
-            <span class="text-white text-xs font-medium uppercase leading-snug"
-              >Read</span
-            >
+            Read
+          </button>
+        </div>
+
+        <!-- Merchandise -->
+        <div
+          class="relative h-28 rounded-[20px] shadow-md bg-fuchsia-400 p-4 col-span-full sm:col-span-1"
+        >
+          <div class="text-white text-lg font-medium">Buy our Merchandise!</div>
+          <div class="text-white text-xs mt-2">somethingsomething</div>
+          <button
+            class="absolute left-4 bottom-2 w-16 h-8 bg-fuchsia-800 text-white text-xs font-medium uppercase rounded-[5px] flex items-center justify-center"
+          >
+            Buy
           </button>
         </div>
       </div>
 
-      <!-- Buy our Merchandise card -->
-      <div class="block mt-6">
-        <div
-          class="w-80 h-28 relative rounded-[20px] shadow-[0px_4px_4px_0px_rgba(80,85,136,0.20)] overflow-hidden bg-fuchsia-400"
-        >
-          <div
-            class="absolute left-[27px] top-[16px] text-white text-lg font-medium leading-loose"
-          >
-            Buy our Merchandise!
-          </div>
-          <div
-            class="absolute left-[27px] top-[50px] text-white text-xs font-normal"
-          >
-            somethingsomething
-          </div>
-          <button
-            class="absolute left-[26px] bottom-2.5 w-16 h-8 bg-fuchsia-800 rounded-[5px] flex items-center justify-center"
-          >
-            <span class="text-white text-xs font-medium uppercase leading-snug"
-              >Buy</span
-            >
-          </button>
-        </div>
-      </div>
-
-      <!-- Sponsors Section-->
-      <div class="flex items-center mt-[33px] space-x-4">
-        <!-- Our Sponsors title https://rrup.org/contact-us/ -->
-        <div
-          class="w-36 h-6 flex items-center justify-center text-zinc-700 text-xl font-bold capitalize"
-        >
+      <!-- Sponsors -->
+      <div class="flex flex-wrap items-center justify-between gap-4 mt-8">
+        <div class="text-xl font-bold text-zinc-700 capitalize">
           Our Sponsors
         </div>
-        <!-- Become a Sponsor button -->
         <a
           href="https://rrup.org/contact-us/"
           target="_blank"
           rel="noopener noreferrer"
-          @click.stop
-          class="w-36 h-6 relative bg-white rounded-[50px] outline outline-1 outline-offset-[-1px] outline-zinc-600 overflow-hidden flex items-center justify-center no-underline"
+          class="bg-white text-zinc-600 text-xs font-semibold capitalize px-4 py-1 rounded-full border border-zinc-600"
         >
-          <span class="text-zinc-600 text-xs font-semibold capitalize">
-            Become a Sponsor</span
-          >
+          Become a Sponsor
         </a>
       </div>
     </div>
@@ -315,8 +234,9 @@ import { fetchCombinedEvents } from "../server/utils/fetchCombinedEvents";
 // Auth (optional based on your code)
 const { status, data, refresh } = useAuth();
 await refresh();
-const user = computed(() => data?.user);
-
+const user = computed(() => data.value?.user);
+console.log(user);
+const showEvents = ref(false);
 interface EventItem {
   id: string;
   dateDay: string;

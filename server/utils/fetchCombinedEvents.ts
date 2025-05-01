@@ -93,6 +93,8 @@ export async function fetchCombinedEventById(
       $fetch<LocalEventExtraById>(`/api/event/${id}`),
     ]);
 
+    console.log(localExtra);
+
     return {
       ...googleEvent,
       capacity: localExtra?.Event.capacity,
