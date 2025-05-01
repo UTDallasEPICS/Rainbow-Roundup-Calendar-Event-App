@@ -92,7 +92,7 @@ function placeMarker(event) {
     />
 
     <GoogleMap
-      api-key="apiKey"
+      api-key="AIzaSyCEWYxzJ-T8xm5UPvLPSkdsKUeVxNQb72A"
       :libraries="['places']"
       style="width: 100%; height: 500px"
       :center="center"

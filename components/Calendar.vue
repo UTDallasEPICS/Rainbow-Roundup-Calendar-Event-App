@@ -234,7 +234,7 @@ const submitEvent = async () => {
       body: {
         id: googleEvent.id,
         description: newEvent.description,
-        userId: "97af366b-7c06-4707-a0f5-4fa154b57fee",
+        userId: "20f42894-5e34-497c-bc10-c53e51656d00",
         eventLat: newEvent.lat,
         eventLong: newEvent.lng,
         startTime: new Date(newEvent.start),

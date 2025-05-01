@@ -5,7 +5,7 @@ export const useGoogleMaps = async () => {
   const config = useRuntimeConfig();
 
   const loader = new Loader({
-    apiKey: config.public.googlePlacesApiKey,
+    apiKey: "AIzaSyCEWYxzJ-T8xm5UPvLPSkdsKUeVxNQb72A",
     version: "weekly",
     libraries: ["places"],
   });
