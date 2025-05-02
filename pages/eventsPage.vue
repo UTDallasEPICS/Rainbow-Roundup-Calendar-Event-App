@@ -7,7 +7,7 @@
       >
         <!-- Back to Admin -->
         <NuxtLink
-          to="/calendar"
+          to="/"
           class="inline-flex items-center text-zinc-700 hover:text-zinc-900"
         >
           <svg

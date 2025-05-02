@@ -3,8 +3,8 @@
     <header
       class="bg-[#89BBEB] rounded-3xl shadow-lg text-center px-8 py-14 mb-12 text-black"
     >
-      <h1 class="text-5xl font-extrabold mb-6">Rainbow Roundup</h1>
-      <p class="max-w-4xl mx-auto text-2xl leading-relaxed font-medium">
+      <h1 class="text-3xl font-extrabold mb-6">Rainbow Roundup</h1>
+      <p class="max-w-md mx-auto text-md leading-relaxed font-medium">
         Rainbow Roundup is a non-profit organization that promotes acceptance in
         all aspects of lesbian, gay, bisexual and transgender families and
         allies, to serve and strengthen the community through social activities,

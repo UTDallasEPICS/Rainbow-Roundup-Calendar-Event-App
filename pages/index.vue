@@ -4,84 +4,26 @@
   >
     <div class="w-full max-w-6xl space-y-8 py-8">
       <!-- Greeting -->
-      <header class="text-center">
+      <header>
         <h1 class="text-xl md:text-2xl font-bold text-zinc-700 capitalize">
-          Helloiausdisagd {{ user?.firstname || "" }}!
+          Hello {{ user?.firstname || "" }}!
         </h1>
       </header>
 
       <!-- Calendar Section -->
-      <div class="text-center">
-        <div
-          class="text-xs md:text-sm font-extrabold uppercase text-zinc-700 mb-2"
-        >
-          Your Calendar
+      <div>
+        <div class="text-sm md:text-md font-extrabold uppercase text-zinc-700">
+          Your Event Calendar
         </div>
       </div>
-      <div
-        class="flex flex-col md:flex-row bg-white rounded-lg shadow-md p-6 max-w-6xl mx-auto space-y-6 md:space-y-0 md:space-x-6"
-      >
-        <!-- Calendar Grid -->
-        <div class="w-full md:w-2/3">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-2xl font-semibold">May 2025</h2>
-            <button
-              @click="showEvents = !showEvents"
-              class="text-sm text-blue-600 underline hover:text-blue-800 transition"
-            >
-              {{ showEvents ? "Hide" : "Show" }} Events
-            </button>
-          </div>
-
-          <div
-            class="grid grid-cols-7 gap-2 text-center text-sm text-gray-700 font-semibold mb-2"
-          >
-            <div>Sun</div>
-            <div>Mon</div>
-            <div>Tue</div>
-            <div>Wed</div>
-            <div>Thu</div>
-            <div>Fri</div>
-            <div>Sat</div>
-          </div>
-
-          <div class="grid grid-cols-7 gap-2 text-center">
-            <template v-for="day in 31" :key="day">
-              <div
-                class="h-20 border rounded-lg p-2 hover:bg-blue-100 cursor-pointer flex flex-col items-start"
-              >
-                <span class="text-sm font-bold text-gray-700">{{ day }}</span>
-                <div class="text-xs text-blue-500 truncate w-full">+ Event</div>
-              </div>
-            </template>
-          </div>
-        </div>
-
-        <!-- Events Panel -->
-        <div
-          v-show="showEvents"
-          class="w-full md:w-1/3 bg-gray-50 border border-gray-200 rounded-lg p-4 transition-all duration-300 ease-in-out"
-        >
-          <h3 class="text-lg font-semibold mb-3">Events for May 15</h3>
-          <ul class="space-y-2 text-sm">
-            <li class="p-2 rounded bg-white border border-gray-200">
-              <p class="font-medium">Team Meeting</p>
-              <p class="text-gray-600">10:00 AM - 11:00 AM</p>
-            </li>
-            <li class="p-2 rounded bg-white border border-gray-200">
-              <p class="font-medium">Lunch w/ Client</p>
-              <p class="text-gray-600">1:00 PM - 2:00 PM</p>
-            </li>
-          </ul>
-        </div>
-      </div>
+      <CalendarSection :events="events" />
 
       <!-- Admin Section -->
       <div
         v-if="user && (user.role === 'ADMIN' || user.role === 'SUPER')"
-        class="text-center space-y-2"
+        class="space-y-2"
       >
-        <div class="text-xs font-extrabold uppercase text-zinc-700">
+        <div class="text-sm md:text-md font-extrabold uppercase text-zinc-700">
           Manage Users
         </div>
         <NuxtLink
@@ -93,8 +35,8 @@
       </div>
 
       <!-- Events Controls -->
-      <div class="flex flex-wrap items-center justify-between gap-4">
-        <div class="text-md font-extrabold uppercase text-zinc-700">
+      <div class="flex flex-col flex-wrap gap-4">
+        <div class="text-sm md:text-md font-extrabold uppercase text-zinc-700">
           Upcoming Events
         </div>
         <div class="flex gap-2">
@@ -162,7 +104,7 @@
       </div>
 
       <!-- Support Cards Section -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 gap-6">
         <!-- Support Families -->
         <div class="relative h-28 rounded-[20px] shadow-md bg-lime-300 p-4">
           <div class="text-slate-900 text-lg font-medium">
