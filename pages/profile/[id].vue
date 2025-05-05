@@ -5,11 +5,6 @@
         <img class="w-40 h-40 rounded-full object-cover" src="../public/images/ProfileImage.png" alt="Profile Page">
     </div>
 
-    <button class = "mb-6 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition"
-        @click = "editMode =!editMode">
-        {{ editMode ? 'Save' : 'Edit' }}
-    </button>
-
     <div>   
         <label class = "block text-sm font-medium text-gray-700">First Name</label>
         <div class = "flex space-x-6 mt-1 border-solid border-gray-700">
@@ -17,7 +12,7 @@
                 type = "text"
                 id = "first-name"
                 v-model = "firstName"
-                :readonly = "!editMode"
+                readonly
                 :class = "inputClass"
             />
         </div>
@@ -30,7 +25,7 @@
                 type = "text"
                 id = "last-name"
                 v-model = "lastName"
-                :readonly = "!editMode"
+                readonly
                 :class = "inputClass"
             />
         </div>
@@ -43,7 +38,7 @@
                 type = "tel"
                 id = "phone-number"
                 v-model = "phoneNumber"
-                :readonly = "!editMode"
+                readonly
                 :class = "inputClass"
             />
         </div>
@@ -56,13 +51,13 @@
                 type = "email"
                 id = "email"
                 v-model = "email"
-                :readonly = "!editMode"
+                readonly
                 :class = "inputClass"
             />
         </div>
     </div>
 
-<div v-if = "editMode" class = "mt-10 max-w-xl">
+<div v-if = "isAdmin" class = "mt-10 max-w-xl">
     <div class = "bg-red-50 p-4 rounded-xl mb-4 border border-red-200">
         <div>
             <p class="text-md font-bold text-red-700">Delete this account?</p>
@@ -77,23 +72,41 @@
     </div>
 </div>
 
-<div class="flex flex-col items-center">
-<br>
-<button class="w-[264px] border-none text-white text-lg text-center cursor-pointer mt-3 py-4 rounded-xl bg-red-500 hover:bg-red-600"><a href="./login">Log Out</a></button>
-</div>
-
 </div>
     
 </template>
 
 <script setup>
+
 import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
 
-const editMode = ref(false)
+const { status, data: session } = useAuth()
 
-const inputClass = computed(() =>
-  editMode.value
-    ? 'px-3 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 border border-gray-400'
-    : 'px-3 py-2 rounded-xl focus:outline-none bg-gray-100 text-gray-600 cursor-not-allowed'
-)
+const isAdmin = computed(() => {
+    const role = session?.data?.user?.role
+    const target = userData.value.role
+
+    if (role === 'SUPER') return true
+    if (role === 'ADMIN' && target !== 'ADMIN') return true
+    return false
+})
+
+const inputClass = 'px-3 py-2 rounded-xl focus:outline-none bg-gray-100 text-gray-600 cursor-not-allowed'
+
+const route = useRoute();
+
+console.log(route.params.id);
+
+const id = route.params.id
+
+const {data, refresh} = await useFetch(`/api/user/${id}`)
+
+const userData = ref(data.value.User);
+
+const firstName = ref(userData.value.firstname)
+const lastName = ref(userData.value.lastname)
+const phoneNumber = ref(userData.value.phoneNum)
+const email = ref(userData.value.email)
+
 </script>
