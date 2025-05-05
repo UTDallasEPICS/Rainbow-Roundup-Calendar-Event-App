@@ -5,11 +5,11 @@
     <NuxtRouteAnnouncer />
 
     <div class="sticky top-0 z-50">
-    <div class="flex justify-end bg-gray-100 py-2 items-center space-x-4 px-2">
+    <div class="flex justify-end py-2 items-center space-x-4 px-2">
     <!-- Notification Button -->
     <button
       @click="requestNotificationPermission"
-      class="p-2 text-lg font-semibold text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 transition duration-300 ease-in-out"
+      class="p-2 text-lg font-semibold text-gray-500 rounded-lg"
     >
       <span v-if="isSubscribed">
         <!-- Normal Bell Icon when Subscribed -->
@@ -26,12 +26,18 @@
     </button>
 
     <!-- Menu Button -->
-    <button
-      @click="toggleDropdown"
-      class="px-4 py-2 text-md font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
-    >
-      Menu
-    </button>
+    <!-- Hamburger Menu Button -->
+      <button
+        @click="toggleDropdown"
+        class="p-3 rounded-lg"
+        aria-label="Toggle menu"
+      >
+        <!-- Hamburger icon -->
+        <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+
   </div>
 
 
