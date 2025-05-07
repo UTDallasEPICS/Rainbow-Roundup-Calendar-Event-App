@@ -68,8 +68,6 @@ export async function fetchCombinedEvents(): Promise<CombinedEvent[]> {
     fetchLocalDatabaseExtras(),
   ]);
 
-  console.log(localExtras);
-
   return googleEvents.map((event) => {
     const extra = localExtras.find((e) => e.id === event.id);
 
@@ -78,7 +76,7 @@ export async function fetchCombinedEvents(): Promise<CombinedEvent[]> {
       capacity: extra?.capacity,
       currentCapacity: extra?.currentCapacity,
       tags: extra?.tags,
-      signUps: [], // no SignUps available here during full list
+      signUps: extra?.SignUps?.slice(0, 3) ?? [], // return only first 3 signups
     };
   });
 }
@@ -92,8 +90,6 @@ export async function fetchCombinedEventById(
       $fetch<GoogleEvent>(`/api/google/calendar/${id}`),
       $fetch<LocalEventExtraById>(`/api/event/${id}`),
     ]);
-
-    console.log(localExtra);
 
     return {
       ...googleEvent,

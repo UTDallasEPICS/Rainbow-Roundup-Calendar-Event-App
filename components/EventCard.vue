@@ -111,10 +111,14 @@ const props = defineProps({
   dateMonth: { type: String, required: true },
   title: { type: String, required: true },
   currentCapacity: { type: Number, default: 0 },
-  avatars: { type: Array, default: () => [] },
+  signUps: { type: Array, default: () => [] },
   location: { type: String, default: "" },
   saved: { type: Boolean, default: false },
 });
+
+const avatars = computed(
+  () => props.signUps.map((s) => s.User?.profilePic).filter((url) => !!url) // filter out undefined/null
+);
 
 const emit = defineEmits(["update:saved", "expand"]);
 

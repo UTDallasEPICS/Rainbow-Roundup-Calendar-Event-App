@@ -96,13 +96,21 @@
               >Donate</a
             >
           </li>
-          <li>
+          <li v-if="status.value === 'authenticated'">
             <NuxtLink
               to="/signup"
               @click="navigate('Sign Up')"
               class="block px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md"
               >Sign Up</NuxtLink
             >
+          </li>
+          <li v-else>
+            <button
+              @click="() => signOut({ callbackUrl: '/login' })"
+              class="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md"
+            >
+              Logout
+            </button>
           </li>
           <li
             @click="promptInstall"
@@ -120,97 +128,80 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      dropdownOpen: false,
-      isSubscribed: false, // Track subscription status
-      deferredPrompt: null,
-    };
-  },
-  mounted() {
-    // Check if the user is already subscribed (i.e., notification permission granted)
-    this.updateSubscriptionStatus();
-    window.addEventListener("beforeinstallprompt", (e) => {
-      e.preventDefault();
-      this.deferredPrompt = e;
-    });
-  },
-  methods: {
-    // Toggle dropdown menu visibility
-    toggleDropdown() {
-      this.dropdownOpen = !this.dropdownOpen;
-    },
+<script setup>
+import { ref, onMounted } from "vue";
+const { status, signOut } = useAuth();
 
-    // Navigate to different pages (for now, just logs the page name)
-    navigate(page) {
-      console.log(`Navigating to ${page}`);
-      this.dropdownOpen = false; // Close the dropdown after selection
-    },
+const dropdownOpen = ref(false);
+const isSubscribed = ref(false);
+const deferredPrompt = ref(null);
 
-    promptInstall() {
-      if (this.deferredPrompt) {
-        this.deferredPrompt.prompt();
-        this.deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === "accepted") {
-            console.log("User accepted the install prompt");
-          } else {
-            console.log("User dismissed the install prompt");
-          }
-          this.deferredPrompt = null;
-        });
-      } else {
-        console.log("Install prompt not available");
-      }
-    },
+if (typeof window !== "undefined") {
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt.value = e;
+    console.log("Deferred prompt captured (composition API)");
+  });
+}
 
-    updateSubscriptionStatus() {
-      if (Notification.permission === "granted") {
-        this.isSubscribed = true;
-      } else {
-        this.isSubscribed = false;
-      }
-    },
-
-    requestNotificationPermission() {
-      if ("serviceWorker" in navigator && "Notification" in window) {
-        // Force the prompt if the permission is already granted
-        Notification.requestPermission()
-          .then((permission) => {
-            if (permission === "granted") {
-              console.log("Notification permission granted");
-              this.isSubscribed = true; // Set subscription status to true when permission is granted
-
-              // Send a message to the service worker after permission is granted
-              navigator.serviceWorker.ready
-                .then((registration) => {
-                  registration.active.postMessage({
-                    action: "showMessage", // Action to display a message
-                    message: "Notification permission granted!",
-                  });
-                })
-                .catch((error) => {
-                  console.error(
-                    "Error sending permission status to service worker:",
-                    error
-                  );
-                });
-            } else if (permission === "denied") {
-              console.log("Notification permission denied");
-              this.isSubscribed = false; // Set subscription status to false when permission is denied
-            }
-
-            // Update subscription status after each request
-            this.updateSubscriptionStatus();
-          })
-          .catch((error) => {
-            console.error("Error requesting notification permission:", error);
-          });
-      } else {
-        console.log("Notification API or Service Worker is not supported");
-      }
-    },
-  },
+const toggleDropdown = () => {
+  dropdownOpen.value = !dropdownOpen.value;
 };
+
+const navigate = (page) => {
+  console.log(`Navigating to ${page}`);
+  dropdownOpen.value = false;
+};
+
+const promptInstall = () => {
+  if (deferredPrompt.value) {
+    deferredPrompt.value.prompt();
+    deferredPrompt.value.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === "accepted") {
+        console.log("User accepted the install prompt");
+      } else {
+        console.log("User dismissed the install prompt");
+      }
+      deferredPrompt.value = null;
+    });
+  } else {
+    console.log("Install prompt not available");
+  }
+};
+
+const updateSubscriptionStatus = () => {
+  isSubscribed.value = Notification.permission === "granted";
+};
+
+const requestNotificationPermission = () => {
+  if ("serviceWorker" in navigator && "Notification" in window) {
+    Notification.requestPermission()
+      .then((permission) => {
+        console.log("Permission:", permission);
+        if (permission === "granted") {
+          isSubscribed.value = true;
+          navigator.serviceWorker.ready.then((registration) => {
+            if (registration.active) {
+              registration.active.postMessage({
+                action: "showMessage",
+                message: "Notifications enabled!",
+              });
+            }
+          });
+        } else {
+          isSubscribed.value = false;
+        }
+        updateSubscriptionStatus();
+      })
+      .catch((err) => {
+        console.error("Notification permission error:", err);
+      });
+  } else {
+    console.warn("Notification API or Service Worker not supported.");
+  }
+};
+
+onMounted(() => {
+  updateSubscriptionStatus();
+});
 </script>

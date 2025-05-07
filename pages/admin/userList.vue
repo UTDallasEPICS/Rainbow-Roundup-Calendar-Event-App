@@ -285,7 +285,6 @@
 import { ref, computed, onMounted } from "vue";
 import { useFetch } from "#app"; // Nuxt 3's fetch composable
 const { data } = useAuth();
-console.log(data.value.user);
 const users = ref([]); // empty initially
 
 const searchTerm = ref("");
@@ -299,7 +298,6 @@ onMounted(async () => {
     console.error("Error fetching users:", error.value);
   } else if (data.value?.success) {
     users.value = data.value.Users;
-    console.log(users.value);
   } else {
     console.error("Unexpected response:", data.value);
   }

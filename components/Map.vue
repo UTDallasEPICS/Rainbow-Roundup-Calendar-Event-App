@@ -77,8 +77,6 @@ function placeMarker(event) {
   };
   markerPosition.value = location;
   emit("update:location", location);
-  // console.log(location);
-  // console.log(markerPosition.value.lat, markerPosition.value.lng);
 }
 </script>
 

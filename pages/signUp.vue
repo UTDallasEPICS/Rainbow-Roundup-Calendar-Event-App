@@ -10,18 +10,25 @@
     </h2>
 
     <div class="space-y-6 w-full">
-      <!-- Profile Picture Upload -->
-      <!-- <div>
+      <!-- Profile Picture Upload with Preview -->
+      <div>
         <label class="block text-md font-semibold text-gray-800 mb-2">
           Profile Picture
         </label>
         <input
           type="file"
           accept="image/*"
-          @change="handleFileUpload"
+          @change="handleFileChange"
           class="w-full px-4 py-2 border border-gray-300 rounded-xl"
         />
-      </div> -->
+        <div v-if="imageUrl" class="mt-4 flex justify-center">
+          <img
+            :src="imageUrl"
+            alt="Profile Preview"
+            class="w-32 h-32 rounded-full object-cover"
+          />
+        </div>
+      </div>
 
       <!-- First Name -->
       <div>
@@ -30,7 +37,6 @@
         >
         <input
           type="text"
-          id="first-name"
           v-model="signupModel.firstname"
           class="w-full px-4 py-3 text-md rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#89BBEB] transition"
         />
@@ -43,7 +49,6 @@
         >
         <input
           type="text"
-          id="last-name"
           v-model="signupModel.lastname"
           class="w-full px-4 py-3 text-md rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#89BBEB] transition"
         />
@@ -56,7 +61,6 @@
         >
         <input
           type="email"
-          id="email"
           v-model="signupModel.email"
           class="w-full px-4 py-3 text-md rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#89BBEB] transition"
         />
@@ -92,23 +96,15 @@
     >
       Register
     </button>
-
-    <!-- Error Message -->
-    <div v-if="errors?.error" class="mt-4 text-red-600 text-md font-semibold">
-      {{ errors.error }}
-    </div>
   </form>
 </template>
 
-<script setup>
-import { useFetch } from "#app";
-
+<script setup lang="ts">
 const router = useRouter();
-const selectedFile = ref(null);
 
-const handleFileUpload = (e) => {
-  selectedFile.value = e.target.files[0];
-};
+const file = ref<File | null>(null);
+const imageUrl = ref<string | null>(null);
+const errors = ref({});
 
 const signupModel = ref({
   email: "",
@@ -120,24 +116,52 @@ const signupModel = ref({
   GlobalNotif: false,
 });
 
-const errors = ref({});
-const uploadToS3 = async (file) => {
-  const formData = new FormData();
-  formData.append("file", file);
+function handleFileChange(e: Event) {
+  const input = e.target as HTMLInputElement;
+  if (input.files?.[0]) {
+    file.value = input.files[0];
+    previewImage(file.value);
+  }
+}
 
-  const res = await fetch("/api/upload-profile-pic", {
+function previewImage(file: File) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    imageUrl.value = reader.result as string;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function uploadToS3(file: File) {
+  const { uploadUrl, fileUrl } = await $fetch("/api/user/profile_picture", {
     method: "POST",
-    body: formData,
+    body: {
+      fileName: `${Date.now()}-${file.name}`,
+      fileType: file.type,
+    },
   });
-  const { url } = await res.json();
-  return url;
-};
+
+  const res = await fetch(uploadUrl, {
+    method: "PUT",
+    headers: {
+      "Content-Type": file.type,
+    },
+    body: file,
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Upload failed: ${res.status} - ${errorText}`);
+  }
+
+  return fileUrl;
+}
 
 const submitSignupForm = async () => {
   errors.value = {};
   try {
-    if (selectedFile.value) {
-      const uploadedUrl = await uploadToS3(selectedFile.value);
+    if (file.value) {
+      const uploadedUrl = await uploadToS3(file.value);
       signupModel.value.profilePic = uploadedUrl;
     }
 
@@ -150,10 +174,11 @@ const submitSignupForm = async () => {
     if (data?.value?.success) {
       router.push("login");
     } else {
-      errors.value = { error: data?.value?.error };
+      errors.value = { error: "Signup failed." };
     }
   } catch (err) {
-    console.error("Error in submitting signup form", err);
+    console.error("Error submitting signup form", err);
+    errors.value = { error: "Something went wrong during signup." };
   }
 };
 </script>

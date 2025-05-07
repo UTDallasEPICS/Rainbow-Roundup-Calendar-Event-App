@@ -32,7 +32,7 @@
 
       <!-- Gradient header -->
       <div class="h-20 bg-[#FFE166] relative">
-        <div class="absolute inset-0 opacity-10 bg-[url('/pattern.svg')]" />
+        <div class="absolute inset-0 opacity-10" />
       </div>
 
       <div class="p-6 space-y-6">
@@ -113,7 +113,13 @@
               :key="signup.id"
               class="flex items-center space-x-3"
             >
-              <div class="w-6 h-6 bg-gray-200 rounded-full flex-shrink-0" />
+              <img
+                :src="
+                  userMap[signup.userId]?.profilePic || '/default-profile.png'
+                "
+                alt="Profile"
+                class="w-6 h-6 rounded-full object-cover flex-shrink-0"
+              />
               <div>
                 <p class="font-medium">
                   {{ userMap[signup.userId]?.firstname || "Unknown" }}
@@ -130,17 +136,28 @@
           </ul>
         </div>
 
-        <!-- RSVP buttons (read-only) -->
         <div class="mt-4 space-y-2">
           <p class="text-sm font-medium text-gray-800">Will you attend?</p>
           <div class="flex gap-3">
             <button
-              class="flex-1 py-2 text-sm font-semibold rounded-full shadow-sm bg-green-200 hover:bg-green-300 transition"
+              @click="respondToEvent('yes')"
+              :class="[
+                'flex-1 py-2 text-sm font-semibold rounded-full shadow-sm transition',
+                userRSVP === 'yes'
+                  ? 'bg-green-400 text-white'
+                  : 'bg-green-200 hover:bg-green-300',
+              ]"
             >
               Yes
             </button>
             <button
-              class="flex-1 py-2 text-sm font-semibold rounded-full shadow-sm bg-red-200 hover:bg-red-300 transition"
+              @click="respondToEvent('no')"
+              :class="[
+                'flex-1 py-2 text-sm font-semibold rounded-full shadow-sm transition',
+                userRSVP === 'no'
+                  ? 'bg-red-400 text-white'
+                  : 'bg-red-200 hover:bg-red-300',
+              ]"
             >
               No
             </button>
@@ -180,6 +197,8 @@ const editedEvent = reactive({
   location: "",
   capacity: null,
 });
+const isResponding = ref(false);
+const rsvpResponse = ref(null);
 
 // Auth & routing
 const { data: user } = useAuth();
@@ -230,7 +249,6 @@ async function loadEvent() {
 }
 
 onMounted(loadEvent);
-
 // Actions
 const toggleEdit = () => (isEditing.value = true);
 const saveChanges = () => {
@@ -260,4 +278,55 @@ function formatDateTime(iso) {
     minute: "2-digit",
   });
 }
+
+const respondToEvent = async (response) => {
+  if (isResponding.value) return; // Prevent spamming by blocking clicks
+  isResponding.value = true;
+
+  if (!user.value || !user.value.user?.id) {
+    router.push("/login"); // Or use router.push("/") if using Vue Router directly
+  }
+
+  rsvpResponse.value = response;
+  console.log(`User responded: ${response}`);
+
+  const userId = user.value?.user.id;
+  const eventId = event.value?.id;
+
+  if (!userId || !eventId) {
+    console.error("Missing userId or eventId.");
+    isResponding.value = false;
+    return;
+  }
+
+  try {
+    if (response === "yes") {
+      const result = await $fetch("/api/signup", {
+        method: "POST",
+        body: { userId, eventId },
+      });
+      console.log("RSVP success:", result);
+    } else if (response === "no") {
+      const signup = await $fetch("/api/signup", {
+        method: "GET",
+        query: { userId, eventId },
+      });
+      console.log(signup);
+      if (!signup || !signup.id) {
+        console.warn("No RSVP found to remove.");
+      } else {
+        const result = await $fetch(`/api/signup/${signup.id}`, {
+          method: "DELETE",
+        });
+        console.log("RSVP removed successfully:", result);
+      }
+    }
+  } catch (err) {
+    console.error("RSVP action failed:", err);
+  } finally {
+    setTimeout(() => {
+      isResponding.value = false;
+    }, 1500);
+  }
+};
 </script>

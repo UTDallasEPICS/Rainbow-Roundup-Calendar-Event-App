@@ -4,7 +4,13 @@
   >
     <div class="w-full max-w-6xl space-y-8 py-8">
       <!-- Greeting -->
-      <header>
+      <header class="flex items-center space-x-4">
+        <img
+          :src="user?.profilePic || '/default-profile.png'"
+          alt="Profile"
+          class="w-10 h-10 rounded-full object-cover"
+          v-if="user"
+        />
         <h1 class="text-xl md:text-2xl font-bold text-zinc-700 capitalize">
           Hello {{ user?.firstname || "" }}!
         </h1>
@@ -177,7 +183,6 @@ import { fetchCombinedEvents } from "../server/utils/fetchCombinedEvents";
 const { status, data, refresh } = useAuth();
 await refresh();
 const user = computed(() => data.value?.user);
-console.log(user);
 const showEvents = ref(false);
 interface EventItem {
   id: string;
@@ -207,7 +212,6 @@ const editingEvent = ref<any>(null);
 onMounted(async () => {
   try {
     const data = await fetchCombinedEvents();
-    console.log("Fetched data:", data);
 
     events.value = data.map((event) => {
       const date = new Date(event.start); // assuming event.start is ISO string
