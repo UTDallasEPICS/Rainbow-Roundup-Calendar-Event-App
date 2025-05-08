@@ -4,6 +4,9 @@
   >
     <!-- Main content -->
     <div class="max-w-4xl p-6 space-y-6">
+      <NuxtLink to="/profile">
+        <button> Profile Navigation Button </button> <!-- TODO: turn this button into a profile picture -->
+      </NuxtLink>
       <header class="mb-6">
         <h1
           class="w-36 h-6 justify-center text-zinc-700 text-xl font-bold capitalize"
