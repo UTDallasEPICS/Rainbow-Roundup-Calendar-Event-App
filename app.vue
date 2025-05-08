@@ -5,9 +5,7 @@
     <NuxtRouteAnnouncer />
 
     <div class="sticky top-0 z-50">
-      <div
-        class="flex justify-end bg-gray-100 py-2 items-center space-x-4 px-2"
-      >
+      <div class="flex justify-end py-2 items-center space-x-4 px-2">
         <!-- Notification Button -->
         <button
           @click="requestNotificationPermission"

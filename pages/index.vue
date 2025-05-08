@@ -1,6 +1,6 @@
 <template>
   <div
-    class="min-h-screen bg-gray-100 w-full flex flex-col items-center justify-center px-4 md:px-8"
+    class="min-h-screen w-full flex flex-col items-center justify-center px-4 md:px-8"
   >
     <div class="w-full max-w-6xl space-y-8 py-8">
       <!-- Greeting -->
