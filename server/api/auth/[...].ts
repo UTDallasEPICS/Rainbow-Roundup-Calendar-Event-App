@@ -107,10 +107,12 @@ export default NuxtAuthHandler({
         const additionalUserData = await prisma.user.findUnique({
           where: { email },
           select: {
+            id: true,
             firstname: true,
             lastname: true,
             phoneNum: true,
             role: true,
+            profilePic: true,
           }, // Retrieve only necessary fields
         });
 
@@ -120,10 +122,12 @@ export default NuxtAuthHandler({
             ...session,
             user: {
               ...session.user,
+              id: additionalUserData.id,
               firstname: additionalUserData.firstname,
               lastname: additionalUserData.lastname,
               phoneNum: additionalUserData.phoneNum,
               role: additionalUserData.role,
+              profilePic: additionalUserData.profilePic,
             },
           };
         }
