@@ -7,6 +7,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
+      NUXT_GOOGLE_PLACES: process.env.NUXT_GOOGLE_PLACES,
     },
     smtpHost: process.env.SMTP_HOST,
     smtpPort: process.env.SMTP_PORT,

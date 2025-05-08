@@ -45,7 +45,6 @@ export default defineEventHandler(async (event) => {
 
     // Parse and validate the request body
     const body = await readBody<CalendarEvent>(event);
-    console.log(body);
 
     // Insert the event into Google Calendar
     const response = await calendar.events.insert({
@@ -54,8 +53,10 @@ export default defineEventHandler(async (event) => {
       sendUpdates: "all",
     });
 
+    const temp = formatEventForResponse(response.data);
+
     // Format and return the created event
-    return formatEventForResponse(response.data);
+    return temp;
   } catch (error: any) {
     console.error("Failed to create event:", {
       message: error.message,
