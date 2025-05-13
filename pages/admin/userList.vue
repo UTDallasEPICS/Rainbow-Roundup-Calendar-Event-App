@@ -1,7 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-100 flex items-start justify-center p-6">
     <div class="w-full max-w-4xl space-y-4">
-      <!-- 1) Back link -->
       <NuxtLink
         to="/"
         class="inline-flex items-center text-zinc-700 hover:text-zinc-900"
@@ -27,7 +26,6 @@
       >
         <div class="p-6">
           <h1 class="text-2xl font-bold text-zinc-700 mb-4">User List</h1>
-          <!-- 2) Search box -->
           <input
             v-model="searchTerm"
             type="text"
@@ -38,7 +36,7 @@
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
                 <tr>
-                  <!-- existing sortable columns -->
+                  
                   <th
                     @click="sortBy('firstName')"
                     class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
@@ -84,7 +82,6 @@
                       sortAsc ? "▲" : "▼"
                     }}</span>
                   </th>
-                  <!-- new columns -->
                   <th
                     class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700"
                   >
@@ -121,8 +118,7 @@
                   >
                     {{ user.role }}
                   </td>
-                  <!-- Warning column -->
-                  <!-- Warning column -->
+                  
                   <td
                     class="px-4 py-3 text-sm"
                     :class="
@@ -133,8 +129,7 @@
                   >
                     {{ user.PotentialOffenses?.length > 0 ? "Yes" : "No" }}
                   </td>
-
-                  <!-- Reason column -->
+                  
                   <td class="px-4 py-3 text-sm text-gray-800">
                     {{
                       user.PotentialOffenses?.length > 0
