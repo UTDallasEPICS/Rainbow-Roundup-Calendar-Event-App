@@ -5,12 +5,14 @@
     <div class="w-full max-w-6xl space-y-8 py-8">
       <!-- Greeting -->
       <header class="flex items-center space-x-4">
-        <img
-          :src="user?.profilePic || '/default-profile.png'"
-          alt="Profile"
-          class="w-10 h-10 rounded-full object-cover"
-          v-if="user"
-        />
+        <NuxtLink to="/profile">
+          <img
+            :src="user?.profilePic || '/default-profile.png'"
+            alt="Profile"
+            class="w-10 h-10 rounded-full object-cover"
+            v-if="user"
+          />
+        </NuxtLink>
         <h1 class="text-xl md:text-2xl font-bold text-zinc-700 capitalize">
           Hello {{ user?.firstname || "" }}!
         </h1>

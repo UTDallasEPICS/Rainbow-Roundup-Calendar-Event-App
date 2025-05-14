@@ -86,14 +86,14 @@
               }}</span>
 
               <!-- Expand -->
-              <button
+              <!-- <button
                 @click.stop.prevent="$emit('expand')"
                 class="absolute right-2 w-6 h-6 flex justify-between items-center"
               >
                 <span class="block w-1 h-1 bg-zinc-600 rounded-full"></span>
                 <span class="block w-1 h-1 bg-zinc-600 rounded-full"></span>
                 <span class="block w-1 h-1 bg-zinc-600 rounded-full"></span>
-              </button>
+              </button> -->
             </div>
           </div>
         </div>
