@@ -5,6 +5,7 @@ import {
   formatEventForResponse,
 } from "~/server/utils/eventFormatter.ts";
 import { getServerSession } from "#auth";
+import type { User } from "../../../types/session";
 
 /**
  * Handles the creation of a new event in Google Calendar.
@@ -35,8 +36,14 @@ import { getServerSession } from "#auth";
  */
 export default defineEventHandler(async (event) => {
   const session = await getServerSession(event);
-  if (!session) {
-    return { status: "unauthenticated!" };
+
+  const user = session?.user as User | undefined;
+
+  if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
+    throw createError({
+      statusMessage: "Unauthenticated",
+      statusCode: 403,
+    });
   }
 
   try {

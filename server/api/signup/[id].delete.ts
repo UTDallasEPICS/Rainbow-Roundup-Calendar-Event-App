@@ -1,16 +1,28 @@
-import { PrismaClient } from '@prisma/client';
-import { defineEventHandler, getRouterParam, setResponseStatus } from 'h3';
+import { PrismaClient } from "@prisma/client";
+import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
+import { getServerSession } from "#auth";
+import type { User } from "../../../types/session";
 
 export default defineEventHandler(async (event) => {
   // Access the dynamic route parameters to get the signup ID
   const prisma = event.context.prisma;
-  const id = getRouterParam(event, 'id'); // Extract the ID from the dynamic route
+  const id = getRouterParam(event, "id"); // Extract the ID from the dynamic route
+  const session = await getServerSession(event);
+
+  const user = session?.user as User | undefined;
+
+  if (user) {
+    throw createError({
+      statusMessage: "Unauthenticated",
+      statusCode: 403,
+    });
+  }
 
   if (!id) {
     setResponseStatus(event, 400); //idk the proper hhtp response
     return {
       success: false,
-      error: 'Signup ID is required.',
+      error: "Signup ID is required.",
     };
   }
 
@@ -24,22 +36,26 @@ export default defineEventHandler(async (event) => {
       setResponseStatus(event, 404);
       return {
         success: false,
-        error: 'No signup with matching id'
+        error: "No signup with matching id",
       };
     }
 
     // Get the associated event
     const associatedEvent = await prisma.event.findUnique({
-      where: { id: existingSignUp.eventId }
+      where: { id: existingSignUp.eventId },
     });
 
     // Delete the signup
     await prisma.signUp.delete({
-      where: { id }
+      where: { id },
     });
 
     // Update event capacity if needed
-    if (associatedEvent && associatedEvent.capacity !== null && associatedEvent.currentCapacity !== null) {
+    if (
+      associatedEvent &&
+      associatedEvent.capacity !== null &&
+      associatedEvent.currentCapacity !== null
+    ) {
       await prisma.event.update({
         where: { id: existingSignUp.eventId },
         data: {
@@ -52,12 +68,12 @@ export default defineEventHandler(async (event) => {
 
     return {
       success: true,
-      signup: existingSignUp
+      signup: existingSignUp,
     };
-
   } catch (error) {
-    setResponseStatus(event, 500)
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    setResponseStatus(event, 500);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
     return {
       success: false,
       error: `Error deleting signup: ${errorMessage}`,
