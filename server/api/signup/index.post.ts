@@ -1,10 +1,21 @@
 import { PrismaClient, Event } from "@prisma/client";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
+import { getServerSession } from "#auth";
+import type { User } from "../../../types/session";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const prisma = event.context.prisma;
   //prevent duplicate signups
+  const session = await getServerSession(event);
+  const user = session?.user as User | undefined;
+  if (!user) {
+    throw createError({
+      statusMessage: "Unauthenticated",
+      statusCode: 403,
+    });
+  }
+
   const existingSignUp = await prisma.signUp.findUnique({
     where: {
       userId_eventId: {

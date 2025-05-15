@@ -1,16 +1,34 @@
-import { PrismaClient } from '@prisma/client';
-import { defineEventHandler, getRouterParam, readBody, setResponseStatus } from 'h3';
+import { PrismaClient } from "@prisma/client";
+import {
+  defineEventHandler,
+  getRouterParam,
+  readBody,
+  setResponseStatus,
+} from "h3";
+import { getServerSession } from "#auth";
+import type { User } from "../../../types/session";
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
+  const session = await getServerSession(event);
+
+  const user = session?.user as User | undefined;
+
+  if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
+    throw createError({
+      statusMessage: "Unauthenticated",
+      statusCode: 403,
+    });
+  }
+
   // Access the dynamic route parameters to get the event ID
-  const id = getRouterParam(event, 'id'); // Extract the ID from the dynamic route
-  
+  const id = getRouterParam(event, "id"); // Extract the ID from the dynamic route
+
   if (!id) {
     setResponseStatus(event, 400);
     return {
       success: false,
-      error: 'Event ID is required.',
+      error: "Event ID is required.",
     };
   }
 
@@ -23,7 +41,7 @@ export default defineEventHandler(async (event) => {
       setResponseStatus(event, 400);
       return {
         success: false,
-        error: 'EndTime must be after StartTime'
+        error: "EndTime must be after StartTime",
       };
     }
   }
@@ -57,14 +75,15 @@ export default defineEventHandler(async (event) => {
       },
       data: updateData,
     });
-    setResponseStatus(event, 200)
+    setResponseStatus(event, 200);
     return {
       success: true,
       event: updatedEvent,
     };
   } catch (error) {
     setResponseStatus(event, 500);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
     return {
       success: false,
       error: `Error updating event: ${errorMessage}`,

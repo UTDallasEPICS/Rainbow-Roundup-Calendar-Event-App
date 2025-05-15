@@ -5,95 +5,138 @@
     </ClientOnly>
 
     <Teleport to="body">
-      <div v-if="showModal" class="modal-backdrop">
-        <div class="modal horizontal-modal overflow-y-auto bg-red-500">
-          <h3>Add Event</h3>
-          <form @submit.prevent="submitEvent" class="form-horizontal">
-            <div class="form-content">
-              <div class="form-row">
-                <input v-model="eventForm.title" placeholder="Title" required />
+      <!-- Add Event Modal -->
+      <div
+        v-if="showModal"
+        class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center"
+      >
+        <div
+          class="bg-white rounded-2xl w-full max-w-2xl p-6 shadow-xl overflow-y-auto max-h-[90vh]"
+        >
+          <h3 class="text-xl font-bold mb-4 text-gray-800">Add Event</h3>
+          <form @submit.prevent="submitEvent" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input
+                v-model="eventForm.title"
+                placeholder="Title"
+                required
+                class="input"
+              />
+              <input
+                type="number"
+                min="1"
+                v-model="eventForm.capacity"
+                placeholder="Capacity"
+                required
+                class="input"
+              />
+            </div>
+
+            <textarea
+              v-model="eventForm.description"
+              placeholder="Description"
+              rows="3"
+              class="input w-full"
+            ></textarea>
+
+            <input
+              v-model="eventForm.location"
+              placeholder="Location"
+              class="input w-full"
+            />
+
+            <Map @update:location="updateLocation" />
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <label class="text-sm text-gray-600">
+                Start:
                 <input
-                  type="number"
-                  min="1"
-                  v-model="eventForm.capacity"
-                  placeholder="Capacity"
-                  required
+                  type="datetime-local"
+                  :value="eventForm.start?.slice(0, 16)"
+                  @input="eventForm.start = $event.target.value"
+                  class="input w-full"
                 />
-              </div>
+              </label>
+              <label class="text-sm text-gray-600">
+                End:
+                <input
+                  type="datetime-local"
+                  :value="eventForm.end?.slice(0, 16)"
+                  @input="eventForm.end = $event.target.value"
+                  class="input w-full"
+                />
+              </label>
+            </div>
 
-              <div class="form-row">
-                <textarea
-                  v-model="eventForm.description"
-                  placeholder="Description"
-                  rows="2"
-                ></textarea>
-              </div>
-
-              <div class="form-row">
-                <input v-model="eventForm.location" placeholder="Location" />
-              </div>
-
-              <Map @update:location="updateLocation" />
-
-              <div class="form-row">
-                <label>
-                  Start:
-                  <input
-                    type="datetime-local"
-                    :value="eventForm.start?.slice(0, 16)"
-                    @input="eventForm.start = $event.target.value"
-                  />
-                </label>
-                <label>
-                  End:
-                  <input
-                    type="datetime-local"
-                    :value="eventForm.end?.slice(0, 16)"
-                    @input="eventForm.end = $event.target.value"
-                  />
-                </label>
-              </div>
-
-              <div class="form-row modal-actions">
-                <button type="submit">Add</button>
-                <button @click="showModal = false" type="button">Cancel</button>
-              </div>
+            <div class="flex justify-end gap-3 mt-4">
+              <button
+                type="submit"
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+              >
+                Add
+              </button>
+              <button
+                @click="showModal = false"
+                type="button"
+                class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 transition"
+              >
+                Cancel
+              </button>
             </div>
           </form>
         </div>
       </div>
-      <div v-if="showEventModal" class="modal-backdrop">
-        <div class="modal">
-          <h3 class="modal-title">{{ selectedEvent?.title }}</h3>
-          <p>
-            <strong>Description:</strong>
-            {{ selectedEvent?.description || "N/A" }}
-          </p>
-          <p>
-            <strong>Location:</strong> {{ selectedEvent?.location || "N/A" }}
-          </p>
-          <p>
-            <strong>Start:</strong>
-            {{ new Date(selectedEvent?.start).toLocaleString() }}
-          </p>
-          <p>
-            <strong>End:</strong>
-            {{ new Date(selectedEvent?.end).toLocaleString() }}
-          </p>
 
-          <div class="rsvp-section">
-            <p class="rsvp-label">Are you going?</p>
-            <div class="rsvp-buttons">
+      <!-- View Event Modal -->
+      <div
+        v-if="showEventModal"
+        class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center"
+      >
+        <div class="bg-white rounded-2xl w-full max-w-lg p-6 shadow-xl">
+          <h3 class="text-xl font-bold text-gray-800 mb-2">
+            {{ selectedEvent?.title }}
+          </h3>
+
+          <div class="text-sm text-gray-700 space-y-2">
+            <p>
+              <strong>Description:</strong>
+              {{ selectedEvent?.description || "N/A" }}
+            </p>
+            <p>
+              <strong>Location:</strong> {{ selectedEvent?.location || "N/A" }}
+            </p>
+            <p>
+              <strong>Start:</strong>
+              {{ new Date(selectedEvent?.start).toLocaleString() }}
+            </p>
+            <p>
+              <strong>End:</strong>
+              {{ new Date(selectedEvent?.end).toLocaleString() }}
+            </p>
+          </div>
+
+          <div class="mt-4">
+            <p class="text-gray-600 text-sm font-medium mb-1">Are you going?</p>
+            <div class="flex gap-3">
               <button
-                class="event-btn"
-                :class="{ yes: true, selected: rsvpResponse === 'yes' }"
+                class="px-4 py-2 rounded-lg font-semibold border transition"
+                :class="{
+                  'bg-green-500 text-white border-green-600':
+                    rsvpResponse === 'yes',
+                  'bg-white text-green-600 border-green-600 hover:bg-green-100':
+                    rsvpResponse !== 'yes',
+                }"
                 @click="respondToEvent('yes')"
               >
                 Yes
               </button>
               <button
-                class="event-btn"
-                :class="{ no: true, selected: rsvpResponse === 'no' }"
+                class="px-4 py-2 rounded-lg font-semibold border transition"
+                :class="{
+                  'bg-red-500 text-white border-red-600': rsvpResponse === 'no',
+                  'bg-white text-red-600 border-red-600 hover:bg-red-100':
+                    rsvpResponse !== 'no',
+                }"
                 @click="respondToEvent('no')"
               >
                 No
@@ -101,9 +144,19 @@
             </div>
           </div>
 
-          <div class="modal-actions">
-            <button @click="editEvent" type="button">Edit</button>
-            <button @click="showEventModal = false" type="button">Close</button>
+          <div class="flex justify-end gap-3 mt-6">
+            <button
+              @click="editEvent"
+              class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition"
+            >
+              Edit
+            </button>
+            <button
+              @click="showEventModal = false"
+              class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 transition"
+            >
+              Close
+            </button>
           </div>
         </div>
       </div>

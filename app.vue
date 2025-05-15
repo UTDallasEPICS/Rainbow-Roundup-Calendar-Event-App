@@ -9,7 +9,7 @@
         <!-- Notification Button -->
         <button
           @click="requestNotificationPermission"
-          class="p-2 text-lg font-semibold text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 transition duration-300 ease-in-out"
+          class="p-2 text-lg font-semibold text-gray-500 rounded-lg"
         >
           <span v-if="isSubscribed">
             <!-- Normal Bell Icon when Subscribed -->
@@ -48,11 +48,26 @@
         </button>
 
         <!-- Menu Button -->
+        <!-- Hamburger Menu Button -->
         <button
           @click="toggleDropdown"
-          class="px-4 py-2 text-md font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
+          class="p-3 rounded-lg"
+          aria-label="Toggle menu"
         >
-          Menu
+          <!-- Hamburger icon -->
+          <svg
+            class="w-6 h-6 text-gray-500"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
         </button>
       </div>
 
@@ -94,7 +109,7 @@
               >Donate</a
             >
           </li>
-          <li v-if="status.value === 'authenticated'">
+          <li v-if="status === 'unauthenticated' || status === null">
             <NuxtLink
               to="/signup"
               @click="navigate('Sign Up')"
@@ -130,6 +145,7 @@
 import { ref, onMounted } from "vue";
 const { status, signOut } = useAuth();
 
+console.log(status.value);
 const dropdownOpen = ref(false);
 const isSubscribed = ref(false);
 const deferredPrompt = ref(null);

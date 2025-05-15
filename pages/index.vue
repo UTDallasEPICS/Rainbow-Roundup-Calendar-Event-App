@@ -5,12 +5,14 @@
     <div class="w-full max-w-6xl space-y-8 py-8">
       <!-- Greeting -->
       <header class="flex items-center space-x-4">
-        <img
-          :src="user?.profilePic || '/default-profile.png'"
-          alt="Profile"
-          class="w-10 h-10 rounded-full object-cover"
-          v-if="user"
-        />
+        <NuxtLink to="/profile">
+          <img
+            :src="user?.profilePic || '/default-profile.png'"
+            alt="Profile"
+            class="w-10 h-10 rounded-full object-cover"
+            v-if="user"
+          />
+        </NuxtLink>
         <h1 class="text-xl md:text-2xl font-bold text-zinc-700 capitalize">
           Hello {{ user?.firstname || "" }}!
         </h1>
@@ -101,11 +103,15 @@
         class="w-full overflow-x-auto flex space-x-4 snap-x snap-mandatory scrollbar-none"
       >
         <div
-          v-for="n in 3"
-          :key="n"
-          class="flex-shrink-0 w-64 sm:w-80 h-56 bg-amber-300 rounded-[20px] shadow-md snap-start flex items-center justify-center"
+          v-for="(img, index) in imageRefs"
+          :key="index"
+          class="flex-shrink-0 w-64 sm:w-80 h-56 bg-amber-300 rounded-[20px] shadow-md snap-start flex items-center justify-center overflow-hidden"
         >
-          Placeholder {{ n }}
+          <img
+            :src="img"
+            alt="Card image"
+            class="object-cover w-full h-full rounded-[20px]"
+          />
         </div>
       </div>
 
@@ -116,7 +122,9 @@
           <div class="text-slate-900 text-lg font-medium">
             Support our Families!
           </div>
-          <div class="text-slate-600 text-xs mt-2">somethingsomething</div>
+          <div class="text-slate-600 text-xs mt-2">
+            Your kindness makes a difference.
+          </div>
           <a
             href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
             target="_blank"
@@ -130,12 +138,16 @@
         <!-- Our Mission -->
         <div class="relative h-28 rounded-[20px] shadow-md bg-blue-300 p-4">
           <div class="text-slate-900 text-lg font-medium">Our Mission</div>
-          <div class="text-slate-600 text-xs mt-2">somethingsomething</div>
-          <button
-            class="absolute left-4 bottom-2 w-16 h-8 bg-slate-500 text-white text-xs font-medium uppercase rounded-[5px] flex items-center justify-center"
-          >
-            Read
-          </button>
+          <div class="text-slate-600 text-xs mt-2">
+            Learn how we're changing lives.
+          </div>
+          <NuxtLink to="/aboutUs">
+            <button
+              class="absolute left-4 bottom-2 w-16 h-8 bg-slate-500 text-white text-xs font-medium uppercase rounded-[5px] flex items-center justify-center"
+            >
+              Read
+            </button>
+          </NuxtLink>
         </div>
 
         <!-- Merchandise -->
@@ -143,7 +155,9 @@
           class="relative h-28 rounded-[20px] shadow-md bg-fuchsia-400 p-4 col-span-full sm:col-span-1"
         >
           <div class="text-white text-lg font-medium">Buy our Merchandise!</div>
-          <div class="text-white text-xs mt-2">somethingsomething</div>
+          <div class="text-white text-xs mt-2">
+            Wear your support with pride.
+          </div>
           <button
             class="absolute left-4 bottom-2 w-16 h-8 bg-fuchsia-800 text-white text-xs font-medium uppercase rounded-[5px] flex items-center justify-center"
           >
@@ -166,6 +180,100 @@
           Become a Sponsor
         </a>
       </div>
+      <section class="sponsors py-16 flex flex-col items-center text-center">
+        <h3 class="text-3xl font-bold text-gray-700 mb-10">Gold Sponsors</h3>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 px-6 max-w-screen-lg mx-auto"
+        >
+          <div
+            v-for="(sponsor, index) in goldSponsors"
+            :key="index"
+            class="sponsor"
+          >
+            <a :href="sponsor.link" target="_blank">
+              <img
+                :src="sponsor.image"
+                :alt="sponsor.name"
+                class="h-28 object-contain mx-auto"
+              />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Silver Sponsors Section -->
+      <section
+        class="silver-sponsors py-16 flex flex-col items-center text-center bg-gray-50"
+      >
+        <h3 class="text-3xl font-bold text-gray-700 mb-10">Silver Sponsors</h3>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 gap-8 px-6 max-w-screen-lg mx-auto"
+        >
+          <div
+            v-for="(sponsor, index) in silverSponsors"
+            :key="index"
+            class="sponsor"
+          >
+            <a :href="sponsor.link" target="_blank">
+              <img
+                :src="sponsor.image"
+                :alt="sponsor.name"
+                class="h-20 object-contain mx-auto"
+              />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bronze Sponsors Section -->
+      <section
+        class="bronze-sponsors py-16 flex flex-col items-center text-center"
+      >
+        <h3 class="text-3xl font-bold text-gray-700 mb-10">Bronze Sponsors</h3>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 px-6 max-w-screen-lg mx-auto"
+        >
+          <div
+            v-for="(sponsor, index) in bronzeSponsors"
+            :key="index"
+            class="sponsor"
+          >
+            <a :href="sponsor.link" target="_blank">
+              <img
+                :src="sponsor.image"
+                :alt="sponsor.name"
+                class="h-20 object-contain mx-auto"
+              />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Community Partners Section -->
+      <section
+        class="community-partners py-16 flex flex-col items-center text-center bg-gray-50"
+      >
+        <h3 class="text-3xl font-bold text-gray-700 mb-10">
+          Community Partners
+        </h3>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 gap-8 px-6 max-w-screen-lg mx-auto"
+        >
+          <div
+            v-for="(partner, index) in communityPartners"
+            :key="index"
+            class="partner"
+          >
+            <a :href="partner.link" target="_blank">
+              <img
+                :src="partner.image"
+                :alt="partner.name"
+                class="h-20 object-contain mx-auto"
+              />
+            </a>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 </template>
@@ -208,6 +316,88 @@ const events = ref<EventItem[]>([]);
 // Event form state
 const showForm = ref(false);
 const editingEvent = ref<any>(null);
+const imageRefs = [
+  "https://scontent-dfw5-2.xx.fbcdn.net/v/t1.6435-9/61943043_2067162563407064_4747728038081331200_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=127cfc&_nc_ohc=gUHsNDXZm_sQ7kNvwGGM6XY&_nc_oc=AdkjfpJ8yWGS4Gfyr9Z-P27RxUTyNhIyMfPtIrxbwvdPTS2za-eyK1gRNXt-moQTyLM&_nc_zt=23&_nc_ht=scontent-dfw5-2.xx&_nc_gid=WVUZKrhKWQ-qyMypuZ1qag&oh=00_AfKX3nZPdECjfwN3aibIjtIB3s4PfiC-plk_0F1K2eXU7Q&oe=68447766",
+  "https://scontent-dfw5-2.xx.fbcdn.net/v/t39.30808-6/464335962_8337242136399044_7762473312658236399_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=0b6b33&_nc_ohc=DuGFQdyj18cQ7kNvwEDHC8s&_nc_oc=AdkkffLm_olbOIY_9Q6VPZsDJjUoRHNYSnMMNmFhTCaF6tk-YiujsAXCPNKCFnjlTrY&_nc_zt=23&_nc_ht=scontent-dfw5-2.xx&_nc_gid=gkSyKd-XaupRryNm4co54A&oh=00_AfIp5lo9sT9IrfZ_QE0kcTc08US69zvrQeCZbVgN9bWOjA&oe=6822E2BB",
+  "https://scontent-dfw5-2.xx.fbcdn.net/v/t39.30808-6/464152053_8328599417263316_4529249896384968498_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=0b6b33&_nc_ohc=aKAHhU2EIkIQ7kNvwFb37Au&_nc_oc=AdnIicxKOqaxCUpQlg2OCsXg1TV2SBAotbkEdSeuVnEZ98L2URMthh32uavt9mYOGV8&_nc_zt=23&_nc_ht=scontent-dfw5-2.xx&_nc_gid=d4ZLmw9rI_dKx-ZbN0A7Zg&oh=00_AfKgE0Q2gm3n1wFEjwpbCLVs1DuFYnW56Yxl1qEC0Rmdmw&oe=6822E23F",
+];
+
+const goldSponsors = [
+  {
+    name: "Duggan Family Law",
+    image: "/images/sponsor1.png",
+    link: "https://www.dugganfamilylaw.com/",
+  },
+  {
+    name: "Burch Law",
+    image: "/images/sponsor2.png",
+    link: "https://burch-law.com/",
+  },
+  {
+    name: "Brooks Cannon",
+    image: "/images/sponsor3.jpg",
+    link: "https://brookscannon.com/",
+  },
+  {
+    name: "Teddy Bear Party",
+    image: "/images/sponsor4.png",
+    link: "https://teddybearparty.org/",
+  },
+];
+
+const silverSponsors = [
+  {
+    name: "The We Team",
+    image: "/images/sponsor5.png",
+    link: "https://theweteam.preproperties.com/",
+  },
+];
+
+const bronzeSponsors = [
+  {
+    name: "Bronze Sponsor 1",
+    image: "/images/bronze1.png",
+    link: "https://example.com",
+  },
+  {
+    name: "Bronze Sponsor 2",
+    image: "/images/bronze2.png",
+    link: "https://conceivefertilitycenter.com/",
+  },
+  {
+    name: "Bronze Sponsor 1",
+    image: "/images/bronze3.png",
+    link: "https://example.com",
+  },
+  {
+    name: "Bronze Sponsor 2",
+    image: "/images/bronze4.png",
+    link: "https://example.com",
+  },
+  {
+    name: "Bronze Sponsor 1",
+    image: "/images/bronze5.png",
+    link: "https://www.joinampmd.com/",
+  },
+  {
+    name: "Bronze Sponsor 2",
+    image: "/images/bronze6.png",
+    link: "https://www.fertilitytexas.com/",
+  },
+  {
+    name: "Bronze Sponsor 2",
+    image: "/images/bronze7.png",
+    link: "https://www.edwardjones.com/ashley-bloom",
+  },
+];
+
+const communityPartners = [
+  {
+    name: "Partner 1",
+    image: "/images/community1.png",
+    link: "https://example.com",
+  },
+];
 
 onMounted(async () => {
   try {

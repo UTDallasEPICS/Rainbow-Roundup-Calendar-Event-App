@@ -3,13 +3,13 @@ import { formatEventForResponse } from "~/server/utils/eventFormatter.ts";
 
 /**
  * Handles fetching a single event from Google Calendar by its event ID.
- * 
- * This endpoint integrates with the Google Calendar API to retrieve a specific event 
+ *
+ * This endpoint integrates with the Google Calendar API to retrieve a specific event
  * using its unique identifier.
- * 
+ *
  * Route Parameter:
  * - `id` (string): The unique identifier of the event in Google Calendar.
- * 
+ *
  * The response will return a single event object with the following structure:
  * - `id` (string): Unique identifier for the event.
  * - `title` (string): Title of the event (optional).
@@ -18,7 +18,7 @@ import { formatEventForResponse } from "~/server/utils/eventFormatter.ts";
  * - `end` (string): End date/time of the event in ISO 8601 format.
  * - `timeZone` (string): Time zone of the event (optional).
  * - `location` (string): Location of the event (optional).
- * 
+ *
  * @route GET /api/google/calendar/:id
  * @param event - The incoming HTTP request context in Nuxt.
  * @returns {Promise<object>} A formatted event object.
@@ -26,13 +26,14 @@ import { formatEventForResponse } from "~/server/utils/eventFormatter.ts";
 export default defineEventHandler(async (event) => {
   try {
     // Extract the event ID from the route parameters
-    const eventId = getRouterParam(event, 'id');
+
+    const eventId = getRouterParam(event, "id");
 
     // Validate that an event ID was provided
     if (!eventId) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Event ID is required'
+        statusMessage: "Event ID is required",
       });
     }
 
@@ -52,14 +53,14 @@ export default defineEventHandler(async (event) => {
     if (error.response?.status === 404) {
       throw createError({
         statusCode: 404,
-        statusMessage: 'Event not found'
+        statusMessage: "Event not found",
       });
     }
 
-    console.error('Failed to fetch event:', error);
+    console.error("Failed to fetch event:", error);
     throw createError({
       statusCode: 500,
-      statusMessage: 'Failed to fetch event details'
+      statusMessage: "Failed to fetch event details",
     });
   }
 });
