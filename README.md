@@ -39,7 +39,7 @@ Rainbow Roundup is a calendar event management platform built to unify and uplif
 
 - Create, edit, or delete events
 
-### `/admin/userLust`
+### `/admin/userList`
 
 - Promote or demote users (Super Admin only)
 
@@ -77,7 +77,7 @@ Rainbow Roundup is a calendar event management platform built to unify and uplif
 ## Tech Stack
 
 - **Meta Framework**: Nuxt.js (Vue-based, fullstack)
-- **Database**: MySQL
+- **Database**: SQLite3
 - **ORM**: Prisma
 - **Authentication**: Next-Auth (via Nuxt Auth module)
 - **Storage**: AWS S3 (for profile images)
@@ -127,6 +127,7 @@ There are currently **no legacy systems** or required data imports from a previo
 4. **Initialize the Database**
 
    ```bash
+   npx prisma generate
    npx prisma migrate dev --name init
    ```
 
@@ -144,6 +145,8 @@ There are currently **no legacy systems** or required data imports from a previo
 
 7. **Authentication Setup**
    - Configure email credentials in `.env`
+   -  Do ``` npx prisma studio ``` to see the DB
+   -  Change your user role to SUPER or ADMIN
 
 ---
 
