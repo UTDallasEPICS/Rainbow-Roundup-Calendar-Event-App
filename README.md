@@ -25,7 +25,7 @@ Rainbow Roundup is a calendar event management platform built to unify and uplif
 
 ### `/signup` and `/login`
 
-- Register and log in using secure authentication
+- Register and log in using secure magic link authentication
 
 ### `/profile`
 
