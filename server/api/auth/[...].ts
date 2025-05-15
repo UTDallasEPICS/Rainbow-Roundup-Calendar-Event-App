@@ -112,6 +112,7 @@ export default NuxtAuthHandler({
             lastname: true,
             phoneNum: true,
             role: true,
+            profilePic: true,
           }, // Retrieve only necessary fields
         });
 
@@ -126,6 +127,7 @@ export default NuxtAuthHandler({
               lastname: additionalUserData.lastname,
               phoneNum: additionalUserData.phoneNum,
               role: additionalUserData.role,
+              profilePic: additionalUserData.profilePic,
             },
           };
         }

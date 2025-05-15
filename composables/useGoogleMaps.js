@@ -5,7 +5,7 @@ export const useGoogleMaps = async () => {
   const config = useRuntimeConfig();
 
   const loader = new Loader({
-    apiKey: config.public.googlePlacesApiKey,
+    apiKey: config.public.NUXT_GOOGLE_PLACES,
     version: "weekly",
     libraries: ["places"],
   });

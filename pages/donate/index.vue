@@ -117,7 +117,6 @@ const fetchPaymentIntent = async (amount: number) => {
  * Displays a modal and logs success or error messages based on the result.
  */
 const handleSubmit = async () => {
-  console.log("clicked");
   showModal.value = true;
 
   const stripeInstance = elementsComponent.value?.instance;

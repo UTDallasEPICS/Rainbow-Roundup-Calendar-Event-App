@@ -1,17 +1,17 @@
-import { EventImpl } from "@fullcalendar/core/internal.js";
 import { PrismaClient } from "@prisma/client";
-import { defineEventHandler } from "h3";
+import { defineEventHandler, readBody } from "h3";
 import { getServerSession } from "#auth";
 import type { User } from "../../../types/session";
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
+  // Debugging: Log the params to verify the URL structure
   const id = getRouterParam(event, "id");
   const session = await getServerSession(event);
 
   const user = session?.user as User | undefined;
 
-  if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
+  if (!user?.role || user.role !== "SUPER") {
     throw createError({
       statusMessage: "Unauthenticated",
       statusCode: 403,
@@ -22,44 +22,51 @@ export default defineEventHandler(async (event) => {
     setResponseStatus(event, 400);
     return {
       success: false,
-      error: "User ID is required to delete the user.",
+      error: "User ID is required to update the user.",
     };
   }
 
+  const body = await readBody(event);
+
   try {
+    // Fetch the existing user before updating
     const existingUser = await prisma.user.findUnique({
       where: { id },
     });
+
     if (!existingUser) {
       setResponseStatus(event, 404);
       return {
         success: false,
-        error: "No user with matching id",
+        error: `User with ID ${id} not found.`,
       };
     }
-    //cascade deletes
-    await prisma.announcement.deleteMany({ where: { userId: id } });
-    await prisma.signUp.deleteMany({ where: { userId: id } });
-    await prisma.event.deleteMany({ where: { userId: id } });
-    await prisma.report.deleteMany({ where: { reporterUserId: id } });
-    await prisma.report.deleteMany({ where: { reportedUserId: id } });
-    // Attempt to delete the user from the database
-    await prisma.user.delete({
-      where: { id: String(id) },
+
+    const updateData: any = {};
+    if (body.email) updateData.email = body.email;
+    if (body.firstname) updateData.firstname = body.firstname;
+    if (body.lastname) updateData.lastname = body.lastname;
+    if (body.phoneNum) updateData.phoneNum = body.phoneNum;
+    if (body.profilePic) updateData.profilePic = body.profilePic;
+    if (body.GlobalNotif) updateData.GlobalNotif = body.GlobalNotif;
+    if (body.role) updateData.role = body.role;
+    // Perform the update
+    const updatedUser = await prisma.user.update({
+      where: { id },
+      data: updateData,
     });
     setResponseStatus(event, 200);
     return {
       success: true,
-      message: "User deleted successfully",
-      user: existingUser,
+      user: updatedUser,
     };
   } catch (error) {
+    setResponseStatus(event, 500);
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
-    setResponseStatus(event, 500);
     return {
       success: false,
-      error: `Error deleting user: ${errorMessage}`,
+      error: `Error updating user: ${errorMessage}`,
     };
   }
 });

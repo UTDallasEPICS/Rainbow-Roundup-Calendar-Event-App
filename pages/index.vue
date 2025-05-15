@@ -1,157 +1,73 @@
 <template>
   <div
-    class="min-h-screen bg-gray-100 w-full flex flex-col items-center justify-center"
+    class="min-h-screen w-full flex flex-col items-center justify-center px-4 md:px-8"
   >
-    <!-- Main content -->
-    <div class="max-w-4xl p-6 space-y-6">
-      <NuxtLink to="/profile">
-        <button> Profile Navigation Button </button> <!-- TODO: turn this button into a profile picture -->
-      </NuxtLink>
-      <header class="mb-6">
-        <h1
-          class="w-36 h-6 justify-center text-zinc-700 text-xl font-bold capitalize"
-          v-if="user"
-        >
-          Hello {{ user.firstname }}!
+    <div class="w-full max-w-6xl space-y-8 py-8">
+      <!-- Greeting -->
+      <header class="flex items-center space-x-4">
+        <NuxtLink to="/profile">
+          <img
+            :src="user?.profilePic || '/default-profile.png'"
+            alt="Profile"
+            class="w-10 h-10 rounded-full object-cover"
+            v-if="user"
+          />
+        </NuxtLink>
+        <h1 class="text-xl md:text-2xl font-bold text-zinc-700 capitalize">
+          Hello {{ user?.firstname || "" }}!
         </h1>
       </header>
 
+      <!-- Calendar Section -->
+      <div>
+        <div class="text-sm md:text-md font-extrabold uppercase text-zinc-700">
+          Your Event Calendar
+        </div>
+      </div>
+      <CalendarSection :events="events" />
+
+      <!-- Admin Section -->
       <div
-        class="w-36 h-6 justify-center text-zinc-700 text-xs font-extrabold uppercase"
+        v-if="user && (user.role === 'ADMIN' || user.role === 'SUPER')"
+        class="space-y-2"
       >
-        Your Calendar
-      </div>
-
-      <!-- Temporary card -->
-      <Calendar />
-      <!-- <div class="bg-white rounded-lg shadow-md p-6 max-w-md">
-        <h2 class="text-2xl font-semibold mb-2">Temporary Calendar Card</h2>
-        <p class="text-gray-600 mb-4">
-          This is a placeholder card for the calendar.
-        </p>
-        <button
-          class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Action
-        </button>
-      </div> -->
-
-      <!-- Image Carousel Section
-    <div class="flex flex-col items-center w-full">
-      <div class="w-4/5 relative">
-        <div class="overflow-hidden h-[20vh] md:h-[30vh]">
-          <div
-            class="flex transition-transform duration-300 h-full"
-            :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
-          >
-            <div
-              v-for="(image, index) in images"
-              :key="index"
-              class="min-w-full h-full flex-shrink-0"
-            >
-              <img
-                :src="image"
-                class="w-full h-full object-cover"
-                alt="carousel image"
-              />
-            </div>
-          </div>
-        </div>
-
-        Dots
-        <div class="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
-          <div
-            v-for="(_, index) in images"
-            :key="index"
-            class="w-2 h-2 rounded-full transition-colors duration-200"
-            :class="currentIndex === index ? 'bg-white' : 'bg-white/50'"
-          ></div>
-        </div>
-      </div>
-      <span class="text-sm md:text-base mt-2">Latest Event</span>
-    </div> -->
-
-      <!-- User Management -->
-      <div v-if="user && (user.role === 'ADMIN' || user.role === 'SUPER')">
-        <div
-          class="w-36 h-6 justify-center text-zinc-700 text-xs font-extrabold uppercase"
-        >
+        <div class="text-sm md:text-md font-extrabold uppercase text-zinc-700">
           Manage Users
         </div>
         <NuxtLink
           to="/admin/userList"
-          class="w-40 h-12 relative bg-lime-300 rounded-[20px] overflow-hidden flex items-center justify-center"
+          class="bg-lime-300 text-zinc-600 text-xs font-extrabold uppercase px-4 py-2 rounded-full inline-block"
         >
-          <span
-            class="absolute justify-center text-zinc-600 text-xs font-extrabold uppercase"
-            >All Users</span
-          >
+          All Users
         </NuxtLink>
       </div>
 
-      <!-- Events Cards -->
-      <div class="flex items-center mt-[33px] space-x-4">
-        <div
-          class="w-36 h-6 justify-center text-zinc-700 text-xs font-extrabold uppercase"
-        >
+      <!-- Events Controls -->
+      <div class="flex flex-col flex-wrap gap-4">
+        <div class="text-sm md:text-md font-extrabold uppercase text-zinc-700">
           Upcoming Events
         </div>
-        <!-- See All Events -->
-        <NuxtLink
-          to="/eventsPage"
-          class="w-20 h-6 relative bg-white rounded-[50px] outline outline-1 outline-offset-[-1px] outline-zinc-600 overflow-hidden flex items-center justify-center no-underline"
-        >
-          <span class="text-zinc-600 text-xs font-semibold capitalize"
-            >See All</span
+        <div class="flex gap-2">
+          <NuxtLink
+            to="/eventsPage"
+            class="bg-white text-zinc-600 text-xs font-semibold capitalize px-4 py-1 rounded-full border border-zinc-600"
           >
-        </NuxtLink>
-        <!-- Make New Events -->
-        <NuxtLink to="/calendar">
-          <button
-            class="px-3 py-1 bg-white/50 rounded-full outline outline-1 outline-green-600 text-xs"
+            See All
+          </NuxtLink>
+          <NuxtLink
+            to="/calendar"
             v-if="user && (user.role === 'ADMIN' || user.role === 'SUPER')"
           >
-            New
-          </button>
-        </NuxtLink>
+            <button
+              class="bg-white/50 text-green-600 text-xs px-4 py-1 rounded-full border border-green-600"
+            >
+              New
+            </button>
+          </NuxtLink>
+        </div>
       </div>
 
-      <!-- hard‑coded EventCard for visuals -->
-      <!-- <div class="flex space-x-4 overflow-x-auto">
-        <EventCard
-          date-day="10"
-          date-month="June"
-          title="Event No 1"
-          :going="20"
-          :avatars="[
-            'https://placehold.co/24x24',
-            'https://placehold.co/24x24',
-            'https://placehold.co/24x24',
-          ]"
-          location="Somewhere, Dallas"
-          :saved="false"
-          @update:saved="(val) => console.log('saved?', val)"
-          @expand="onExpand"
-        />
-
-        <EventCard
-          date-day="10"
-          date-month="June"
-          title="pryde"
-          :going="20"
-          :avatars="[
-            'https://placehold.co/24x24',
-            'https://placehold.co/24x24',
-            'https://placehold.co/24x24',
-          ]"
-          location="Somewhere, Dallas"
-          :saved="false"
-          @update:saved="(val) => console.log('saved?', val)"
-          @expand="onExpand"
-        />
-      </div> -->
-
-      <!-- 2) Horizontally scrollable event cards -->
+      <!-- Event Cards Scrollable -->
       <div class="overflow-x-auto flex space-x-4 py-4 snap-x snap-mandatory">
         <EventCard
           v-for="e in events"
@@ -163,11 +79,10 @@
         />
       </div>
 
-      <!-- Popup overlay for Make/Edit form -->
+      <!-- Event Form Modal -->
       <teleport to="body">
         <div
           v-if="showForm"
-          @scroll="onScroll"
           class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
         >
           <MakeEventCard
@@ -179,129 +94,186 @@
       </teleport>
 
       <!-- Image Gallery -->
-      <div
-        class="w-32 h-6 justify-center text-zinc-700 text-xs font-extrabold uppercase"
-      >
+      <div class="text-md font-extrabold uppercase text-zinc-700">
         Image Gallery
       </div>
-      <!-- Scrollable placards -->
       <div
         ref="gallery"
         @scroll="onScroll"
-        class="w-80 overflow-x-auto flex space-x-4 snap-x snap-mandatory scrollbar-none pb-"
+        class="w-full overflow-x-auto flex space-x-4 snap-x snap-mandatory scrollbar-none"
       >
         <div
-          v-for="n in 3"
-          :key="n"
-          class="flex-shrink-0 w-80 h-56 bg-amber-300 rounded-[20px] shadow-[0px_4px_0px_0px_rgba(80,85,136,0.25)] snap-start flex items-center justify-center"
+          v-for="(img, index) in imageRefs"
+          :key="index"
+          class="flex-shrink-0 w-64 sm:w-80 h-56 bg-amber-300 rounded-[20px] shadow-md snap-start flex items-center justify-center overflow-hidden"
         >
-          Placeholder {{ n }}
+          <img
+            :src="img"
+            alt="Card image"
+            class="object-cover w-full h-full rounded-[20px]"
+          />
         </div>
       </div>
 
-      <!-- Support our Families card -->
-      <div class="block mt-6">
-        <div
-          class="w-80 h-28 relative rounded-[20px] shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] bg-lime-300"
-        >
-          <!-- Title -->
-          <div
-            class="absolute left-[27px] top-[16px] text-slate-900 text-lg font-medium leading-loose"
-          >
+      <!-- Support Cards Section -->
+      <div class="grid grid-cols-1 gap-6">
+        <!-- Support Families -->
+        <div class="relative h-28 rounded-[20px] shadow-md bg-lime-300 p-4">
+          <div class="text-slate-900 text-lg font-medium">
             Support our Families!
           </div>
-          <!-- Description -->
-          <div
-            class="absolute left-[27px] top-[50px] text-slate-600 text-xs font-normal"
-          >
-            somethingsomething
+          <div class="text-slate-600 text-xs mt-2">
+            Your kindness makes a difference.
           </div>
-          <!-- Button -->
           <a
             href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
             target="_blank"
             rel="noopener noreferrer"
-            @click.stop
-            class="absolute left-[26px] bottom-2.5 w-16 h-8 bg-lime-600 rounded-[5px] flex items-center justify-center"
+            class="absolute left-4 bottom-2 w-16 h-8 bg-lime-600 text-white text-xs font-medium uppercase rounded-[5px] flex items-center justify-center"
           >
-            <span class="text-white text-xs font-medium uppercase leading-snug">
-              Donate
-            </span>
+            Donate
           </a>
         </div>
-      </div>
 
-      <!-- Our Mission card -->
-      <div class="block mt-6">
-        <div
-          class="w-80 h-28 relative rounded-[20px] shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] overflow-hidden bg-blue-300"
-        >
-          <div
-            class="absolute left-[27px] top-[16px] text-slate-900 text-lg font-medium leading-loose"
-          >
-            Our Mission
+        <!-- Our Mission -->
+        <div class="relative h-28 rounded-[20px] shadow-md bg-blue-300 p-4">
+          <div class="text-slate-900 text-lg font-medium">Our Mission</div>
+          <div class="text-slate-600 text-xs mt-2">
+            Learn how we're changing lives.
           </div>
-          <div
-            class="absolute left-[27px] top-[50px] text-slate-600 text-xs font-normal"
-          >
-            somethingsomething
+          <NuxtLink to="/aboutUs">
+            <button
+              class="absolute left-4 bottom-2 w-16 h-8 bg-slate-500 text-white text-xs font-medium uppercase rounded-[5px] flex items-center justify-center"
+            >
+              Read
+            </button>
+          </NuxtLink>
+        </div>
+
+        <!-- Merchandise -->
+        <div
+          class="relative h-28 rounded-[20px] shadow-md bg-fuchsia-400 p-4 col-span-full sm:col-span-1"
+        >
+          <div class="text-white text-lg font-medium">Buy our Merchandise!</div>
+          <div class="text-white text-xs mt-2">
+            Wear your support with pride.
           </div>
           <button
-            class="absolute left-[26px] bottom-2.5 w-16 h-8 bg-slate-500 rounded-[5px] flex items-center justify-center"
+            class="absolute left-4 bottom-2 w-16 h-8 bg-fuchsia-800 text-white text-xs font-medium uppercase rounded-[5px] flex items-center justify-center"
           >
-            <span class="text-white text-xs font-medium uppercase leading-snug"
-              >Read</span
-            >
+            Buy
           </button>
         </div>
       </div>
 
-      <!-- Buy our Merchandise card -->
-      <div class="block mt-6">
-        <div
-          class="w-80 h-28 relative rounded-[20px] shadow-[0px_4px_4px_0px_rgba(80,85,136,0.20)] overflow-hidden bg-fuchsia-400"
-        >
-          <div
-            class="absolute left-[27px] top-[16px] text-white text-lg font-medium leading-loose"
-          >
-            Buy our Merchandise!
-          </div>
-          <div
-            class="absolute left-[27px] top-[50px] text-white text-xs font-normal"
-          >
-            somethingsomething
-          </div>
-          <button
-            class="absolute left-[26px] bottom-2.5 w-16 h-8 bg-fuchsia-800 rounded-[5px] flex items-center justify-center"
-          >
-            <span class="text-white text-xs font-medium uppercase leading-snug"
-              >Buy</span
-            >
-          </button>
-        </div>
-      </div>
-
-      <!-- Sponsors Section-->
-      <div class="flex items-center mt-[33px] space-x-4">
-        <!-- Our Sponsors title https://rrup.org/contact-us/ -->
-        <div
-          class="w-36 h-6 flex items-center justify-center text-zinc-700 text-xl font-bold capitalize"
-        >
+      <!-- Sponsors -->
+      <div class="flex flex-wrap items-center justify-between gap-4 mt-8">
+        <div class="text-xl font-bold text-zinc-700 capitalize">
           Our Sponsors
         </div>
-        <!-- Become a Sponsor button -->
         <a
           href="https://rrup.org/contact-us/"
           target="_blank"
           rel="noopener noreferrer"
-          @click.stop
-          class="w-36 h-6 relative bg-white rounded-[50px] outline outline-1 outline-offset-[-1px] outline-zinc-600 overflow-hidden flex items-center justify-center no-underline"
+          class="bg-white text-zinc-600 text-xs font-semibold capitalize px-4 py-1 rounded-full border border-zinc-600"
         >
-          <span class="text-zinc-600 text-xs font-semibold capitalize">
-            Become a Sponsor</span
-          >
+          Become a Sponsor
         </a>
       </div>
+      <section class="sponsors py-16 flex flex-col items-center text-center">
+        <h3 class="text-3xl font-bold text-gray-700 mb-10">Gold Sponsors</h3>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 px-6 max-w-screen-lg mx-auto"
+        >
+          <div
+            v-for="(sponsor, index) in goldSponsors"
+            :key="index"
+            class="sponsor"
+          >
+            <a :href="sponsor.link" target="_blank">
+              <img
+                :src="sponsor.image"
+                :alt="sponsor.name"
+                class="h-28 object-contain mx-auto"
+              />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Silver Sponsors Section -->
+      <section
+        class="silver-sponsors py-16 flex flex-col items-center text-center bg-gray-50"
+      >
+        <h3 class="text-3xl font-bold text-gray-700 mb-10">Silver Sponsors</h3>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 gap-8 px-6 max-w-screen-lg mx-auto"
+        >
+          <div
+            v-for="(sponsor, index) in silverSponsors"
+            :key="index"
+            class="sponsor"
+          >
+            <a :href="sponsor.link" target="_blank">
+              <img
+                :src="sponsor.image"
+                :alt="sponsor.name"
+                class="h-20 object-contain mx-auto"
+              />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bronze Sponsors Section -->
+      <section
+        class="bronze-sponsors py-16 flex flex-col items-center text-center"
+      >
+        <h3 class="text-3xl font-bold text-gray-700 mb-10">Bronze Sponsors</h3>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 px-6 max-w-screen-lg mx-auto"
+        >
+          <div
+            v-for="(sponsor, index) in bronzeSponsors"
+            :key="index"
+            class="sponsor"
+          >
+            <a :href="sponsor.link" target="_blank">
+              <img
+                :src="sponsor.image"
+                :alt="sponsor.name"
+                class="h-20 object-contain mx-auto"
+              />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Community Partners Section -->
+      <section
+        class="community-partners py-16 flex flex-col items-center text-center bg-gray-50"
+      >
+        <h3 class="text-3xl font-bold text-gray-700 mb-10">
+          Community Partners
+        </h3>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 gap-8 px-6 max-w-screen-lg mx-auto"
+        >
+          <div
+            v-for="(partner, index) in communityPartners"
+            :key="index"
+            class="partner"
+          >
+            <a :href="partner.link" target="_blank">
+              <img
+                :src="partner.image"
+                :alt="partner.name"
+                class="h-20 object-contain mx-auto"
+              />
+            </a>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 </template>
@@ -318,8 +290,8 @@ import { fetchCombinedEvents } from "../server/utils/fetchCombinedEvents";
 // Auth (optional based on your code)
 const { status, data, refresh } = useAuth();
 await refresh();
-const user = computed(() => data?.user);
-
+const user = computed(() => data.value?.user);
+const showEvents = ref(false);
 interface EventItem {
   id: string;
   dateDay: string;
@@ -344,11 +316,92 @@ const events = ref<EventItem[]>([]);
 // Event form state
 const showForm = ref(false);
 const editingEvent = ref<any>(null);
+const imageRefs = [
+  "https://scontent-dfw5-2.xx.fbcdn.net/v/t1.6435-9/61943043_2067162563407064_4747728038081331200_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=127cfc&_nc_ohc=gUHsNDXZm_sQ7kNvwGGM6XY&_nc_oc=AdkjfpJ8yWGS4Gfyr9Z-P27RxUTyNhIyMfPtIrxbwvdPTS2za-eyK1gRNXt-moQTyLM&_nc_zt=23&_nc_ht=scontent-dfw5-2.xx&_nc_gid=WVUZKrhKWQ-qyMypuZ1qag&oh=00_AfKX3nZPdECjfwN3aibIjtIB3s4PfiC-plk_0F1K2eXU7Q&oe=68447766",
+  "https://scontent-dfw5-2.xx.fbcdn.net/v/t39.30808-6/464335962_8337242136399044_7762473312658236399_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=0b6b33&_nc_ohc=DuGFQdyj18cQ7kNvwEDHC8s&_nc_oc=AdkkffLm_olbOIY_9Q6VPZsDJjUoRHNYSnMMNmFhTCaF6tk-YiujsAXCPNKCFnjlTrY&_nc_zt=23&_nc_ht=scontent-dfw5-2.xx&_nc_gid=gkSyKd-XaupRryNm4co54A&oh=00_AfIp5lo9sT9IrfZ_QE0kcTc08US69zvrQeCZbVgN9bWOjA&oe=6822E2BB",
+  "https://scontent-dfw5-2.xx.fbcdn.net/v/t39.30808-6/464152053_8328599417263316_4529249896384968498_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=0b6b33&_nc_ohc=aKAHhU2EIkIQ7kNvwFb37Au&_nc_oc=AdnIicxKOqaxCUpQlg2OCsXg1TV2SBAotbkEdSeuVnEZ98L2URMthh32uavt9mYOGV8&_nc_zt=23&_nc_ht=scontent-dfw5-2.xx&_nc_gid=d4ZLmw9rI_dKx-ZbN0A7Zg&oh=00_AfKgE0Q2gm3n1wFEjwpbCLVs1DuFYnW56Yxl1qEC0Rmdmw&oe=6822E23F",
+];
+
+const goldSponsors = [
+  {
+    name: "Duggan Family Law",
+    image: "/images/sponsor1.png",
+    link: "https://www.dugganfamilylaw.com/",
+  },
+  {
+    name: "Burch Law",
+    image: "/images/sponsor2.png",
+    link: "https://burch-law.com/",
+  },
+  {
+    name: "Brooks Cannon",
+    image: "/images/sponsor3.jpg",
+    link: "https://brookscannon.com/",
+  },
+  {
+    name: "Teddy Bear Party",
+    image: "/images/sponsor4.png",
+    link: "https://teddybearparty.org/",
+  },
+];
+
+const silverSponsors = [
+  {
+    name: "The We Team",
+    image: "/images/sponsor5.png",
+    link: "https://theweteam.preproperties.com/",
+  },
+];
+
+const bronzeSponsors = [
+  {
+    name: "Bronze Sponsor 1",
+    image: "/images/bronze1.png",
+    link: "https://example.com",
+  },
+  {
+    name: "Bronze Sponsor 2",
+    image: "/images/bronze2.png",
+    link: "https://conceivefertilitycenter.com/",
+  },
+  {
+    name: "Bronze Sponsor 1",
+    image: "/images/bronze3.png",
+    link: "https://example.com",
+  },
+  {
+    name: "Bronze Sponsor 2",
+    image: "/images/bronze4.png",
+    link: "https://example.com",
+  },
+  {
+    name: "Bronze Sponsor 1",
+    image: "/images/bronze5.png",
+    link: "https://www.joinampmd.com/",
+  },
+  {
+    name: "Bronze Sponsor 2",
+    image: "/images/bronze6.png",
+    link: "https://www.fertilitytexas.com/",
+  },
+  {
+    name: "Bronze Sponsor 2",
+    image: "/images/bronze7.png",
+    link: "https://www.edwardjones.com/ashley-bloom",
+  },
+];
+
+const communityPartners = [
+  {
+    name: "Partner 1",
+    image: "/images/community1.png",
+    link: "https://example.com",
+  },
+];
 
 onMounted(async () => {
   try {
     const data = await fetchCombinedEvents();
-    console.log("Fetched data:", data);
 
     events.value = data.map((event) => {
       const date = new Date(event.start); // assuming event.start is ISO string
