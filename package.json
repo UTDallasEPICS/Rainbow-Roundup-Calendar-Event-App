@@ -43,6 +43,7 @@
     "nuxt": "^3.14.1592",
     "sass": "^1.81.0",
     "stripe": "^17.6.0",
+    "vite-plugin-vue-inspector": "^5.3.1",
     "uuid": "^11.1.0",
     "vue": "latest",
     "vue-stripe-js": "^2.0.2",
