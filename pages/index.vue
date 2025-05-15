@@ -324,30 +324,33 @@ const imageRefs = [
 
 const goldSponsors = [
   {
-    name: "Gold Sponsor 1",
-    image: "/images/gold1.png",
-    link: "https://example.com",
+    name: "Duggan Family Law",
+    image: "/images/sponsor1.png",
+    link: "https://www.dugganfamilylaw.com/",
   },
   {
-    name: "Gold Sponsor 2",
-    image: "/images/gold2.png",
-    link: "https://example.com",
+    name: "Burch Law",
+    image: "/images/sponsor2.png",
+    link: "https://burch-law.com/",
   },
-  // ...
+  {
+    name: "Brooks Cannon",
+    image: "/images/sponsor3.jpg",
+    link: "https://brookscannon.com/",
+  },
+  {
+    name: "Teddy Bear Party",
+    image: "/images/sponsor4.png",
+    link: "https://teddybearparty.org/",
+  },
 ];
 
 const silverSponsors = [
   {
-    name: "Silver Sponsor 1",
-    image: "/images/silver1.png",
-    link: "https://example.com",
+    name: "The We Team",
+    image: "/images/sponsor5.png",
+    link: "https://theweteam.preproperties.com/",
   },
-  {
-    name: "Silver Sponsor 2",
-    image: "/images/silver2.png",
-    link: "https://example.com",
-  },
-  // ...
 ];
 
 const bronzeSponsors = [
@@ -359,23 +362,41 @@ const bronzeSponsors = [
   {
     name: "Bronze Sponsor 2",
     image: "/images/bronze2.png",
+    link: "https://conceivefertilitycenter.com/",
+  },
+  {
+    name: "Bronze Sponsor 1",
+    image: "/images/bronze3.png",
     link: "https://example.com",
   },
-  // ...
+  {
+    name: "Bronze Sponsor 2",
+    image: "/images/bronze4.png",
+    link: "https://example.com",
+  },
+  {
+    name: "Bronze Sponsor 1",
+    image: "/images/bronze5.png",
+    link: "https://www.joinampmd.com/",
+  },
+  {
+    name: "Bronze Sponsor 2",
+    image: "/images/bronze6.png",
+    link: "https://www.fertilitytexas.com/",
+  },
+  {
+    name: "Bronze Sponsor 2",
+    image: "/images/bronze7.png",
+    link: "https://www.edwardjones.com/ashley-bloom",
+  },
 ];
 
 const communityPartners = [
   {
     name: "Partner 1",
-    image: "/images/partner1.png",
+    image: "/images/community1.png",
     link: "https://example.com",
   },
-  {
-    name: "Partner 2",
-    image: "/images/partner2.png",
-    link: "https://example.com",
-  },
-  // ...
 ];
 
 onMounted(async () => {

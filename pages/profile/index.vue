@@ -6,8 +6,15 @@
     <div class="flex flex-col items-center mt-4 mb-6">
       <img
         class="w-40 h-40 rounded-full object-cover"
-        :src="profilePic || '../public/images/ProfileImage.png'"
+        :src="imageUrl || profilePic || '../public/images/ProfileImage.png'"
         alt="Profile Page"
+      />
+      <input
+        v-if="editMode"
+        type="file"
+        accept="image/*"
+        @change="handleFileChange"
+        class="mt-2"
       />
     </div>
 
@@ -118,28 +125,64 @@ const inputClass = computed(() =>
 );
 
 const route = useRoute();
-
 const id = route.params.id;
 
 const { status, data: session, signOut } = useAuth();
-
 const userID = session.value.user.id;
 
 const { data, refresh } = await useFetch(`/api/user/${userID}`);
-
 const userData = ref(data.value.User);
-console.log(userData.value);
+
 const firstName = ref(userData.value.firstname);
 const lastName = ref(userData.value.lastname);
 const phoneNum = ref(userData.value.phoneNum);
 const email = ref(userData.value.email);
 const profilePic = ref(userData.value.profilePic);
 
+const file = ref(null);
+const imageUrl = ref(null);
+
+function handleFileChange(e) {
+  const input = e.target;
+  if (input.files?.[0]) {
+    file.value = input.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      imageUrl.value = reader.result;
+    };
+    reader.readAsDataURL(file.value);
+  }
+}
+
+async function uploadToS3(file) {
+  const { uploadUrl, fileUrl } = await $fetch("/api/user/profile_picture", {
+    method: "POST",
+    body: {
+      fileName: `${Date.now()}-${file.name}`,
+      fileType: file.type,
+    },
+  });
+
+  const res = await fetch(uploadUrl, {
+    method: "PUT",
+    headers: {
+      "Content-Type": file.type,
+    },
+    body: file,
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Upload failed: ${res.status} - ${errorText}`);
+  }
+
+  return fileUrl;
+}
+
 const toggleEditMode = async () => {
   if (editMode.value) {
     await saveAccount();
   }
-
   editMode.value = !editMode.value;
 };
 
@@ -156,6 +199,13 @@ const deleteAccount = async () => {
 
 const saveAccount = async () => {
   try {
+    let newProfilePic = profilePic.value;
+
+    if (file.value) {
+      newProfilePic = await uploadToS3(file.value);
+      profilePic.value = newProfilePic;
+    }
+
     await $fetch(`/api/user/${userID}`, {
       method: "PUT",
       body: {
@@ -163,9 +213,11 @@ const saveAccount = async () => {
         lastname: lastName.value,
         phoneNum: phoneNum.value,
         email: email.value,
+        profilePic: newProfilePic,
       },
     });
   } catch (e) {
+    console.error("Save failed", e);
     return e;
   }
 };

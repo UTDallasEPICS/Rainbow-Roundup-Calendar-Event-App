@@ -8,10 +8,8 @@ export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
   //prevent duplicate signups
   const session = await getServerSession(event);
-
   const user = session?.user as User | undefined;
-
-  if (user) {
+  if (!user) {
     throw createError({
       statusMessage: "Unauthenticated",
       statusCode: 403,

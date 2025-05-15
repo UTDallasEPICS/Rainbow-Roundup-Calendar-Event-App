@@ -6,7 +6,10 @@
       class="w-full max-w-lg bg-white rounded-2xl shadow-md overflow-hidden relative"
     >
       <!-- Edit/Save/Cancel Controls -->
-      <div class="absolute top-4 right-4 flex space-x-2 z-10">
+      <div
+        class="absolute top-4 right-4 flex space-x-2 z-10"
+        v-if="['ADMIN', 'SUPER'].includes(user?.user?.role)"
+      >
         <button
           v-if="!isEditing"
           @click="toggleEdit"
@@ -202,6 +205,7 @@ const rsvpResponse = ref(null);
 
 // Auth & routing
 const { data: user } = useAuth();
+
 const route = useRoute();
 const router = useRouter();
 const eventId = route.params.id;
@@ -279,6 +283,13 @@ function formatDateTime(iso) {
   });
 }
 
+const userRSVP = computed(() => {
+  const userId = user.value?.user?.id;
+  if (!userId || !event.value?.signUps) return null;
+
+  return event.value.signUps.some((s) => s.userId === userId) ? "yes" : "no";
+});
+
 const respondToEvent = async (response) => {
   if (isResponding.value) return; // Prevent spamming by blocking clicks
   isResponding.value = true;
@@ -307,20 +318,22 @@ const respondToEvent = async (response) => {
       });
       console.log("RSVP success:", result);
     } else if (response === "no") {
-      const signup = await $fetch("/api/signup", {
+      console.log(userId);
+      console.log(eventId);
+      const signup = await $fetch("/api/signup/lookup", {
         method: "GET",
         query: { userId, eventId },
       });
-      console.log(signup);
-      if (!signup || !signup.id) {
+      if (!signup || !signup.signUp.id) {
         console.warn("No RSVP found to remove.");
       } else {
-        const result = await $fetch(`/api/signup/${signup.id}`, {
+        const result = await $fetch(`/api/signup/${signup.signUp.id}`, {
           method: "DELETE",
         });
         console.log("RSVP removed successfully:", result);
       }
     }
+    await loadEvent();
   } catch (err) {
     console.error("RSVP action failed:", err);
   } finally {

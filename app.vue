@@ -109,7 +109,7 @@
               >Donate</a
             >
           </li>
-          <li v-if="status.value === 'authenticated'">
+          <li v-if="status === 'unauthenticated' || status === null">
             <NuxtLink
               to="/signup"
               @click="navigate('Sign Up')"
@@ -145,6 +145,7 @@
 import { ref, onMounted } from "vue";
 const { status, signOut } = useAuth();
 
+console.log(status.value);
 const dropdownOpen = ref(false);
 const isSubscribed = ref(false);
 const deferredPrompt = ref(null);

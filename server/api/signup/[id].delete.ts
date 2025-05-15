@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
 
   const user = session?.user as User | undefined;
 
-  if (user) {
+  if (!user) {
     throw createError({
       statusMessage: "Unauthenticated",
       statusCode: 403,

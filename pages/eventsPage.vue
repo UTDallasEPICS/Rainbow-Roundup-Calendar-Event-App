@@ -32,22 +32,14 @@
         <!-- Search & Filter -->
         <div class="flex space-x-4">
           <!-- Search Icon -->
-          <button aria-label="Search">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="size-6"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-              />
-            </svg>
-          </button>
+          <!-- Search Input -->
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search events..."
+            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+          />
+
           <!-- Filter Icon -->
           <button aria-label="Filter">
             <svg
@@ -69,9 +61,14 @@
       </div>
     </div>
 
+    <!-- Loading State -->
+    <div v-if="loading" class="w-full max-w-4xl flex justify-center py-10">
+      <div class="text-gray-600 text-lg animate-pulse">Loading events...</div>
+    </div>
+
     <!-- Scrollable events list -->
     <div class="w-full max-w-4xl flex-1 overflow-y-auto px-6 pb-6">
-      <EventList :events="events" />
+      <EventList :events="filteredEvents" />
     </div>
   </div>
 </template>
@@ -79,52 +76,21 @@
 <script>
 import EventList from "~/components/EventList.vue";
 import { fetchCombinedEvents } from "../server/utils/fetchCombinedEvents";
+
 export default {
   name: "EventsPage",
   components: { EventList },
-
   data() {
     return {
-      events: [
-        {
-          id: 1,
-          title: "April Social Hangout",
-          date: "2025-04-28",
-          time: "5:30 PM",
-          location: "Location Space, City",
-          isActive: true,
-        },
-        {
-          id: 2,
-          title: "Musical Event at the Museum",
-          date: "2025-05-01",
-          time: "2:00 PM",
-          location: "Another Location, Dallas",
-          isActive: false,
-        },
-        {
-          id: 3,
-          title: "Parents Night Out",
-          date: "2025-04-23",
-          time: "6:00 PM",
-          location: "Place 3, Richardson",
-          isActive: true,
-        },
-        {
-          id: 4,
-          title: "Mother’s Day Brunch",
-          date: "2025-04-28",
-          time: "5:30 PM",
-          location: "Yeehaw, Plano",
-          isActive: true,
-        },
-      ],
+      events: [],
+      loading: true,
+      error: null,
+      searchQuery: "",
     };
   },
   async mounted() {
     try {
-      const data = await fetchCombinedEvents(); // your backend route
-      console.log(data);
+      const data = await fetchCombinedEvents();
       this.events = data;
     } catch (err) {
       console.error("Error fetching events:", err);
@@ -132,6 +98,14 @@ export default {
     } finally {
       this.loading = false;
     }
+  },
+  computed: {
+    filteredEvents() {
+      if (!this.searchQuery.trim()) return this.events;
+      return this.events.filter((event) =>
+        event.title?.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    },
   },
 };
 </script>
