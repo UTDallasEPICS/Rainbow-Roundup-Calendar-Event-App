@@ -1,6 +1,6 @@
 ## Conceptual Overview
 
-Rainbow Roundup is a calendar event management platform designed to streamline student organization events at UT Dallas. It centralizes event discovery, RSVP management, and event moderation in one system. The platform supports different user roles to ensure efficient access control and functionality.
+Rainbow Roundup is a calendar event management platform built to unify and uplift the LGBTQ+ community in the Dallas–Fort Worth area. It centralizes event discovery, RSVP management, and event moderation, making it easier for community members to find and engage with local happenings. The platform supports different user roles to ensure inclusive access control, secure moderation, and seamless event coordination across diverse organizations and interest groups.
 
 ### User Roles:
 
