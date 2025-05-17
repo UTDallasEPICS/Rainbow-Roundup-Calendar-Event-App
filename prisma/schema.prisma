@@ -25,6 +25,9 @@ model User {
   // Report relations
   Reports           Report[] @relation("ReporterUser")       // Reports this user has made
   PotentialOffenses Report[] @relation("ReportedUser")       // Reports this user has received
+  CartItems         CartItem[]
+  ShippingInfos     ShippingInfo[]
+  Orders            Order[]
 }
 
 model Event {
@@ -93,6 +96,85 @@ model Report {
   // A single report by a user on another user
   @@unique([reportedUserId, reporterUserId])
 }
+
+model Product {
+  id          String        @id @default(uuid())
+  name        String
+  description String
+  thumbnail   String
+  ItemConfigs ItemConfig[]
+}
+
+model ItemConfig {
+  id         String       @id @default(uuid())
+  productId  String
+  price      Float
+  stock      Int
+  fit        Fit
+  size       Size
+  product    Product      @relation(fields: [productId], references: [id])
+  ItemPhotos ItemPhoto[]
+  CartItems  CartItem[]
+  OrderItems OrderItem[]
+}
+
+model ItemPhoto {
+  id           String     @id @default(uuid())
+  itemConfigId String
+  photoUrl     String
+  itemConfig   ItemConfig @relation(fields: [itemConfigId], references: [id])
+}
+
+model CartItem {
+  id           String     @id @default(uuid())
+  userId       String
+  quantity     Int
+  itemConfigId String
+  itemConfig   ItemConfig @relation(fields: [itemConfigId], references: [id])
+  user         User       @relation(fields: [userId], references: [id])
+}
+
+model Order {
+  id              String        @id @default(uuid())
+  userId          String
+  shippingInfoId  String
+  status          OrderStatus   @default(PENDING)
+  paymentInfo     String?
+  placedAt        DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  user            User          @relation(fields: [userId], references: [id])
+  shippingInfo    ShippingInfo @relation(fields: [shippingInfoId], references: [id])
+  orderItems      OrderItem[]
+}
+
+model OrderItem {
+  id             String      @id @default(uuid())
+  orderId        String
+  itemConfigId   String
+  quantity       Int
+  priceAtOrder   Float
+  order          Order       @relation(fields: [orderId], references: [id])
+  itemConfig     ItemConfig  @relation(fields: [itemConfigId], references: [id])
+}
+
+model ShippingInfo {
+  id         String   @id @default(uuid())
+  userId     String
+  name       String
+  phone      String
+  address1   String
+  address2   String?
+  city       String
+  state      String
+  postalCode String
+  country    String
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  User       User     @relation(fields: [userId], references: [id])
+  Orders     Order[]
+}
+
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -105,4 +187,29 @@ enum Role {
   USER 
   ADMIN 
   SUPER
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum Fit{
+  M
+  F
+  U
+}
+
+enum Size{
+  XXS
+  XS
+  S
+  M
+  L
+  XL
+  XXL
+  XXXL
 }
