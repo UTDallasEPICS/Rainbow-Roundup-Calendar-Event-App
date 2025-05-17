@@ -177,7 +177,7 @@
           rel="noopener noreferrer"
           class="bg-white text-zinc-600 text-xs font-semibold capitalize px-4 py-1 rounded-full border border-zinc-600"
         >
-          Become a Sponsor
+          Contact Us
         </a>
       </div>
       <section class="sponsors py-16 flex flex-col items-center text-center">

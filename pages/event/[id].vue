@@ -94,7 +94,11 @@
           </div>
           <div>
             <span class="font-medium text-gray-800">Capacity:</span><br />
-            <span v-if="!isEditing">{{ event.capacity ?? "N/A" }}</span>
+            <span v-if="!isEditing"
+              >{{ event.currentCapacity ?? "N/A" }}/{{
+                event.capacity ?? "N/A"
+              }}</span
+            >
             <input
               v-else
               type="number"
