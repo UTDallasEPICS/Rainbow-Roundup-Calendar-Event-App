@@ -29,13 +29,13 @@ export default NuxtAuthHandler({
         identifier: email,
         url,
         provider,
-      }: {
+      }: { // type definition, ignore weird syntax
         identifier: string;
         url: string;
         provider: { server: string; from: string };
       }) {
         // Extract host from the URL to customize the email subject and content
-        const { host } = new URL(url);
+        const { host } = new URL(url); // host is localhost:3000 in development, but in production, this will be changed to some other domain.
 
         // Create the transport object for sending the email using Nodemailer
         const transport = createTransport(provider.server);
@@ -65,7 +65,7 @@ export default NuxtAuthHandler({
     newUser: "/signup", // Custom sign-up page URL
   },
   callbacks: {
-    async signIn({ user, account, email }) {
+    async signIn({ user, account, email }) { // todo: understand if account and email need ot be cut
       // If no email is provided, sign-in should fail
       if (!user?.email) {
         return false;

@@ -16,7 +16,7 @@ model User {
   phoneNum         String?
   profilePic       String?
   GlobalNotif      Boolean // Global notifications (annoncements)
-  emailVerified DateTime?
+  emailVerified    DateTime?
 
   SignUps           SignUp[]
   Announcements     Announcement[] // references announcements created by user

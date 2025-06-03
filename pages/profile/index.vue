@@ -127,7 +127,7 @@ const inputClass = computed(() =>
 const route = useRoute();
 const id = route.params.id;
 
-const { status, data: session, signOut } = useAuth();
+const { status, data: session, signOut } = useAuth(); // We are deconstructing data from useAuth and renaming it to session.
 const userID = session.value.user.id;
 
 const { data, refresh } = await useFetch(`/api/user/${userID}`);
