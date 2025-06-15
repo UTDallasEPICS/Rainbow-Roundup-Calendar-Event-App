@@ -14,8 +14,8 @@ const { status, data, signOut } = useAuth();
       <template v-if="data">
         <h1 class="text-2xl font-bold text-gray-800 mb-4">
           Welcome back,
-          <span class="text-blue-600">{{ data.user.firstname }}</span
-          >!
+          <span class="text-blue-600">{{ data?.user?.firstname }}</span>!
+          <!-- The Linter is mad at firstname, but it does work. -->
         </h1>
         <p class="text-sm text-gray-500 mb-6">We're glad to see you again.</p>
         <div class="border-t border-gray-200 pt-4">
