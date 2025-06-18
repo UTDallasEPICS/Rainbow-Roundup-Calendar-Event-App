@@ -170,9 +170,9 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 const router = useRouter();
-const { data, status } = useAuth();
+const { data: session, status } = useAuth(); // extract data from useAuth and rename to session
+const userData = session.value.user;
 const isAuthenticated = computed(() => status.value === "authenticated");
-const props = defineProps(["user"]);
 const showModal = ref(false);
 const eventForm = ref({
   title: "",
@@ -212,7 +212,7 @@ const calendarOptions = ref({
   },
   editable: true,
   selectable:
-    props.user?.role === "ADMIN" || props.user?.role === "SUPER" || false,
+    userData?.role === "ADMIN" || userData?.role === "SUPER" || false,
   select: (info) => {
     // Prefill form with selected time
     showModal.value = true;
@@ -261,6 +261,11 @@ onBeforeUnmount(() => {
 
 const submitEvent = async () => {
   try {
+      // Validation for location, todo: change to look like the rest of application, this is just a band-aid
+    if (!eventForm.value.location || eventForm.value.lat === null || eventForm.value.lng === null) {
+      alert("Please select a valid location on the map before submitting.");
+      return;
+    }
     // Format start and end time before sending the request
     const formattedStart = formatDateToISO(
       eventForm.value.start,
@@ -277,24 +282,32 @@ const submitEvent = async () => {
       end: formattedEnd,
     };
 
-    const googleEvent = await $fetch("/api/google/calendar", {
+
+    const googleEvent = await $fetch("/api/google/calendar", { // maybe need fetch raw for status code instead of manually including status
       method: "POST",
       body: newEvent,
     });
 
-    const result = await $fetch("/api/event", {
+    const { status } = await $fetch.raw("/api/event", { // need status code, so we are using $fetch.raw
       method: "POST",
       body: {
         id: googleEvent.id,
-        description: newEvent.description,
-        userId: props.user.id || "-1",
-        eventLat: newEvent.lat,
-        eventLong: newEvent.lng,
-        startTime: new Date(newEvent.start),
-        endTime: new Date(newEvent.end),
-        capacity: newEvent.capacity,
+        description: newEvent?.description,
+        userId: userData?.id || "-1",
+        eventLat: newEvent?.lat,
+        eventLong: newEvent?.lng,
+        startTime: new Date(newEvent?.start),
+        endTime: new Date(newEvent?.end),
+        capacity: newEvent?.capacity,
       },
     });
+
+    if (status != 200) {
+      const deleteGoogleEvent = await $fetch(`/api/google/calendar/${googleEvent.id}`, {
+        method: 'DELETE'
+      })
+      console.log(deleteGoogleEvent)
+    }
 
     // Add event to calendar view
     calendarOptions.value.events.push({
@@ -306,7 +319,7 @@ const submitEvent = async () => {
       location: newEvent.location,
       timeZone: newEvent.timeZone,
     });
-
+   
     showModal.value = false;
     // Reset form
     eventForm.value = {
@@ -327,7 +340,7 @@ const submitEvent = async () => {
 const respondToEvent = async (response) => {
   rsvpResponse.value = response;
 
-  const userId = props.user.id; // Replace with actual user ID from auth
+  const userId = userData.id; // Replace with actual user ID from auth
   const eventId = selectedEvent.value.id;
 
   if (response === "yes") {

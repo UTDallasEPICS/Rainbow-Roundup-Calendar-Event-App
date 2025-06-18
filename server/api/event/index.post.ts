@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
     const newEvent = await prisma.event.create({
       data: {
         id: body.id,
-        description: body.description,
+        description: body?.description,
         userId: body.userId,
         eventLat: body.eventLat,
         eventLong: body.eventLong,
@@ -42,7 +42,6 @@ export default defineEventHandler(async (event) => {
     });
     setResponseStatus(event, 200);
     return {
-      success: true,
       data: newEvent,
     };
   } catch (error) {

@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { defineEventHandler, readBody, createError } from 'h3';
+import { getServerSession } from '#auth';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
@@ -7,8 +8,8 @@ export default defineEventHandler(async (event) => {
   
   try {
 
-    const { auth } = useAuth();
-    if (!auth || !auth.userId) {
+    const session = await getServerSession(event);
+    if (!session || !session.user.id) {
       throw createError({
         statusCode: 401,
         statusMessage: 'Unauthorized',
@@ -18,7 +19,7 @@ export default defineEventHandler(async (event) => {
     const newReport = await prisma.report.create({
       data: {
         reportedUserId: body.reportedUserId,
-        reporterUserId: auth.userId,
+        reporterUserId: session.user.id,
         isUsername: body.isUsername || false,
         isProfilePic: body.isProfilePic || false,
         isOther: body.isOther || false,
