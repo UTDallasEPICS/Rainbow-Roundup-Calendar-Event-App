@@ -56,9 +56,10 @@
 
       <!-- Email -->
       <div>
-        <label class="block text-md font-semibold text-gray-800 mb-2"
-          >Email</label
-        >
+        <label class="block text-md font-semibold text-gray-800 mb-2">
+          Email <label class="inline text-md font-semibold text-gray-400 mb-2"> (private) </label> 
+        </label>
+
         <input
           type="email"
           v-model="signupModel.email"
@@ -69,8 +70,9 @@
       <!-- Phone Number -->
       <div>
         <label class="block text-md font-semibold text-gray-800 mb-2"
-          >Phone Number</label
-        >
+          >Phone Number <label class="inline text-md font-semibold text-gray-400 mb-2"> (private) </label> </label>
+
+        
         <input
           type="tel"
           v-model="signupModel.phoneNum"
