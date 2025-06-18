@@ -9,6 +9,7 @@
             <img class="w-40 h-40 rounded-full object-cover" src="../public/images/ProfileImage.png" alt="Profile Page">
         </div>
 
+         <!--First name-->
         <div>
             <label class="block text-sm font-medium text-gray-700">First Name</label>
             <div class="flex space-x-6 mt-1 border-solid border-gray-700">
@@ -16,6 +17,7 @@
             </div>
         </div>
 
+        <!--Last name-->
         <div>
             <label class="block mt-4 text-sm font-medium text-gray-700">Last Name</label>
             <div class="flex space-x-6 mt-1 border-solid border-gray-700">
@@ -39,6 +41,7 @@
             </div>
         </div>
 
+         <!--Delete-->
         <div v-if="isAdmin" class="mt-10 max-w-xl">
             <div class="bg-red-50 p-4 rounded-xl mb-4 border border-red-200">
                 <div>
@@ -57,54 +60,73 @@
 </template>
 
 <script setup>
-
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const { status, data: session } = useAuth()
+const route = useRoute()
 
+// Reactive fetch based on current route param
+const userData = ref(null)
 
-// checks what role user is
-const isSelf = computed(() => session?.value?.user?.id === userData.value.id)
+// Anytime route.params.id changes, userData will update and roles will compute agai  
+const fetchUser = async () => {
+  const { data } = await useFetch(() => `/api/user/${route.params.id}`)
+  userData.value = data.value?.User || null
+}
 
-// checks if user is an admin
-const isAdmin = computed(() => {
-    const role = session?.value?.user?.role
-    const targetRole = userData.value.role
-    if (role === 'SUPER') return true
-    if (role === 'ADMIN' && targetRole !== 'ADMIN') return true
-    return false
+await fetchUser()
+
+// This code would only run once when component first mounted, so every time
+// you redirect to another profile, component does not reload.
+// const id = route.params.id
+// const { data, refresh } = await useFetch(`/api/user/${id}`)
+
+// Refetch on route change (e.g., navigating to a new profile)
+watch(
+  () => route.params.id,
+  async () => {
+    await fetchUser()
+  }
+)
+
+// Role checks
+const isSelf = computed(() => {
+  return session?.value?.user?.id === userData.value?.id
 })
-// checks if user has permission to view other user's profile information
-const canViewPrivateFields = computed(() => isSelf.value || isAdmin.value)
+
+const isAdmin = computed(() => {
+  const role = session.value?.user?.role
+  const targetRole = userData.value?.role
+  if (!role || !targetRole) return false
+  if (role === 'SUPER') return true
+  if (role === 'ADMIN' && targetRole !== 'ADMIN') return true
+  return false
+})
+
+const canViewPrivateFields = computed(() => {
+  return isSelf.value || isAdmin.value
+})
+
+// Display fields as computed, to auto-update when userData changes
+// Original method only copied the value once, never updated again
+const firstName   = computed(() => userData.value?.firstname ?? '')
+const lastName    = computed(() => userData.value?.lastname  ?? '')
+const phoneNumber = computed(() => userData.value?.phoneNum  ?? '')
+const email       = computed(() => userData.value?.email     ?? '')
 
 const inputClass = 'px-3 py-2 rounded-xl focus:outline-none bg-gray-100 text-gray-600 cursor-not-allowed'
 
-const route = useRoute();
-
-const id = route.params.id
-
-const { data, refresh } = await useFetch(`/api/user/${id}`)
-
-const userData = ref(data.value.User);
-
-const firstName = ref(userData.value.firstname)
-const lastName = ref(userData.value.lastname)
-const phoneNumber = ref(userData.value.phoneNum)
-const email = ref(userData.value.email)
-
+// Account deletion handler
 const deleteAccount = async () => {
-    try {
-        await $fetch(`/api/user/${id}`,
-            {
-                method: 'DELETE'
-            });
-
-        return navigateTo('/', { redirectCode: 301 })
-    } catch (e) {
-        return e
-    }
-
+  try {
+    await $fetch(`/api/user/${route.params.id}`, {
+      method: 'DELETE'
+    })
+    return navigateTo('/', { redirectCode: 301 })
+  } catch (e) {
+    return e
+  }
 }
-
 </script>
+
