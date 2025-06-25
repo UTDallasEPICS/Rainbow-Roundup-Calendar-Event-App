@@ -8,7 +8,6 @@ export default defineEventHandler(async (event) => {
   // Debugging: Log the params to verify the URL structure
   const id = getRouterParam(event, "id");
   const session = await getServerSession(event);
-
   const user = session?.user as User | undefined;
 
   if (!user?.role || user.role !== "SUPER") {
