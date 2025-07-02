@@ -19,11 +19,9 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
   try {
-    //temp mohit code is done 
     const session = await getServerSession(event);
     const user = session?.user as User | undefined;
-    //only the access this code to put, owner of the acc
-    // admin
+
     if (!user || user.id !== id) {
       throw createError({
         statusCode: 403,

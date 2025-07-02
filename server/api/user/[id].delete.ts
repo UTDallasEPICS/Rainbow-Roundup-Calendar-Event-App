@@ -11,7 +11,6 @@ export default defineEventHandler(async (event) => {
 
   const user = session?.user as User | undefined;
   
-//temp mohit fixing needed 
   if (!id) {
     setResponseStatus(event, 400);
     return {
@@ -20,18 +19,10 @@ export default defineEventHandler(async (event) => {
     };
   }
 
-  //connect both the if shoud be combined 
-  if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
+  // Allow deletion if user is SUPER, ADMIN, or is deleting their own account
+  if (!user || (!["SUPER", "ADMIN"].includes(user.role) && user.id !== id)) {
     throw createError({
       statusMessage: "Unauthenticated",
-      statusCode: 403,
-    });
-  }
-
-  //add option to delte your own acc if the account belongs to the user
-  if (!user || user.id !== id) {
-    throw createError({
-      statusMessage: "Forbidden: You can only delete your own account.",
       statusCode: 403,
     });
   }

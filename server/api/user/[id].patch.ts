@@ -18,10 +18,7 @@ export default defineEventHandler(async (event) => {
       error: "User ID is required to update the user.",
     };
   }
-  //temp mohit
-  //good 
-  //ask if the placement logic makes sense
-  //also ask what the status message should say 
+  
   if (!user || user.id !== id) {
     throw createError({
       statusMessage: "Forbidden: Only account holder can access this file.",
