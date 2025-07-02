@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { defineEventHandler, readBody } from 'h3';
+import { getServerSession } from "#auth";
+import type { User } from "../../../types/session";
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
@@ -17,6 +19,18 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
   try {
+    //temp mohit code is done 
+    const session = await getServerSession(event);
+    const user = session?.user as User | undefined;
+    //only the access this code to put, owner of the acc
+    // admin
+    if (!user || user.id !== id) {
+      throw createError({
+        statusCode: 403,
+        statusMessage: "Forbidden: You can only update your own account.",
+      });
+    }
+
     // Fetch the existing user before updating
     const existingUser = await prisma.user.findUnique({
       where: { id },

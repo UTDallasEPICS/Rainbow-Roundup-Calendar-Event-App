@@ -10,20 +10,23 @@ export default defineEventHandler(async (event) => {
   const session = await getServerSession(event);
 
   const user = session?.user as User | undefined;
-
-  if (!user?.role || user.role !== "SUPER") {
-    throw createError({
-      statusMessage: "Unauthenticated",
-      statusCode: 403,
-    });
-  }
-
+  
   if (!id) {
     setResponseStatus(event, 400);
     return {
       success: false,
       error: "User ID is required to update the user.",
     };
+  }
+  //temp mohit
+  //good 
+  //ask if the placement logic makes sense
+  //also ask what the status message should say 
+  if (!user || user.id !== id) {
+    throw createError({
+      statusMessage: "Forbidden: Only account holder can access this file.",
+      statusCode: 403,
+    });
   }
 
   const body = await readBody(event);

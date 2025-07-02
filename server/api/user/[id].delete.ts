@@ -10,7 +10,17 @@ export default defineEventHandler(async (event) => {
   const session = await getServerSession(event);
 
   const user = session?.user as User | undefined;
+  
+//temp mohit fixing needed 
+  if (!id) {
+    setResponseStatus(event, 400);
+    return {
+      success: false,
+      error: "User ID is required to delete the user.",
+    };
+  }
 
+  //connect both the if shoud be combined 
   if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
     throw createError({
       statusMessage: "Unauthenticated",
@@ -18,12 +28,12 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  if (!id) {
-    setResponseStatus(event, 400);
-    return {
-      success: false,
-      error: "User ID is required to delete the user.",
-    };
+  //add option to delte your own acc if the account belongs to the user
+  if (!user || user.id !== id) {
+    throw createError({
+      statusMessage: "Forbidden: You can only delete your own account.",
+      statusCode: 403,
+    });
   }
 
   try {
