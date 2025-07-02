@@ -1,11 +1,11 @@
 <template>
-  <div class="force light mode">
+  <div class="bg-white min-h-screen">
     <!-- PWA Manifest and Route Announcer -->
     <NuxtPwaManifest />
     <NuxtRouteAnnouncer />
 
     <div class="sticky top-0 z-50">
-      <div class="flex justify-end py-2 items-center space-x-4 px-2">
+      <div class="flex justify-end py-2 items-center space-x-4 px-2 bg-white">
         <!-- Notification Button -->
         <button
           @click="requestNotificationPermission"
@@ -47,12 +47,14 @@
           </span>
         </button>
 
+        <!-- Menu Button -->
         <!-- Hamburger Menu Button -->
         <button
           @click="toggleDropdown"
           class="p-3 rounded-lg"
           aria-label="Toggle menu"
         >
+          <!-- Hamburger icon -->
           <svg
             class="w-6 h-6 text-gray-500"
             fill="none"
@@ -133,13 +135,13 @@
       </div>
     </div>
 
-    <!-- Nuxt Page Component -->
-    <NuxtPage class="min-h-screen" />
+    <!-- Nuxt Page Component to display content -->
+    <NuxtPage class="min-h-screen bg-white" />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from "vue";
+import { ref, onMounted } from "vue";
 const { status, signOut } = useAuth();
 
 console.log(status.value);
@@ -147,47 +149,11 @@ const dropdownOpen = ref(false);
 const isSubscribed = ref(false);
 const deferredPrompt = ref(null);
 
-// Force light mode function
-const forceLightMode = () => {
-  if (typeof document !== 'undefined') {
-    document.documentElement.classList.remove('dark', 'dark-theme', 'theme-dark');
-    document.body.classList.remove('dark', 'dark-theme', 'theme-dark');
-    document.documentElement.classList.add('light', 'light-theme', 'theme-light');
-    document.body.classList.add('light', 'light-theme', 'theme-light');
-    document.documentElement.style.colorScheme = 'light only';
-    document.documentElement.style.backgroundColor = 'white';
-    document.documentElement.style.color = 'black';
-    document.body.style.backgroundColor = 'white';
-    document.body.style.color = 'black';
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('theme', 'light');
-      localStorage.setItem('nuxt-color-mode', 'light');
-      localStorage.removeItem('darkMode');
-      localStorage.setItem('colorScheme', 'light');
-    }
-  }
-};
-
-useHead({
-  meta: [
-    { name: 'color-scheme', content: 'light only' },
-    { name: 'theme-color', content: '#ffffff' }
-  ]
-});
-
 if (typeof window !== "undefined") {
   window.addEventListener("beforeinstallprompt", (e) => {
     e.preventDefault();
     deferredPrompt.value = e;
     console.log("Deferred prompt captured (composition API)");
-  });
-
-  forceLightMode();
-  setInterval(forceLightMode, 100);
-  const observer = new MutationObserver(forceLightMode);
-  observer.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['class', 'style']
   });
 }
 
@@ -250,42 +216,5 @@ const requestNotificationPermission = () => {
 
 onMounted(() => {
   updateSubscriptionStatus();
-  nextTick(() => {
-    forceLightMode();
-  });
 });
 </script>
-
-<style>
-:root {
-  color-scheme: light only !important;
-  --bg-color: white;
-  --text-color: black;
-  --border-color: #e0e0e0;
-}
-
-html, body, #__nuxt, #__layout {
-  background-color: white !important;
-  color: black !important;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: light only !important;
-  }
-  html, body, #__nuxt, #__layout {
-    background-color: white !important;
-    color: black !important;
-  }
-  * {
-    color: inherit;
-  }
-}
-
-.dark-mode,
-html.dark,
-body.dark {
-  background-color: white !important;
-  color: black !important;
-}
-</style>
