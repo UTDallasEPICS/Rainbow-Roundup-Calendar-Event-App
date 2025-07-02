@@ -1,5 +1,5 @@
 <template>
-  <div class="light-theme">
+  <div class="force light mode">
     <!-- PWA Manifest and Route Announcer -->
     <NuxtPwaManifest />
     <NuxtRouteAnnouncer />
@@ -47,14 +47,12 @@
           </span>
         </button>
 
-        <!-- Menu Button -->
         <!-- Hamburger Menu Button -->
         <button
           @click="toggleDropdown"
           class="p-3 rounded-lg"
           aria-label="Toggle menu"
         >
-          <!-- Hamburger icon -->
           <svg
             class="w-6 h-6 text-gray-500"
             fill="none"
@@ -135,9 +133,8 @@
       </div>
     </div>
 
-    <!-- Nuxt Page Component to display content -->
+    <!-- Nuxt Page Component -->
     <NuxtPage class="min-h-screen" />
-    <!-- NuxtPage was given min-h-screen to make it actually fill the screen-->
   </div>
 </template>
 
@@ -150,35 +147,18 @@ const dropdownOpen = ref(false);
 const isSubscribed = ref(false);
 const deferredPrompt = ref(null);
 
-// Function to force light mode
+// Force light mode function
 const forceLightMode = () => {
   if (typeof document !== 'undefined') {
-    // Add light mode class to root element
-    document.documentElement.classList.add('light-theme');
-    document.documentElement.classList.remove('dark', 'dark-theme');
-    
-    // Set meta tags for color scheme
-    const meta = document.createElement('meta');
-    meta.name = 'color-scheme';
-    meta.content = 'light only';
-    document.head.appendChild(meta);
-    
-    const themeColor = document.createElement('meta');
-    themeColor.name = 'theme-color';
-    themeColor.content = '#ffffff';
-    document.head.appendChild(themeColor);
-    
-    // Set CSS variables
-    document.documentElement.style.setProperty('--bg-color', 'white');
-    document.documentElement.style.setProperty('--text-color', 'black');
-    
-    // Set background and text colors
+    document.documentElement.classList.remove('dark', 'dark-theme', 'theme-dark');
+    document.body.classList.remove('dark', 'dark-theme', 'theme-dark');
+    document.documentElement.classList.add('light', 'light-theme', 'theme-light');
+    document.body.classList.add('light', 'light-theme', 'theme-light');
+    document.documentElement.style.colorScheme = 'light only';
     document.documentElement.style.backgroundColor = 'white';
     document.documentElement.style.color = 'black';
     document.body.style.backgroundColor = 'white';
     document.body.style.color = 'black';
-    
-    // Store preference in localStorage
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem('theme', 'light');
       localStorage.setItem('nuxt-color-mode', 'light');
@@ -188,15 +168,11 @@ const forceLightMode = () => {
   }
 };
 
-// Set up head meta tags for light mode
 useHead({
   meta: [
     { name: 'color-scheme', content: 'light only' },
     { name: 'theme-color', content: '#ffffff' }
-  ],
-  bodyAttrs: {
-    class: 'light-theme'
-  }
+  ]
 });
 
 if (typeof window !== "undefined") {
@@ -205,29 +181,13 @@ if (typeof window !== "undefined") {
     deferredPrompt.value = e;
     console.log("Deferred prompt captured (composition API)");
   });
-  
-  // Force light mode immediately
+
   forceLightMode();
-  
-  // Continuously enforce light mode
-  const enforceLightMode = () => {
-    forceLightMode();
-    requestAnimationFrame(enforceLightMode);
-  };
-  enforceLightMode();
-  
-  // Also observe for any changes to the document
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach(() => {
-      forceLightMode();
-    });
-  });
-  
+  setInterval(forceLightMode, 100);
+  const observer = new MutationObserver(forceLightMode);
   observer.observe(document.documentElement, {
     attributes: true,
-    attributeFilter: ['class', 'style'],
-    childList: true,
-    subtree: true
+    attributeFilter: ['class', 'style']
   });
 }
 
@@ -290,8 +250,6 @@ const requestNotificationPermission = () => {
 
 onMounted(() => {
   updateSubscriptionStatus();
-  
-  // Force light mode after component is mounted
   nextTick(() => {
     forceLightMode();
   });
@@ -299,49 +257,34 @@ onMounted(() => {
 </script>
 
 <style>
-/* Force light mode CSS - Global styles */
 :root {
   color-scheme: light only !important;
-  --bg-color: white !important;
-  --text-color: black !important;
+  --bg-color: white;
+  --text-color: black;
+  --border-color: #e0e0e0;
 }
 
-html, body {
+html, body, #__nuxt, #__layout {
   background-color: white !important;
   color: black !important;
 }
 
-/* Override any dark mode classes */
-.dark, .dark-theme, .dark-mode {
-  background-color: white !important;
-  color: black !important;
-}
-
-/* Override any prefers-color-scheme dark styles */
 @media (prefers-color-scheme: dark) {
-  :root, html, body {
+  :root {
     color-scheme: light only !important;
+  }
+  html, body, #__nuxt, #__layout {
     background-color: white !important;
     color: black !important;
   }
-  
-  /* Force all elements to use light colors */
   * {
-    background-color: inherit !important;
-    color: inherit !important;
+    color: inherit;
   }
 }
 
-/* Ensure all children inherit the light theme */
-.light-theme, .light-theme * {
-  background-color: white !important;
-  color: black !important;
-}
-
-/* Override Nuxt Color Mode if it's being used */
-.dark-mode, .dark-theme {
-  --bg-color: white !important;
-  --text-color: black !important;
+.dark-mode,
+html.dark,
+body.dark {
   background-color: white !important;
   color: black !important;
 }
