@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white min-h-screen">
+  <div>
     <!-- PWA Manifest and Route Announcer -->
     <NuxtPwaManifest />
     <NuxtRouteAnnouncer />
