@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="light-theme">
     <!-- PWA Manifest and Route Announcer -->
     <NuxtPwaManifest />
     <NuxtRouteAnnouncer />
@@ -137,12 +137,12 @@
 
     <!-- Nuxt Page Component to display content -->
     <NuxtPage class="min-h-screen" />
-    <!-- NuxtPage was given min-h-screen to make it actually fill the screen-->>
+    <!-- NuxtPage was given min-h-screen to make it actually fill the screen-->
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 const { status, signOut } = useAuth();
 
 console.log(status.value);
@@ -150,11 +150,84 @@ const dropdownOpen = ref(false);
 const isSubscribed = ref(false);
 const deferredPrompt = ref(null);
 
+// Function to force light mode
+const forceLightMode = () => {
+  if (typeof document !== 'undefined') {
+    // Add light mode class to root element
+    document.documentElement.classList.add('light-theme');
+    document.documentElement.classList.remove('dark', 'dark-theme');
+    
+    // Set meta tags for color scheme
+    const meta = document.createElement('meta');
+    meta.name = 'color-scheme';
+    meta.content = 'light only';
+    document.head.appendChild(meta);
+    
+    const themeColor = document.createElement('meta');
+    themeColor.name = 'theme-color';
+    themeColor.content = '#ffffff';
+    document.head.appendChild(themeColor);
+    
+    // Set CSS variables
+    document.documentElement.style.setProperty('--bg-color', 'white');
+    document.documentElement.style.setProperty('--text-color', 'black');
+    
+    // Set background and text colors
+    document.documentElement.style.backgroundColor = 'white';
+    document.documentElement.style.color = 'black';
+    document.body.style.backgroundColor = 'white';
+    document.body.style.color = 'black';
+    
+    // Store preference in localStorage
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('theme', 'light');
+      localStorage.setItem('nuxt-color-mode', 'light');
+      localStorage.removeItem('darkMode');
+      localStorage.setItem('colorScheme', 'light');
+    }
+  }
+};
+
+// Set up head meta tags for light mode
+useHead({
+  meta: [
+    { name: 'color-scheme', content: 'light only' },
+    { name: 'theme-color', content: '#ffffff' }
+  ],
+  bodyAttrs: {
+    class: 'light-theme'
+  }
+});
+
 if (typeof window !== "undefined") {
   window.addEventListener("beforeinstallprompt", (e) => {
     e.preventDefault();
     deferredPrompt.value = e;
     console.log("Deferred prompt captured (composition API)");
+  });
+  
+  // Force light mode immediately
+  forceLightMode();
+  
+  // Continuously enforce light mode
+  const enforceLightMode = () => {
+    forceLightMode();
+    requestAnimationFrame(enforceLightMode);
+  };
+  enforceLightMode();
+  
+  // Also observe for any changes to the document
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach(() => {
+      forceLightMode();
+    });
+  });
+  
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class', 'style'],
+    childList: true,
+    subtree: true
   });
 }
 
@@ -217,5 +290,59 @@ const requestNotificationPermission = () => {
 
 onMounted(() => {
   updateSubscriptionStatus();
+  
+  // Force light mode after component is mounted
+  nextTick(() => {
+    forceLightMode();
+  });
 });
 </script>
+
+<style>
+/* Force light mode CSS - Global styles */
+:root {
+  color-scheme: light only !important;
+  --bg-color: white !important;
+  --text-color: black !important;
+}
+
+html, body {
+  background-color: white !important;
+  color: black !important;
+}
+
+/* Override any dark mode classes */
+.dark, .dark-theme, .dark-mode {
+  background-color: white !important;
+  color: black !important;
+}
+
+/* Override any prefers-color-scheme dark styles */
+@media (prefers-color-scheme: dark) {
+  :root, html, body {
+    color-scheme: light only !important;
+    background-color: white !important;
+    color: black !important;
+  }
+  
+  /* Force all elements to use light colors */
+  * {
+    background-color: inherit !important;
+    color: inherit !important;
+  }
+}
+
+/* Ensure all children inherit the light theme */
+.light-theme, .light-theme * {
+  background-color: white !important;
+  color: black !important;
+}
+
+/* Override Nuxt Color Mode if it's being used */
+.dark-mode, .dark-theme {
+  --bg-color: white !important;
+  --text-color: black !important;
+  background-color: white !important;
+  color: black !important;
+}
+</style>
