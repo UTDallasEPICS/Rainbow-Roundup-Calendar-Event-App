@@ -4,7 +4,7 @@ import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
   const id = getRouterParam(event, "id");
-
+  
   try {
     if (id) {
       // Fetch a single event by ID with relations (admin and signUps)
