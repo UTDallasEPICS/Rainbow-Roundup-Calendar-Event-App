@@ -22,7 +22,7 @@ export const sendVerificationEmail = async (email: string, token: string) => {
     text: `Please verify your email address by clicking the link: ${verificationUrl}`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: auto;">
-        <h2>Welcome to the Platform!</h2>
+        <h2>Welcome to Rainbow Roundup!</h2>
         <p>Please confirm your email by clicking the link below. This link will expire in 15 minutes.</p>
         <a href="${verificationUrl}" style="background: #6366f1; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none;">
           Verify Email

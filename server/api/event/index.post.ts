@@ -45,7 +45,6 @@ export default defineEventHandler(async (event) => {
       data: newEvent,
     };
   } catch (error) {
-    // Use a type guard to ensure `error` is an instance of `Error`
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
     setResponseStatus(event, 500);
