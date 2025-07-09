@@ -54,7 +54,7 @@
                   type="datetime-local"
                   :value="eventForm.start?.slice(0, 16)"
                   @input="eventForm.start = $event.target.value"
-                  autocomplete="off"
+                  autocomplete="off-datetime"
                   class="input w-full"
                 />
               </label>
@@ -64,7 +64,7 @@
                   type="datetime-local"
                   :value="eventForm.end?.slice(0, 16)"
                   @input="eventForm.end = $event.target.value"
-                  autocomplete="off"
+                  autocomplete="off-datetime"
                   class="input w-full"
                 />
               </label>
