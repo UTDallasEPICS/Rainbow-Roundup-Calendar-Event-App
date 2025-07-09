@@ -52,9 +52,8 @@
                 Start:
                 <input
                   type="datetime-local"
-                  :value="eventForm.start?.slice(0, 16)"
+                  :value="eventForm.start"
                   @input="eventForm.start = $event.target.value"
-                  autocomplete="off-datetime"
                   class="input w-full"
                 />
               </label>
@@ -62,9 +61,8 @@
                 End:
                 <input
                   type="datetime-local"
-                  :value="eventForm.end?.slice(0, 16)"
+                  :value="eventForm.end"
                   @input="eventForm.end = $event.target.value"
-                  autocomplete="off-datetime"
                   class="input w-full"
                 />
               </label>
@@ -204,6 +202,18 @@ const formatDateToISO = (dateStr, timeZone) => {
   return date.toISOString(); // Send ISO format to the backend
 };
 
+// Utility function for getting local date as default value of start and end time
+const getLocalDatetime = (start = true) => {
+  // YYYY-MM-DDTHH:MM
+  const date = new Date(Date.now() + 86400000);
+  const year = date.getFullYear().toString();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // getMonth is 0 indexed, have to correct
+  const day = date.getDate().toString().padStart(2, '0');
+  const hour = start ? '12' : '14';
+
+  return `${year}-${month}-${day}T${hour}:00`;
+}
+
 const calendarOptions = ref({
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
   initialView: "dayGridMonth",
@@ -235,6 +245,7 @@ const calendarOptions = ref({
     showEventModal.value = true;
   },
 });
+
 onMounted(async () => {
   try {
     const events = await $fetch("/api/google/calendar");
@@ -243,6 +254,13 @@ onMounted(async () => {
     }
   } catch (error) {
     console.error("Error fetching events:", error);
+  }
+});
+
+watch(showModal, (modal) => {
+  if (modal && !eventForm.value.start) {
+    eventForm.value.start = getLocalDatetime();
+    eventForm.value.end = getLocalDatetime(false);
   }
 });
 
