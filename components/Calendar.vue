@@ -234,13 +234,6 @@ const calendarOptions = ref({
   },
 });
 
-//REMOVE
-watch(showModal, (modal) => {
-  console.log(eventForm.value.start);
-  console.log(eventForm.value.end);
-});
-//REMOVE
-
 onMounted(async () => {
   try {
     const events = await $fetch("/api/google/calendar");
