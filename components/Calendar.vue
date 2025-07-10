@@ -262,6 +262,8 @@ watch(showModal, (modal) => {
     eventForm.value.start = getLocalDatetime();
     eventForm.value.end = getLocalDatetime(false);
   }
+  console.log(eventForm.value.start);
+  console.log(eventForm.value.end);
 });
 
 const handleEscapeKey = (e) => {
