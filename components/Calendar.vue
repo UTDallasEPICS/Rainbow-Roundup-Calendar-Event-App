@@ -202,18 +202,6 @@ const formatDateToISO = (dateStr, timeZone) => {
   return date.toISOString(); // Send ISO format to the backend
 };
 
-// Utility function for getting local date as default value of start and end time
-const getLocalDatetime = (start = true) => {
-  // YYYY-MM-DDTHH:MM
-  const date = new Date(Date.now() + 86400000);
-  const year = date.getFullYear().toString();
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // getMonth is 0 indexed, have to correct
-  const day = date.getDate().toString().padStart(2, '0');
-  const hour = start ? '12' : '14';
-
-  return `${year}-${month}-${day}T${hour}:00`;
-}
-
 const calendarOptions = ref({
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
   initialView: "dayGridMonth",
@@ -228,8 +216,8 @@ const calendarOptions = ref({
   select: (info) => {
     // Prefill form with selected time
     showModal.value = true;
-    eventForm.value.start = info.startStr; // for datetime-local input
-    eventForm.value.end = info.endStr;
+    eventForm.value.start = info.startStr + "T12:00"; // for datetime-local input
+    eventForm.value.end = info.endStr + "T12:00";
   },
 
   eventClick: (info) => {
@@ -246,6 +234,13 @@ const calendarOptions = ref({
   },
 });
 
+//REMOVE
+watch(showModal, (modal) => {
+  console.log(eventForm.value.start);
+  console.log(eventForm.value.end);
+});
+//REMOVE
+
 onMounted(async () => {
   try {
     const events = await $fetch("/api/google/calendar");
@@ -255,15 +250,6 @@ onMounted(async () => {
   } catch (error) {
     console.error("Error fetching events:", error);
   }
-});
-
-watch(showModal, (modal) => {
-  if (modal && !eventForm.value.start) {
-    eventForm.value.start = getLocalDatetime();
-    eventForm.value.end = getLocalDatetime(false);
-  }
-  console.log(eventForm.value.start);
-  console.log(eventForm.value.end);
 });
 
 const handleEscapeKey = (e) => {
