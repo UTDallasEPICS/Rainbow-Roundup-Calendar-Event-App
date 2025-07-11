@@ -281,17 +281,17 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import { useRouter } from "vue-router";
+import { useUser } from '~/composables/useUser';
+const { user } = useUser();
 
 // Components
 import EventCard from "@/components/EventCard.vue";
 import MakeEventCard from "@/components/MakeEventCard.vue";
 import { fetchCombinedEvents } from "../server/utils/fetchCombinedEvents";
 
-// Auth (optional based on your code)
-const { status, data, refresh } = useAuth();
-await refresh();
-const user = computed(() => data.value?.user);
-const showEvents = ref(false);
+// User state
+// Remove the local user ref and onMounted user fetch for user
+
 interface EventItem {
   id: string;
   dateDay: string;

@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { defineEventHandler, readBody, setResponseStatus } from "h3";
+import { defineEventHandler, readBody, setResponseStatus, setCookie } from "h3";
 
 export default defineEventHandler(async (event) => {
   const prisma = new PrismaClient();
@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // Move to User table
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         email: pending.email,
         firstname: pending.firstname,
@@ -29,7 +29,17 @@ export default defineEventHandler(async (event) => {
 
     await prisma.pendingUser.delete({ where: { token } });
 
-    return { success: true };
+    // user will stay logged in for 1 day
+    setCookie(event, 'session_id', user.id, {
+      httpOnly: true,
+      path: '/',
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 24, // 1 day
+    });
+
+    // redirect to home
+    return { success: true, redirect: "/" };
   } catch (err) {
     console.error("Verification error:", err);
     setResponseStatus(event, 500);

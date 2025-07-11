@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
   const token = nanoid(32);
-  const expires = new Date(Date.now() + 1000 * 60 * 15); // 15 minutes from now
+  const expires = new Date(Date.now() + 1000 * 60 * 10); // 10 minutes from now
 
   try {
     const existingUser = await prisma.user.findUnique({

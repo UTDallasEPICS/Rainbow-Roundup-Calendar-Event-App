@@ -16,6 +16,7 @@ export const sendVerificationEmail = async (email: string, token: string) => {
   const verificationUrl = `${siteUrl}/verify?token=${token}`;
 
   const mailOptions = {
+    // should grab email from .env automatically, if no-reply is sending, there is an issue with the email and not the code
     from: process.env.SMTP_FROM || "no-reply@example.com",
     to: email,
     subject: "Verify your email address",
@@ -23,7 +24,7 @@ export const sendVerificationEmail = async (email: string, token: string) => {
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: auto;">
         <h2>Welcome to Rainbow Roundup!</h2>
-        <p>Please confirm your email by clicking the link below. This link will expire in 15 minutes.</p>
+        <p>Please confirm your email by clicking the link below. This link will expire in 10 minutes.</p>
         <a href="${verificationUrl}" style="background: #6366f1; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none;">
           Verify Email
         </a>

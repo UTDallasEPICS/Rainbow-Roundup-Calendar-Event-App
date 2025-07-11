@@ -109,7 +109,7 @@
               >Donate</a
             >
           </li>
-          <li v-if="status === 'unauthenticated' || status === null">
+          <li v-if="!user">
             <NuxtLink
               to="/signup"
               @click="navigate('Sign Up')"
@@ -117,9 +117,9 @@
               >Sign Up</NuxtLink
             >
           </li>
-          <li v-else>
+          <li v-if="user">
             <button
-              @click="() => signOut({ callbackUrl: '/login' })"
+              @click="logout"
               class="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md"
             >
               Logout
@@ -143,9 +143,9 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-const { status, signOut } = useAuth();
+import { useUser } from '~/composables/useUser';
+const { user } = useUser();
 
-console.log(status.value);
 const dropdownOpen = ref(false);
 const isSubscribed = ref(false);
 const deferredPrompt = ref(null);
@@ -215,7 +215,19 @@ const requestNotificationPermission = () => {
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
   updateSubscriptionStatus();
+  try {
+    const res = await $fetch('/api/user/me');
+    user.value = res.user;
+  } catch (e) {
+    user.value = null;
+  }
 });
+
+const logout = async () => {
+  await $fetch('/api/user/logout', { method: 'POST' });
+  user.value = null;
+  window.location.href = '/';
+};
 </script>

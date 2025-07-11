@@ -13,6 +13,7 @@ import { useRoute, useRouter } from "vue-router";
 interface VerifyResponse {
   success: boolean;
   error?: string;
+  redirect?: string;
 }
 
 const route = useRoute();
@@ -35,8 +36,9 @@ onMounted(async () => {
     });
 
     if (res.success) {
-      success.value = "Email verified! Redirecting to login...";
-      setTimeout(() => router.push("/login"), 3000);
+      success.value = "Email verified! Redirecting...";
+      const redirectPath = res.redirect || "/";
+      setTimeout(() => window.location.href = redirectPath, 2000);
     } else if ("error" in res && typeof res.error === "string") {
       error.value = res.error;
     } else {
@@ -48,3 +50,6 @@ onMounted(async () => {
   }
 });
 </script>
+
+
+

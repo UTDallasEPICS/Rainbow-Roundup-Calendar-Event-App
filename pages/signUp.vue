@@ -96,6 +96,10 @@
     >
       Register
     </button>
+    <!-- Success message -->
+    <div v-if="successMessage" class="text-green-600 mt-4 text-center">
+      {{ successMessage }}
+    </div>
   </form>
 </template>
 
@@ -105,6 +109,7 @@ const router = useRouter();
 const file = ref<File | null>(null);
 const imageUrl = ref<string | null>(null);
 const errors = ref({});
+const successMessage = ref("");
 
 const signupModel = ref({
   email: "",
@@ -172,7 +177,8 @@ const submitSignupForm = async () => {
     });
 
     if (data?.value?.success) {
-      router.push("login");
+      successMessage.value = "A verification email has been sent to your address. Please check your inbox to complete registration.";
+      // Optionally clear form fields here
     } else {
       errors.value = { error: "Signup failed." };
     }
