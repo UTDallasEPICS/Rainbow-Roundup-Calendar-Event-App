@@ -7,14 +7,14 @@
       <header class="flex items-center space-x-4">
         <NuxtLink to="/profile">
           <img
-            :src="user?.profilePic || '/default-profile.png'"
+            :src="session?.user?.profilePic || '/default-profile.png'"
             alt="Profile"
             class="w-10 h-10 rounded-full object-cover"
-            v-if="user"
+            v-if="session && session.user"
           />
         </NuxtLink>
         <h1 class="text-xl md:text-2xl font-bold text-zinc-700 capitalize">
-          Hello {{ user?.firstname || "" }}!
+          Hello {{ session?.user?.firstname || "" }}!
         </h1>
       </header>
 
@@ -28,7 +28,7 @@
 
       <!-- Admin Section -->
       <div
-        v-if="user && (user.role === 'ADMIN' || user.role === 'SUPER')"
+        v-if="session && (session.user.role === 'ADMIN' || session.user.role === 'SUPER')"
         class="space-y-2"
       >
         <div class="text-sm md:text-md font-extrabold uppercase text-zinc-700">
@@ -56,7 +56,7 @@
           </NuxtLink>
           <NuxtLink
             to="/calendar"
-            v-if="user && (user.role === 'ADMIN' || user.role === 'SUPER')"
+            v-if="session && (session.user.role === 'ADMIN' || session.user.role === 'SUPER')"
           >
             <button
               class="bg-white/50 text-green-600 text-xs px-4 py-1 rounded-full border border-green-600"
@@ -281,8 +281,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import { useRouter } from "vue-router";
-import { useUser } from '~/composables/useUser';
-const { user } = useUser();
+// Use NuxtAuth for session
+const { data: session } = useAuth();
 
 // Components
 import EventCard from "@/components/EventCard.vue";

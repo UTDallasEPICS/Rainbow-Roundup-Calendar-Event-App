@@ -2,7 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import { defineEventHandler, readBody, setResponseStatus, setCookie } from "h3";
 
 export default defineEventHandler(async (event) => {
-  const prisma = new PrismaClient();
+  const prisma = event.context.prisma;
+  const config = useRuntimeConfig();
   const { token } = await readBody(event);
 
   try {
@@ -34,7 +35,7 @@ export default defineEventHandler(async (event) => {
       httpOnly: true,
       path: '/',
       sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
+      secure: config.public.NODE_ENV === 'production',
       maxAge: 60 * 60 * 24, // 1 day
     });
 

@@ -1,15 +1,16 @@
 import { createTransport } from "nodemailer";
 
 export const sendVerificationEmail = async (email: string, token: string) => {
-  const siteUrl = process.env.ORIGIN || "http://localhost:3000";
+  const config = useRuntimeConfig();
+  const siteUrl = config.public.ORIGIN || "http://localhost:3000";
 
   const transporter = createTransport({
-    host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT || "587"),
+    host: config.smtpHost,
+    port: parseInt(config.smtpPort || "587"),
     secure: false, 
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
+      user: config.smtpUser,
+      pass: config.smtpPass,
     },
   });
 
@@ -17,7 +18,7 @@ export const sendVerificationEmail = async (email: string, token: string) => {
 
   const mailOptions = {
     // should grab email from .env automatically, if no-reply is sending, there is an issue with the email and not the code
-    from: process.env.SMTP_FROM || "no-reply@example.com",
+    from: config.smtpFrom || "no-reply@example.com",
     to: email,
     subject: "Verify your email address",
     text: `Please verify your email address by clicking the link: ${verificationUrl}`,

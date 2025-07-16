@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 import { sendVerificationEmail } from '../../utils/sendVerificationEmail';
 
 export default defineEventHandler(async (event) => {
-  const prisma = event.context.prisma || new PrismaClient();
+  const prisma = event.context.prisma;
   const body = await readBody(event);
 
   const token = nanoid(32);

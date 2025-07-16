@@ -109,15 +109,15 @@
               >Donate</a
             >
           </li>
-          <li v-if="!user">
+          <li v-if="!session">
             <NuxtLink
               to="/signup"
               @click="navigate('Sign Up')"
               class="block px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md"
-              >Sign Up</NuxtLink
+              >Sign Up/Log In</NuxtLink
             >
           </li>
-          <li v-if="user">
+          <li v-else>
             <button
               @click="logout"
               class="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md"
@@ -143,8 +143,9 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useUser } from '~/composables/useUser';
-const { user } = useUser();
+
+// Use the built-in auth composable instead of custom useUser
+const { data: session, signOut } = useAuth();
 
 const dropdownOpen = ref(false);
 const isSubscribed = ref(false);
@@ -215,19 +216,11 @@ const requestNotificationPermission = () => {
   }
 };
 
-onMounted(async () => {
+onMounted(() => {
   updateSubscriptionStatus();
-  try {
-    const res = await $fetch('/api/user/me');
-    user.value = res.user;
-  } catch (e) {
-    user.value = null;
-  }
 });
 
 const logout = async () => {
-  await $fetch('/api/user/logout', { method: 'POST' });
-  user.value = null;
-  window.location.href = '/';
+  await signOut({ callbackUrl: '/' });
 };
 </script>
