@@ -1,6 +1,5 @@
 import { EventImpl } from "@fullcalendar/core/internal.js";
 import { PrismaClient } from "@prisma/client";
-import { defineEventHandler } from "h3";
 import { getServerSession } from "#auth";
 import type { User } from "../../../types/session";
 

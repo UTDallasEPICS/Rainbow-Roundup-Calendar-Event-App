@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { defineEventHandler, readBody, setResponseStatus } from 'h3';
 import { nanoid } from 'nanoid';
 import { sendVerificationEmail } from '../../utils/sendVerificationEmail';
 
