@@ -17,7 +17,7 @@ export const sendVerificationEmail = async (email: string, token: string) => {
   const verificationUrl = `${siteUrl}/verify?token=${token}`;
 
   const mailOptions = {
-    // should grab email from .env automatically, if no-reply is sending, there is an issue with the email and not the code
+    // changed to use config.smtpFrom, if no-reply is sending, there is an issue with the email and not the code
     from: config.smtpFrom || "no-reply@example.com",
     to: email,
     subject: "Verify your email address",

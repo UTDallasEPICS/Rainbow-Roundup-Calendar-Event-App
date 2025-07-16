@@ -5,7 +5,9 @@
     <div class="w-full max-w-6xl space-y-8 py-8">
       <!-- Greeting -->
       <header class="flex items-center space-x-4">
-        <NuxtLink to="/profile">
+        <NuxtLink
+          :to="session?.user?.id ? `/profile/${session.user.id}` : '/profile'"
+        >
           <img
             :src="session?.user?.profilePic || '/default-profile.png'"
             alt="Profile"
@@ -28,7 +30,10 @@
 
       <!-- Admin Section -->
       <div
-        v-if="session && (session.user.role === 'ADMIN' || session.user.role === 'SUPER')"
+        v-if="
+          session &&
+          (session.user.role === 'ADMIN' || session.user.role === 'SUPER')
+        "
         class="space-y-2"
       >
         <div class="text-sm md:text-md font-extrabold uppercase text-zinc-700">
@@ -56,7 +61,10 @@
           </NuxtLink>
           <NuxtLink
             to="/calendar"
-            v-if="session && (session.user.role === 'ADMIN' || session.user.role === 'SUPER')"
+            v-if="
+              session &&
+              (session.user.role === 'ADMIN' || session.user.role === 'SUPER')
+            "
           >
             <button
               class="bg-white/50 text-green-600 text-xs px-4 py-1 rounded-full border border-green-600"
