@@ -66,7 +66,7 @@ onMounted(async () => {
   }
 });
 
-function placeMarker(event) {
+function placeMarker(event : any) {//TODO: comment to fix it later
   // markerPosition.value = {
   //   lat: event.latLng.lat(),
   //   lng: event.latLng.lng(),
