@@ -102,7 +102,7 @@
   </NuxtLink>
 </template>
 
-<script setup>
+<script setup lang= 'ts'>
 import { ref, watch } from "vue";
 
 const props = defineProps({
@@ -117,7 +117,8 @@ const props = defineProps({
 });
 
 const avatars = computed(
-  () => props.signUps.map((s) => s.User?.profilePic).filter((url) => !!url) // filter out undefined/null
+  // TODO: check what type we should be enforcing here
+  () => props.signUps.map((s: any) => s.User?.profilePic).filter((url) => !!url) // filter out undefined/null
 );
 
 const emit = defineEmits(["update:saved", "expand"]);
