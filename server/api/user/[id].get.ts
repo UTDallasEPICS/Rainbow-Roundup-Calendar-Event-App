@@ -6,7 +6,6 @@ SEEMS TO BE FIXED: 6/28
 import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "#auth";
 import type { User } from "../../../types/session";
-import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
