@@ -33,7 +33,6 @@
     "@stripe/stripe-js": "^5.6.0",
     "@vue-stripe/vue-stripe": "^4.5.0",
     "aws-sdk": "^2.1692.0",
-    "crypto": "^1.0.1",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
     "eslint": "^9.19.0",

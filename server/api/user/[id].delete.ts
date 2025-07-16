@@ -10,20 +10,21 @@ export default defineEventHandler(async (event) => {
   const session = await getServerSession(event);
 
   const user = session?.user as User | undefined;
-
-  if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
-    throw createError({
-      statusMessage: "Unauthenticated",
-      statusCode: 403,
-    });
-  }
-
+  
   if (!id) {
     setResponseStatus(event, 400);
     return {
       success: false,
       error: "User ID is required to delete the user.",
     };
+  }
+
+  // Allow deletion if user is SUPER, ADMIN, or is deleting their own account
+  if (!user || (!["SUPER", "ADMIN"].includes(user.role) && user.id !== id)) {
+    throw createError({
+      statusMessage: "Unauthenticated",
+      statusCode: 403,
+    });
   }
 
   try {

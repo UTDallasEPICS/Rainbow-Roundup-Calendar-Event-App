@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
+
   try {
     const events = await prisma.event.findMany({
       include: {

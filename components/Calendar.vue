@@ -52,7 +52,7 @@
                 Start:
                 <input
                   type="datetime-local"
-                  :value="eventForm.start?.slice(0, 16)"
+                  :value="eventForm.start"
                   @input="eventForm.start = $event.target.value"
                   class="input w-full"
                 />
@@ -61,7 +61,7 @@
                 End:
                 <input
                   type="datetime-local"
-                  :value="eventForm.end?.slice(0, 16)"
+                  :value="eventForm.end"
                   @input="eventForm.end = $event.target.value"
                   class="input w-full"
                 />
@@ -216,8 +216,8 @@ const calendarOptions = ref({
   select: (info) => {
     // Prefill form with selected time
     showModal.value = true;
-    eventForm.value.start = info.startStr; // for datetime-local input
-    eventForm.value.end = info.endStr;
+    eventForm.value.start = info.startStr + "T12:00"; // for datetime-local input
+    eventForm.value.end = info.endStr + "T12:00";
   },
 
   eventClick: (info) => {
@@ -233,6 +233,7 @@ const calendarOptions = ref({
     showEventModal.value = true;
   },
 });
+
 onMounted(async () => {
   try {
     const events = await $fetch("/api/google/calendar");
