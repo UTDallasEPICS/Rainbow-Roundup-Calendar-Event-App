@@ -48,7 +48,7 @@ model Event {
   SignUps          SignUp[]
 
   // Announcements
-  Anouncements     Announcement[]
+  Announcements     Announcement[]
 
 }
 

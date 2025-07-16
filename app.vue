@@ -5,7 +5,7 @@
     <NuxtRouteAnnouncer />
 
     <div class="sticky top-0 z-50">
-      <div class="flex justify-end py-2 items-center space-x-4 px-2">
+      <div class="flex justify-end py-2 items-center space-x-4 px-2 bg-white">
         <!-- Notification Button -->
         <button
           @click="requestNotificationPermission"
@@ -136,8 +136,7 @@
     </div>
 
     <!-- Nuxt Page Component to display content -->
-    <NuxtPage class="min-h-screen" />
-    <!-- NuxtPage was given min-h-screen to make it actually fill the screen-->>
+    <NuxtPage class="min-h-screen bg-white" />
   </div>
 </template>
 

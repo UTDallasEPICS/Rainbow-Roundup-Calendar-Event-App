@@ -7,22 +7,21 @@ export default defineEventHandler(async (event) => {
   // Debugging: Log the params to verify the URL structure
   const id = getRouterParam(event, "id");
   const session = await getServerSession(event);
-
   const user = session?.user as User | undefined;
-
-  if (!user?.role || user.role !== "SUPER") {
-    throw createError({
-      statusMessage: "Unauthenticated",
-      statusCode: 403,
-    });
-  }
-
+  
   if (!id) {
     setResponseStatus(event, 400);
     return {
       success: false,
       error: "User ID is required to update the user.",
     };
+  }
+  
+  if (!user || user.id !== id) {
+    throw createError({
+      statusMessage: "Forbidden: Only account holder can access this file.",
+      statusCode: 403,
+    });
   }
 
   const body = await readBody(event);

@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
     }
     catch (error: any) {
             // Handle different types of errors
-    if (error.response?.status === 404) {
+      if (error.response?.status === 404) {
         throw createError({
           statusCode: 404,
           statusMessage: 'Event not found'
