@@ -12,8 +12,8 @@ export default eventHandler(async (event) => {
   // Now we can access event.context.prisma
   const prisma = event.context.prisma;
 
-  const authHandler = NuxtAuthHandler({
-    adapter: PrismaAdapter(prisma), 
+  return NuxtAuthHandler({
+    adapter: PrismaAdapter(prisma), // Use Prisma as the adapter for NuxtAuth
     session: {
       strategy: "jwt", // Use JSON Web Tokens (JWT) for session storage
     },
@@ -142,7 +142,5 @@ export default eventHandler(async (event) => {
         }
       },
     },
-  });
-
-  return authHandler(event);
+  })(event);
 });
