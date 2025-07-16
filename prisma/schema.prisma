@@ -70,7 +70,8 @@ model Announcement {
   userId          String //user creating announcement
   eventId         String //related event
   announceBody    String // actual announcement
-
+  createdAt       DateTime @default(now())
+  
   // Foreign Keys
   User            User     @relation(fields: [userId], references: [id])
   Event           Event    @relation(fields: [eventId], references: [id])
