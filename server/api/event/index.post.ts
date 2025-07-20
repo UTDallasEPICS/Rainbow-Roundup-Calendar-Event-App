@@ -55,10 +55,10 @@ export default defineEventHandler(async (event) => {
         },
     });
 
-    const users = await prisma.user.findMany({
+    // Look into filtering for verified users later
+    const emailRecipients = await prisma.user.findMany({
       where: {
         GlobalNotif: true,
-        emailVerified: true,
         role: "USER",
       },
       select: {
@@ -66,11 +66,7 @@ export default defineEventHandler(async (event) => {
       },
     });
 
-    // REMOVE
-    console.log(users);
-    // REMOVE
-
-    for (const user of users) {
+    for (const user of emailRecipients) {
       const mailOptions = {
         to: user.email,
         from: config.smtpFrom,
