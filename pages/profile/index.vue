@@ -34,6 +34,8 @@
           v-model="firstName"
           :readonly="!editMode"
           :class="inputClass"
+          ref="firstNameRef"
+          @keydown.enter.prevent="focusNext(lastNameRef)""
         />
       </div>
     </div>
@@ -49,6 +51,8 @@
           v-model="lastName"
           :readonly="!editMode"
           :class="inputClass"
+          ref="lastNameRef"
+          @keydown.enter.prevent="focusNext(phoneNumberRef)"
         />
       </div>
     </div>
@@ -64,6 +68,8 @@
           v-model="phoneNum"
           :readonly="!editMode"
           :class="inputClass"
+          ref="phoneNumberRef"
+          @keydown.enter.prevent="focusNext(emailRef)"
         />
       </div>
     </div>
@@ -77,6 +83,8 @@
           v-model="email"
           :readonly="!editMode"
           :class="inputClass"
+          ref="emailRef"
+          @keydown.enter.prevent="toggleEditMode"
         />
       </div>
     </div>
@@ -141,6 +149,15 @@ const profilePic = ref(userData.value.profilePic);
 
 const file = ref(null);
 const imageUrl = ref(null);
+
+const firstNameRef = ref(null);
+const lastNameRef = ref(null);
+const phoneNumberRef = ref(null);
+const emailRef = ref(null);
+
+function focusNext(refEl){
+  refEl?.focus();
+}
 
 function handleFileChange(e) {
   const input = e.target;
