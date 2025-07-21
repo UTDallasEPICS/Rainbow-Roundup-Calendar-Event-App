@@ -175,6 +175,8 @@ const submitSignupForm = async () => {
     });
 
     if (data?.value?.success) {    
+    if (data?.value?.success) {
+      
       if (file.value) {
         try {
           const uploadedUrl = await uploadToS3(file.value);
@@ -186,6 +188,9 @@ const submitSignupForm = async () => {
         }
       }
       
+      successMessage.value = "A verification email has been sent to your address. Please check your inbox to complete registration.";
+      // Optionally clear form fields here
+      router.push("login");
       successMessage.value = "A verification email has been sent to your address. Please check your inbox to complete registration.";
       // Optionally clear form fields here
     } else {
