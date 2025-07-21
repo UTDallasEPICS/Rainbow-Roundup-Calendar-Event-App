@@ -159,8 +159,6 @@ async function uploadToS3(file: File) {
 
 const submitSignupForm = async () => {
   errors.value = {};
-  
-  
   const userDataToSubmit = { ...signupModel.value };
   
   try {
