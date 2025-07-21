@@ -28,7 +28,7 @@
         </div>
 
         <!-- Navigation Links -->
-        <nav class="flex space-x-6 text-sm font-medium">
+        <nav class="hidden xl:flex space-x-6 text-sm font-medium">
           <NuxtLink
             to="/"
             @click="navigate('Home')"
@@ -105,6 +105,136 @@
             </span>
           </button>
         </nav>
+
+        <!-- Hamburger Button -->
+        <button
+          @click="toggleMobileMenu"
+          class="xl:hidden flex items-center justify-center w-8 h-8 text-gray-700 hover:text-black focus:outline-none"
+          aria-label="Toggle menu"
+        >
+          <!-- Hamburger Icon -->
+          <svg
+            v-if="!mobileMenuOpen"
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+          <!-- Close Icon -->
+          <svg
+            v-else
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Collapsible Navigation Menu (when page is resized)-->
+      <div
+        v-if="mobileMenuOpen"
+        class="xl:hidden bg-white border-t border-gray-200 shadow-lg"
+      >
+        <nav class="flex flex-col space-y-1 px-4 py-3 text-sm font-medium">
+          <NuxtLink
+            to="/"
+            @click="navigate('Home')"
+            class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+            >Home</NuxtLink
+          >
+          <NuxtLink
+            to="/aboutUs"
+            @click="navigate('About Us')"
+            class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+            >About Us</NuxtLink
+          >
+          <NuxtLink
+            to="/calendar"
+            @click="navigate('Calendar')"
+            class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+            >Calendar</NuxtLink
+          >
+          <a
+            href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
+            @click="navigate('Donate')"
+            class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+            >Donate</a
+          >
+          <NuxtLink
+            v-if="!session"
+            to="/signup"
+            @click="navigate('Sign Up')"
+            class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+            >Sign Up/Log In</NuxtLink
+          >
+          <button
+            v-else
+            @click="logout"
+            class="block py-2 text-left text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+          >
+            Logout
+          </button>
+          <button
+            @click="promptInstall"
+            class="block py-2 text-left text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+          >
+            Install App
+          </button>
+          <button
+            @click="requestNotificationPermission"
+            class="flex items-center py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+            aria-label="Toggle notifications"
+          >
+            <span class="mr-2">Notifications</span>
+            <span v-if="isSubscribed">
+              <!-- Bell icon -->
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
+                />
+              </svg>
+            </span>
+            <span v-else>
+              <!-- Bell with slash -->
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9.143 17.082a24.248 24.248 0 0 0 3.844.148m-3.844-.148a23.856 23.856 0 0 1-5.455-1.31 8.964 8.964 0 0 0 2.3-5.542m3.155 6.852a3 3 0 0 0 5.667 1.97m1.965-2.277L21 21m-4.225-4.225a23.81 23.81 0 0 0 3.536-1.003A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6.53 6.53m10.245 10.245L6.53 6.53M3 3l3.53 3.53"
+                />
+              </svg>
+            </span>
+          </button>
+        </nav>
       </div>
     </div>
 
@@ -120,6 +250,7 @@ import { ref, onMounted } from "vue";
 const { data: session, signOut } = useAuth();
 
 const dropdownOpen = ref(false);
+const mobileMenuOpen = ref(false);
 const isSubscribed = ref(false);
 const deferredPrompt = ref(null);
 
@@ -133,11 +264,6 @@ if (typeof window !== "undefined") {
 
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value;
-};
-
-const navigate = (page) => {
-  console.log(`Navigating to ${page}`);
-  dropdownOpen.value = false;
 };
 
 const promptInstall = () => {
@@ -191,6 +317,7 @@ const requestNotificationPermission = () => {
 onMounted(() => {
   updateSubscriptionStatus();
 });
+
 const logout = async () => {
   await signOut({ callbackUrl: "/" });
 };
