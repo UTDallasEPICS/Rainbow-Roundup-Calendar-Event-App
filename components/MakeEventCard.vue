@@ -96,7 +96,7 @@
     </form>
   </template>
   
-  <script setup>
+  <script setup lang='ts'>
   import { reactive, toRefs, watch, computed } from 'vue'
   
   // accept existing event data for edit mode

@@ -48,7 +48,7 @@ model Event {
   SignUps          SignUp[]
 
   // Announcements
-  Anouncements     Announcement[]
+  Announcements     Announcement[]
 
 }
 
@@ -70,7 +70,8 @@ model Announcement {
   userId          String //user creating announcement
   eventId         String //related event
   announceBody    String // actual announcement
-
+  createdAt       DateTime @default(now())
+  
   // Foreign Keys
   User            User     @relation(fields: [userId], references: [id])
   Event           Event    @relation(fields: [eventId], references: [id])
@@ -182,6 +183,19 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+model PendingUser {
+  id         String   @id @default(uuid())
+  email      String   @unique
+  firstname  String
+  lastname   String
+  phoneNum   String?
+  profilePic String?
+  token      String   @unique
+  expires    DateTime @default(now())
+}
+
+
 
 enum Role {
   USER 
