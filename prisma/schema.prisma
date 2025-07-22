@@ -82,9 +82,8 @@ model FinishedItem {
   id                String     @id @default(uuid())
   quantity          Int
   size              Size
-  price             Float 
-  orderItemId       String 
-  orderItem         OrderItem   @relation(field: [orderItemId], references: [id])   
+  price             Float
+  orderItem         OrderItem[]  
   itemId            String      
   item              Item        @relation(field: [itemId], references: [id])  
 }
@@ -93,10 +92,6 @@ model FinishedItem {
 model Item {
   id                String      @id @default(uuid())
   name              String   
-  price             Float   
-  stock             Int
-  fit               Fit
-  size              Size
   finishedItems     FinishedItem[]
   itemPhoto         ItemPhoto[]
 }
