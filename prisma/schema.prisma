@@ -8,15 +8,15 @@ generator client {
 }
 
 model User {
-  id               String   @id @default(uuid())
-  email            String   @unique
-  firstname        String
-  lastname         String
-  role             Role     @default(USER)
-  phoneNum         String?
-  profilePic       String?
-  GlobalNotif      Boolean // Global notifications (annoncements)
-  emailVerified    DateTime?
+  id            String    @id @default(uuid())
+  email         String    @unique
+  firstname     String
+  lastname      String
+  role          Role      @default(USER)
+  phoneNum      String?
+  profilePic    String?
+  GlobalNotif   Boolean // Global notifications (annoncements)
+  emailVerified DateTime?
 
   SignUps           SignUp[]
   CreatedEvents     Event[]
