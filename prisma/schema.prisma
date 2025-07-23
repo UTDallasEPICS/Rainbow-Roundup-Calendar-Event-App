@@ -83,9 +83,11 @@ model FinishedItem {
   quantity          Int
   size              Size
   price             Float
-  orderItem         OrderItem[]  
   itemId            String      
-  item              Item        @relation(field: [itemId], references: [id])  
+  item              Item        @relation(fields: [itemId], references: [id])  
+  
+
+  OrderItems OrderItem[]
 }
 
 
@@ -101,13 +103,13 @@ model ItemPhoto {
   id           String     @id @default(uuid())
   url          String   
   itemId       String
-  item         Item       @relation(field: [itemId], references: [id])
+  Item         Item       @relation(fields: [itemId], references: [id])
 }
 
 model Order {
   id              String        @id @default(uuid())
   userId          String
-  status          OrderStatus   @default(PENDING)
+  status          OrderStatus   
   paymentInfo     String?
   placedAt        DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
@@ -118,7 +120,9 @@ model Order {
 model OrderItem {
   id             String         @id @default(uuid())
   orderId        String
-  order          Order       @relation(fields: [orderId], references: [id])
+  finishedItemId  String  
+  Order          Order       @relation(fields: [orderId], references: [id])
+  FinishedItem FinishedItem @relation(fields:[finishedItemId], references: [id])
 }
 
 
