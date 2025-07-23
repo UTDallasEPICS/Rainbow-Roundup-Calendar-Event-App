@@ -1,26 +1,18 @@
 <template>
   <div>
     <!-- Safari Disclaimer Popup -->
-    <div
-      v-if="showSafariDisclaimer"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
-      @keydown.esc="closeSafariDisclaimer"
-      tabindex="0"
-      aria-modal="true"
-      role="dialog"
-    >
+    <div v-if="showSafariDisclaimer" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
+      @keydown.esc="closeSafariDisclaimer" tabindex="0" aria-modal="true" role="dialog">
       <div class="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 relative">
-        <button
-          @click="closeSafariDisclaimer"
-          class="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-          aria-label="Close"
-        >
+        <button @click="closeSafariDisclaimer" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+          aria-label="Close">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
         <div class="flex items-center mb-3">
-          <svg class="w-6 h-6 text-blue-500 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <svg class="w-6 h-6 text-blue-500 mr-2" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
           <span class="font-semibold text-lg">Safari Notice</span>
@@ -28,10 +20,8 @@
         <p class="text-gray-700 mb-2">
           For the best experience, consider using Chrome or Firefox. Some features may not work as expected in Safari.
         </p>
-        <button
-          @click="closeSafariDisclaimer"
-          class="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-        >
+        <button @click="closeSafariDisclaimer"
+          class="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
           Got it!
         </button>
       </div>
@@ -69,9 +59,10 @@
       <div class="flex justify-between items-center px-4 py-2">
         <div class="flex items-center space-x-2">
           <a href="https://rrup.org/">
-            <img src="/public/images/rrup_logo.png" alt="Rainbow Roundup Logo" class="h-12 w-auto" href="https://rrup.org/"/>
+            <img src="/public/images/rrup_logo.png" alt="Rainbow Roundup Logo" class="h-12 w-auto"
+              href="https://rrup.org/" />
           </a>
-          
+
         </div>
 
         <!-- Navigation Links -->
@@ -126,28 +117,29 @@
         </button>
       </div>
 
-      <!-- Collapsible Navigation Menu (when page is resized)-->
-     <div v-show="mobileMenuOpen" class="xl:hidden bg-white border-t border-gray-200 shadow-lg">
+      <!-- Collapsible Mobile Navigation Menu (when page is resized)-->
+      <div v-if="mobileMenuOpen"
+        class="xl:hidden bg-white border-t border-gray-200 shadow-lg absolute left-0 right-0 top-full"
+        style="z-index:100">
         <nav class="flex flex-col space-y-1 px-4 py-3 text-sm font-medium">
-          <NuxtLink to="/" @click="navigate('Home')"
-            class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2">Home</NuxtLink>
-          <NuxtLink to="/aboutUs" @click="navigate('About Us')"
-            class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2">About Us</NuxtLink>
-          <NuxtLink to="/calendar" @click="navigate('Calendar')"
-            class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2">Calendar</NuxtLink>
-          <a href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE" @click="navigate('Donate')"
-            class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2">Donate</a>
-          <NuxtLink v-if="!session" to="/signup" @click="navigate('Sign Up')"
-            class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2">Sign Up/Log In</NuxtLink>
-          <button v-else @click="logout"
-            class="block py-2 text-left text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2">
-            Logout
-          </button>
-          <button @click="promptInstall"
-            class="block py-2 text-left text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2">
-            Install App
-          </button>
-          <button @click="requestNotificationPermission"
+          <NuxtLink to="/" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+            @click.native="handleMobileNavClick">Home</NuxtLink>
+          <NuxtLink to="/aboutUs" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+            @click.native="handleMobileNavClick">About Us</NuxtLink>
+          <NuxtLink to="/calendar" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+            @click.native="handleMobileNavClick">Calendar</NuxtLink>
+          <a href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
+            class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+            @click="handleMobileNavClick">Donate</a>
+          <NuxtLink v-if="!session" to="/signup"
+            class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+            @click.native="handleMobileNavClick">Sign Up/Log In</NuxtLink>
+          <button v-else @click="logout(); handleMobileNavClick()"
+            class="block py-2 text-left text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2">Logout</button>
+          <button @click="promptInstall(); handleMobileNavClick()"
+            class="block py-2 text-left text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2">Install
+            App</button>
+          <button @click="requestNotificationPermission(); handleMobileNavClick()"
             class="flex items-center py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             aria-label="Toggle notifications">
             <span class="mr-2">Notifications</span>
@@ -181,11 +173,22 @@ import { ref, onMounted } from "vue";
 // Use the built-in auth composable instead of custom useUser
 const { data: session, signOut } = useAuth();
 
-const dropdownOpen = ref(false);
+const dropdownOpen = ref(false); 
 const mobileMenuOpen = ref(false);
 const isSubscribed = ref(false);
 const deferredPrompt = ref(null);
 
+// Toggles resized mobile menu view
+const toggleMobileMenu = () => {
+  mobileMenuOpen.value = !mobileMenuOpen.value;
+};
+
+// Closes the resized mobile menu once a nav link is clicked
+const handleMobileNavClick = () => {
+  mobileMenuOpen.value = false;
+};
+
+// Tracks if disclaimer has already been shown
 const showSafariDisclaimer = ref(false);
 
 // Safari detection function
