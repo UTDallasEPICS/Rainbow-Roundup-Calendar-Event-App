@@ -42,7 +42,15 @@
         <input type="email" id="email" :value="email" readonly :class="inputClass" />
       </div>
     </div>
-
+    <!-- Report button: only show if viewing another user's profile -->
+    <div v-if="!isSelf" class="mt-6">
+      <button
+        class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded-xl"
+        @click="reportUser"
+      >
+        Report
+      </button>
+    </div>
     <!-- Delete section visible only to admin/super -->
     <div v-if="isAdmin" class="mt-10 max-w-xl">
       <div class="bg-red-50 p-4 rounded-xl mb-4 border border-red-200">
