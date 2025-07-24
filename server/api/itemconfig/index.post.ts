@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client'
-import { defineEventHandler, readBody, setResponseStatus } from 'h3'
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma

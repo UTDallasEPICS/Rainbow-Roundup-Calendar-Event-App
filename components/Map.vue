@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang='ts'>
 import { ref, onMounted } from "vue";
 import { GoogleMap, Marker } from "vue3-google-map";
 import { useGoogleMaps } from "@/composables/useGoogleMaps";
@@ -9,7 +9,7 @@ const autocompleteInput = ref(null);
 const emit = defineEmits(["update:location"]);
 const config = useRuntimeConfig();
 const apiKey = config.public.NUXT_GOOGLE_PLACES;
-let autocomplete;
+let autocomplete : any;
 
 function getUserLocation() {
   if (navigator.geolocation) {
@@ -66,7 +66,7 @@ onMounted(async () => {
   }
 });
 
-function placeMarker(event) {
+function placeMarker(event : any) {//TODO: comment to fix it later
   // markerPosition.value = {
   //   lat: event.latLng.lat(),
   //   lng: event.latLng.lng(),
