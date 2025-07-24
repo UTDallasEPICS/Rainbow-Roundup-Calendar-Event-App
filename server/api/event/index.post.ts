@@ -1,7 +1,8 @@
-import { PrismaClient } from "@prisma/client";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { getServerSession } from "#auth";
 import { createTransport } from "nodemailer";
+import { createEmailMsg } from "../../utils/createEmailMsg.ts";
+import { resolve } from "path";
 import type { User } from "../../../types/session";
 
 const config = useRuntimeConfig();  // Access config for smtp
@@ -63,20 +64,29 @@ export default defineEventHandler(async (event) => {
       },
       select: {
         email: true,
+        firstname: true,
       },
     });
 
+    const eventURL = config.url + `/event/${body.id}`;
+    const logoPath = resolve("public/images/318x146Logo.png");
     for (const user of emailRecipients) {
       const mailOptions = {
         to: user.email,
         from: config.smtpFrom,
         subject: "New Event from Rainbow Roundup",
-        text: "Hey, Rainbow Roundup is hosting a new event! You can check it out here <Add link later>",
-        html: "<p>Hey, <strong>Rainbow Roundup</strong> is hosting a new event! You can check it out here <strong>Add link later</strong></p>",
+        text: `Hey, Rainbow Roundup is hosting a new event! You can check it out here ${eventURL}`,
+        html: createEmailMsg(user.firstname, body.title, body.startTime, body.description, config.url, eventURL),
+        attachments: [    // use attachments to ensure logo is displayed in email even in dev
+          {
+            filename: '318x146Logo.png',
+            path: logoPath,
+            cid: 'logo',
+          },
+        ],
       };
 
-      transport.sendMail(mailOptions, (err, info) => {
-        if (err) {
+      transport.sendMail(mailOptions, (err, info) => { if (err) {
           console.log(`Error sending email to ${user.email}:`, err);
         }
       });

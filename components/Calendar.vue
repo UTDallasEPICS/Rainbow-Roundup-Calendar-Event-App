@@ -293,6 +293,7 @@ const submitEvent = async () => {
       method: "POST",
       body: {
         id: googleEvent.id,
+        title: newEvent.title,
         description: newEvent?.description,
         userId: userData?.id || "-1",
         eventLat: newEvent?.lat,
