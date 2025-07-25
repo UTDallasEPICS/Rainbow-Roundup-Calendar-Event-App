@@ -18,160 +18,117 @@ model User {
   GlobalNotif   Boolean // Global notifications (annoncements)
   emailVerified DateTime?
 
-  SignUps       SignUp[]
-  Announcements Announcement[] // references announcements created by user
-  CreatedEvents Event[]
-
+  SignUps           SignUp[]
+  CreatedEvents     Event[]
+  
   // Report relations
-  Reports           Report[]       @relation("ReporterUser") // Reports this user has made
-  PotentialOffenses Report[]       @relation("ReportedUser") // Reports this user has received
-  CartItems         CartItem[]
-  ShippingInfos     ShippingInfo[]
+  Reports           Report[] @relation("ReporterUser")       // Reports this user has made
+  PotentialOffenses Report[] @relation("ReportedUser")       // Reports this user has received
   Orders            Order[]
 }
 
 model Event {
-  id              String   @id
-  description     String
-  userId          String // References Admin who created the event
-  eventLat        Float
-  eventLong       Float
-  startTime       DateTime // Datetime, includes date and time
-  endTime         DateTime
-  capacity        Int?
-  currentCapacity Int?
+  id               String   @id 
+  description      String
+  userId           String   // References Admin who created the event
+  eventLat         Float
+  eventLong        Float
+  startTime        DateTime // Datetime, includes date and time
+  endTime          DateTime
+  capacity         Int?
+  currentCapacity  Int?
 
   //Foreign Keys
-  User User @relation(fields: [userId], references: [id])
+  User             User      @relation(fields: [userId], references: [id])
 
   // Relation to SignUps
-  SignUps SignUp[]
-
-  // Announcements
-  Announcements Announcement[]
+  SignUps          SignUp[]
 }
 
 model SignUp {
-  id            String  @id @default(uuid())
-  userId        String
-  eventId       String
-  Notifications Boolean
+  id              String   @id @default(uuid())
+  userId          String
+  eventId         String
+  Notifications   Boolean
 
   // Foreign keys to User and Event
-  User  User  @relation(fields: [userId], references: [id])
-  Event Event @relation(fields: [eventId], references: [id])
+  User            User     @relation(fields: [userId], references: [id])
+  Event           Event    @relation(fields: [eventId], references: [id])
 
   @@unique([userId, eventId]) // Ensure a unique pair of user-event sign-ups
 }
 
-model Announcement {
-  id              String @id @default(uuid())
-  userId          String //user creating announcement
-  eventId         String //related event
-  announceBody    String // actual announcement
-  createdAt       DateTime @default(now())
-  // Foreign Keys
-  User  User  @relation(fields: [userId], references: [id])
-  Event Event @relation(fields: [eventId], references: [id])
-
-  @@unique([userId, eventId])
-}
-
 model Report {
-  id             String   @id @default(uuid())
-  reportedUserId String //account being reported
-  reporterUserId String //account making report
-  isUsername     Boolean // is the report username related
-  isProfilePic   Boolean // is the report profilePic related
-  isOther        Boolean // is something else
-  description    String?
-  reportTime     DateTime @default(now())
+  id                  String @id @default(uuid())
+  reportedUserId      String  //account being reported
+  reporterUserId      String  //account making report
+  isUsername          Boolean // is the report username related
+  isProfilePic        Boolean // is the report profilePic related
+  isOther             Boolean // is something else
+  description         String?
+  reportTime          DateTime @default(now())
 
   // Foreign Keys
-  ReportedUser User @relation("ReportedUser", fields: [reportedUserId], references: [id])
-  ReporterUser User @relation("ReporterUser", fields: [reporterUserId], references: [id])
+  ReportedUser            User     @relation("ReportedUser", fields: [reportedUserId], references: [id])
+  ReporterUser            User     @relation("ReporterUser", fields: [reporterUserId], references: [id])
 
+  
   // A single report by a user on another user
   @@unique([reportedUserId, reporterUserId])
 }
 
-model Product {
-  id          String       @id @default(uuid())
-  name        String
-  description String
-  thumbnail   String
-  ItemConfigs ItemConfig[]
-}
 
-model ItemConfig {
-  id         String      @id @default(uuid())
-  productId  String
-  price      Float
-  stock      Int
-  fit        Fit
-  size       Size
-  product    Product     @relation(fields: [productId], references: [id])
-  ItemPhotos ItemPhoto[]
-  CartItems  CartItem[]
+model FinishedItem {
+  id                String     @id @default(uuid())
+  quantity          Int
+  size              Size
+  price             Float
+  itemId            String      
+  item              Item        @relation(fields: [itemId], references: [id])  
+  
+
   OrderItems OrderItem[]
 }
 
-model ItemPhoto {
-  id           String     @id @default(uuid())
-  itemConfigId String
-  photoUrl     String
-  itemConfig   ItemConfig @relation(fields: [itemConfigId], references: [id])
+
+model Item {
+  id                String      @id @default(uuid())
+  name              String   
+
+  FinishedItems     FinishedItem[]
+  ItemPhotos         ItemPhoto[]
 }
 
-model CartItem {
+
+model ItemPhoto {
   id           String     @id @default(uuid())
-  userId       String
-  quantity     Int
-  itemConfigId String
-  itemConfig   ItemConfig @relation(fields: [itemConfigId], references: [id])
-  user         User       @relation(fields: [userId], references: [id])
+  url          String   
+  itemId       String
+
+  Item         Item       @relation(fields: [itemId], references: [id])
 }
 
 model Order {
-  id             String       @id @default(uuid())
-  userId         String
-  shippingInfoId String
-  status         OrderStatus  @default(PENDING)
-  paymentInfo    String?
-  placedAt       DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  user           User         @relation(fields: [userId], references: [id])
-  shippingInfo   ShippingInfo @relation(fields: [shippingInfoId], references: [id])
-  orderItems     OrderItem[]
+  id              String        @id @default(uuid())
+  userId          String
+  status          OrderStatus   
+  paymentInfo     String?
+  placedAt        DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  User            User          @relation(fields: [userId], references: [id])
+  OrderItems      OrderItem[]
 }
 
 model OrderItem {
-  id           String     @id @default(uuid())
-  orderId      String
-  itemConfigId String
-  quantity     Int
-  priceAtOrder Float
-  order        Order      @relation(fields: [orderId], references: [id])
-  itemConfig   ItemConfig @relation(fields: [itemConfigId], references: [id])
+  id             String         @id @default(uuid())
+  orderId        String
+  finishedItemsId  String  
+  
+  Order          Order       @relation(fields: [orderId], references: [id])
+  FinishedItems FinishedItem @relation(fields:[finishedItemsId], references: [id])
 }
 
-model ShippingInfo {
-  id         String   @id @default(uuid())
-  userId     String
-  name       String
-  phone      String
-  address1   String
-  address2   String?
-  city       String
-  state      String
-  postalCode String
-  country    String
-  isDefault  Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  User       User     @relation(fields: [userId], references: [id])
-  Orders     Order[]
-}
 
 model VerificationToken {
   identifier String
@@ -192,27 +149,27 @@ model PendingUser {
   expires    DateTime @default(now())
 }
 
+
 enum Role {
-  USER
-  ADMIN
+  USER 
+  ADMIN 
   SUPER
 }
 
 enum OrderStatus {
-  PENDING
-  PAID
-  SHIPPED
+  UNCONFIRMED
+  CONFIRMED 
+  PAID 
   DELIVERED
-  CANCELLED
 }
 
-enum Fit {
+enum Fit{
   M
   F
   U
 }
 
-enum Size {
+enum Size{
   XXS
   XS
   S
