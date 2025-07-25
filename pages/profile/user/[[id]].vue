@@ -52,7 +52,7 @@
       </button>
     </div>
     <!-- Report Modal -->
-    <div v-if="showReportModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div v-if="showReportModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-40 backdrop-blur-sm">
       <div class="bg-white rounded-xl p-6 w-[90%] max-w-md">
         <div class="flex flex-col items-center mb-4">
           <img :src="userData?.imageUrl || '/images/ProfileImage.png'" alt="User profile" class="w-24 h-24 rounded-full object-cover" />
@@ -99,6 +99,7 @@
 </template>
 
 <script setup>
+import { onMounted, onBeforeUnmount } from 'vue'
 import { ref, computed, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -213,6 +214,19 @@ const submitReport = async () => {
   } catch (error) {
     console.error('Failed to submit report:', error)
     alert('There was an error submitting your report.')
+  }
+}
+onMounted(() => {
+  window.addEventListener('keydown', handleEscapeKey)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleEscapeKey)
+})
+
+const handleEscapeKey = (event) => {
+  if (event.key === 'Escape') {
+    showReportModal.value = false
   }
 }
 </script>
