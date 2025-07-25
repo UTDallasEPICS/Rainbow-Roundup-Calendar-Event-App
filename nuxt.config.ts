@@ -20,6 +20,7 @@ export default defineNuxtConfig({
     smtpUser: process.env.SMTP_USER,
     smtpPass: process.env.SMTP_PASS,
     smtpFrom: process.env.SMTP_FROM,
+    url: process.env.URL,
   },
 
   devtools: { enabled: true },

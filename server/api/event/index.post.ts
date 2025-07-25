@@ -1,7 +1,11 @@
-import { PrismaClient } from "@prisma/client";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { getServerSession } from "#auth";
+import { createTransport } from "nodemailer";
+import { createEmailMsg } from "../../utils/createEmailMsg.ts";
+import { resolve } from "path";
 import type { User } from "../../../types/session";
+
+const config = useRuntimeConfig();  // Access config for smtp
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
@@ -52,7 +56,52 @@ export default defineEventHandler(async (event) => {
         currentCapacity: 0,
       },
     });
+    // Send email notification about the new event
+    const transport = createTransport({
+      host: config.smtpHost, 
+        port: Number(config.smtpPort),
+        secure: false,
+        auth: {
+          user: config.smtpUser,
+          pass: config.smtpPass,
+        },
+    });
 
+    // Look into filtering for verified users later
+    const emailRecipients = await prisma.user.findMany({
+      where: {
+        GlobalNotif: true,
+        role: "USER",
+      },
+      select: {
+        email: true,
+        firstname: true,
+      },
+    });
+
+    const eventURL = config.url + `/event/${body.id}`;
+    const logoPath = resolve("public/images/318x146Logo.png");
+    for (const user of emailRecipients) {
+      const mailOptions = {
+        to: user.email,
+        from: config.smtpFrom,
+        subject: "New Event from Rainbow Roundup",
+        text: `Hey, Rainbow Roundup is hosting a new event! You can check it out here ${eventURL}`,
+        html: createEmailMsg(user.firstname, body.title, body.startTime, body.description, config.url, eventURL),
+        attachments: [    // use attachments to ensure logo is displayed in email even in dev
+          {
+            filename: '318x146Logo.png',
+            path: logoPath,
+            cid: 'logo',
+          },
+        ],
+      };
+
+      transport.sendMail(mailOptions, (err, info) => { if (err) {
+          console.log(`Error sending email to ${user.email}:`, err);
+        }
+      });
+    }
     setResponseStatus(event, 200);
     return {
       data: newEvent,
