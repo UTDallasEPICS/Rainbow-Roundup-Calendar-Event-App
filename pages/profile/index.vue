@@ -121,6 +121,10 @@
 <script setup>
 import { ref, computed } from "vue";
 
+definePageMeta({
+  middleware: "sidebase-auth",
+});
+
 const editMode = ref(false);
 
 const inputClass = computed(() =>
@@ -129,8 +133,6 @@ const inputClass = computed(() =>
     : "px-3 py-2 rounded-xl focus:outline-none bg-gray-100 text-gray-600 cursor-not-allowed"
 );
 
-const route = useRoute();
-const id = route.params.id;
 
 const { status, data: session, signOut } = useAuth(); // We are deconstructing data from useAuth and renaming it to session.
 const userID = session.value.user.id;
@@ -235,4 +237,6 @@ const saveAccount = async () => {
     return e;
   }
 };
+
+
 </script>
