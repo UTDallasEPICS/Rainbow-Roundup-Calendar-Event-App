@@ -11,7 +11,6 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const prisma = event.context.prisma;
   const session = await getServerSession(event);
-
   const user = session?.user as User | undefined;
 
   if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
@@ -21,12 +20,25 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // validate that event starts before it ends
-  if (new Date(body.startTime) >= new Date(body.endTime)) {
+  const startTime = new Date(body.startTime);
+  const endTime = new Date(body.endTime);
+  const currentTime = new Date();
+
+  // Check that event starts before it ends
+  if (startTime >= endTime) {
     setResponseStatus(event, 400);
     return {
       success: false,
       error: "EndTime must be after StartTime",
+    };
+  }
+
+  // Check that start date is not in the past
+  if (startTime < currentTime) {
+    setResponseStatus(event, 400);
+    return {
+      success: false,
+      error: "Event start time cannot be in the past",
     };
   }
 
@@ -38,13 +50,12 @@ export default defineEventHandler(async (event) => {
         userId: body.userId,
         eventLat: body.eventLat,
         eventLong: body.eventLong,
-        startTime: new Date(body.startTime),
-        endTime: new Date(body.endTime),
+        startTime: startTime,
+        endTime: endTime,
         capacity: body.capacity,
         currentCapacity: 0,
       },
     });
-
     // Send email notification about the new event
     const transport = createTransport({
       host: config.smtpHost, 
@@ -91,7 +102,6 @@ export default defineEventHandler(async (event) => {
         }
       });
     }
-
     setResponseStatus(event, 200);
     return {
       data: newEvent,
