@@ -1,9 +1,9 @@
 <template>
   <div>
     <!-- Safari Disclaimer Popup -->
-    <div v-if="showSafariDisclaimer" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
+    <div v-if="showSafariDisclaimer" class="fixed inset-0 z-50 flex items-center justify-center"
       @keydown.esc="closeSafariDisclaimer" tabindex="0" aria-modal="true" role="dialog">
-      <div class="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 relative">
+      <div class="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 relative border border-gray-200">
         <button @click="closeSafariDisclaimer" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
           aria-label="Close">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -26,8 +26,6 @@
         </button>
       </div>
     </div>
-  </div>
-  <div>
     <!-- PWA Manifest and Route Announcer -->
     <NuxtPwaManifest />
     <NuxtRouteAnnouncer />
@@ -173,7 +171,7 @@ import { ref, onMounted } from "vue";
 // Use the built-in auth composable instead of custom useUser
 const { data: session, signOut } = useAuth();
 
-const dropdownOpen = ref(false); 
+const dropdownOpen = ref(false);
 const mobileMenuOpen = ref(false);
 const isSubscribed = ref(false);
 const deferredPrompt = ref(null);
