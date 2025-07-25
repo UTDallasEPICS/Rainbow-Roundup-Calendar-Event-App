@@ -94,8 +94,9 @@ model FinishedItem {
 model Item {
   id                String      @id @default(uuid())
   name              String   
-  finishedItems     FinishedItem[]
-  itemPhoto         ItemPhoto[]
+
+  FinishedItems     FinishedItem[]
+  ItemPhotos         ItemPhoto[]
 }
 
 
@@ -103,6 +104,7 @@ model ItemPhoto {
   id           String     @id @default(uuid())
   url          String   
   itemId       String
+
   Item         Item       @relation(fields: [itemId], references: [id])
 }
 
@@ -113,16 +115,18 @@ model Order {
   paymentInfo     String?
   placedAt        DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
-  user            User          @relation(fields: [userId], references: [id])
-  orderItems      OrderItem[]
+
+  User            User          @relation(fields: [userId], references: [id])
+  OrderItems      OrderItem[]
 }
 
 model OrderItem {
   id             String         @id @default(uuid())
   orderId        String
-  finishedItemId  String  
+  finishedItemsId  String  
+  
   Order          Order       @relation(fields: [orderId], references: [id])
-  FinishedItem FinishedItem @relation(fields:[finishedItemId], references: [id])
+  FinishedItems FinishedItem @relation(fields:[finishedItemsId], references: [id])
 }
 
 
