@@ -11,13 +11,13 @@
           <div class="flex transition-transform duration-500 ease-in-out" ref="carousel">
             <!-- Slide 1 -->
             <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 flex items-center justify-center p-4">
-              <img src="/Users/hamzamunis/Desktop/EPICS 2200/EPICSProject/Rainbow-Roundup-Calendar-Event-App/public/images/rrup_logo.png" 
+              <img src="/images/rrup_logo.png" 
                   alt="Rainbow Roundup Logo" 
                   class="max-h-52 md:max-h-80 object-contain">
             </div>
             <!-- Slide 2 - Full size image -->
             <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 relative">
-              <img src="/Users/hamzamunis/Desktop/EPICS 2200/EPICSProject/Rainbow-Roundup-Calendar-Event-App/public/images/carousel_3.png" 
+              <img src="/images/carousel_3.png" 
                   alt="Rainbow Roundup Event" 
                   class="absolute inset-0 w-full h-full object-cover">
             </div>
