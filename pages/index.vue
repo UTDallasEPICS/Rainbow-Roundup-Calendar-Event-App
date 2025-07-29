@@ -1,7 +1,7 @@
 <template>
   <div class="bg-blue-600 min-h-screen text-white flex flex-col">
     
-    <!-- Blue Area with Centered Carousel -->
+    <!-- Centered Carousel -->
     <div class="w-full bg-white flex flex-col items-center">  
       <!-- Carousel Container - Full width but content centered -->
       <div class="w-full max-w-screen-2xl pt-2">
