@@ -134,7 +134,7 @@
     </div>
 
     <!-- Support Cards Section -->
-    <div class="bg-white grid grid-cols-1 gap-6 pt-2">
+    <div class="bg-white grid grid-cols-1 gap-6 px-6 py-4">
         <!-- Support Families -->
         <div class="relative h-28 rounded-[20px] shadow-lg bg-lime-300 p-4">
           <div class="text-slate-900 text-lg font-medium">
