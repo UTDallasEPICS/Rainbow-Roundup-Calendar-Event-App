@@ -60,11 +60,11 @@
             See All
           </NuxtLink>
           <NuxtLink
-            to="/calendar"
             v-if="
               session &&
               (session.user.role === 'ADMIN' || session.user.role === 'SUPER')
             "
+            to="/calendar"
           >
             <button
               class="bg-white/50 text-green-600 text-xs px-4 py-1 rounded-full border border-green-600"
@@ -291,6 +291,7 @@ import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import { useRouter } from "vue-router";
 // Use NuxtAuth for session
 const { data: session } = useAuth();
+console.log(`Session Data: ${session}`)
 
 // Components
 import EventCard from "@/components/EventCard.vue";
