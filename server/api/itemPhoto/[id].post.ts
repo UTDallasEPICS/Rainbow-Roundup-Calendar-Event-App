@@ -61,7 +61,7 @@ export default defineEventHandler(async (event) => {
         }
 
         // upload file to s3 bucket
-        const objectKey = `itemPhotos/${Date.now}-${file.filename}`;
+        const objectKey = `itemPhotos/${Date.now()}-${file.filename}`;
         const bucketName = config.NUXT_AWS_S3_BUCKET_NAME!;
         const region = config.AWS_REGION!;
         const command = new PutObjectCommand({
