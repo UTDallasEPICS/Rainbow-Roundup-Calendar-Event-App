@@ -2,7 +2,6 @@ import { defineEventHandler, setResponseStatus, readMultipartFormData } from "h3
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import type { User } from "../../../types/session";
 import { getServerSession } from "#auth";
-import { jobs } from "googleapis/build/src/apis/jobs";
 
 const config = useRuntimeConfig();
 const s3 = new S3Client({
