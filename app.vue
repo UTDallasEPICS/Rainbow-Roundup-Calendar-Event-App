@@ -31,20 +31,6 @@
     <NuxtRouteAnnouncer />
     <div class="bg-blue-600 text-white text-sm px-4 py-1">
       <div class="flex justify-between items-center max-w-7xl mx-auto">
-        <div>
-          Contact us at:
-          <a
-            href="mailto:info@rainbowroundup.org"
-            class="underline hover:text-blue-200"
-            >info@rrup.org</a
-          >
-        </div>
-        469-443-8993
-      </div>
-    </div>
-
-    <div class="bg-blue-600 text-white text-sm px-4 py-1">
-      <div class="flex justify-between items-center max-w-7xl mx-auto">
         <!-- Left side: email with icon -->
         <div class="flex items-center gap-2 flex-grow">
           <div class="flex items-center space-x-1">
