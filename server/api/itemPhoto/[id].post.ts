@@ -1,4 +1,4 @@
-import { defineEventHandler, setResponseStatus } from "h3";
+import { defineEventHandler, setResponseStatus, readBody } from "h3";
 import type { User } from "../../../types/session";
 import { getServerSession } from "#auth";
 
@@ -7,6 +7,7 @@ export default defineEventHandler(async (event) => {
     const prisma = event.context.prisma;
     const session = await getServerSession(event);
     const user = session?.user as User | undefined;
+    const body = await readBody(event);
 
     if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
         throw createError({
@@ -19,27 +20,38 @@ export default defineEventHandler(async (event) => {
         setResponseStatus(event, 400);
         return {
             success: false,
-            error: "ItemPhoto ID is required",
+            error: "Item ID is required",
         };
     }
 
     try {
-        const itemPhoto = await prisma.itemPhoto.delete({
+        const item = await prisma.item.findUnique({
             where: {
                 id: id,
             }
         });
-        setResponseStatus(event, 200);
+
+        if (!item) {
+            setResponseStatus(event, 400);
+            return {
+                success: false,
+                errror: "Item record does not exist",
+            };
+        }
+
+
+
+        setResponseStatus(event, 201);
         return {
             success: true,
             itemPhoto: itemPhoto,
         };
     } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+        const errorMessage = error instanceof Error? error.message : "Unknown error occurred";
         setResponseStatus(event, 500);
         return {
             success: false,
-            error: `Error creating event: ${errorMessage}`,
+            error: `Error creating item photo: ${errorMessage}`,
         };
     }
 });
