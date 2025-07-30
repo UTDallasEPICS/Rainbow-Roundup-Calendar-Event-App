@@ -29,7 +29,6 @@
     <!-- PWA Manifest and Route Announcer -->
     <NuxtPwaManifest />
     <NuxtRouteAnnouncer />
-
     <div class="bg-blue-600 text-white text-sm px-4 py-1">
       <div class="flex justify-between items-center max-w-7xl mx-auto">
         <!-- Left side: email with icon -->
@@ -60,7 +59,6 @@
             <img src="/public/images/rrup_logo.png" alt="Rainbow Roundup Logo" class="h-12 w-auto"
               href="https://rrup.org/" />
           </a>
-
         </div>
 
         <!-- Navigation Links -->
@@ -228,6 +226,7 @@ onMounted(() => {
     window.addEventListener("keydown", handleKeyPress);
   }
 });
+
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value;
 };
@@ -279,7 +278,6 @@ const requestNotificationPermission = () => {
     console.warn("Notification API or Service Worker not supported.");
   }
 };
-
 
 const logout = async () => {
   await signOut({ callbackUrl: "/" });
