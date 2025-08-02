@@ -80,6 +80,17 @@
         </div>
       </div>
     </div>
+    <div v-if="reportMessage" class="mt-4 text-center">
+      <p
+        :class="{
+          'text-green-600': reportMessageType === 'success',
+          'text-red-600': reportMessageType === 'error'
+        }"
+        class="font-semibold"
+      >
+        {{ reportMessage }}
+      </p>
+    </div>
     <!-- Delete section visible only to admin/super -->
     <div v-if="isAdmin" class="mt-10 max-w-xl">
       <div class="bg-red-50 p-4 rounded-xl mb-4 border border-red-200">
@@ -183,6 +194,8 @@ const deleteAccount = async () => {
 const showReportModal = ref(false)
 const reportReason = ref('')
 const reportDescription = ref('')
+const reportMessage = ref('')
+const reportMessageType = ref('') // 'success' or 'error'
 
 // Open report modal
 const reportUser = () => {
@@ -201,19 +214,27 @@ const submitReport = async () => {
       method: 'POST',
       body: {
         reportedUserId: userData.value?.id,
-        reason: reportReason.value,
         description: reportDescription.value,
-        reporterId: session.value?.user?.id,
-        timestamp: new Date().toISOString()
+        isUsername: reportReason.value === 'Inappropriate Username',
+        isProfilePic: reportReason.value === 'Inappropriate Profile Picture',
+        isOther: reportReason.value === 'Other'
       }
     })
-    alert('Report submitted. Thank you.')
+    reportMessage.value = 'Successfully submitted report.'
+    reportMessageType.value = 'success'
+  } catch (error) {
+    console.error('Failed to submit report:', error)
+    reportMessage.value = 'There was an error submitting your report.'
+    reportMessageType.value = 'error'
+  } finally {
     showReportModal.value = false
     reportReason.value = ''
     reportDescription.value = ''
-  } catch (error) {
-    console.error('Failed to submit report:', error)
-    alert('There was an error submitting your report.')
+
+    setTimeout(() => {
+      reportMessage.value = ''
+      reportMessageType.value = ''
+    }, 20000)
   }
 }
 onMounted(() => {
