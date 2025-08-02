@@ -1,14 +1,15 @@
-const config = useRuntimeConfig()   // get url through config
+import { parseLocalISO } from './parseLocalISO';
 
-export function createEmailMsg(
+export function createNewEventEmail(
     firstName: string,
     title: string,
     datetime: string,
     description: string,
-    url: string,
     eventUrl: string,
   ) : string {
 
+  // THIS FUNCTION USES useRuntimeConfig() SO ONLY CALL IN SERVER ROUTES, HAS TO HAVE A NITRO CONTEXT
+  const config = useRuntimeConfig();
   const { date, time } = parseLocalISO(datetime);
 
   return `<!DOCTYPE html>
@@ -72,7 +73,7 @@ export function createEmailMsg(
               </div>
 
               <!-- Greeting -->
-              <div class="greeting"">
+              <div class="greeting">
                 Hi ${firstName},
               </div>
 
@@ -94,38 +95,10 @@ export function createEmailMsg(
               <!-- Footer -->
               <div class="footer">
                 Sent with 💜 by Rainbow Roundup<br />
-                <a href="${url}" style="color: #888;">Visit our website</a>
+                <a href="${config.url}" style="color: #888;">Visit our website</a>
               </div>
             </div>
           </body>
         </html>
     `;
 }
-
-// datetime is UTC, converts to CST
-function parseLocalISO(datetime: string) : {date: string, time: string} {
-  const date = new Date(datetime);
-
-  const options = {
-    timeZone: "America/Chicago",
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  };
-
-  const format = Intl.DateTimeFormat("en-US", options);
-  const parts = format.formatToParts(date);
-  
-  const get = (type: string) => parts.find(p => p.type === type)?.value || '';
-
-  const formattedDate = `${get('month')} ${get('day')}, ${get('year')}`;
-  const formattedTime = `${get('hour')}:${get('minute')} ${get('dayPeriod')}`;
-
-  return {
-    date: formattedDate,
-    time: formattedTime,
-  };
-} 

@@ -1,7 +1,7 @@
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { getServerSession } from "#auth";
 import { createTransport } from "nodemailer";
-import { createEmailMsg } from "../../utils/createEmailMsg.ts";
+import { createNewEventEmail } from "../../utils/createNewEventEmail.ts";
 import { resolve } from "path";
 import type { User } from "../../../types/session";
 
@@ -87,7 +87,7 @@ export default defineEventHandler(async (event) => {
         from: config.smtpFrom,
         subject: "New Event from Rainbow Roundup",
         text: `Hey, Rainbow Roundup is hosting a new event! You can check it out here ${eventURL}`,
-        html: createEmailMsg(user.firstname, body.title, body.startTime, body.description, config.url, eventURL),
+        html: createNewEventEmail(user.firstname, body.title, body.startTime, body.description, eventURL),
         attachments: [    // use attachments to ensure logo is displayed in email even in dev
           {
             filename: '318x146Logo.png',
