@@ -63,8 +63,8 @@
 
         </div>
 
-        <!-- Navigation Links -->
-        <nav class="hidden xl:flex space-x-6 text-sm font-medium">
+        <!-- Navigation Links - added md sizing -->
+        <nav class="hidden md:flex space-x-6 text-sm font-medium">
           <NuxtLink to="/" @click="navigate('Home')" class="text-gray-700 hover:text-black">Home</NuxtLink>
           <NuxtLink to="/aboutUs" @click="navigate('About Us')" class="text-gray-700 hover:text-black">About Us
           </NuxtLink>
@@ -99,9 +99,9 @@
           </button>
         </nav>
 
-        <!-- Hamburger Button -->
+        <!-- Hamburger Button - md: sizing -->
         <button @click="toggleMobileMenu"
-          class="xl:hidden flex items-center justify-center w-8 h-8 text-gray-700 hover:text-black focus:outline-none"
+          class="md:hidden flex items-center justify-center w-8 h-8 text-gray-700 hover:text-black focus:outline-none"
           aria-label="Toggle menu">
           <!-- Hamburger Icon -->
           <svg v-if="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
@@ -228,6 +228,7 @@ onMounted(() => {
     window.addEventListener("keydown", handleKeyPress);
   }
 });
+
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value;
 };
@@ -280,8 +281,13 @@ const requestNotificationPermission = () => {
   }
 };
 
-
 const logout = async () => {
   await signOut({ callbackUrl: "/" });
+};
+
+const navigate = (section) => {
+  // close mobile menu when navigating
+  mobileMenuOpen.value = false;
+  console.log(`Navigating to: ${section}`);
 };
 </script>
