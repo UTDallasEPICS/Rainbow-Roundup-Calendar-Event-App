@@ -120,9 +120,6 @@
 
 <script setup>
 import { ref, computed } from "vue";
-definePageMeta({
-  middleware: "sidebase-auth",
-});
 
 const editMode = ref(false);
 
@@ -139,7 +136,7 @@ const { status, data: session, signOut } = useAuth(); // We are deconstructing d
 const userID = session.value.user.id;
 
 const { data, refresh } = await useFetch(`/api/user/${userID}`);
-const userData = ref(data.value.User);
+const userData = ref(data.value.user);
 
 const firstName = ref(userData.value.firstname);
 const lastName = ref(userData.value.lastname);
