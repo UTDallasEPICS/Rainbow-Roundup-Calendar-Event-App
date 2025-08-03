@@ -7,136 +7,140 @@ import { PrismaClient } from "@prisma/client";
 import { createTransport } from "nodemailer";
 
 const config = useRuntimeConfig(); // Access runtime configuration (e.g., SMTP settings)
-const prisma = new PrismaClient(); // Initialize Prisma client for database interactions
 
-export default NuxtAuthHandler({
-  adapter: PrismaAdapter(prisma), // Use Prisma as the adapter for NuxtAuth
-  session: {
-    strategy: "jwt", // Use JSON Web Tokens (JWT) for session storage
-  },
-  providers: [
-    EmailProvider.default({
-      server: {
-        host: config.smtpHost, // SMTP server host
-        port: Number(config.smtpPort), // SMTP server port
-        auth: {
-          user: config.smtpUser, // SMTP username
-          pass: config.smtpPass, // SMTP password
+export default eventHandler(async (event) => {
+  // Now we can access event.context.prisma
+  const prisma = event.context.prisma;
+
+  return NuxtAuthHandler({
+    adapter: PrismaAdapter(prisma), // Use Prisma as the adapter for NuxtAuth
+    session: {
+      strategy: "jwt", // Use JSON Web Tokens (JWT) for session storage
+    },
+    providers: [
+      EmailProvider.default({
+        server: {
+          host: config.smtpHost, // SMTP server host
+          port: Number(config.smtpPort), // SMTP server port
+          auth: {
+            user: config.smtpUser, // SMTP username
+            pass: config.smtpPass, // SMTP password
+          },
         },
-      },
-      from: "noreply@example.com", // Default sender email address for verification emails
-      sendVerificationRequest({
-        identifier: email,
-        url,
-        provider,
-      }: { // type definition, ignore weird syntax
-        identifier: string;
-        url: string;
-        provider: { server: string; from: string };
-      }) {
-        // Extract host from the URL to customize the email subject and content
-        const { host } = new URL(url); // host is localhost:3000 in development, but in production, this will be changed to some other domain.
+        from: "noreply@example.com", // Default sender email address for verification emails
+        sendVerificationRequest({
+          identifier: email,
+          url,
+          provider,
+        }: { // type definition, ignore weird syntax
+          identifier: string;
+          url: string;
+          provider: { server: string; from: string };
+        }) {
+          // Extract host from the URL to customize the email subject and content
+          const { host } = new URL(url); // host is localhost:3000 in development, but in production, this will be changed to some other domain.
 
-        // Create the transport object for sending the email using Nodemailer
-        const transport = createTransport(provider.server);
+          // Create the transport object for sending the email using Nodemailer
+          const transport = createTransport(provider.server);
 
-        // Mail options for sending the email verification link
-        const mailOptions = {
-          to: email, // Recipient email address
-          from: provider.from, // Sender email address
-          subject: `Sign in to ${host}`, // Email subject
-          text: `Sign in to ${host} using this link: ${url}`, // Plain text email body
-          html: `<p>Sign in to <strong>${host}</strong> using this link: <a href="${url}">${url}</a></p>`, // HTML formatted email body
-        };
-
-        // Send the email and log any errors or the success response
-        transport.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            console.error("Error sending email:", error); // Log error if sending fails
-          } else {
-            console.log("Email sent:", info.response); // Log success message if email is sent
-          }
-        });
-      },
-    }),
-  ],
-  pages: {
-    signIn: "/login", // Custom sign-in page URL
-    newUser: "/signup", // Custom sign-up page URL
-  },
-  callbacks: {
-    async signIn({ user, account, email }) { // todo: understand if account and email need ot be cut
-      // If no email is provided, sign-in should fail
-      if (!user?.email) {
-        return false;
-      }
-
-      try {
-        // Check if the user already exists in the database based on their email
-        const userExists = await prisma.user.findUnique({
-          where: { email: user.email },
-        });
-
-        // If the user exists, allow sign-in; otherwise, redirect to the sign-up page
-        if (userExists) {
-          return true;
-        } else {
-          return Promise.resolve("/signup"); // Redirect to the signup page if user doesn't exist
-        }
-      } catch (error) {
-        console.error("Error checking if user exists:", error); // Log any errors encountered during the sign-in check
-        return false; // Prevent sign-in if there is an error
-      }
-    },
-    jwt({ token, account, profile }) {
-      // Add the session token to the JWT when account details are available
-      if (account) {
-        token.sessionToken = account.session_token;
-      }
-      return token; // Return the updated JWT token
-    },
-    async session({ session, token }) {
-      const email = token.email; // Get the user's email from the JWT token
-
-      if (!email) {
-        return session; // If no email is present, return the session as-is
-      }
-
-      // Attempt to retrieve additional user data from the database
-      try {
-        const additionalUserData = await prisma.user.findUnique({
-          where: { email },
-          select: {
-            id: true,
-            firstname: true,
-            lastname: true,
-            phoneNum: true,
-            role: true,
-            profilePic: true,
-          }, // Retrieve only necessary fields
-        });
-
-        // If additional user data is found, populate the session with it
-        if (additionalUserData) {
-          return {
-            ...session,
-            user: {
-              ...session.user,
-              id: additionalUserData.id,
-              firstname: additionalUserData.firstname,
-              lastname: additionalUserData.lastname,
-              phoneNum: additionalUserData.phoneNum,
-              role: additionalUserData.role,
-              profilePic: additionalUserData.profilePic,
-            },
+          // Mail options for sending the email verification link
+          const mailOptions = {
+            to: email, // Recipient email address
+            from: provider.from, // Sender email address
+            subject: `Sign in to ${host}`, // Email subject
+            text: `Sign in to ${host} using this link: ${url}`, // Plain text email body
+            html: `<p>Sign in to <strong>${host}</strong> using this link: <a href="${url}">${url}</a></p>`, // HTML formatted email body
           };
+
+          // Send the email and log any errors or the success response
+          transport.sendMail(mailOptions, (error, info) => {
+            if (error) {
+              console.error("Error sending email:", error); // Log error if sending fails
+            } else {
+              console.log("Email sent:", info.response); // Log success message if email is sent
+            }
+          });
+        },
+      }),
+    ],
+    pages: {
+      signIn: "/login", // Custom sign-in page URL
+      newUser: "/signup", // Custom sign-up page URL
+    },
+    callbacks: {
+      async signIn({ user, account, email }) { // todo: understand if account and email need ot be cut
+        // If no email is provided, sign-in should fail
+        if (!user?.email) {
+          return false;
         }
 
-        return session; // If no additional data is found, return the original session
-      } catch (error) {
-        console.error("Error fetching additional user data:", error); // Log errors encountered while fetching user data
-        return session; // Return the original session in case of error
-      }
+        try {
+          // Check if the user already exists in the database based on their email
+          const userExists = await prisma.user.findUnique({
+            where: { email: user.email },
+          });
+
+          // If the user exists, allow sign-in; otherwise, redirect to the sign-up page
+          if (userExists) {
+            return true;
+          } else {
+            return Promise.resolve("/signup"); // Redirect to the signup page if user doesn't exist
+          }
+        } catch (error) {
+          console.error("Error checking if user exists:", error); // Log any errors encountered during the sign-in check
+          return false; // Prevent sign-in if there is an error
+        }
+      },
+      jwt({ token, account, profile }) {
+        // Add the session token to the JWT when account details are available
+        if (account) {
+          token.sessionToken = account.session_token;
+        }
+        return token; // Return the updated JWT token
+      },
+      async session({ session, token }) {
+        const email = token.email; // Get the user's email from the JWT token
+
+        if (!email) {
+          return session; // If no email is present, return the session as-is
+        }
+
+        // Attempt to retrieve additional user data from the database
+        try {
+          const additionalUserData = await prisma.user.findUnique({
+            where: { email },
+            select: {
+              id: true,
+              firstname: true,
+              lastname: true,
+              phoneNum: true,
+              role: true,
+              profilePic: true,
+            }, // Retrieve only necessary fields
+          });
+
+          // If additional user data is found, populate the session with it
+          if (additionalUserData) {
+            return {
+              ...session,
+              user: {
+                ...session.user,
+                id: additionalUserData.id,
+                firstname: additionalUserData.firstname,
+                lastname: additionalUserData.lastname,
+                phoneNum: additionalUserData.phoneNum,
+                role: additionalUserData.role,
+                profilePic: additionalUserData.profilePic,
+              },
+            };
+          }
+
+          return session; // If no additional data is found, return the original session
+        } catch (error) {
+          console.error("Error fetching additional user data:", error); // Log errors encountered while fetching user data
+          return session; // Return the original session in case of error
+        }
+      },
     },
-  },
+  })(event);
 });

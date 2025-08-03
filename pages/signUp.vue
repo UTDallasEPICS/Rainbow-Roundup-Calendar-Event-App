@@ -1,4 +1,5 @@
 <template>
+  <div class="min-h-screen bg-white text-gray-900 dark:bg-white dark:text-gray-900">
   <form
     @submit.prevent="submitSignupForm"
     class="w-full max-w-xl mx-auto flex flex-col items-center justify-center bg-white p-6 sm:p-10 rounded-2xl"
@@ -13,8 +14,7 @@
       <!-- Profile Picture Upload with Preview -->
       <div>
         <label class="block text-md font-semibold text-gray-800 mb-2">
-          Profile Picture
-        </label>
+          Profile Picture  </label>
         <input
           type="file"
           accept="image/*"
@@ -96,7 +96,13 @@
     >
       Register
     </button>
+    <!-- Success message -->
+    <div v-if="successMessage" class="text-green-600 mt-4 text-center">
+      {{ successMessage }}
+    </div>
+    
   </form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -105,6 +111,7 @@ const router = useRouter();
 const file = ref<File | null>(null);
 const imageUrl = ref<string | null>(null);
 const errors = ref({});
+const successMessage = ref("");
 
 const signupModel = ref({
   email: "",
@@ -159,26 +166,41 @@ async function uploadToS3(file: File) {
 
 const submitSignupForm = async () => {
   errors.value = {};
+  const userDataToSubmit = { ...signupModel.value };
+  
   try {
-    if (file.value) {
-      const uploadedUrl = await uploadToS3(file.value);
-      signupModel.value.profilePic = uploadedUrl;
-    }
-
+    
     const { data, error } = await useFetch("/api/user", {
       method: "POST",
-      body: signupModel.value,
+      body: userDataToSubmit,
       watch: false,
     });
 
-    if (data?.value?.success) {
+    if (data?.value?.success) {    
+    
+      
+      if (file.value) {
+        try {
+          const uploadedUrl = await uploadToS3(file.value);
+          signupModel.value.profilePic = uploadedUrl;
+        
+        } catch (uploadError) {
+          console.error("Profile picture upload failed:", uploadError);
+          
+        }
+      }
+      
       router.push("login");
+      successMessage.value = "A verification email has been sent to your address. Please check your inbox to complete registration.";
+      // Optionally clear form fields here
     } else {
       errors.value = { error: "Signup failed." };
+      
     }
   } catch (err) {
     console.error("Error submitting signup form", err);
     errors.value = { error: "Something went wrong during signup." };
+    
   }
 };
 </script>

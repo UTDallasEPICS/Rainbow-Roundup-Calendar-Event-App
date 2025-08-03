@@ -5,16 +5,18 @@
     <div class="w-full max-w-6xl space-y-8 py-8">
       <!-- Greeting -->
       <header class="flex items-center space-x-4">
-        <NuxtLink to="/profile">
+        <NuxtLink
+          :to="session?.user?.id ? `/profile/${session.user.id}` : '/profile'"
+        >
           <img
-            :src="user?.profilePic || '/default-profile.png'"
+            :src="session?.user?.profilePic || '/default-profile.png'"
             alt="Profile"
             class="w-10 h-10 rounded-full object-cover"
-            v-if="user"
+            v-if="session && session.user"
           />
         </NuxtLink>
         <h1 class="text-xl md:text-2xl font-bold text-zinc-700 capitalize">
-          Hello {{ user?.firstname || "" }}!
+          Hello {{ session?.user?.firstname || "" }}!
         </h1>
       </header>
 
@@ -28,7 +30,10 @@
 
       <!-- Admin Section -->
       <div
-        v-if="user && (user.role === 'ADMIN' || user.role === 'SUPER')"
+        v-if="
+          session &&
+          (session.user.role === 'ADMIN' || session.user.role === 'SUPER')
+        "
         class="space-y-2"
       >
         <div class="text-sm md:text-md font-extrabold uppercase text-zinc-700">
@@ -56,7 +61,10 @@
           </NuxtLink>
           <NuxtLink
             to="/calendar"
-            v-if="user && (user.role === 'ADMIN' || user.role === 'SUPER')"
+            v-if="
+              session &&
+              (session.user.role === 'ADMIN' || session.user.role === 'SUPER')
+            "
           >
             <button
               class="bg-white/50 text-green-600 text-xs px-4 py-1 rounded-full border border-green-600"
@@ -281,16 +289,23 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import { useRouter } from "vue-router";
+// Use NuxtAuth for session
+const { data: session } = useAuth();
 
 // Components
 import EventCard from "@/components/EventCard.vue";
 import MakeEventCard from "@/components/MakeEventCard.vue";
 import { fetchCombinedEvents } from "../server/utils/fetchCombinedEvents";
 
+
 const { status, data, refresh } = useAuth();
 await refresh(); // don't load components until auth is done checking who you are
 const user = computed(() => data.value?.user);
 const showEvents = ref(false);
+
+// User state
+// Remove the local user ref and onMounted user fetch for user
+
 interface EventItem {
   id: string;
   dateDay: string;
