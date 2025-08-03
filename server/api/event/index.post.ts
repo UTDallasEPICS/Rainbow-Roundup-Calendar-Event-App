@@ -46,6 +46,7 @@ export default defineEventHandler(async (event) => {
     const newEvent = await prisma.event.create({
       data: {
         id: body.id,
+        title: body.title,
         description: body?.description,
         userId: body.userId,
         eventLat: body.eventLat,

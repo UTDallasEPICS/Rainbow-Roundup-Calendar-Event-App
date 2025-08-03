@@ -16,7 +16,7 @@ export function createEventReminderEmail({
     eventUrl: string,
     daysTill: number,
     attending: boolean,
-}) : {subject: string, html: string} | undefined {
+}) : {subject: string, html: string, text: string} | undefined {
 
   // THIS FUNCTION USES useRuntimeConfig() SO ONLY CALL IN SERVER ROUTES, HAS TO HAVE A NITRO CONTEXT
   const config = useRuntimeConfig();
@@ -28,8 +28,14 @@ export function createEventReminderEmail({
   const attendingStr = `We're excited to see you soon! Just a reminder that the event you're signed up for is in ${daysTill} days:`;
   const signupStr = `We’ve got something awesome coming up in ${daysTill} — and we’d love for you to be there!`;
 
+  const text = attending ?
+    `We're excited to see you soon! Just a reminder that the event you're signed up for is in ${daysTill} days!!!\n\nCome check it out at ${eventUrl}`
+    : 
+    `We’ve got something awesome coming up in ${daysTill} — and we’d love for you to come!!!\n\nCome check it out at ${eventUrl}`;
+
   return {
     subject: attending ? "👋 Just a Reminder – Your Upcoming Event with Us!" : "🎉 Don’t Miss Out on This Upcoming Event!",
+    text: text,
     html: `<!DOCTYPE html>
         <html>
           <head>
