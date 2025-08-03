@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
             statusCode: 403,
         });
     }
+
     if (!id) {
         setResponseStatus(event, 400);
         return {

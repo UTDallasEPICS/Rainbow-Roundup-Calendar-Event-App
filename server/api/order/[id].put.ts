@@ -71,7 +71,7 @@ export default defineEventHandler(async (event) => {
         setResponseStatus(event, 200);
         return {
             success: true,
-            order: fullOrder,
+            data: fullOrder, 
         };
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";

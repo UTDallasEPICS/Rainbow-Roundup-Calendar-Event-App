@@ -7,6 +7,7 @@ export default defineEventHandler(async (event) => {
     const session = await getServerSession(event);
     const user = session?.user as User | undefined;
 
+    // Auth check: only SUPER or ADMIN
     if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
         throw createError({
             statusMessage: "Unauthenticated",
@@ -32,7 +33,7 @@ export default defineEventHandler(async (event) => {
         setResponseStatus(event, 200);
         return {
             success: true,
-            orders,
+            data: orders, 
         };
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";

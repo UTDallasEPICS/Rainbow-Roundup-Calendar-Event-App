@@ -7,7 +7,6 @@ export default defineEventHandler(async (event) => {
     const session = await getServerSession(event);
     const user = session?.user as User | undefined;
 
-    // Auth check: must be SUPER or ADMIN
     if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
         throw createError({
             statusMessage: "Unauthenticated",
@@ -16,10 +15,8 @@ export default defineEventHandler(async (event) => {
     }
 
     try {
-        // Get request body
         const body = await readBody(event);
 
-        // Validate required fields
         if (!body.name || !body.finishedItems) {
             setResponseStatus(event, 400);
             return {
@@ -29,7 +26,7 @@ export default defineEventHandler(async (event) => {
         }
         if (!Array.isArray(body.finishedItems)) {
             setResponseStatus(event, 400);
-            return{ 
+            return {
                 success: false,
                 error: "finishedItems field must be an array",
             };
@@ -38,7 +35,7 @@ export default defineEventHandler(async (event) => {
         const item = await prisma.item.create({
             data: {
                 name: body.name,
-            }
+            },
         });
 
         if (!item) {
@@ -49,19 +46,18 @@ export default defineEventHandler(async (event) => {
             };
         }
 
-        // Create finishedItems and reference Item field
         await Promise.all(
-            body.finishedItems.map(async (finishedItem : Record<string, any>) => {
+            body.finishedItems.map(async (finishedItem: Record<string, any>) => {
                 const quantity = Number(finishedItem.quantity);
                 const size = finishedItem.size;
                 const price = parseFloat(finishedItem.price);
                 if (!quantity || !size || !price) {
                     throw createError({
                         statusCode: 400,
-                        statusMessage: "Request must include an array of finishedItems with quanity, size, and price fields",
+                        statusMessage: "Request must include an array of finishedItems with quantity, size, and price fields",
                     });
                 }
-                if (!["XXS","XS","S","M","L","XL","XXL","XXXL"].includes(size)) {
+                if (!["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL"].includes(size)) {
                     throw createError({
                         statusCode: 400,
                         statusMessage: "Invalid size, valid sizes: XXS, XS, S, M, L, XL, XXL, XXXL",
@@ -69,24 +65,30 @@ export default defineEventHandler(async (event) => {
                 }
                 const finItem = await prisma.finishedItem.create({
                     data: {
-                        quantity: quantity,
-                        size: size,
-                        price: price,
+                        quantity,
+                        size,
+                        price,
                         itemId: item.id,
-                    }
+                    },
                 });
                 if (!finItem) {
                     throw createError({
                         statusCode: 500,
-                        statusMessage: "Finished Item creation failed"
+                        statusMessage: "Finished Item creation failed",
                     });
                 }
-            }));
+            })
+        );
+
+        const updatedItem = await prisma.item.findUnique({
+            where: { id: item.id },
+            include: { FinishedItems: true },
+        });
 
         setResponseStatus(event, 200);
         return {
             success: true,
-            data: item,
+            data: updatedItem,
         };
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";

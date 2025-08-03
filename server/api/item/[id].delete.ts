@@ -3,7 +3,7 @@ import type { User } from "../../../types/session";
 import { getServerSession } from "#auth";
 
 export default defineEventHandler(async (event) => {
-    const id = getRouterParam(event, "id"); 
+    const id = getRouterParam(event, "id");
     const prisma = event.context.prisma;
     const session = await getServerSession(event);
     const user = session?.user as User | undefined;
@@ -19,38 +19,39 @@ export default defineEventHandler(async (event) => {
         setResponseStatus(event, 400);
         return {
             success: false,
-            error: "Order ID is required",
+            error: "Item ID is required",
         };
     }
 
     try {
-        const existingOrder = await prisma.order.findUnique({
+        const existingItem = await prisma.item.findUnique({
             where: { id },
-            include: {
-                OrderItems: true,
-            },
         });
 
-        if (!existingOrder) {
+        if (!existingItem) {
             setResponseStatus(event, 404);
             return {
                 success: false,
-                error: "Order not found",
+                error: "Item not found",
             };
         }
 
-        await prisma.orderItem.deleteMany({
-            where: { orderId: id },
+        await prisma.finishedItem.deleteMany({
+            where: { itemId: id },
         });
 
-        await prisma.order.delete({
+        await prisma.itemPhoto.deleteMany({
+            where: { itemId: id },
+        });
+
+        await prisma.item.delete({
             where: { id },
         });
 
         setResponseStatus(event, 200);
         return {
             success: true,
-            message: "Order and related order items deleted successfully",
+            message: "Item and its related finishedItems and itemPhotos deleted successfully",
         };
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";

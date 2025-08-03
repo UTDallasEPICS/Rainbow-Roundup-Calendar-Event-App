@@ -8,6 +8,7 @@ export default defineEventHandler(async (event) => {
     const user = session?.user as User | undefined;
     const prisma = event.context.prisma;
 
+    // Auth check
     if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
         throw createError({
             statusMessage: "Unauthenticated",
@@ -40,7 +41,7 @@ export default defineEventHandler(async (event) => {
         setResponseStatus(event, 200);
         return {
             success: true,
-            orders,
+            data: orders, 
         };
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
