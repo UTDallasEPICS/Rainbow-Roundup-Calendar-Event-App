@@ -5,16 +5,7 @@ import { asCleanDays } from "@fullcalendar/core/internal";
 
 export default defineEventHandler(async (event) => {
     const prisma = event.context.prisma;
-    const session = await getServerSession(event);
-    const user = session?.user as User | undefined;
-
-    if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
-        throw createError({
-            statusMessage: "Unauthenticated",
-            statusCode: 403,
-        });
-    }
-
+    
     try {
         const items = await prisma.item.findMany({
             include: {

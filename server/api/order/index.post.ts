@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
     const session = await getServerSession(event);
     const user = session?.user as User | undefined;
 
-    if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
+    if (!user?.role) {
         throw createError({
             statusMessage: "Unauthenticated",
             statusCode: 403,
@@ -64,7 +64,7 @@ export default defineEventHandler(async (event) => {
         setResponseStatus(event, 201);
         return {
             success: true,
-            order,
+            data: order,
         };
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";

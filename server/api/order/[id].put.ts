@@ -23,6 +23,21 @@ export default defineEventHandler(async (event) => {
         };
     }
 
+    // Authenticate that user calling api has permissions to update the order
+    if (user?.role !== "SUPER" && user?.role !== "ADMIN") {
+        const order = await prisma.order.findUnique({
+            where: {id: id,},
+            select: {userId: true,}
+        });
+
+        if (order?.userId !== user.id) {
+            throw createError({
+                statusMessage: "Unauthenticated",
+                statusCode: 403,
+            });
+        }
+    }
+
     try {
         const body = await readBody(event);
 
@@ -43,6 +58,13 @@ export default defineEventHandler(async (event) => {
         });
 
         if (Array.isArray(body.orderItems)) {
+            if (body.orderItems.length === 0) {
+                setResponseStatus(event, 400);
+                return {
+                    success: false,
+                    error: "Must include order items for update",
+                };
+            }
             await prisma.orderItem.deleteMany({
                 where: { orderId: id },
             });

@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     const prisma = event.context.prisma;
 
     // Auth check
-    if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
+    if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN" && user.id !== userId)) {
         throw createError({
             statusMessage: "Unauthenticated",
             statusCode: 403,
