@@ -58,6 +58,7 @@ export default defineNuxtConfig({
     "@nuxt/ui",
     "@nuxt/eslint",
     "@sidebase/nuxt-auth",
+    "nuxt-scheduler",
   ],
   auth: {
     isEnabled: true,

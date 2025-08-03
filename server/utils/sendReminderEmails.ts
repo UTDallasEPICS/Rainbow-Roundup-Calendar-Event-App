@@ -67,11 +67,11 @@ export async function sendReminderEmails(days: number) {
     for (const user of signups) {
       const eventUrl = config.url + `/event/${user.Event.id}`;
       const emailParams = {
-        firstname: user.User.firstname,
+        firstName: user.User.firstname,
         title: user.Event.title,
         datetime: user.Event.startTime,
         description: user.Event.description,
-        eventURL: eventUrl,
+        eventUrl: eventUrl,
         daysTill: days,
         attending: true,
       };
@@ -146,11 +146,11 @@ export async function sendReminderEmails(days: number) {
       else {
         for (const user of usersNotSignedUp) {
           const emailParams = {
-            firstname: user.firstname,
+            firstName: user.firstname,
             title: event.title,
             datetime: event.startTime,
             description: event.description,
-            eventURL: eventUrl,
+            eventUrl: eventUrl,
             daysTill: days,
             attending: false,
           };

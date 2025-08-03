@@ -23,7 +23,7 @@ export function createEventReminderEmail({
   const { date, time } = parseLocalISO(datetime);
   
   if (daysTill <= 0) {
-    return undefined;
+    return null;
   }
   const attendingStr = `We're excited to see you soon! Just a reminder that the event you're signed up for is in ${daysTill} days:`;
   const signupStr = `We’ve got something awesome coming up in ${daysTill} — and we’d love for you to be there!`;
