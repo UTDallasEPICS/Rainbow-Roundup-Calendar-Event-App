@@ -42,7 +42,55 @@
         <input type="email" id="email" :value="email" readonly :class="inputClass" />
       </div>
     </div>
+    <!-- Report button: only show if viewing another user's profile -->
+    <div v-if="!isSelf" class="mt-6">
+      <button
+        class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded-xl"
+        @click="reportUser"
+      >
+        Report
+      </button>
+    </div>
+    <!-- Report Modal -->
+    <div v-if="showReportModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-40 backdrop-blur-sm">
+      <div class="bg-white rounded-xl p-6 w-[90%] max-w-md">
+        <div class="flex flex-col items-center mb-4">
+          <img :src="userData?.imageUrl || '/images/ProfileImage.png'" alt="User profile" class="w-24 h-24 rounded-full object-cover" />
+          <p class="mt-2 text-lg font-semibold text-gray-800">{{ userData?.username }}</p>
+        </div>
 
+        <div class="mb-3">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+          <select v-model="reportReason" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none">
+            <option disabled value="">-- Select a reason --</option>
+            <option>Inappropriate Username</option>
+            <option>Inappropriate Profile Picture</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Description (optional)</label>
+          <textarea v-model="reportDescription" rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none" placeholder="Write more details here..."></textarea>
+        </div>
+
+        <div class="flex justify-end space-x-2">
+          <button @click="showReportModal = false" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-md">Cancel</button>
+          <button @click="submitReport" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md">Submit</button>
+        </div>
+      </div>
+    </div>
+    <div v-if="reportMessage" class="mt-4 text-center">
+      <p
+        :class="{
+          'text-green-600': reportMessageType === 'success',
+          'text-red-600': reportMessageType === 'error'
+        }"
+        class="font-semibold"
+      >
+        {{ reportMessage }}
+      </p>
+    </div>
     <!-- Delete section visible only to admin/super -->
     <div v-if="isAdmin" class="mt-10 max-w-xl">
       <div class="bg-red-50 p-4 rounded-xl mb-4 border border-red-200">
@@ -62,6 +110,7 @@
 </template>
 
 <script setup>
+import { onMounted, onBeforeUnmount } from 'vue'
 import { ref, computed, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -138,6 +187,67 @@ const deleteAccount = async () => {
     return router.push({ path: '/', replace: true })
   } catch (e) {
     console.error('Failed to delete account:', e)
+  }
+}
+
+// Report modal state
+const showReportModal = ref(false)
+const reportReason = ref('')
+const reportDescription = ref('')
+const reportMessage = ref('')
+const reportMessageType = ref('') // 'success' or 'error'
+
+// Open report modal
+const reportUser = () => {
+  showReportModal.value = true
+}
+
+// Submit report handler
+const submitReport = async () => {
+  if (!reportReason.value) {
+    alert('Please select a reason for reporting.')
+    return
+  }
+
+  try {
+    await $fetch('/api/report', {
+      method: 'POST',
+      body: {
+        reportedUserId: userData.value?.id,
+        description: reportDescription.value,
+        isUsername: reportReason.value === 'Inappropriate Username',
+        isProfilePic: reportReason.value === 'Inappropriate Profile Picture',
+        isOther: reportReason.value === 'Other'
+      }
+    })
+    reportMessage.value = 'Successfully submitted report.'
+    reportMessageType.value = 'success'
+  } catch (error) {
+    console.error('Failed to submit report:', error)
+    reportMessage.value = 'There was an error submitting your report.'
+    reportMessageType.value = 'error'
+  } finally {
+    showReportModal.value = false
+    reportReason.value = ''
+    reportDescription.value = ''
+
+    setTimeout(() => {
+      reportMessage.value = ''
+      reportMessageType.value = ''
+    }, 20000)
+  }
+}
+onMounted(() => {
+  window.addEventListener('keydown', handleEscapeKey)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleEscapeKey)
+})
+
+const handleEscapeKey = (event) => {
+  if (event.key === 'Escape') {
+    showReportModal.value = false
   }
 }
 </script>
