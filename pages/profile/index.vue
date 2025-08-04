@@ -120,7 +120,9 @@
 
 <script setup>
 import { ref, computed } from "vue";
-
+definePageMeta({
+   middleware: "sidebase-auth",
+ });
 const editMode = ref(false);
 
 const inputClass = computed(() =>
