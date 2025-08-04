@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 
-import { defineEventHandler, readBody, createError } from 'h3';
 import { User } from "../../../types/session";
 
 import { getServerSession } from '#auth';
