@@ -1,4 +1,5 @@
 <template>
+  <div class="min-h-screen bg-white text-gray-900 dark:bg-white dark:text-gray-900">
   <form
     @submit.prevent="submitSignupForm"
     class="w-full max-w-xl mx-auto flex flex-col items-center justify-center bg-white p-6 sm:p-10 rounded-2xl"
@@ -13,8 +14,7 @@
       <!-- Profile Picture Upload with Preview -->
       <div>
         <label class="block text-md font-semibold text-gray-800 mb-2">
-          Profile Picture
-        </label>
+          Profile Picture  </label>
         <input
           type="file"
           accept="image/*"
@@ -100,7 +100,9 @@
     <div v-if="successMessage" class="text-green-600 mt-4 text-center">
       {{ successMessage }}
     </div>
+    
   </form>
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -20,6 +20,7 @@ export default defineNuxtConfig({
     smtpUser: process.env.SMTP_USER,
     smtpPass: process.env.SMTP_PASS,
     smtpFrom: process.env.SMTP_FROM,
+    url: process.env.URL,
   },
 
   devtools: { enabled: true },
@@ -57,6 +58,7 @@ export default defineNuxtConfig({
     "@nuxt/ui",
     "@nuxt/eslint",
     "@sidebase/nuxt-auth",
+    "nuxt-scheduler",
   ],
   auth: {
     isEnabled: true,
