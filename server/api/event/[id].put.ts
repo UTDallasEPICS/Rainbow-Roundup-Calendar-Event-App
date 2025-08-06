@@ -63,6 +63,7 @@ export default defineEventHandler(async (event) => {
 
     const updateData: any = {};
     if (body.description != null) updateData.description = body.description;
+    if (body.title != null) updateData.title = body.title;
     if (body.userId != null) updateData.userId = body.userId;
     if (body.startTime != null) updateData.startTime = new Date(body.startTime);
     if (body.endTime != null) updateData.endTime = new Date(body.endTime);
