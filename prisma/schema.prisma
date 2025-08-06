@@ -29,6 +29,7 @@ model User {
 
 model Event {
   id              String   @id
+  title           String
   description     String
   userId          String // References Admin who created the event
   eventLat        Float

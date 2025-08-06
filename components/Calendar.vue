@@ -306,6 +306,7 @@ const startTime = new Date(eventForm.value.start);
       method: "POST",
       body: {
         id: googleEvent.id,
+        title: newEvent.title,
         description: newEvent?.description,
         userId: userData?.id || "-1",
         eventLat: newEvent?.lat,
