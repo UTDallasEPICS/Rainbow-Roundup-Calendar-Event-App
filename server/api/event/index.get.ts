@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
             User: { select: { id: true, firstname: true, profilePic: true } },
           },
         }, // Who signed up
-        Anouncements: true, // Any related notifications // previously called notifications, now called announcements
+        Announcements: true, // Any related notifications // previously called notifications, now called announcements
       },
       orderBy: {
         startTime: "asc", // Optional: sort upcoming events first
