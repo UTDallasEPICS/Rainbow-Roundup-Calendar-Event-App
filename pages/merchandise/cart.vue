@@ -1,3 +1,5 @@
+<!--The Stripe integration needs to be done in order for the checkout and payment methods to work-->
+
 <template>
   <div class="container mx-auto px-4 py-8">
     <div class="flex flex-col lg:flex-row gap-8">
