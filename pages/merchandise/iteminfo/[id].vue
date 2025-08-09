@@ -1,48 +1,49 @@
 <template>
-  <div v-if="item" class="item-details">
-    <h1 class="item-name">{{ item.name }}</h1>
+  <div v-if="item" class="max-w-[900px] mx-auto p-6 font-sans">
+    <h1 class="text-2xl mb-4 font-bold">{{ item.name }}</h1>
 
-    <div class="item-content">
-      <img :src="item?.ItemPhotos?.[0]?.url || '/placeholder.jpg'" alt="Item image">
-      <div class="item-info">
-        <p class="item-description">{{ item.description }}</p>
+    <div class="flex gap-8 items-start">
+      <!--Image needs to be fixed-->
+      <img :src="item?.ItemPhotos?.[0]?.url || '/placeholder.jpg'" alt="Item image" class="w-[300px] h-auto rounded-lg object-cover shadow-md">
+      <div class="flex-1">
+        <p class="text-lg mb-6 leading-snug">{{ item.description }}</p>
 
-        <div class="selectors">
-          <label>
+        <div class="space-y-4 font-semibold">
+          <label class="block mb-4 font-semibold">
             Size:
-            <select v-model="selectedSize" class="select-input">
+            <select v-model="selectedSize" class="ml-2 px-2 py-1 text-base rounded border border-gray-300">
               <option disabled value="">Select size</option>
               <option v-for="size in item.availableSizes" :key="size">{{ size }}</option>
             </select>
           </label>
 
-          <label>
+          <label class="block mb-4 font-semibold">
             Fit:
-            <select v-model="selectedFit" class="select-input">
+            <select v-model="selectedFit" class="ml-2 px-2 py-1 text-base rounded border border-gray-300">
               <option disabled value="">Select fit</option>
               <option v-for="fit in item.availableFits" :key="fit">{{ fit }}</option>
             </select>
           </label>
 
-          <label>
+          <label class="block mb-4 font-semibold">
             Quantity:
             <input
               type="number"
               v-model.number="quantity"
               min="1"
-              class="quantity-input"
+              class="ml-2 px-2 py-1 text-base rounded border border-gray-300 w-16"
             />
           </label>
         </div>
 
-        <p class="total-price">
+        <p class="text-xl my-6">
           Total: <strong>${{ formattedPrice }}</strong>
         </p>
 
         <button
           :disabled="!canAddToCart"
           @click="addToCart"
-          class="add-to-cart-btn"
+          class="bg-blue-500 text-white px-4 py-2 text-lg rounded-md cursor-pointer transition-colors duration-300 enabled:hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed"
         >
           Add to Cart
         </button>
@@ -50,7 +51,7 @@
     </div>
   </div>
 
-  <div v-else class="loading">
+  <div v-else class="max-w-[600px] mx-auto mt-12 text-lg text-center">
     <p>Loading item details...</p>
   </div>
 </template>
@@ -141,93 +142,3 @@ const addToCart = async () => {
   }
 };
 </script>
-
-<style scoped>
-.item-details {
-  max-width: 900px;
-  margin: auto;
-  padding: 1.5rem;
-  font-family: Arial, sans-serif;
-}
-
-.item-name {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  font-weight: bold;
-}
-
-.item-content {
-  display: flex;
-  gap: 2rem;
-  align-items: flex-start;
-}
-
-.item-image {
-  width: 300px;
-  height: auto;
-  border-radius: 8px;
-  object-fit: cover;
-  box-shadow: 0 0 8px rgba(0,0,0,0.15);
-}
-
-.item-info {
-  flex: 1;
-}
-
-.item-description {
-  font-size: 1.1rem;
-  margin-bottom: 1.5rem;
-  line-height: 1.4;
-}
-
-.selectors label {
-  display: block;
-  margin-bottom: 1rem;
-  font-weight: 600;
-}
-
-.select-input,
-.quantity-input {
-  margin-left: 0.5rem;
-  padding: 0.4rem 0.6rem;
-  font-size: 1rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-
-.quantity-input {
-  width: 60px;
-}
-
-.total-price {
-  font-size: 1.25rem;
-  margin: 1.5rem 0;
-}
-
-.add-to-cart-btn {
-  background-color: #007bff;
-  color: white;
-  padding: 0.75rem 1.5rem;
-  font-size: 1.1rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.add-to-cart-btn:disabled {
-  background-color: #999;
-  cursor: not-allowed;
-}
-
-.add-to-cart-btn:not(:disabled):hover {
-  background-color: #0056b3;
-}
-
-.loading {
-  max-width: 600px;
-  margin: 3rem auto;
-  font-size: 1.2rem;
-  text-align: center;
-}
-</style>
