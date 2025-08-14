@@ -4,15 +4,6 @@
     <header class="w-full bg-header-1 px-4 sm:px-5 md:px-6 lg:px-[20px] py-4">
       <div class="w-full max-w-[1600px] mx-auto">
         <div class="flex flex-col lg:flex-row justify-between items-center gap-4 lg:gap-0">
-          <!-- Logo -->
-          <div class="flex-shrink-0">
-            <img
-              src="/public/img_header_logo.png"
-              alt="Rainbow Roundup Logo"
-              class="w-[120px] h-[55px] sm:w-[140px] sm:h-[65px] md:w-[160px] md:h-[75px] lg:w-[174px] lg:h-[80px]"
-            />
-          </div>
-
 
           <!-- Search Bar -->
           <div class="w-full lg:w-[64%] max-w-2xl">
@@ -39,13 +30,13 @@
 
           <!-- Cart and Login -->
           <div class="flex items-center gap-4 sm:gap-6 lg:gap-8 flex-shrink-0">
-            <button class="focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-lg transition-transform hover:scale-105 active:scale-95">
-              <img
-                src="/public/img_cart.png"
-                alt="Shopping Cart"
-                class="w-[60px] h-[60px] sm:w-[70px] sm:h-[70px] md:w-[80px] md:h-[80px] lg:w-[92px] lg:h-[92px]"
-              />
-            </button>
+              <button class="focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-lg transition-transform hover:scale-105 active:scale-95">
+                <img
+                  src="/public/img_cart.png"
+                  alt="Shopping Cart"
+                  class="w-[60px] h-[60px] sm:w-[70px] sm:h-[70px] md:w-[80px] md:h-[80px] lg:w-[92px] lg:h-[92px]"
+                />
+              </button>
           </div>
         </div>
       </div>

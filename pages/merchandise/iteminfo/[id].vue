@@ -47,7 +47,9 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang='ts'>
+// protect page behind auth system
+
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -57,12 +59,8 @@ const router = useRouter();
 const item = ref(null);
 const availableSizes = ref([]);
 const selectedSize = ref('');
-const selectedFit = ref('');
 const quantity = ref(1);
 const imageUrl = ref('');
-
-// Simulate user logged-in state, replace with your auth logic
-const userData = ref({ user: { id: '123' } });
 
 onMounted(async () => {
   try { const res = await fetch(`/api/item/${route.params.id}`);
@@ -72,17 +70,12 @@ onMounted(async () => {
 
     item.value = data.data;
 
-    console.log(data.data);
-
     // Set available sizes
-    for (const finishedItem of data.data.FinishedItems) {
-      availableSizes.value.push(finishedItem.size);     
-    }
-    availableSizes.value.sort((a, b) => b.localeCompare(a));
+    availableSizes.value = (item.value?.FinishedItems ?? [])
+      .map(fi => fi.size)
 
     // Set defaults to empty so user must select
     selectedSize.value = '';
-    selectedFit.value = '';
   } catch (error) {
     console.error('Failed to load item:', error);
     alert('Failed to load item.');
@@ -90,30 +83,26 @@ onMounted(async () => {
   }
 });
 
-const formattedPrice = computed(() => {
+const formattedPrice = computed<string>(() => {
   if (!item.value) return '0.00';
-  const basePrice = Number(item.value.basePrice);
-  if (!basePrice || quantity.value < 1) return '0.00';
+
+  const basePrice = item.value.FinishedItems
+    .find((fi) => fi.size === selectedSize.value)
+    ?.price;
+
+  if (!Number.isFinite(basePrice) || quantity.value < 1) return '0.00';
   return (basePrice * quantity.value).toFixed(2);
 });
 
-const canAddToCart = computed(() => {
+const canAddToCart = computed<boolean>(() => {
   return (
-    userData.value?.user &&
     item.value &&
     selectedSize.value !== '' &&
-    selectedFit.value !== '' &&
     quantity.value > 0
   );
 });
 
 const addToCart = async () => {
-  if (!userData.value?.user) {
-    alert('Please log in to add items to your cart.');
-    router.push('/login');
-    return;
-  }
-
   if (!canAddToCart.value) {
     alert('Please select size, fit, and quantity.');
     return;
@@ -123,7 +112,6 @@ const addToCart = async () => {
     const payload = {
       itemId: item.value.id,
       size: selectedSize.value,
-      fit: selectedFit.value,
       quantity: quantity.value,
     };
 
