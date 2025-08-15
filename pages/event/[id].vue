@@ -282,7 +282,7 @@ const deleteEvent = () => {
 // added in navigation to user profile function
 const navigateToUserProfile = (userId) => {
   if (userId) {
-    router.push(`/profile/user/${userId}`);
+    router.push(`/profile/${userId}`);
   }
 };
 
