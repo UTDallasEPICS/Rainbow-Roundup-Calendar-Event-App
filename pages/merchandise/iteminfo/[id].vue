@@ -115,6 +115,7 @@ const addToCart = async () => {
       quantity: quantity.value,
     };
 
+    // This api doesn't exist, either build it or rework this code with the order api
     const res = await fetch('/api/cart/add', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
