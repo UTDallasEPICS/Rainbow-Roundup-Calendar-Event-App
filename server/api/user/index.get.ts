@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import { defineEventHandler, setResponseStatus } from "h3";
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
@@ -9,7 +8,6 @@ export default defineEventHandler(async (event) => {
       include: {
         CreatedEvents: true,
         SignUps: true,
-        Announcements: true,
         Reports: true,
         PotentialOffenses: true,
       },

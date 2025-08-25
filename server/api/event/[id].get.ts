@@ -4,13 +4,13 @@ import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
   const id = getRouterParam(event, "id");
-
+  
   try {
     if (id) {
       // Fetch a single event by ID with relations (admin and signUps)
       const singleEvent = await prisma.event.findUnique({
         where: { id }, //getRouterParam already defines id as a string no need to cast
-        include: { User: true, SignUps: true, Anouncements: true },
+        include: { User: true, SignUps: true,},
       });
 
       if (!singleEvent) {

@@ -52,7 +52,7 @@
                 Start:
                 <input
                   type="datetime-local"
-                  :value="eventForm.start?.slice(0, 16)"
+                  :value="eventForm.start"
                   @input="eventForm.start = $event.target.value"
                   class="input w-full"
                 />
@@ -61,7 +61,7 @@
                 End:
                 <input
                   type="datetime-local"
-                  :value="eventForm.end?.slice(0, 16)"
+                  :value="eventForm.end"
                   @input="eventForm.end = $event.target.value"
                   class="input w-full"
                 />
@@ -164,7 +164,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang='js'> // TODO: Should be lang='ts' but that for later
 import { ref, computed } from "vue";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -216,8 +216,8 @@ const calendarOptions = ref({
   select: (info) => {
     // Prefill form with selected time
     showModal.value = true;
-    eventForm.value.start = info.startStr; // for datetime-local input
-    eventForm.value.end = info.endStr;
+    eventForm.value.start = info.startStr + "T12:00"; // for datetime-local input
+    eventForm.value.end = info.endStr + "T12:00";
   },
 
   eventClick: (info) => {
@@ -233,6 +233,7 @@ const calendarOptions = ref({
     showEventModal.value = true;
   },
 });
+
 onMounted(async () => {
   try {
     const events = await $fetch("/api/google/calendar");
@@ -261,9 +262,23 @@ onBeforeUnmount(() => {
 
 const submitEvent = async () => {
   try {
-      // Validation for location, todo: change to look like the rest of application, this is just a band-aid
+    // Validation for location
     if (!eventForm.value.location || eventForm.value.lat === null || eventForm.value.lng === null) {
       alert("Please select a valid location on the map before submitting.");
+      return;
+    }
+
+const startTime = new Date(eventForm.value.start);
+    const endTime = new Date(eventForm.value.end);
+    const currentTime = new Date();
+    
+    if (startTime < currentTime) {
+      alert("Event start time cannot be in the past. Please select a future date and time.");
+      return;
+    }
+
+    if (endTime <= startTime) {
+      alert("Event end time must be after the start time.");
       return;
     }
     // Format start and end time before sending the request
@@ -282,16 +297,16 @@ const submitEvent = async () => {
       end: formattedEnd,
     };
 
-
-    const googleEvent = await $fetch("/api/google/calendar", { // maybe need fetch raw for status code instead of manually including status
+    const googleEvent = await $fetch("/api/google/calendar", {
       method: "POST",
       body: newEvent,
     });
 
-    const { status } = await $fetch.raw("/api/event", { // need status code, so we are using $fetch.raw
+    const { status } = await $fetch.raw("/api/event", {
       method: "POST",
       body: {
         id: googleEvent.id,
+        title: newEvent.title,
         description: newEvent?.description,
         userId: userData?.id || "-1",
         eventLat: newEvent?.lat,
