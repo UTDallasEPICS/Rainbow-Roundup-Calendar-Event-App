@@ -161,18 +161,17 @@
     </div>
 
     <!-- Nuxt Page Component to display content -->
-    <NuxtPage class="min-h-screen bg-white" />
+    <NuxtPage class="min-h-screen" />
+    <!-- NuxtPage was given min-h-screen to make it actually fill the screen-->>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
+const { status, signOut } = useAuth();
 
-// Use the built-in auth composable instead of custom useUser
-const { data: session, signOut } = useAuth();
-
+console.log(status.value);
 const dropdownOpen = ref(false);
-const mobileMenuOpen = ref(false);
 const isSubscribed = ref(false);
 const deferredPrompt = ref(null);
 
@@ -231,6 +230,11 @@ onMounted(() => {
 
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value;
+};
+
+const navigate = (page) => { // todo: make linter stop complaining about this
+  console.log(`Navigating to ${page}`);
+  dropdownOpen.value = false;
 };
 
 const promptInstall = () => {
