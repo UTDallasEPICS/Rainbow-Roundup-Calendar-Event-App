@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
       statusCode: 403,
     });
   }
-  
+
   // Access the dynamic route parameters to get the event ID
   const id = getRouterParam(event, "id"); // Extract the ID from the dynamic route
 
@@ -31,7 +31,6 @@ export default defineEventHandler(async (event) => {
       error: "Event ID is required.",
     };
   }
-
 
   // Read the body to get the data to update
   const body = await readBody(event);
@@ -63,7 +62,6 @@ export default defineEventHandler(async (event) => {
 
     const updateData: any = {};
     if (body.description != null) updateData.description = body.description;
-    if (body.title != null) updateData.title = body.title;
     if (body.userId != null) updateData.userId = body.userId;
     if (body.startTime != null) updateData.startTime = new Date(body.startTime);
     if (body.endTime != null) updateData.endTime = new Date(body.endTime);

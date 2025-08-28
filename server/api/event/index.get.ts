@@ -2,7 +2,6 @@ import { PrismaClient } from "@prisma/client";
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
-
   try {
     const events = await prisma.event.findMany({
       include: {
@@ -12,6 +11,7 @@ export default defineEventHandler(async (event) => {
             User: { select: { id: true, firstname: true, profilePic: true } },
           },
         }, // Who signed up
+        Anouncements: true, // Any related notifications // previously called notifications, now called announcements
       },
       orderBy: {
         startTime: "asc", // Optional: sort upcoming events first

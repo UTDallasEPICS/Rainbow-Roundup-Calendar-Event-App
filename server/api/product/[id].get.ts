@@ -7,26 +7,25 @@ export default defineEventHandler(async (event) => {
 
   try {
     if (id) {
-      // Fetch a single report by ID
-      const singleReport = await prisma.report.findUnique({
-        where: {id},
+      // Fetch a single user by ID
+      const singleProduct = await prisma.product.findUnique({
+        where: { id },
         include: {
-          ReportedUser: true,
-          ReporterUser: true
+          ItemConfigs: true
         }
       });
 
-      if (!singleReport) {
+      if (!singleProduct) {
         setResponseStatus(event, 404)
         return {
           success: false,
-          error: `No report found with ID: ${id}`,
+          error: `No product found with ID: ${id}`,
         };
       }
       setResponseStatus(event, 200)
       return {
         success: true,
-        Report: singleReport,
+        Product: singleProduct,
       };
     }
     else{
@@ -41,7 +40,7 @@ export default defineEventHandler(async (event) => {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return {
       success: false,
-      error: `Error fetching report: ${errorMessage}`,
+      error: `Error fetching prodcuct(s): ${errorMessage}`,
     };
   }
 });

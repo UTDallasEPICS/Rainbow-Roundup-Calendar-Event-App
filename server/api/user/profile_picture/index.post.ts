@@ -1,13 +1,11 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-const config = useRuntimeConfig();
-
 const s3 = new S3Client({
-  region: config.AWS_REGION,
+  region: process.env.AWS_REGION,
   credentials: {
-    accessKeyId: config.NUXT_AWS_ACCESS_KEY_ID!,
-    secretAccessKey: config.NUXT_AWS_SECRET_ACCESS_KEY!,
+    accessKeyId: process.env.NUXT_AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.NUXT_AWS_SECRET_ACCESS_KEY!,
   },
 });
 
@@ -22,8 +20,8 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const bucketName = config.NUXT_AWS_S3_BUCKET_NAME!;
-    const region = config.AWS_REGION!;
+    const bucketName = process.env.NUXT_AWS_S3_BUCKET_NAME!;
+    const region = process.env.AWS_REGION!;
     const objectKey = `profile-pictures/${body.fileName}`;
 
     const command = new PutObjectCommand({

@@ -9,18 +9,11 @@ export default defineNuxtConfig({
       STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
       NUXT_GOOGLE_PLACES: process.env.NUXT_GOOGLE_PLACES,
     },
-    
-    AWS_REGION: process.env.AWS_REGION,
-    NUXT_AWS_ACCESS_KEY_ID: process.env.NUXT_AWS_ACCESS_KEY_ID,
-    NUXT_AWS_SECRET_ACCESS_KEY: process.env.NUXT_AWS_SECRET_ACCESS_KEY,
-    NUXT_AWS_S3_BUCKET_NAME: process.env.NUXT_AWS_S3_BUCKET_NAME,
-
     smtpHost: process.env.SMTP_HOST,
     smtpPort: process.env.SMTP_PORT,
     smtpUser: process.env.SMTP_USER,
     smtpPass: process.env.SMTP_PASS,
     smtpFrom: process.env.SMTP_FROM,
-    url: process.env.URL,
   },
 
   devtools: { enabled: true },
@@ -58,7 +51,6 @@ export default defineNuxtConfig({
     "@nuxt/ui",
     "@nuxt/eslint",
     "@sidebase/nuxt-auth",
-    "nuxt-scheduler",
   ],
   auth: {
     isEnabled: true,

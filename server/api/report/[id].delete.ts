@@ -1,5 +1,6 @@
 import { EventImpl } from '@fullcalendar/core/internal.js';
 import { PrismaClient } from '@prisma/client';
+import { defineEventHandler } from 'h3';
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;

@@ -111,15 +111,14 @@
         <!-- Divider -->
         <div class="border-t border-gray-200"></div>
 
-        <!-- Who's going: tried to make clickable -->
+        <!-- Who’s going (read-only) -->
         <div v-if="!isLoading">
           <h2 class="text-sm font-medium text-gray-800 mb-2">People Going</h2>
           <ul class="space-y-2 max-h-32 overflow-y-auto pr-2 text-gray-700">
             <li
               v-for="signup in event.signUps"
               :key="signup.id"
-              class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 rounded-lg p-2 -m-2 transition-colors"
-              @click="navigateToUserProfile(signup.userId)"
+              class="flex items-center space-x-3"
             >
               <img
                 :src="
@@ -129,7 +128,7 @@
                 class="w-6 h-6 rounded-full object-cover flex-shrink-0"
               />
               <div>
-                <p class="font-medium text-indigo-600 hover:text-indigo-800">
+                <p class="font-medium">
                   {{ userMap[signup.userId]?.firstname || "Unknown" }}
                   {{ userMap[signup.userId]?.lastname || "" }}
                 </p>
@@ -258,7 +257,6 @@ async function loadEvent() {
 }
 
 onMounted(loadEvent);
-
 // Actions
 const toggleEdit = () => (isEditing.value = true);
 const saveChanges = () => {
@@ -277,13 +275,6 @@ const cancelEdit = () => {
 };
 const deleteEvent = () => {
   console.log("Deleting event", event.value.id);
-};
-
-// added in navigation to user profile function
-const navigateToUserProfile = (userId) => {
-  if (userId) {
-    router.push(`/profile/${userId}`);
-  }
 };
 
 // Formatting helper

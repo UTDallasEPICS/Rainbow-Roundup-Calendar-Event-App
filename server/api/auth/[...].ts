@@ -4,10 +4,10 @@ import Auth0Provider from "next-auth/providers/auth0";
 import EmailProvider from "next-auth/providers/email";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
-import { prisma } from '../../utils/prisma';
 import { createTransport } from "nodemailer";
 
 const config = useRuntimeConfig(); // Access runtime configuration (e.g., SMTP settings)
+const prisma = new PrismaClient(); // Initialize Prisma client for database interactions
 
 export default NuxtAuthHandler({
   adapter: PrismaAdapter(prisma), // Use Prisma as the adapter for NuxtAuth
@@ -36,8 +36,10 @@ export default NuxtAuthHandler({
       }) {
         // Extract host from the URL to customize the email subject and content
         const { host } = new URL(url); // host is localhost:3000 in development, but in production, this will be changed to some other domain.
+
         // Create the transport object for sending the email using Nodemailer
         const transport = createTransport(provider.server);
+
         // Mail options for sending the email verification link
         const mailOptions = {
           to: email, // Recipient email address
@@ -99,6 +101,7 @@ export default NuxtAuthHandler({
       if (!email) {
         return session; // If no email is present, return the session as-is
       }
+
       // Attempt to retrieve additional user data from the database
       try {
         const additionalUserData = await prisma.user.findUnique({
@@ -112,6 +115,7 @@ export default NuxtAuthHandler({
             profilePic: true,
           }, // Retrieve only necessary fields
         });
+
         // If additional user data is found, populate the session with it
         if (additionalUserData) {
           return {
@@ -127,7 +131,7 @@ export default NuxtAuthHandler({
             },
           };
         }
-        console.log(session)
+
         return session; // If no additional data is found, return the original session
       } catch (error) {
         console.error("Error fetching additional user data:", error); // Log errors encountered while fetching user data
