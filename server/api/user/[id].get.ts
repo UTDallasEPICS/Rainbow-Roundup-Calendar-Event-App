@@ -50,7 +50,6 @@ export default defineEventHandler(async (event) => {
           include: {
             CreatedEvents: true,
             SignUps: true,
-            Announcements: true,
             Reports: true,
             PotentialOffenses: true,
           },
