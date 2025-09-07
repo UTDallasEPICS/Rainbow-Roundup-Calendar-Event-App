@@ -4,6 +4,14 @@
     <header class="w-full bg-header-1 px-4 sm:px-5 md:px-6 lg:px-[20px] py-4">
       <div class="w-full max-w-[1600px] mx-auto">
         <div class="flex flex-col lg:flex-row justify-between items-center gap-4 lg:gap-0">
+          <!-- Logo -->
+          <div class="flex-shrink-0">
+            <img
+              src="/public/img_header_logo.png"
+              alt="Rainbow Roundup Logo"
+              class="w-[120px] h-[55px] sm:w-[140px] sm:h-[65px] md:w-[160px] md:h-[75px] lg:w-[174px] lg:h-[80px]"
+            />
+          </div>
 
           <!-- Search Bar -->
           <div class="w-full lg:w-[64%] max-w-2xl">
@@ -27,21 +35,17 @@
             </form>
           </div>
 
-
           <!-- Cart and Login -->
           <div class="flex items-center gap-4 sm:gap-6 lg:gap-8 flex-shrink-0">
-              <button class="focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-lg transition-transform hover:scale-105 active:scale-95">
-                <img
-                  src="/public/img_cart.png"
-                  alt="Shopping Cart"
-                  class="w-[60px] h-[60px] sm:w-[70px] sm:h-[70px] md:w-[80px] md:h-[80px] lg:w-[92px] lg:h-[92px]"
-                />
-              </button>
+            <button class="focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-lg transition-transform hover:scale-105 active:scale-95">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="sm:size-6 md:size-10 lg:size-14">
+                <path d="M2.25 2.25a.75.75 0 0 0 0 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 0 0-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 0 0 0-1.5H5.378A2.25 2.25 0 0 1 7.5 15h11.218a.75.75 0 0 0 .674-.421 60.358 60.358 0 0 0 2.96-7.228.75.75 0 0 0-.525-.965A60.864 60.864 0 0 0 5.68 4.509l-.232-.867A1.875 1.875 0 0 0 3.636 2.25H2.25ZM3.75 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM16.5 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
     </header>
-
 
     <!-- Navigation Menu -->
     <div class="w-full mt-[34px]">
@@ -75,7 +79,6 @@
       </div>
     </div>
 
-
     <!-- Hero Slider -->
     <div class="w-full mt-[82px]">
       <div class="w-full max-w-[1600px] mx-auto">
@@ -98,7 +101,6 @@
                 :style="{ backgroundImage: `url(${slide.backgroundImage})` }"
               />
 
-
               <div class="absolute inset-0 flex flex-col justify-center items-center z-20">
                 <button
                   v-if="heroSlides.length > 1"
@@ -112,7 +114,6 @@
                   </span>
                 </button>
 
-
                 <button
                   v-if="heroSlides.length > 1"
                   @click="nextSlide"
@@ -125,13 +126,11 @@
                   </span>
                 </button>
 
-
                 <div class="text-center px-4 sm:px-6 md:px-8">
                   <h2 class="text-global-1 text-lg sm:text-xl md:text-2xl lg:text-[30px] font-medium leading-tight sm:leading-normal md:leading-relaxed lg:leading-[37px] mb-4 sm:mb-6 md:mb-8">
                     Hero Banner
                   </h2>
                 </div>
-
 
                 <div class="bg-global-1 px-4 sm:px-8 md:px-12 lg:px-[60px] py-3 sm:py-4 md:py-5 lg:py-[12px] rounded-lg sm:rounded-xl shadow-[0px_4px_4px_#0000003f] mx-4 sm:mx-6 md:mx-8">
                   <h1 class="text-global-1 text-2xl sm:text-3xl md:text-4xl lg:text-[60px] font-extralight leading-tight sm:leading-normal md:leading-relaxed lg:leading-[73px] text-center">
@@ -141,7 +140,6 @@
               </div>
             </div>
           </div>
-
 
           <div v-if="heroSlides.length > 1" class="absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-[16px] left-1/2 transform -translate-x-1/2 z-30">
             <div class="flex items-center justify-center gap-2 sm:gap-3">
@@ -160,28 +158,29 @@
       </div>
     </div>
 
-
-    <!-- Pagination Indicator -->
-    <div class="w-full mt-4 sm:mt-6 md:mt-8 lg:mt-[16px] mb-4 sm:mb-6 md:mb-8 lg:mb-[16px]">
-      <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8">
-        <div class="flex justify-center">
-          <div class="w-full sm:w-3/4 md:w-1/2 lg:w-[8%]">
-            <div class="flex items-center justify-center gap-1.5 sm:gap-2 md:gap-3">
-              <button
-                v-for="(_, index) in 5"
-                :key="index"
-                @click="handlePageChange(index)"
-                class="w-3 h-3 sm:w-4 sm:h-4 rounded-full transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
-                :class="{'bg-pagerindicator-1 scale-110 shadow-sm': currentPage === index, 'bg-gray-300 hover:bg-gray-400 active:scale-95': currentPage !== index}"
-                :aria-label="`Go to page ${index + 1}`"
-                :aria-current="currentPage === index ? 'page' : undefined"
-              />
-            </div>
-          </div>
+<!-- Pagination Indicator -->
+<div class="w-full mt-4 sm:mt-6 md:mt-8 lg:mt-[16px] mb-4 sm:mb-6 md:mb-8 lg:mb-[16px]">
+  <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8">
+    <div class="flex justify-center">
+      <div class="w-full sm:w-3/4 md:w-1/2 lg:w-[8%]">
+        <div class="flex items-center justify-center gap-1.5 sm:gap-2 md:gap-3">
+          <button
+            v-for="(_, index) in 5"
+            :key="index"
+            @click="handlePageChange(index)"
+            class="w-3 h-3 sm:w-4 sm:h-4 rounded-full transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
+            :class="{
+              'bg-pagerindicator-1 scale-110 shadow-sm': currentPage === index, 
+              'bg-gray-300 hover:bg-gray-400 active:scale-95': currentPage !== index
+            }"
+            :aria-label="`Go to page ${index + 1}`"
+            :aria-current="currentPage === index ? 'page' : undefined"
+          />
         </div>
       </div>
     </div>
-
+  </div>
+</div>
 
     <!-- Product Section -->
     <div class="w-full">
@@ -245,58 +244,44 @@
             </div>
           </div>
 
-
           <!-- Second Product -->
           <div class="w-full lg:w-1/2 flex flex-col justify-start items-center">
             <div class="w-full max-w-[496px] flex flex-col justify-start items-end">
               <div class="w-full max-w-[406px] flex flex-col gap-3 sm:gap-4 md:gap-5 lg:gap-[12px] justify-start items-center">
                 <img
-                  src="/public/img_secondshirt.png"
+                  :src="currentChildrenShirtImage"
                   alt="Children's Shirt"
-                  class="w-full max-w-[496px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[466px] object-cover"
+                  class="w-full max-w-[496px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[466px] object-cover transition-opacity duration-300"
+                  :class="{ 'opacity-0': isImageChanging }"
                 />
                 <div class="flex justify-center items-center w-full px-4 sm:px-5 md:px-6 lg:px-[18px]">
                   <img
                     src="/public/img_left.svg"
                     alt="Previous color"
                     class="w-3 h-6 sm:w-4 sm:h-7 md:w-5 md:h-8 lg:w-[12px] lg:h-[24px] mr-3 sm:mr-4 cursor-pointer hover:scale-110 transition-transform"
+                    @click="prevChildrenShirtImage"
                   />
                   <div class="flex gap-4 sm:gap-5 md:gap-6 lg:gap-[24px] justify-center items-center px-8 sm:px-10 md:px-12 lg:px-[42px]">
                     <img
-                      src="/public/img_1.1.png"
+                      v-for="(image, index) in childrenShirtImages"
+                      :key="index"
+                      :src="image.thumbnail"
                       alt="Color option"
                       class="w-[40px] h-[40px] sm:w-[45px] sm:h-[45px] md:w-[48px] md:h-[48px] lg:w-[50px] lg:h-[50px] cursor-pointer hover:scale-105 transition-transform"
-                    />
-                    <img
-                      src="/public/img_1.2.png"
-                      alt="Color option"
-                      class="w-[40px] h-[40px] sm:w-[45px] sm:h-[45px] md:w-[48px] md:h-[48px] lg:w-[50px] lg:h-[50px] cursor-pointer hover:scale-105 transition-transform"
-                    />
-                    <img
-                      src="/public/img_1.3.png"
-                      alt="Color option"
-                      class="w-[40px] h-[40px] sm:w-[45px] sm:h-[45px] md:w-[48px] md:h-[48px] lg:w-[50px] lg:h-[50px] cursor-pointer hover:scale-105 transition-transform"
-                    />
-                    <img
-                      src="/public/img_1.4.png"
-                      alt="Color option"
-                      class="w-[40px] h-[40px] sm:w-[45px] sm:h-[45px] md:w-[48px] md:h-[48px] lg:w-[50px] lg:h-[50px] cursor-pointer hover:scale-105 transition-transform"
-                    />
-                    <img
-                      src="/public/img_1.5.png"
-                      alt="Color option"
-                      class="w-[40px] h-[40px] sm:w-[45px] sm:h-[45px] md:w-[48px] md:h-[48px] lg:w-[50px] lg:h-[50px] cursor-pointer hover:scale-105 transition-transform"
+                      :class="{ 'ring-2 ring-blue-500': currentChildrenShirtIndex === index }"
+                      @click="selectChildrenShirtImage(index)"
                     />
                   </div>
                   <img
                     src="/public/img_right.svg"
                     alt="Next color"
                     class="w-3 h-6 sm:w-4 sm:h-7 md:w-5 md:h-8 lg:w-[12px] lg:h-[24px] ml-3 sm:ml-4 cursor-pointer hover:scale-110 transition-transform"
+                    @click="nextChildrenShirtImage"
                   />
                 </div>
               </div>
-              <div class="mt-8 sm:mt-10 md:mt-12 lg:mt-[46px] flex justify-end items-center w-full pr-0 sm:pr-20 md:pr-24 lg:pr-[114px]">
-                <div class="flex items-center gap-3 sm:gap-4 lg:gap-[14px]">
+              <div class="mt-8 sm:mt-10 md:mt-12 lg:mt-[46px] text-center pl-4 sm:pl-6 md:pl-8">
+                <div class="flex items-center justify-center gap-3 sm:gap-4 lg:gap-[14px]">
                   <p class="text-global-1 text-lg sm:text-xl md:text-2xl lg:text-[30px] font-medium leading-tight sm:leading-normal md:leading-relaxed lg:leading-[37px] line-through">
                     $25.00
                   </p>
@@ -305,9 +290,9 @@
                   </p>
                 </div>
               </div>
-              <div class="mt-4 sm:mt-5 md:mt-6 lg:mt-[22px] pr-0 sm:pr-20 md:pr-24 lg:pr-[114px] w-full flex justify-end">
+              <div class="mt-4 sm:mt-5 md:mt-6 lg:mt-[22px] text-center relative right-1 sm:right-2">
                 <p class="text-global-1 text-lg sm:text-xl md:text-2xl lg:text-[30px] font-light leading-tight sm:leading-normal md:leading-relaxed lg:leading-[37px]">
-                  Children's Shirt
+                  Children's Shirt!
                 </p>
               </div>
             </div>
@@ -315,23 +300,47 @@
         </div>
       </div>
     </div>
-
-
+  
     <!-- Footer Spacing -->
     <div class="w-full h-[60px] sm:h-[80px] md:h-[100px] lg:h-[120px]"></div>
   </div>
 </template>
 
-
 <script setup>
-import { ref, onMounted } from 'vue'
-
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 // State
 const currentSlide = ref(0)
 const currentPage = ref(0)
 const searchQuery = ref('')
 
+// Children's shirt image gallery
+const childrenShirtImages = ref([
+  {
+    main: '/public/img_secondshirt.png',
+    thumbnail: '/public/img_1.1.png'
+  },
+  {
+    main: '/public/img_secondshirt_blue.png',
+    thumbnail: '/public/img_1.2.png'
+  },
+  {
+    main: '/public/img_secondshirt_red.png',
+    thumbnail: '/public/img_1.3.png'
+  },
+  {
+    main: '/public/img_secondshirt_green.png',
+    thumbnail: '/public/img_1.4.png'
+  },
+  {
+    main: '/public/img_secondshirt_yellow.png',
+    thumbnail: '/public/img_1.5.png'
+  }
+])
+
+const currentChildrenShirtIndex = ref(0)
+const currentChildrenShirtImage = ref(childrenShirtImages.value[0].main)
+const isImageChanging = ref(false)
 
 // Hero slider data
 const heroSlides = ref([
@@ -355,59 +364,78 @@ const heroSlides = ref([
   }
 ])
 
-
 // Auto-play slider
 let autoPlayInterval
 onMounted(() => {
   autoPlayInterval = setInterval(nextSlide, 6000)
 })
 
+// Methods for children's shirt image gallery
+const selectChildrenShirtImage = (index) => {
+  if (index === currentChildrenShirtIndex.value) return
+  
+  isImageChanging.value = true
+  setTimeout(() => {
+    currentChildrenShirtIndex.value = index
+    currentChildrenShirtImage.value = childrenShirtImages.value[index].main
+    isImageChanging.value = false
+  }, 150)
+}
+
+const nextChildrenShirtImage = () => {
+  isImageChanging.value = true
+  setTimeout(() => {
+    currentChildrenShirtIndex.value = (currentChildrenShirtIndex.value + 1) % childrenShirtImages.value.length
+    currentChildrenShirtImage.value = childrenShirtImages.value[currentChildrenShirtIndex.value].main
+    isImageChanging.value = false
+  }, 150)
+}
+
+const prevChildrenShirtImage = () => {
+  isImageChanging.value = true
+  setTimeout(() => {
+    currentChildrenShirtIndex.value = (currentChildrenShirtIndex.value - 1 + childrenShirtImages.value.length) % childrenShirtImages.value.length
+    currentChildrenShirtImage.value = childrenShirtImages.value[currentChildrenShirtIndex.value].main
+    isImageChanging.value = false
+  }, 150)
+}
 
 // Methods
 const handleShopByStyle = () => {
   console.log('Shop by Style clicked')
 }
 
-
 const handleShopByFit = () => {
   console.log('Shop by Fit clicked')
 }
-
 
 const handleDonate = () => {
   console.log('Donate clicked')
 }
 
-
 const handleMainPage = () => {
   console.log('Main Page clicked')
 }
-
 
 const handleSearch = () => {
   console.log('Search:', searchQuery.value)
 }
 
-
 const nextSlide = () => {
   currentSlide.value = (currentSlide.value + 1) % heroSlides.value.length
 }
-
 
 const prevSlide = () => {
   currentSlide.value = (currentSlide.value - 1 + heroSlides.value.length) % heroSlides.value.length
 }
 
-
 const goToSlide = (index) => {
   currentSlide.value = index
 }
 
-
 const handlePageChange = (pageIndex) => {
   currentPage.value = pageIndex
 }
-
 
 // Clean up interval
 onBeforeUnmount(() => {
@@ -415,109 +443,3 @@ onBeforeUnmount(() => {
 })
 </script>
 
-
-<style>
-/* Import Tailwind directives */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-
-/* Custom CSS variables */
-@layer base {
-  :root {
-    /* Global Colors */
-    --global-bg-1: #ffffff;
-    --global-text-1: #000000;
-   
-    /* Header Colors */
-    --header-bg-1: #ffffff;
-    --header-text-1: #000000;
-   
-    /* SearchView Colors */
-    --searchview-bg-1: #ffffff;
-    --searchview-text-1: #979797;
-   
-    /* Button Colors */
-    --button-bg-1: #ffffff;
-    --button-text-1: #000000;
-   
-    /* Slider Colors */
-    --slider-bg-1: #d9d9d9;
-    --slider-text-1: #ff3b30;
-    --slider-text-2: #ffffff;
-   
-    /* PagerIndicator Colors */
-    --pagerindicator-bg-1: #d9d9d9;
-    --pagerindicator-text-1: #000000;
-  }
-}
-
-
-@layer utilities {
-  /* Global */
-  .bg-global-1 {
-    background-color: var(--global-bg-1);
-  }
-  .text-global-1 {
-    color: var(--global-text-1);
-  }
- 
-  /* Header */
-  .bg-header-1 {
-    background-color: var(--header-bg-1);
-  }
-  .text-header-1 {
-    color: var(--header-text-1);
-  }
- 
-  /* SearchView */
-  .bg-searchview-1 {
-    background-color: var(--searchview-bg-1);
-  }
-  .text-searchview-1 {
-    color: var(--searchview-text-1);
-  }
- 
-  /* Button */
-  .bg-button-1 {
-    background-color: var(--button-bg-1);
-  }
-  .text-button-1 {
-    color: var(--button-text-1);
-  }
- 
-  /* Slider */
-  .bg-slider-1 {
-    background-color: var(--slider-bg-1);
-  }
-  .text-slider-1 {
-    color: var(--slider-text-1);
-  }
-  .text-slider-2 {
-    color: var(--slider-text-2);
-  }
- 
-  /* PagerIndicator */
-  .bg-pagerindicator-1 {
-    background-color: var(--pagerindicator-bg-1);
-  }
-  .text-pagerindicator-1 {
-    color: var(--pagerindicator-text-1);
-  }
-}
-
-
-/* Base styles */
-body {
-  font-family: 'Inter', 'Roboto', sans-serif;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-
-*, *::before, *::after {
-  box-sizing: inherit;
-}
-</style>
