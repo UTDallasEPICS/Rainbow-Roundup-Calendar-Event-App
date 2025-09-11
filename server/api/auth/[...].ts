@@ -10,7 +10,8 @@ import { createTransport } from "nodemailer";
 const config = useRuntimeConfig(); // Access runtime configuration (e.g., SMTP settings)
 
 export default NuxtAuthHandler({
-  adapter: PrismaAdapter(prisma), // Use Prisma as the adapter for NuxtAuth
+  secret: "placeholder-secret",
+  adapter: (PrismaAdapter(prisma)), // Use Prisma as the adapter for NuxtAuth
   session: {
     strategy: "jwt", // Use JSON Web Tokens (JWT) for session storage
   },
