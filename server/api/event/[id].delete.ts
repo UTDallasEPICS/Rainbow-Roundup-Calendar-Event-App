@@ -39,9 +39,10 @@ export default defineEventHandler(async (event) => {
       };
     }
 
-    await prisma.announcement.deleteMany({ where: { eventId: id } });
     await prisma.signUp.deleteMany({ where: { eventId: id } });
 
+
+    // TODO: Set up deletion in the Google Events Calendar as well as deleting from the Prisma Database
     await prisma.event.delete({
       where: { id },
     });

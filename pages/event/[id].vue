@@ -1,4 +1,8 @@
 <template>
+  <div>
+    <!-- placeholder back button -->
+    <button @click="$router.back()">go back</button>
+  </div>
   <div
     class="min-h-screen flex items-center justify-center bg-gray-50 p-4 sm:p-6 font-sans"
   >
@@ -19,7 +23,7 @@
         </button>
         <template v-else>
           <button
-            @click="saveChanges"
+            @click="saveChanges()"
             class="bg-indigo-600 text-white px-4 py-1 rounded-full hover:bg-indigo-700 transition"
           >
             Save
@@ -180,7 +184,7 @@
         <!-- Delete at bottom -->
         <div v-if="isEditing" class="mt-6">
           <button
-            @click="deleteEvent"
+            @click="deleteEvent()"
             class="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition"
           >
             Delete Event
@@ -261,8 +265,13 @@ onMounted(loadEvent);
 
 // Actions
 const toggleEdit = () => (isEditing.value = true);
-const saveChanges = () => {
-  console.log("Saving edits:", editedEvent);
+async function saveChanges() {
+  console.log("PLACEHOLDER Saving edits:", editedEvent);
+
+  // const { error : putError } = await useFetch('api/event/${eventId}', {
+  //     method: "PUT",
+  //     body: editedEvent,
+  // });
   isEditing.value = false;
 };
 const cancelEdit = () => {
@@ -275,8 +284,33 @@ const cancelEdit = () => {
   });
   isEditing.value = false;
 };
-const deleteEvent = () => {
+async function deleteEvent() {
   console.log("Deleting event", event.value.id);
+
+  // delete event on the database side
+  const { error : deleteError } = await useFetch(`../api/event/${eventId}`, {
+      method: "DELETE",
+      body: event.value.id,
+  });
+
+  if (deleteError.value) {
+    console.error("DELETE error:", deleteError.value);
+  }
+
+  // delete event on the google calendar side
+  const { error : calendarError } = await useFetch(`../api/google/calendar/${eventId}`, {
+      method: "DELETE",
+      body: event.value.id,
+  });
+
+  if (calendarError.value) {
+    console.error("DELETE error:", deleteError.value);
+  }
+
+  console.log("Event deleted");
+  
+  // navigate back to events page
+  router.push(`/eventsPage`);
 };
 
 // added in navigation to user profile function

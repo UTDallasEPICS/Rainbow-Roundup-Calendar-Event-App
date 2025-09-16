@@ -145,11 +145,14 @@
           </div>
 
           <div class="flex justify-end gap-3 mt-6">
-            <button
+            <!-- <button v-if="['ADMIN', 'SUPER'].includes(userData.role)"
               @click="editEvent"
               class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition"
             >
               Edit
+            </button> -->
+            <button class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition">
+              <NuxtLink :to="`/event/${selectedEvent.id}`">Edit</NuxtLink>
             </button>
             <button
               @click="showEventModal = false"
@@ -157,6 +160,7 @@
             >
               Close
             </button>
+            
           </div>
         </div>
       </div>
@@ -230,6 +234,7 @@ const calendarOptions = ref({
       timeZone: info.event.extendedProps.timeZone,
       location: info.event.extendedProps.location,
     };
+    //router.push(`/event/${info.event.id}`);
     showEventModal.value = true;
   },
 });
