@@ -29,7 +29,7 @@
     <!-- PWA Manifest and Route Announcer -->
     <NuxtPwaManifest />
     <NuxtRouteAnnouncer />
-    <div class="bg-blue-600 text-white text-sm px-4 py-1">
+    <div class="z-50 sticky bg-blue-600 text-white text-sm px-4 py-1">
       <div class="flex justify-between items-center max-w-7xl mx-auto">
         <!-- Left side: email with icon -->
         <div class="flex items-center gap-2 flex-grow">

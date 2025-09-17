@@ -1,10 +1,14 @@
 <template>
   <div class="calendar-container">
     <ClientOnly>
-      <FullCalendar :options="calendarOptions" class="calendar" />
+      <FullCalendar :options="calendarOptions" class="calendar z-10" />
     </ClientOnly>
 
     <Teleport to="body">
+      <div>
+        <ViewEvent @close-view-event-window="showEventWindow = false" v-if="showEventWindow" :eventId="selectedEvent.id" />
+      </div>
+
       <!-- Add Event Modal -->
       <div
         v-if="showModal"
@@ -88,7 +92,7 @@
       </div>
 
       <!-- View Event Modal -->
-      <div
+      <!-- <div
         v-if="showEventModal"
         class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center"
       >
@@ -145,12 +149,6 @@
           </div>
 
           <div class="flex justify-end gap-3 mt-6">
-            <!-- <button v-if="['ADMIN', 'SUPER'].includes(userData.role)"
-              @click="editEvent"
-              class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition"
-            >
-              Edit
-            </button> -->
             <button class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition">
               <NuxtLink :to="`/event/${selectedEvent.id}`">Edit</NuxtLink>
             </button>
@@ -163,7 +161,7 @@
             
           </div>
         </div>
-      </div>
+      </div> -->
     </Teleport>
   </div>
 </template>
@@ -191,8 +189,12 @@ const eventForm = ref({
 });
 
 const selectedEvent = ref(null);
-const showEventModal = ref(false);
+//const showEventModal = ref(false);
 const rsvpResponse = ref(null);
+
+const showEventWindow = ref(false);
+
+
 
 // Utility function to format datetime to ISO string with time zone info
 const formatDateToISO = (dateStr, timeZone) => {
@@ -235,7 +237,8 @@ const calendarOptions = ref({
       location: info.event.extendedProps.location,
     };
     //router.push(`/event/${info.event.id}`);
-    showEventModal.value = true;
+    //showEventModal.value = true;
+    showEventWindow.value = true;
   },
 });
 
@@ -253,7 +256,8 @@ onMounted(async () => {
 const handleEscapeKey = (e) => {
   if (e.key === "Escape") {
     showModal.value = false;
-    showEventModal.value = false;
+    //showEventModal.value = false;
+    showEventWindow.value = false;
   }
 };
 
@@ -405,11 +409,11 @@ const respondToEvent = async (response) => {
   }
 };
 
-watch(showEventModal, (newVal) => {
-  if (newVal) {
-    rsvpResponse.value = null; // Reset RSVP when modal opens
-  }
-});
+// watch(showEventModal, (newVal) => {
+//   if (newVal) {
+//     rsvpResponse.value = null; // Reset RSVP when modal opens
+//   }
+// });
 
 function updateLocation(location) {
   eventForm.value.lat = location.lat;
@@ -445,7 +449,7 @@ const editEvent = () => {
   };
 
   showModal.value = true;
-  showEventModal.value = false;
+  //showEventModal.value = false;
 };
 </script>
 
