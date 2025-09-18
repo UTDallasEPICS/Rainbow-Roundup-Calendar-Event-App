@@ -1,5 +1,5 @@
 <!-- 18 sep 2025
-    a modal window that lets all users see an event's details. should be used in /calendar and /eventsPage. it should let SUPER and ADMIN edit and/or delete events
+    a modal window that lets all users see an event's details. used in /calendar and /eventsPage. it should let SUPER and ADMIN edit and/or delete events
 -->
 
 <template>
@@ -11,7 +11,7 @@
 
 <!-- window -->
     <div
-    class="fixed z-40 min-h-screen w-full flex items-center justify-center p-4 sm:p-6 font-sans overflow-y-auto"
+    class="fixed top-0 right-0 z-40 min-h-screen w-full flex items-center justify-center p-4 sm:p-6 font-sans overflow-y-auto"
     >
     <div
       class="z-40 w-full max-w-5xl bg-white rounded-2xl shadow-md relative overflow-auto max-h-[70vh]"

@@ -35,10 +35,6 @@ Rainbow Roundup is a calendar event management platform built to unify and uplif
 
 - View upcoming and past events
 
-### `event/:id`
-
-- Create, edit, or delete events
-
 ### `/admin/userList`
 
 - Promote or demote users (Super Admin only)
