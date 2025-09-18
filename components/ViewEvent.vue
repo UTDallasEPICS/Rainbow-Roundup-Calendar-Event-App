@@ -1,11 +1,11 @@
-<!-- 16 sep 2025
+<!-- 18 sep 2025
     a modal window that lets all users see an event's details. should be used in /calendar and /eventsPage. it should let SUPER and ADMIN edit and/or delete events
 -->
 
 <template>
   <!-- Background -->
     <div
-        class="fixed top-0 right-0 z-30 h-full w-full bg-black/70"
+        class="fixed top-0 right-0 z-30 h-full w-full bg-black/70 backdrop-blur-sm"
     ></div>
     
 
@@ -237,17 +237,18 @@ import { ref, reactive, computed, onMounted } from "vue";
 import { useAuth } from "#imports"; // todo: figure out why useAuth is called here or if we don't need to touch it. 
 import { fetchCombinedEventById } from "../server/utils/fetchCombinedEvents";
 import { useRoute, useRouter } from "vue-router";
+import { Size } from "@prisma/client";
 
 const props = defineProps(['eventId']);
 const emit = defineEmits(["closeViewEventWindow"]);
 function closeWindow() {
-    console.log("CLOSE WINDOW")
     emit("closeViewEventWindow");
 }
 
 // State
 const isEditing = ref(false);
 const editedEvent = reactive({
+  id: props.eventId,
   title: "",
   description: "",
   start: "",
@@ -320,25 +321,39 @@ onMounted(loadEvent);
 // Actions
 const toggleEdit = () => (isEditing.value = true);
 async function saveChanges() {
-  console.log("PLACEHOLDER Saving edits:", editedEvent);
+    console.log("Saving edits:", editedEvent);
 
-  // assign new event values
-  event.value.title = editedEvent.title;
-  event.value.description = editedEvent.description;
-  event.value.start = editedEvent.start;
-  event.value.end = editedEvent.end;
-  event.value.capacity = editedEvent.capacity;
-  event.value.location = editedEvent.location;
-  event.value.address = editedEvent.address;
-  event.value.lat = editedEvent.lat;
-  event.value.lng = editedEvent.lng;
+    // TO DO: check for valid input, do not save if input is invalid
 
-  // const { error : putError } = await useFetch('api/event/${eventId}', {
-  //     method: "PUT",
-  //     body: editedEvent,
-  // });
+    // assign new event values
+    event.value.title = editedEvent.title;
+    event.value.description = editedEvent.description;
+    event.value.start = editedEvent.start;
+    event.value.end = editedEvent.end;
+    event.value.capacity = editedEvent.capacity;
+    event.value.location = editedEvent.location;
+    event.value.address = editedEvent.address;
+    event.value.lat = editedEvent.lat;
+    event.value.lng = editedEvent.lng;
 
-  isEditing.value = false;
+    const { error : localPutError } = await useFetch(`../api/event/${eventId}`, {
+        method: "PUT",
+        body: editedEvent,
+    });
+    if (localPutError.value) {
+        console.error("Local database PUT error:", localPutError.value);
+    }
+    
+    //to do: figure out how to edit google events
+    const { error : googlePutError } = await useFetch(`../api/google/calendar/${eventId}`, {
+        method: "PUT",
+        body: editedEvent,
+    });
+    if (googlePutError.value) {
+        console.error("Google database PUT error:", googlePutError.value);
+    }
+
+    isEditing.value = false;
 };
 const cancelEdit = () => {
   // revert edits
@@ -359,23 +374,23 @@ async function deleteEvent() {
   console.log("Deleting event", event.value.id);
 
   // delete event on the database side
-  const { error : deleteError } = await useFetch(`../api/event/${eventId}`, {
+  const { error : localDeleteError } = await useFetch(`../api/event/${eventId}`, {
       method: "DELETE",
       body: event.value.id,
   });
 
-  if (deleteError.value) {
-    console.error("DELETE error:", deleteError.value);
+  if (localDeleteError.value) {
+    console.error("Local database DELETE error:", localDeleteError.value);
   }
 
   // delete event on the google calendar side
-  const { error : calendarError } = await useFetch(`../api/google/calendar/${eventId}`, {
+  const { error : googleDeleteError } = await useFetch(`../api/google/calendar/${eventId}`, {
       method: "DELETE",
       body: event.value.id,
   });
 
-  if (calendarError.value) {
-    console.error("DELETE error:", deleteError.value);
+  if (googleDeleteError.value) {
+    console.error("Google calendar DELETE error:", googleDeleteError.value);
   }
 
   console.log("Event deleted");
