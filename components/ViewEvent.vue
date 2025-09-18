@@ -240,7 +240,7 @@ import { useRoute, useRouter } from "vue-router";
 import { Size } from "@prisma/client";
 
 const props = defineProps(['eventId']);
-const emit = defineEmits(["closeViewEventWindow"]);
+const emit = defineEmits(["closeViewEventWindow", "eventChanged"]);
 function closeWindow() {
     emit("closeViewEventWindow");
 }
@@ -320,10 +320,28 @@ onMounted(loadEvent);
 
 // Actions
 const toggleEdit = () => (isEditing.value = true);
+
 async function saveChanges() {
     console.log("Saving edits:", editedEvent);
+    // Validation for location
+    if (!editedEvent.location || editedEvent.lat === null || editedEvent.lng === null) {
+        alert("Please select a valid location on the map before submitting.");
+        return;
+    }
+    // validation for time
+    const startTime = new Date(editedEvent.start);
+    const endTime = new Date(editedEvent.end);
+    const currentTime = new Date();
+    
+    if (startTime < currentTime) {
+      alert("Event start time cannot be in the past. Please select a future date and time.");
+      return;
+    }
 
-    // TO DO: check for valid input, do not save if input is invalid
+    if (endTime <= startTime) {
+      alert("Event end time must be after the start time.");
+      return;
+    }
 
     // assign new event values
     event.value.title = editedEvent.title;
@@ -344,7 +362,6 @@ async function saveChanges() {
         console.error("Local database PUT error:", localPutError.value);
     }
     
-    //to do: figure out how to edit google events
     const { error : googlePutError } = await useFetch(`../api/google/calendar/${eventId}`, {
         method: "PUT",
         body: editedEvent,
@@ -354,6 +371,7 @@ async function saveChanges() {
     }
 
     isEditing.value = false;
+    emit("eventChanged");
 };
 const cancelEdit = () => {
   // revert edits
@@ -394,6 +412,9 @@ async function deleteEvent() {
   }
 
   console.log("Event deleted");
+  emit("eventChanged");
+  emit("closeViewEventWindow");
+  
 
 };
 
