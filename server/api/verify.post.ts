@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
     // Move to User table
     const user = await prisma.user.create({
       data: {
-        email: pending.email,
+        email: (pending.email as string).toLowerCase(), //"as string" is NOT a boiler plate, Do not remove
         firstname: pending.firstname,
         lastname: pending.lastname,
         phoneNum: pending.phoneNum,
