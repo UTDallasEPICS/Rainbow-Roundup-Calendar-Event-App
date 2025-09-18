@@ -156,7 +156,7 @@ const submitSignupForm = async () => {
 
   try {
 
-    const { data, error } = await useFetch("/api/user", {
+    const { data, error } = await useFetch("/api/user", { // todo: change to $fetch
       method: "POST",
       body: userDataToSubmit,
       watch: false,

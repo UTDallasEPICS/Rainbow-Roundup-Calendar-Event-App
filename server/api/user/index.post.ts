@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
         firstname: body.firstname,
         lastname: body.lastname,
         phoneNum: body.phoneNum || null,
-        profilePic: body.profilePic || null,
+        profilePic: body.profilePic || "/default-profile.png",
         token,
         expires,
       },

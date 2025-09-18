@@ -13,8 +13,8 @@ model User {
   firstname     String
   lastname      String
   role          Role      @default(USER)
-  phoneNum      String?
-  profilePic    String?
+  phoneNum      String?   @unique // client requested phone numbers are unique
+  profilePic    String    @default("/default-profile.png")
   GlobalNotif   Boolean // Global notifications (annoncements)
   emailVerified DateTime?
 
@@ -138,8 +138,8 @@ model PendingUser {
   email      String   @unique
   firstname  String
   lastname   String
-  phoneNum   String?
-  profilePic String?
+  phoneNum   String?  @unique // client requested phone numbers are unique
+  profilePic String   @default("/default-profile.png") 
   token      String   @unique
   expires    DateTime @default(now())
 }
