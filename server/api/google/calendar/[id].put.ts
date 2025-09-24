@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
 
     try {
         // update event
-        await calendar.events.update({ // Bad Request sometimes ??? :(
+        await calendar.events.update({
             calendarId: process.env.NUXT_GOOGLE_CALENDAR_ID!,
             eventId: body.id,
             requestBody: formatEventForGoogle(body),

@@ -82,7 +82,7 @@
                 <div class="row-span-1 font-medium text-gray-800">Start:</div>
                 <input
                   type="datetime-local"
-                  v-model="editedEvent.startTime"
+                  v-model="editedEvent.start"
                   class="input w-full row-span-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-300 p-1"
                 />
             </div>
@@ -90,7 +90,7 @@
                 <div class="row-span-1 font-medium text-gray-800">End:</div>
                 <input
                   type="datetime-local"
-                  v-model="editedEvent.endTime"
+                  v-model="editedEvent.end"
                   class="input w-full row-span-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-300 p-1"
                 />
             </div>
@@ -144,7 +144,7 @@
         </div>
 
         <!-- Map -->
-        <div v-if="!isLoading && isEditing">
+        <div v-if="!isLoading">
             <Map @update:location="updateLocation" />
         </div>
 
@@ -240,7 +240,7 @@ import { useRoute, useRouter } from "vue-router";
 import { Size } from "@prisma/client";
 
 const props = defineProps(['eventId']);
-const emit = defineEmits(["closeViewEventWindow", "eventDeleted", "eventEdited"]);
+const emit = defineEmits(["closeViewEventWindow", "eventChanged"]);
 function closeWindow() {
     emit("closeViewEventWindow");
 }
@@ -251,13 +251,13 @@ const editedEvent = reactive({
   id: props.eventId,
   title: "",
   description: "",
-  startTime: "",
-  endTime: "",
+  start: "",
+  end: "",
   capacity: 0,
   location: "",
   address: "",
-  eventLat: null,
-  eventLong: null,
+  lat: null,
+  lng: null,
 });
 const isResponding = ref(false);
 const rsvpResponse = ref(null);
@@ -274,34 +274,33 @@ const event = ref(null);
 const isLoading = ref(true);
 const userMap = ref({});
 
-// get local time string for edited events
-function toLocalISOString(date) {
-  const tzOffset = date.getTimezoneOffset() * 60000; // offset in milliseconds
-  const localISOTime = new Date(date - tzOffset).toISOString().slice(0, 16);
-  return localISOTime.slice(0, 16);
-}
+// Derived formatted date
+const formattedSelectedDate = computed(() =>
+  event.value
+    ? new Date(event.value.start).toLocaleDateString(undefined, {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+    : ""
+);
 
 // Load and initialize
 async function loadEvent() {
   try {
     const eventdata = await fetchCombinedEventById(eventId);
     event.value = eventdata;
-    const startTime = new Date(eventdata.start);
-    const endTime = new Date(eventdata.end);
-
     Object.assign(editedEvent, {
       title: eventdata.title,
       description: eventdata.description,
-      startTime: toLocalISOString(startTime),
-      endTime: toLocalISOString(endTime),
+      start: eventdata.start,
+      end: eventdata.end,
       capacity: eventdata.capacity,
       location: eventdata.location,
       address: eventdata.address,
-      eventLat: eventdata.lat,
-      eventLong: eventdata.lng,
+      lat: eventdata.lat,
+      lng: eventdata.lng,
     });
-
-
     if (eventdata.signUps?.length) {
       const ids = [...new Set(eventdata.signUps.map((s) => s.userId))];
       const users = await $fetch("/api/user/batch", {
@@ -313,7 +312,6 @@ async function loadEvent() {
   } catch (e) {
     console.error("Load failed", e);
   } finally {
-    console.log("Load complete. Edited event:", editedEvent)
     isLoading.value = false;
   }
 }
@@ -324,14 +322,15 @@ onMounted(loadEvent);
 const toggleEdit = () => (isEditing.value = true);
 
 async function saveChanges() {
+    console.log("Saving edits:", editedEvent);
     // Validation for location
-    if (!editedEvent.location || editedEvent.eventLat === null || editedEvent.eventLong === null) {
+    if (!editedEvent.location || editedEvent.lat === null || editedEvent.lng === null) {
         alert("Please select a valid location on the map before submitting.");
         return;
     }
     // validation for time
-    const startTime = new Date(editedEvent.startTime);
-    const endTime = new Date(editedEvent.endTime);
+    const startTime = new Date(editedEvent.start);
+    const endTime = new Date(editedEvent.end);
     const currentTime = new Date();
     
     if (startTime < currentTime) {
@@ -347,17 +346,17 @@ async function saveChanges() {
     // assign new event values
     event.value.title = editedEvent.title;
     event.value.description = editedEvent.description;
-    event.value.start = startTime.toISOString();
-    event.value.end = endTime.toISOString();
+    event.value.start = editedEvent.start;
+    event.value.end = editedEvent.end;
     event.value.capacity = editedEvent.capacity;
     event.value.location = editedEvent.location;
     event.value.address = editedEvent.address;
-    event.value.lat = editedEvent.eventLat;
-    event.value.lng = editedEvent.eventLong;
+    event.value.lat = editedEvent.lat;
+    event.value.lng = editedEvent.lng;
 
     const { error : localPutError } = await useFetch(`../api/event/${eventId}`, {
         method: "PUT",
-        body: event.value,
+        body: editedEvent,
     });
     if (localPutError.value) {
         console.error("Local database PUT error:", localPutError.value);
@@ -365,34 +364,32 @@ async function saveChanges() {
     
     const { error : googlePutError } = await useFetch(`../api/google/calendar/${eventId}`, {
         method: "PUT",
-        body: event.value,
+        body: editedEvent,
     });
     if (googlePutError.value) {
         console.error("Google database PUT error:", googlePutError.value);
     }
 
     isEditing.value = false;
-    emit("eventEdited", event.value);
+    emit("eventChanged");
 };
 const cancelEdit = () => {
   // revert edits
-  const startTime = new Date(event.value.start);
-  const endTime = new Date(event.value.end);
-
   Object.assign(editedEvent, {
     title: event.value.title,
     description: event.value.description,
-    startTime: toLocalISOString(startTime),
-    endTime: toLocalISOString(endTime),
+    start: event.value.start,
+    end: event.value.end,
     capacity: event.value.capacity,
     location: event.value.location,
     address: event.value.address,
-    eventLat: event.value.lat,
-    eventLong: event.value.lng,
+    lat: event.value.lat,
+    lng: event.value.lng,
   });
   isEditing.value = false;
 };
 async function deleteEvent() {
+  console.log("Deleting event", event.value.id);
 
   // delete event on the database side
   const { error : localDeleteError } = await useFetch(`../api/event/${eventId}`, {
@@ -415,7 +412,7 @@ async function deleteEvent() {
   }
 
   console.log("Event deleted");
-  emit("eventDeleted", event);
+  emit("eventChanged");
   emit("closeViewEventWindow");
   
 
@@ -499,20 +496,20 @@ const respondToEvent = async (response) => {
 };
 
 function updateLocation(location) {
-  editedEvent.eventLat = location.lat;
-  editedEvent.eventLong = location.lng;
+  editedEvent.value.lat = location.lat;
+  editedEvent.value.lng = location.lng;
 
   // If we have a name/address from Autocomplete, use them.
   if (location.name || location.address) {
-    editedEvent.location = location.name || location.address || "";
-    editedEvent.address = location.address || "";
+    editedEvent.value.location = location.name || location.address || "";
+    editedEvent.value.address = location.address || "";
   } else {
     // If no name/address, default to coordinates
     const coordsString = `Lat: ${location.lat.toFixed(
       6
     )}, Lng: ${location.lng.toFixed(6)}`;
-    editedEvent.location = coordsString;
-    editedEvent.address = coordsString;
+    editedEvent.value.location = coordsString;
+    editedEvent.value.address = coordsString;
   }
 }
 </script>
