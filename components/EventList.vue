@@ -1,8 +1,8 @@
 <template>
   <div class="space-y-6">
-    <ViewEvent @close-view-event-window="showEventWindow = false" v-if="showEventWindow" :eventId="selectedEventId" />
+    <ViewEvent @close-view-event-window="showEventWindow = false" @event-deleted="(id) => deleteEvent(id)" @event-edited="(e) => editEvent(e)" v-if="showEventWindow" :eventId="selectedEventId" />
     <div
-      v-for="event in events"
+      v-for="event in props.events"
       :key="event.id"
       class="bg-white rounded-2xl shadow flex items-center p-4 cursor-pointer hover:bg-gray-50 transition"
     >
@@ -76,5 +76,32 @@ function isPast(iso) {
 function showWindow(id) {
   selectedEventId.value = id;
   showEventWindow.value = true;
+}
+
+// given an id of an event, deletes event from the list
+function deleteEvent(deleteId) {
+
+  // search through events in event list. if event id matches, then delete it from the list
+  for (let i = 0; i < props.events.length; i++)
+  {
+    if (props.events[i].id == deleteId)
+    {
+      props.events.splice(i, 1);
+      break;
+    }
+  }
+}
+
+// given an edited version of an event, edit the event in the list
+function editEvent(newEvent) {
+  console.log(newEvent);
+  for (let i = 0; i < props.events.length; i++)
+    {
+      if (props.events[i].id == newEvent.id)
+      {
+          props.events[i] = newEvent;
+          break;
+      }
+    }
 }
 </script>

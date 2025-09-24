@@ -6,7 +6,7 @@
 
     <Teleport to="body">
       <div>
-        <ViewEvent @close-view-event-window="showEventWindow = false" v-if="showEventWindow" :eventId="selectedEvent.id" />
+        <ViewEvent @close-view-event-window="showEventWindow = false" @event-deleted="(id) => deleteEvent(id)" @event-edited="(e) => editEvent(e)" v-if="showEventWindow" :eventId="selectedEvent.id" />
       </div>
 
       <!-- Add Event Modal -->
@@ -353,24 +353,32 @@ function updateLocation(location) {
   }
 }
 
-const editEvent = () => {
-  eventForm.value = {
-    title: selectedEvent.value.title || "",
-    description: selectedEvent.value.description || "",
-    start: new Date(selectedEvent.value.start).toISOString().slice(0, 16),
-    end: new Date(selectedEvent.value.end).toISOString().slice(0, 16),
-    location: selectedEvent.value.location || "",
-    lat: selectedEvent.value.lat || null,
-    lng: selectedEvent.value.lng || null,
-    capacity: selectedEvent.value.capacity || 0,
-    timeZone: selectedEvent.value.timeZone || "UTC",
-    address: selectedEvent.value.address || "",
-    userId: selectedEvent.value.userId || 0, // if available
-  };
+// given an id of an event, deletes event from the list
+function deleteEvent(deleteId) {
 
-  showModal.value = true;
-};
+  // search through events in event list. if event id matches, then delete it from the list
+  for (let i = 0; i < calendarOptions.value.events.length; i++)
+  {
+    if (calendarOptions.value.events[i].id == deleteId)
+    {
+      calendarOptions.value.events.splice(i, 1);
+      break;
+    }
+  }
+}
 
+// given an edited version of an event, edit the event in the list
+function editEvent(newEvent) {
+  console.log(newEvent);
+  for (let i = 0; i < calendarOptions.value.events.length; i++)
+    {
+      if (calendarOptions.value.events[i].id == newEvent.id)
+      {
+          calendarOptions.value.events[i] = newEvent;
+          break;
+      }
+    }
+}
 </script>
 
 <style scoped>
