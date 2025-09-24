@@ -1,4 +1,4 @@
-<!-- 18 sep 2025
+<!-- 24 sep 2025
     a modal window that lets all users see an event's details. used in /calendar and /eventsPage. it should let SUPER and ADMIN edit and/or delete events
 -->
 
