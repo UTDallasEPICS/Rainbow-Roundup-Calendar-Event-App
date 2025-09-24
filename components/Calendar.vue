@@ -372,32 +372,22 @@ const respondToEvent = async (response) => {
     } catch (err) {
       console.error("RSVP failed:", err);
     }
-  } else if (response === "no") {
-    try {
-      // Step 1: Get the signup ID
-      const signup = await $fetch(`/api/signup/lookup`, {
-        method: "POST",
-        body: {
-          userId,
-          eventId,
-        },
+  } else if (response === "no") { // Copy from id.vue to fix being unable to cancel rsvp
+      console.log(userId);
+      console.log(eventId);
+      const signup = await $fetch("/api/signup/lookup", {
+        method: "GET",
+        query: { userId, eventId },
       });
-
-      if (!signup || !signup.id) {
+      if (!signup || !signup.signUp.id) {
         console.warn("No RSVP found to remove.");
-        return;
+      } else {
+        const result = await $fetch(`/api/signup/${signup.signUp.id}`, {
+          method: "DELETE",
+        });
+        console.log("RSVP removed successfully:", result);
       }
-
-      // Step 2: Delete the RSVP using the ID
-      const result = await $fetch(`/api/signup/${signup.id}`, {
-        method: "DELETE",
-      });
-
-      console.log("RSVP removed successfully:", result);
-    } catch (err) {
-      console.error("Failed to remove RSVP:", err);
     }
-  }
 };
 
 watch(showEventModal, (newVal) => {
