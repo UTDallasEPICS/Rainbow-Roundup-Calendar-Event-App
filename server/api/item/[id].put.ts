@@ -40,14 +40,13 @@ export default defineEventHandler(async (event) => {
 
             await Promise.all(
                 body.itemVariants.map(async (fi: Record<string, any>) => {
-                    const quantity = Number(fi.quantity);
                     const size = fi.size;
                     const price = parseFloat(fi.price);
 
-                    if (!quantity || !size || !price) {
+                    if (!size || !price) {
                         throw createError({
                             statusCode: 400,
-                            statusMessage: "Each finishedItem must include quantity, size, and price",
+                            statusMessage: "Each itemVariant must include size and price",
                         });
                     }
 
@@ -60,7 +59,6 @@ export default defineEventHandler(async (event) => {
 
                     await prisma.itemVariant.create({
                         data: {
-                            quantity,
                             size,
                             price,
                             itemId: id,

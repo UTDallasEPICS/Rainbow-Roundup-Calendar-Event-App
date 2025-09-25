@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
             setResponseStatus(event, 400);
             return {
                 success: false,
-                error: "finishedItems field must be an array",
+                error: "itemVariants field must be an array",
             };
         }
 

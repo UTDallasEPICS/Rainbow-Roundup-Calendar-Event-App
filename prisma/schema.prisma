@@ -79,7 +79,6 @@ model Report {
 
 model ItemVariant {
   id                String     @id @default(uuid())
-  quantity          Int
   size              Size
   price             Float
   itemId            String      
