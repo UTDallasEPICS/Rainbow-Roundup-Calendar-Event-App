@@ -7,9 +7,9 @@ export default defineEventHandler(async (event) => {
     const prisma = event.context.prisma;
     
     try {
-        const items = await prisma.item.findMany({
+        const items = await prisma.abstractItem.findMany({
             include: {
-                FinishedItems: true,
+                ItemVariants: true,
                 ItemPhotos: true,
             },
             orderBy: {

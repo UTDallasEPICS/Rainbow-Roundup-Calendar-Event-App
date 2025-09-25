@@ -13,10 +13,10 @@ export default defineEventHandler(async (event) => {
     }
 
     try {
-        const item = await prisma.item.findUnique({
+        const item = await prisma.abstractItem.findUnique({
             where: { id },
             include: {
-                FinishedItems: true,
+                ItemVariants: true,
                 ItemPhotos: true,
             }
         });

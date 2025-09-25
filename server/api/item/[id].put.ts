@@ -27,19 +27,19 @@ export default defineEventHandler(async (event) => {
         const body = await readBody(event);
 
         if (body.name) {
-            await prisma.item.update({
+            await prisma.abstractItem.update({
                 where: { id },
                 data: { name: body.name },
             });
         }
 
-        if (Array.isArray(body.finishedItems)) {
-            await prisma.finishedItem.deleteMany({
+        if (Array.isArray(body.ItemVariants)) {
+            await prisma.itemVariant.deleteMany({
                 where: { itemId: id },
             });
 
             await Promise.all(
-                body.finishedItems.map(async (fi: Record<string, any>) => {
+                body.itemVariants.map(async (fi: Record<string, any>) => {
                     const quantity = Number(fi.quantity);
                     const size = fi.size;
                     const price = parseFloat(fi.price);
@@ -58,7 +58,7 @@ export default defineEventHandler(async (event) => {
                         });
                     }
 
-                    await prisma.finishedItem.create({
+                    await prisma.itemVariant.create({
                         data: {
                             quantity,
                             size,
@@ -70,9 +70,9 @@ export default defineEventHandler(async (event) => {
             );
         }
 
-        const updatedItem = await prisma.item.findUnique({
+        const updatedItem = await prisma.abstractItem.findUnique({
             where: { id },
-            include: { FinishedItems: true },
+            include: { ItemVariants: true },
         });
 
         setResponseStatus(event, 200);

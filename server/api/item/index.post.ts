@@ -17,14 +17,14 @@ export default defineEventHandler(async (event) => {
     try {
         const body = await readBody(event);
 
-        if (!body.name || !body.finishedItems) {
+        if (!body.name || !body.itemVariants) {
             setResponseStatus(event, 400);
             return {
                 success: false,
-                error: "Request must include name and finishedItems fields",
+                error: "Request must include name and itemVariants fields",
             };
         }
-        if (!Array.isArray(body.finishedItems)) {
+        if (!Array.isArray(body.itemVariants)) {
             setResponseStatus(event, 400);
             return {
                 success: false,
@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
             };
         }
 
-        const item = await prisma.item.create({
+        const item = await prisma.abstractItem.create({
             data: {
                 name: body.name,
             },
@@ -47,14 +47,14 @@ export default defineEventHandler(async (event) => {
         }
 
         await Promise.all(
-            body.finishedItems.map(async (finishedItem: Record<string, any>) => {
-                const quantity = Number(finishedItem.quantity);
-                const size = finishedItem.size;
-                const price = parseFloat(finishedItem.price);
+            body.itemVariants.map(async (itemVariant: Record<string, any>) => {
+                const quantity = Number(itemVariant.quantity);
+                const size = itemVariant.size;
+                const price = parseFloat(itemVariant.price);
                 if (!quantity || !size || !price) {
                     throw createError({
                         statusCode: 400,
-                        statusMessage: "Request must include an array of finishedItems with quantity, size, and price fields",
+                        statusMessage: "Request must include an array of itemVariants with quantity, size, and price fields",
                     });
                 }
                 if (!["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL"].includes(size)) {
@@ -63,7 +63,7 @@ export default defineEventHandler(async (event) => {
                         statusMessage: "Invalid size, valid sizes: XXS, XS, S, M, L, XL, XXL, XXXL",
                     });
                 }
-                const finItem = await prisma.finishedItem.create({
+                const finItem = await prisma.itemVariant.create({
                     data: {
                         quantity,
                         size,
@@ -80,9 +80,9 @@ export default defineEventHandler(async (event) => {
             })
         );
 
-        const updatedItem = await prisma.item.findUnique({
+        const updatedItem = await prisma.abstractItem.findUnique({
             where: { id: item.id },
-            include: { FinishedItems: true },
+            include: { ItemVariants: true },
         });
 
         setResponseStatus(event, 200);
