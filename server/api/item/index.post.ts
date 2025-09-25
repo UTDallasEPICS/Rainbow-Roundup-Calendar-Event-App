@@ -48,13 +48,12 @@ export default defineEventHandler(async (event) => {
 
         await Promise.all(
             body.itemVariants.map(async (itemVariant: Record<string, any>) => {
-                const quantity = Number(itemVariant.quantity);
                 const size = itemVariant.size;
                 const price = parseFloat(itemVariant.price);
-                if (!quantity || !size || !price) {
+                if (!size || !price) {
                     throw createError({
                         statusCode: 400,
-                        statusMessage: "Request must include an array of itemVariants with quantity, size, and price fields",
+                        statusMessage: "Request must include an array of itemVariants with size and price fields",
                     });
                 }
                 if (!["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL"].includes(size)) {
@@ -65,7 +64,6 @@ export default defineEventHandler(async (event) => {
                 }
                 const finItem = await prisma.itemVariant.create({
                     data: {
-                        quantity,
                         size,
                         price,
                         itemId: item.id,
