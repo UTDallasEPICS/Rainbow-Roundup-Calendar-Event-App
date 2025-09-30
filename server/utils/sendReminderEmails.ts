@@ -65,7 +65,7 @@ export async function sendReminderEmails(days: number) {
     console.log(`[cron] Sending reminder emails to users signed up for events occuring on ${dayStart.toDateString()}`);
 
     for (const user of signups) {
-      const eventUrl = config.url + `/event/${user.Event.id}`;
+      const eventUrl = config.url + `/calendar`;
       const emailParams = {
         firstName: user.User.firstname,
         title: user.Event.title,
@@ -139,7 +139,7 @@ export async function sendReminderEmails(days: number) {
         },
       })
 
-      const eventUrl = config.url + `/event/${event.id}`;
+      const eventUrl = config.url + `/calendar`;
       if (usersNotSignedUp.length === 0) {
         console.log(`[cron] Could not find users not signed up for event: ${event.id}`);
       }

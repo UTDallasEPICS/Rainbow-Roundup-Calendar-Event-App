@@ -80,7 +80,7 @@ export default defineEventHandler(async (event) => {
       },
     });
 
-    const eventURL = config.url + `/event/${body.id}`;
+    const eventURL = config.url + `/calendar`;
     const logoPath = resolve("public/images/318x146Logo.png");
     for (const user of emailRecipients) {
       const mailOptions = {

@@ -415,7 +415,7 @@ async function deleteEvent() {
   }
 
   console.log("Event deleted");
-  emit("eventDeleted", event);
+  emit("eventDeleted", event.value.id);
   emit("closeViewEventWindow");
   
 

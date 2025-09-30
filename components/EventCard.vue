@@ -1,5 +1,6 @@
 <template>
-  <NuxtLink :to="`/event/${id}`">
+  <!-- <NuxtLink :to="`/event/${id}`"> -->
+    <NuxtLink :to="`/eventsPage`">
     <div class="w-full px-4 sm:px-6 lg:px-8 min-w-[250px]">
       <div class="flex flex-wrap gap-4 justify-center py-4">
         <div
