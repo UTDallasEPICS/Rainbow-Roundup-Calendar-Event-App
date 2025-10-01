@@ -88,6 +88,20 @@
         />
       </div>
     </div>
+    <div>
+      <label class="block mt-4 text-sm font-medium text-gray-700">Do you want to enable notifications?</label>
+      <div class="flex space-x-6 mt-1 border-solid border-gray-700">
+        <input
+          type="checkbox"
+          id="GlobalNotif"
+          v-model="GlobalNotif"
+          :readonly="!editMode"
+          :class="inputClass"
+          ref="GlobalNotifRef"
+          @keydown.enter.prevent="toggleEditMode"
+        />
+      </div>
+    </div>
 
     <div v-if="editMode" class="mt-10 max-w-xl">
       <div class="bg-red-50 p-4 rounded-xl mb-4 border border-red-200">
@@ -145,6 +159,7 @@ const lastName = ref(userData.value.lastname);
 const phoneNum = ref(userData.value.phoneNum);
 const email = ref(userData.value.email);
 const profilePic = ref(userData.value.profilePic);
+const GlobalNotif = ref(userData.value.GlobalNotif);
 
 const file = ref(null);
 const imageUrl = ref(null);
@@ -230,6 +245,7 @@ const saveAccount = async () => {
         phoneNum: phoneNum.value,
         email: email.value,
         profilePic: newProfilePic,
+        GlobalNotif: GlobalNotif.value,
       },
     });
   } catch (e) {
