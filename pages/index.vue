@@ -9,19 +9,44 @@
         <div class="relative w-full overflow-hidden bg-white">
           <!-- Slides Container -->
           <div class="flex transition-transform duration-500 ease-in-out" ref="carousel">
-            <!-- Slide 1 -->
-            <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 flex items-center justify-center p-4">
-              <img src="/images/rrup_logo.png" 
-                  alt="Rainbow Roundup Logo" 
-                  class="max-h-52 md:max-h-80 object-contain">
-            </div>
-            <!-- Slide 2 - Full size image -->
-            <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 relative">
-              <img src="/images/carousel_3.png" 
-                  alt="Rainbow Roundup Event" 
-                  class="absolute inset-0 w-full h-full object-cover">
-            </div>
+<!-- Slide 1 -->
+        <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 p-4">
+          <div class="h-full flex items-center justify-center">
+            <img src="/public/images/icons/pwa_logo_512.png" 
+                alt="Rainbow Roundup Logo" 
+                class="max-h-52 md:max-h-96 object-contain w-auto">
           </div>
+        </div>
+        
+        <!-- Slide 2 - Full size image -->
+        <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 p-4">
+          <div class="h-full flex items-center justify-center">
+            <img src="/images/carousel_1.png" 
+                alt="Rainbow Roundup Event" 
+                class="max-h-52 md:max-h-96 object-contain w-auto">
+          </div>
+        </div>
+        
+        <!-- Slide 3 - Full size image -->
+        <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 p-4">
+          <div class="h-full flex items-center justify-center">
+            <img src="/images/carousel_2.png" 
+                alt="Rainbow Roundup Event" 
+                class="max-h-52 md:max-h-106 object-contain w-auto">
+          </div>
+        </div>
+        
+        <!-- Slide 4 - Full size image -->
+        <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 p-4">
+          <div class="h-full flex items-center justify-center">
+            <img src="/images/carousel_3.png" 
+                alt="Rainbow Roundup Event" 
+                class="max-h-52 md:max-h-96 object-contain w-auto">
+          </div>
+        </div>
+
+
+      </div>
           
           <!-- Navigation Arrows -->
           <button @click="prevSlide" 
@@ -110,6 +135,7 @@
               <!-- Event Cards -->
               <div v-for="event in getEventsForDate(selectedDate)" :key="event.title" 
                    class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <!-- <EventCard :signU="event" /> -->
                 <div class="flex items-start">
                   <div class="bg-blue-100 text-blue-800 rounded-lg p-3 mr-4 text-center min-w-12">
                     <div class="font-bold text-lg">{{ selectedDate.getDate() }}</div>
@@ -123,6 +149,10 @@
                 </div>
               </div>
             </div>
+          </div>
+          <!-- Upcoming events popups -->
+          <div>
+            
           </div>
 
           <!-- Placeholder when no date is selected -->
@@ -211,7 +241,7 @@ export default {
     
     return {
       currentSlide: 0,
-      totalSlides: 2,
+      totalSlides: 4,
       interval: null,
       currentMonth: today.getMonth(),
       currentYear: today.getFullYear(),
@@ -222,9 +252,9 @@ export default {
       ],
       events: [
         {
-          date: new Date(2025, 6, 26), // July 26, 2025
+          date: new Date(2025, 10, 231), // July 26, 2025
           time: '12:00 PM',
-          title: "Demo Event",
+          title: "Halloween Block party",
           lat: "40.691116",
           lng: "-74.091606"
         },
@@ -236,16 +266,16 @@ export default {
           lng: "-84.556842"
         },
         {
-          date: new Date(2025, 6, 31), // July 31, 2025
+          date: new Date(2025, 6, 3), // July 31, 2025
           time: '12:00 PM',
-          title: "ReportPage",
+          title: "Bare Back Beach Day",
           lat: "40.689826",
           lng: "-74.044504"
         },
         {
           date: new Date(2025, 7, 7), // August 7, 2025
           time: '4:00 PM',
-          title: "Coffee and Chili",
+          title: "BearDom and TwinkSub",
           lat: "40.692319",
           lng: "-74.069776"
         }
