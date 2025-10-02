@@ -141,7 +141,7 @@
                   <td class="px-4 py-3 text-sm text-gray-800">
                     {{
                       user.PotentialOffenses?.length > 0
-                        ? user.PotentialOffenses[0].reason
+                        ? user.PotentialOffenses[0].description
                         : "—"
                     }}
                   </td>
@@ -167,7 +167,7 @@
           ×
         </button>
 
-        <h2 class="text-xl font-bold text-zinc-800 mb-4">Edit Admin Status</h2>
+        <h2 class="text-xl font-bold text-zinc-800 mb-4">Manage User</h2>
 
         <div class="space-y-4">
           <div>
@@ -198,8 +198,14 @@
 
           <div class="flex justify-end pt-4 border-t">
             <button
+              @click="goToProfile"
+              class="bg-gray-300 text-gray-800 px-4 py-2 mx-1 rounded hover:bg-gray-400 transition"
+            >
+              Visit Profile
+            </button>
+            <button
               @click="saveUserEdits"
-              class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              class="bg-blue-600 text-white px-4 py-2 ml-1 rounded hover:bg-blue-700 transition"
             >
               Save Changes
             </button>
@@ -274,6 +280,10 @@ function openModal(user) {
 function closeModal() {
   selectedUser.value = null;
   isModalOpen.value = false;
+}
+
+async function goToProfile(){
+  await navigateTo(`/profile/${selectedUser.value.id}`);
 }
 
 async function saveUserEdits() {
