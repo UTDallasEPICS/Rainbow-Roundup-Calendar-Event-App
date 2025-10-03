@@ -192,7 +192,7 @@
                 @click="rsvpClickResponse('yes')"
                 :class="[
                     'flex-1 py-2 text-sm font-semibold rounded-full shadow-sm transition',
-                    rsvpChoice === 'yes'
+                    rsvpChoice === 'yes' // The ? runs if the statement is true, : runs otherwise
                     ? 'bg-green-400 text-white'
                     : 'bg-green-200 hover:bg-green-300',
                 ]"
@@ -203,7 +203,7 @@
                 @click="rsvpClickResponse('no')"
                 :class="[
                     'flex-1 py-2 text-sm font-semibold rounded-full shadow-sm transition',
-                    rsvpChoice === 'no'
+                    rsvpChoice === 'no' // The ? runs if the statement is true, : runs otherwise
                     ? 'bg-red-600 text-white'
                     : 'bg-red-200 hover:bg-red-300',
                 ]"
@@ -222,15 +222,16 @@
                   />
                 </div>
             </div>
+            <div v-if="rsvpChoice ==  'no'" class="gap-3">
+              <label class="block mt-4 text-sm font-medium text-gray-700">Note that this will additionally remove all 'plus one' signups</label>
+            </div>
             <div v-if="rsvpChoice" class="flex gap-3">
               
                 <button
                 @click="respondToEvent(rsvpChoice)"
                 :class="[
                     'flex-1 py-2 text-sm font-semibold rounded-full shadow-sm transition',
-                    userRSVP === 'yes'
-                    ? 'bg-blue-400 text-white'
-                    : 'bg-blue-200 hover:bg-blue-300',
+                    'bg-blue-500 hover:bg-blue-600',
                 ]"
                 >
                 Save
@@ -477,9 +478,6 @@ const rsvpClickResponse = async (response) => {
   //console.log('User click: ',rsvpChoice);
   return;
 }
-const rsvpChoiceVal = computed(() => {
-  return rsvpChoice;
-});
 
 const respondToEvent = async (response) => {
   if (isResponding.value) return; // Prevent spamming by blocking clicks
@@ -503,9 +501,10 @@ const respondToEvent = async (response) => {
 
   try {
     if (response === "yes") {
+      const numPlusOneVal = numPlusOne.value; // I created this var since js didn't like submitting numPlusOne.value in POST
       const result = await $fetch("/api/signup", {
         method: "POST",
-        body: { userId, eventId },
+        body: { userId, eventId, numPlusOneVal },
       });
       //console.log("Number of plus one's: ", numPlusOne.value)
       console.log("RSVP success:", result);
