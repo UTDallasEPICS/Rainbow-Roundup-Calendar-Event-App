@@ -478,8 +478,12 @@ const userRSVP = computed(() => {
   return event.value.signUps.some((s) => s.userId === userId) ? "yes" : "no";
 });
 const rsvpClickResponse = async (response) => {
-  rsvpChoice.value = response;
-  //console.log('User click: ',rsvpChoice);
+  if(userRSVP.value === response){
+    console.log('That option is already selected')
+  }
+  else{
+    rsvpChoice.value = response;
+  }
   return;
 }
 
