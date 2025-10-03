@@ -192,7 +192,7 @@
                 @click="rsvpClickResponse('yes')"
                 :class="[
                     'flex-1 py-2 text-sm font-semibold rounded-full shadow-sm transition',
-                    rsvpChoice === 'yes' // The ? runs if the statement is true, : runs otherwise
+                    (rsvpChoice === 'yes' || userRSVP === 'yes') && rsvpChoice != 'no' && (isResponding === false) // The ? runs if the statement is true, : runs otherwise
                     ? 'bg-green-400 text-white'
                     : 'bg-green-200 hover:bg-green-300',
                 ]"
@@ -203,7 +203,7 @@
                 @click="rsvpClickResponse('no')"
                 :class="[
                     'flex-1 py-2 text-sm font-semibold rounded-full shadow-sm transition',
-                    rsvpChoice === 'no' // The ? runs if the statement is true, : runs otherwise
+                    (rsvpChoice === 'no' || userRSVP === 'no') && rsvpChoice != 'yes' && (isResponding === false)// The ? runs if the statement is true, : runs otherwise
                     ? 'bg-red-600 text-white'
                     : 'bg-red-200 hover:bg-red-300',
                 ]"
@@ -236,6 +236,10 @@
                 >
                 Save
                 </button>
+            </div>
+            <div v-if="isResponding" class="flex gap-3">
+              
+                <label class="block mt-4 text-sm font-medium text-gray-700">Processing...</label>
             </div>
             
             </div>
