@@ -189,10 +189,10 @@
             <p class="text-sm font-medium text-gray-800">Will you attend?</p>
             <div class="flex gap-3">
                 <button
-                @click="respondToEvent('yes')"
+                @click="rsvpClickResponse('yes')"
                 :class="[
                     'flex-1 py-2 text-sm font-semibold rounded-full shadow-sm transition',
-                    userRSVP === 'yes'
+                    rsvpChoice === 'yes'
                     ? 'bg-green-400 text-white'
                     : 'bg-green-200 hover:bg-green-300',
                 ]"
@@ -200,17 +200,43 @@
                 Yes
                 </button>
                 <button
-                @click="respondToEvent('no')"
+                @click="rsvpClickResponse('no')"
                 :class="[
                     'flex-1 py-2 text-sm font-semibold rounded-full shadow-sm transition',
-                    userRSVP === 'no'
-                    ? 'bg-red-400 text-white'
+                    rsvpChoice === 'no'
+                    ? 'bg-red-600 text-white'
                     : 'bg-red-200 hover:bg-red-300',
                 ]"
                 >
                 No
                 </button>
             </div>
+            <div v-if="rsvpChoice ==  'yes'" class="gap-3">
+              <label class="block mt-4 text-sm font-medium text-gray-700">How many other people are going to join you?</label>
+                <div class="flex space-x-6 mt-1 border-solid border-gray-700">
+                  <input
+                  type="number"
+                  id="numPlusOne"
+                  v-model.number="numPlusOne"
+                  :min="0"
+                  />
+                </div>
+            </div>
+            <div v-if="rsvpChoice" class="flex gap-3">
+              
+                <button
+                @click="respondToEvent(rsvpChoice)"
+                :class="[
+                    'flex-1 py-2 text-sm font-semibold rounded-full shadow-sm transition',
+                    userRSVP === 'yes'
+                    ? 'bg-blue-400 text-white'
+                    : 'bg-blue-200 hover:bg-blue-300',
+                ]"
+                >
+                Save
+                </button>
+            </div>
+            
             </div>
         </div>
         <!-- Event ID -->
@@ -246,6 +272,8 @@ function closeWindow() {
 }
 
 // State
+const rsvpChoice = ref('');
+const numPlusOne = ref(0);
 const isEditing = ref(false);
 const editedEvent = reactive({
   id: props.eventId,
@@ -444,6 +472,14 @@ const userRSVP = computed(() => {
 
   return event.value.signUps.some((s) => s.userId === userId) ? "yes" : "no";
 });
+const rsvpClickResponse = async (response) => {
+  rsvpChoice.value = response;
+  //console.log('User click: ',rsvpChoice);
+  return;
+}
+const rsvpChoiceVal = computed(() => {
+  return rsvpChoice;
+});
 
 const respondToEvent = async (response) => {
   if (isResponding.value) return; // Prevent spamming by blocking clicks
@@ -471,6 +507,7 @@ const respondToEvent = async (response) => {
         method: "POST",
         body: { userId, eventId },
       });
+      //console.log("Number of plus one's: ", numPlusOne.value)
       console.log("RSVP success:", result);
     } else if (response === "no") {
       console.log(userId);
@@ -488,6 +525,7 @@ const respondToEvent = async (response) => {
         console.log("RSVP removed successfully:", result);
       }
     }
+    rsvpChoice.value = '';
     await loadEvent();
   } catch (err) {
     console.error("RSVP action failed:", err);
