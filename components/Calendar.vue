@@ -49,7 +49,8 @@
               class="input w-full"
             />
 
-            <Map @update:location="updateLocation" />
+            <!-- DELETE if we don't end up using google maps API  -->
+            <!-- <Map @update:location="updateLocation" /> -->
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <label class="text-sm text-gray-600">
@@ -198,8 +199,12 @@ onBeforeUnmount(() => {
 const submitEvent = async () => {
   try {
     // Validation for location
-    if (!eventForm.value.location || eventForm.value.lat === null || eventForm.value.lng === null) {
-      alert("Please select a valid location on the map before submitting.");
+    // if (!eventForm.value.location || eventForm.value.lat === null || eventForm.value.lng === null) {
+    //   alert("Please select a valid location on the map before submitting.");
+    //   return;
+    // }
+    if (!eventForm.value.location) {
+      alert("Please enter a location.");
       return;
     }
 
@@ -246,6 +251,7 @@ const startTime = new Date(eventForm.value.start);
         userId: userData?.id || "-1",
         eventLat: newEvent?.lat,
         eventLong: newEvent?.lng,
+        location: newEvent.location,
         startTime: new Date(newEvent?.start),
         endTime: new Date(newEvent?.end),
         capacity: newEvent?.capacity,

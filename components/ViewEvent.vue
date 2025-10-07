@@ -325,10 +325,15 @@ const toggleEdit = () => (isEditing.value = true);
 
 async function saveChanges() {
     // Validation for location
-    if (!editedEvent.location || editedEvent.eventLat === null || editedEvent.eventLong === null) {
-        alert("Please select a valid location on the map before submitting.");
+    // if (!editedEvent.location || editedEvent.eventLat === null || editedEvent.eventLong === null) {
+    //     alert("Please select a valid location on the map before submitting.");
+    //     return;
+    // }
+    if (!editedEvent.location) {
+        alert("Please enter a location for the event.");
         return;
     }
+
     // validation for time
     const startTime = new Date(editedEvent.startTime);
     const endTime = new Date(editedEvent.endTime);
