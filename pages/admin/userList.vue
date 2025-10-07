@@ -167,7 +167,7 @@
           ×
         </button>
 
-        <h2 class="text-xl font-bold text-zinc-800 mb-4">Manage User</h2>
+        <h2 class="text-xl font-bold text-zinc-800 mb-4">Edit Admin Status</h2>
 
         <div class="space-y-4">
           <div>
