@@ -14,7 +14,7 @@
     class="fixed top-0 right-0 z-40 min-h-screen w-full flex items-center justify-center p-4 sm:p-6 font-sans overflow-y-auto"
     >
     <div
-      class="z-40 w-full max-w-5xl bg-white rounded-2xl shadow-md relative overflow-auto max-h-[70vh]"
+      class="z-40 w-full max-w-xl bg-white rounded-2xl shadow-md relative overflow-auto max-h-[70vh]"
     >
     <div class="absolute top-4 right-4 flex space-x-2 z-10">
         <!-- Edit/Save/Cancel Controls -->
@@ -55,6 +55,7 @@
       </div>
 
       <div class="p-6 space-y-6">
+       
         <!-- Title & metadata -->
         <div class="space-y-1">
           <div v-if="!isEditing">
@@ -118,6 +119,7 @@
           v-if="!isLoading"
           class="grid grid-cols-2 gap-4 text-sm text-gray-600"
         >
+        <!-- location -->
           <div>
             <span class="font-medium text-gray-800">Location:</span><br />
             <span v-if="!isEditing">{{ event.location }}</span>
@@ -127,6 +129,7 @@
               class="w-full border border-gray-300 rounded p-1 focus:outline-none focus:ring-2 focus:ring-indigo-300 mt-1"
             />
           </div>
+          <!-- capacity -->
           <div>
             <span class="font-medium text-gray-800">Capacity:</span><br />
             <span v-if="!isEditing"
@@ -144,9 +147,9 @@
         </div>
 
         <!-- Map -->
-        <div v-if="!isLoading && isEditing">
+        <!-- <div v-if="!isLoading && isEditing">
             <Map @update:location="updateLocation" />
-        </div>
+        </div> -->
 
         <div v-if="!isLoading && !isEditing">
             <!-- Divider -->
@@ -173,9 +176,6 @@
                     <p class="font-medium text-indigo-600 hover:text-indigo-800">
                     {{ userMap[signup.userId]?.firstname || "Unknown" }}
                     {{ userMap[signup.userId]?.lastname || "" }}
-                    </p>
-                    <p class="text-xs text-gray-500">
-                    {{ userMap[signup.userId]?.email || "No email" }}
                     </p>
                 </div>
                 </li>
@@ -355,6 +355,7 @@ async function saveChanges() {
     event.value.lat = editedEvent.eventLat;
     event.value.lng = editedEvent.eventLong;
 
+    // puts changes in local database
     const { error : localPutError } = await useFetch(`../api/event/${eventId}`, {
         method: "PUT",
         body: event.value,
@@ -363,6 +364,7 @@ async function saveChanges() {
         console.error("Local database PUT error:", localPutError.value);
     }
     
+    // puts changes in google calendar
     const { error : googlePutError } = await useFetch(`../api/google/calendar/${eventId}`, {
         method: "PUT",
         body: event.value,
@@ -374,6 +376,8 @@ async function saveChanges() {
     isEditing.value = false;
     emit("eventEdited", event.value);
 };
+
+// reverts edits to what they were before
 const cancelEdit = () => {
   // revert edits
   const startTime = new Date(event.value.start);
@@ -392,6 +396,9 @@ const cancelEdit = () => {
   });
   isEditing.value = false;
 };
+
+
+// deletes an event
 async function deleteEvent() {
 
   // delete event on the database side
@@ -498,22 +505,22 @@ const respondToEvent = async (response) => {
   }
 };
 
-function updateLocation(location) {
-  editedEvent.eventLat = location.lat;
-  editedEvent.eventLong = location.lng;
+// function updateLocation(location) {
+//   editedEvent.eventLat = location.lat;
+//   editedEvent.eventLong = location.lng;
 
-  // If we have a name/address from Autocomplete, use them.
-  if (location.name || location.address) {
-    editedEvent.location = location.name || location.address || "";
-    editedEvent.address = location.address || "";
-  } else {
-    // If no name/address, default to coordinates
-    const coordsString = `Lat: ${location.lat.toFixed(
-      6
-    )}, Lng: ${location.lng.toFixed(6)}`;
-    editedEvent.location = coordsString;
-    editedEvent.address = coordsString;
-  }
-}
+//   // If we have a name/address from Autocomplete, use them.
+//   if (location.name || location.address) {
+//     editedEvent.location = location.name || location.address || "";
+//     editedEvent.address = location.address || "";
+//   } else {
+//     // If no name/address, default to coordinates
+//     const coordsString = `Lat: ${location.lat.toFixed(
+//       6
+//     )}, Lng: ${location.lng.toFixed(6)}`;
+//     editedEvent.location = coordsString;
+//     editedEvent.address = coordsString;
+//   }
+// }
 </script>
 
