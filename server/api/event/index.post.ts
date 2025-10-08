@@ -51,6 +51,7 @@ export default defineEventHandler(async (event) => {
         userId: body.userId,
         eventLat: body.eventLat,
         eventLong: body.eventLong,
+        location: body.location,
         startTime: startTime,
         endTime: endTime,
         capacity: body.capacity,
