@@ -56,30 +56,33 @@
       <div class="flex justify-between items-center px-4 py-2">
         <div class="flex items-center space-x-2">
           <a href="https://rrup.org/">
-            <img src="/public/images/rrup_logo.png" alt="Rainbow Roundup Logo" class="h-12 w-auto"
+            <img src="/public/images/icons/pwa_logo_512.png" alt="Rainbow Roundup Logo" class="h-12 w-auto"
               href="https://rrup.org/" />
           </a>
         </div>
 
         <!-- Navigation Links - added md sizing -->
-        <nav class="hidden md:flex space-x-6 text-sm font-medium">
+        <nav class="hidden xl:flex space-x-6 text-sm font-medium">
           <NuxtLink to="/" @click="navigate('Home')" class="text-gray-700 hover:text-black">Home</NuxtLink>
-          <NuxtLink to="/aboutUs" @click="navigate('About Us')" class="text-gray-700 hover:text-black">About Us
-          </NuxtLink>
-          <NuxtLink to="/calendar" @click="navigate('Calendar')" class="text-gray-700 hover:text-black">Calendar
-          </NuxtLink>
+
+          <NuxtLink to="/aboutUs" @click="navigate('About Us')" class="text-gray-700 hover:text-black">About Us</NuxtLink>
+
+          <NuxtLink to="/calendar" @click="navigate('Calendar')" class="text-gray-700 hover:text-black">Calendar</NuxtLink>
+          
           <a href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE" @click="navigate('Donate')"
             class="text-gray-700 hover:text-black">Donate</a>
-          <NuxtLink v-if="!session" to="/signup" @click="navigate('Sign Up')" class="text-gray-700 hover:text-black">
+          
+            <NuxtLink v-if="!session" to="/signup" @click="navigate('Sign Up')" class="text-gray-700 hover:text-black">
             Sign Up/Log In</NuxtLink>
-          <button v-else @click="logout" class="text-gray-700 hover:text-black">
+          
+            <button v-else @click="logout" class="text-gray-700 hover:text-black">
             Logout
           </button>
           <button @click="promptInstall" class="text-gray-700 hover:text-black">
             Install App
           </button>
-          <!-- 
-          <button @click="requestNotificationPermission" class="text-gray-700 hover:text-black"
+           
+          <button @click="requestNotificationPermission('Notification')" class="text-gray-700 hover:text-black"
             aria-label="Toggle notifications">
             <span v-if="isSubscribed">
               Bell icon
@@ -96,12 +99,12 @@
               </svg>
             </span>
           </button>
-          -->
+          
         </nav>
 
         <!-- Hamburger Button - md: sizing -->
         <button @click="toggleMobileMenu"
-          class="md:hidden flex items-center justify-center w-8 h-8 text-gray-700 hover:text-black focus:outline-none"
+          class="xl:hidden flex items-center justify-center w-8 h-8 text-gray-700 hover:text-black focus:outline-none"
           aria-label="Toggle menu">
           <!-- Hamburger Icon -->
           <svg v-if="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
@@ -117,8 +120,9 @@
 
       <!-- Collapsible Mobile Navigation Menu (when page is resized)-->
       <div v-if="mobileMenuOpen"
-        class="xl:hidden bg-white border-t border-gray-200 shadow-lg absolute left-0 right-0 top-full"
+        class="md:hidden bg-white border-t border-gray-200 shadow-lg absolute left-0 right-0 top-full"
         style="z-index:100">
+
         <nav class="flex flex-col space-y-1 px-4 py-3 text-sm font-medium">
           <NuxtLink to="/" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             @click.native="handleMobileNavClick">Home</NuxtLink>
@@ -129,7 +133,8 @@
           <a href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
             class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             @click="handleMobileNavClick">Donate</a>
-          <NuxtLink v-if="!session" to="/signup"
+          
+            <NuxtLink v-if="!session" to="/signup"
             class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             @click.native="handleMobileNavClick">Sign Up/Log In</NuxtLink>
           <button v-else @click="logout(); handleMobileNavClick()"

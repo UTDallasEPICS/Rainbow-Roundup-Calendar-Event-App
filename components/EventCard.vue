@@ -104,7 +104,9 @@
 
 <script setup lang= 'ts'>
 import { ref, watch } from "vue";
-
+import type { Event } from "@prisma/client"
+import type SignUp from "~/pages/signUp.vue";
+//whenever you fetch 
 const props = defineProps({
   id: { type: String, required: true },
   dateDay: { type: [String, Number], required: true },
@@ -114,6 +116,7 @@ const props = defineProps({
   signUps: { type: Array, default: () => [] },
   location: { type: String, default: "" },
   saved: { type: Boolean, default: false },
+  //signU: Event,
 });
 
 const avatars = computed(
