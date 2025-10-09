@@ -108,20 +108,20 @@ import type { Event } from "@prisma/client"
 import type SignUp from "~/pages/signUp.vue";
 //whenever you fetch 
 const props = defineProps({
-  // id: { type: String, required: true },
-  // dateDay: { type: [String, Number], required: true },
-  // dateMonth: { type: String, required: true },
-  // title: { type: String, required: true },
-  // currentCapacity: { type: Number, default: 0 },
-  // signUps: { type: Array, default: () => [] },
-  // location: { type: String, default: "" },
-  // saved: { type: Boolean, default: false },
+  id: { type: String, required: true },
+  dateDay: { type: [String, Number], required: true },
+  dateMonth: { type: String, required: true },
+  title: { type: String, required: true },
+  currentCapacity: { type: Number, default: 0 },
+  signUps: { type: Array, default: () => [] },
+  location: { type: String, default: "" },
+  saved: { type: Boolean, default: false },
   //signU: Event,
 });
 
 const avatars = computed(
   // TODO: check what type we should be enforcing here
-  () => props.signU.SignUps((s: any) => s.User?.profilePic).filter((url) => !!url) // filter out undefined/null
+  () => props.signUps.map((s: any) => s.User?.profilePic).filter((url) => !!url) // filter out undefined/null
 );
 
 const emit = defineEmits(["update:saved", "expand"]);

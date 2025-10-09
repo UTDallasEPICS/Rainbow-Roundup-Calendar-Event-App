@@ -9,7 +9,7 @@
         <div class="relative w-full overflow-hidden bg-white">
           <!-- Slides Container -->
           <div class="flex transition-transform duration-500 ease-in-out" ref="carousel">
-<!-- Slide 1 -->
+        <!-- Slide 1 -->
         <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 p-4">
           <div class="h-full flex items-center justify-center">
             <img src="/public/images/icons/pwa_logo_512.png" 
@@ -32,7 +32,7 @@
           <div class="h-full flex items-center justify-center">
             <img src="/images/carousel_2.png" 
                 alt="Rainbow Roundup Event" 
-                class="max-h-52 md:max-h-106 object-contain w-auto">
+                class="max-h-52 md:max-h-96 object-contain w-auto">
           </div>
         </div>
         
@@ -65,7 +65,7 @@
     <div class="bg-white py-12 px-4 w-full">
       <div class="max-w-7xl mx-auto">
         <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">YOUR EVENT CALENDAR</h2>
-        
+        <!--EventCard.vue component. Vue options API (export default). Look up Vue composition API-->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <!-- Calendar -->
           <div class="bg-gray-100 p-6 rounded-lg shadow">
@@ -250,6 +250,7 @@ export default {
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
       ],
+      
       events: [
         {
           date: new Date(2025, 10, 231), // July 26, 2025
