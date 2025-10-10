@@ -176,12 +176,16 @@
                     <p class="font-medium text-indigo-600 hover:text-indigo-800">
                     {{ userMap[signup.userId]?.firstname || "Unknown" }}
                     {{ userMap[signup.userId]?.lastname || "" }}
+
+                    <li v-if="!(signup.plusOne === 0)" class="text-gray-400 ">
+                      Plus one signups: {{signup.plusOne }}
+                    </li>
                     </p>
                 </div>
                 </li>
-                <li v-if="!event.signUps.length" class="text-gray-400 italic">
+                <div v-if="!event.signUps.length" class="text-gray-400 italic">
                 No one has signed up yet.
-                </li>
+                </div>
             </ul>
             </div>
 
