@@ -13,19 +13,25 @@ export default defineEventHandler(async (event) => {
     const existingUser = await prisma.user.findUnique({
       where: { email: body.email },
     });
+    const existingPhone = await prisma.user.findUnique({
+      where: { phoneNum: body.phoneNum },
+    });
 
     if (existingUser) {
       setResponseStatus(event, 400);
       return { success: false, error: "User already exists." };
     }
-
+    if (existingPhone) {
+      setResponseStatus(event, 400);
+      return { success: false, error: "An account with that phone number already exists" };
+    }
     await prisma.pendingUser.create({
       data: {
         email: body.email,
         firstname: body.firstname,
         lastname: body.lastname,
         phoneNum: body.phoneNum || null,
-        profilePic: body.profilePic || null,
+        profilePic: body.profilePic || "/default-profile.png",
         token,
         expires,
       },

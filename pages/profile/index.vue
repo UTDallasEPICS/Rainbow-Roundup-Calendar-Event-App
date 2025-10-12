@@ -6,7 +6,7 @@
     <div class="flex flex-col items-center mt-4 mb-6">
       <img
         class="w-40 h-40 rounded-full object-cover"
-        :src="imageUrl || profilePic || '../public/images/ProfileImage.png'"
+        :src="imageUrl || profilePic || '/public/default-profile.png'"
         alt="Profile Page"
       />
       <input

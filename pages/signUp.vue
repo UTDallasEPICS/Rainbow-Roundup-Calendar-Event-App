@@ -156,15 +156,12 @@ const submitSignupForm = async () => {
 
   try {
 
-    const { data, error } = await useFetch("/api/user", {
+    const { data, error } = await useFetch("/api/user", { // todo: change to $fetch
       method: "POST",
       body: userDataToSubmit,
       watch: false,
     });
-
-    if (data?.value?.success) {
-
-
+    if (data?.value?.success && !error.value) {
       if (file.value) {
         try {
           const uploadedUrl = await uploadToS3(file.value);
@@ -172,6 +169,7 @@ const submitSignupForm = async () => {
 
         } catch (uploadError) {
           console.error("Profile picture upload failed:", uploadError);
+          
 
         }
       }
@@ -180,6 +178,8 @@ const submitSignupForm = async () => {
       successMessage.value = "A verification email has been sent to your address. Please check your inbox to complete registration.";
       // Optionally clear form fields here
     } else {
+      successMessage.value = 'Signup failed, check that you do not already have an account';
+      console.error("Error submitting signup form");
       errors.value = { error: "Signup failed." };
 
     }
