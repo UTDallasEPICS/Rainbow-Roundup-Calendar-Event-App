@@ -90,7 +90,7 @@
     </div>
     <div>
       <label class="block mt-4 text-sm font-medium text-gray-700">Do you want to enable notifications?</label>
-      <div class="flex space-x-6 mt-1 border-solid border-gray-700">
+      <div v-if="!editMode" class="flex space-x-6 mt-1 border-solid border-gray-700"> <!-- Run if not edit mode, can't edit toggle-->
         <input
           type="checkbox"
           id="GlobalNotif"
@@ -98,7 +98,16 @@
           :readonly="!editMode"
           :class="inputClass"
           ref="GlobalNotifRef"
-          @keydown.enter.prevent="toggleEditMode"
+          @click.stop.prevent="!editMode"
+        />
+      </div>
+      <div v-if="editMode" class="flex space-x-6 mt-1 border-solid border-gray-700"> <!-- Run if edit mode, can edit toggle-->
+        <input
+          type="checkbox"
+          id="GlobalNotif"
+          v-model="GlobalNotif"
+          :class="inputClass"
+          ref="GlobalNotifRef"
         />
       </div>
     </div>
