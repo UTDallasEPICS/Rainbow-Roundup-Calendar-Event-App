@@ -1,10 +1,14 @@
 <template>
   <div class="calendar-container">
     <ClientOnly>
-      <FullCalendar :options="calendarOptions" class="calendar" />
+      <FullCalendar :options="calendarOptions" class="calendar z-10" />
     </ClientOnly>
 
     <Teleport to="body">
+      <div>
+        <ViewEvent @close-view-event-window="showEventWindow = false" @event-deleted="(id) => deleteEvent(id)" @event-edited="(e) => editEvent(e)" v-if="showEventWindow" :eventId="selectedEvent.id" />
+      </div>
+
       <!-- Add Event Modal -->
       <div
         v-if="showModal"
@@ -45,7 +49,8 @@
               class="input w-full"
             />
 
-            <Map @update:location="updateLocation" />
+            <!-- DELETE if we don't end up using google maps API  -->
+            <!-- <Map @update:location="updateLocation" /> -->
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <label class="text-sm text-gray-600">
@@ -86,80 +91,6 @@
           </form>
         </div>
       </div>
-
-      <!-- View Event Modal -->
-      <div
-        v-if="showEventModal"
-        class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center"
-      >
-        <div class="bg-white rounded-2xl w-full max-w-lg p-6 shadow-xl">
-          <h3 class="text-xl font-bold text-gray-800 mb-2">
-            {{ selectedEvent?.title }}
-          </h3>
-
-          <div class="text-sm text-gray-700 space-y-2">
-            <p>
-              <strong>Description:</strong>
-              {{ selectedEvent?.description || "N/A" }}
-            </p>
-            <p>
-              <strong>Location:</strong> {{ selectedEvent?.location || "N/A" }}
-            </p>
-            <p>
-              <strong>Start:</strong>
-              {{ new Date(selectedEvent?.start).toLocaleString() }}
-            </p>
-            <p>
-              <strong>End:</strong>
-              {{ new Date(selectedEvent?.end).toLocaleString() }}
-            </p>
-          </div>
-
-          <div class="mt-4">
-            <p class="text-gray-600 text-sm font-medium mb-1">Are you going?</p>
-            <div class="flex gap-3">
-              <button
-                class="px-4 py-2 rounded-lg font-semibold border transition"
-                :class="{
-                  'bg-green-500 text-white border-green-600':
-                    rsvpResponse === 'yes',
-                  'bg-white text-green-600 border-green-600 hover:bg-green-100':
-                    rsvpResponse !== 'yes',
-                }"
-                @click="respondToEvent('yes')"
-              >
-                Yes
-              </button>
-              <button
-                class="px-4 py-2 rounded-lg font-semibold border transition"
-                :class="{
-                  'bg-red-500 text-white border-red-600': rsvpResponse === 'no',
-                  'bg-white text-red-600 border-red-600 hover:bg-red-100':
-                    rsvpResponse !== 'no',
-                }"
-                @click="respondToEvent('no')"
-              >
-                No
-              </button>
-            </div>
-          </div>
-
-          <div class="flex justify-end gap-3 mt-6">
-            <button
-              @click="editEvent"
-              class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition"
-            >
-              Edit
-            </button>
-            <button
-              @click="showEventModal = false"
-              class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 transition"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      </div>
     </Teleport>
   </div>
 </template>
@@ -169,6 +100,7 @@ import { ref, computed } from "vue";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+
 const router = useRouter();
 const { data: session, status } = useAuth(); // extract data from useAuth and rename to session
 const userData = session.value.user;
@@ -187,8 +119,11 @@ const eventForm = ref({
 });
 
 const selectedEvent = ref(null);
-const showEventModal = ref(false);
 const rsvpResponse = ref(null);
+
+const showEventWindow = ref(false);
+
+
 
 // Utility function to format datetime to ISO string with time zone info
 const formatDateToISO = (dateStr, timeZone) => {
@@ -230,7 +165,8 @@ const calendarOptions = ref({
       timeZone: info.event.extendedProps.timeZone,
       location: info.event.extendedProps.location,
     };
-    showEventModal.value = true;
+
+    showEventWindow.value = true;
   },
 });
 
@@ -248,7 +184,7 @@ onMounted(async () => {
 const handleEscapeKey = (e) => {
   if (e.key === "Escape") {
     showModal.value = false;
-    showEventModal.value = false;
+    showEventWindow.value = false;
   }
 };
 
@@ -263,8 +199,12 @@ onBeforeUnmount(() => {
 const submitEvent = async () => {
   try {
     // Validation for location
-    if (!eventForm.value.location || eventForm.value.lat === null || eventForm.value.lng === null) {
-      alert("Please select a valid location on the map before submitting.");
+    // if (!eventForm.value.location || eventForm.value.lat === null || eventForm.value.lng === null) {
+    //   alert("Please select a valid location on the map before submitting.");
+    //   return;
+    // }
+    if (!eventForm.value.location) {
+      alert("Please enter a location.");
       return;
     }
 
@@ -311,6 +251,7 @@ const startTime = new Date(eventForm.value.start);
         userId: userData?.id || "-1",
         eventLat: newEvent?.lat,
         eventLong: newEvent?.lng,
+        location: newEvent.location,
         startTime: new Date(newEvent?.start),
         endTime: new Date(newEvent?.end),
         capacity: newEvent?.capacity,
@@ -400,12 +341,6 @@ const respondToEvent = async (response) => {
   }
 };
 
-watch(showEventModal, (newVal) => {
-  if (newVal) {
-    rsvpResponse.value = null; // Reset RSVP when modal opens
-  }
-});
-
 function updateLocation(location) {
   eventForm.value.lat = location.lat;
   eventForm.value.lng = location.lng;
@@ -424,24 +359,32 @@ function updateLocation(location) {
   }
 }
 
-const editEvent = () => {
-  eventForm.value = {
-    title: selectedEvent.value.title || "",
-    description: selectedEvent.value.description || "",
-    start: new Date(selectedEvent.value.start).toISOString().slice(0, 16),
-    end: new Date(selectedEvent.value.end).toISOString().slice(0, 16),
-    location: selectedEvent.value.location || "",
-    lat: selectedEvent.value.lat || null,
-    lng: selectedEvent.value.lng || null,
-    capacity: selectedEvent.value.capacity || 0,
-    timeZone: selectedEvent.value.timeZone || "UTC",
-    address: selectedEvent.value.address || "",
-    userId: selectedEvent.value.userId || 0, // if available
-  };
+// given an id of an event, deletes event from the list
+function deleteEvent(deleteId) {
 
-  showModal.value = true;
-  showEventModal.value = false;
-};
+  // search through events in event list. if event id matches, then delete it from the list
+  for (let i = 0; i < calendarOptions.value.events.length; i++)
+  {
+    if (calendarOptions.value.events[i].id == deleteId)
+    {
+      calendarOptions.value.events.splice(i, 1);
+      break;
+    }
+  }
+}
+
+// given an edited version of an event, edit the event in the list
+function editEvent(newEvent) {
+  console.log(newEvent);
+  for (let i = 0; i < calendarOptions.value.events.length; i++)
+    {
+      if (calendarOptions.value.events[i].id == newEvent.id)
+      {
+          calendarOptions.value.events[i] = newEvent;
+          break;
+      }
+    }
+}
 </script>
 
 <style scoped>

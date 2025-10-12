@@ -1,12 +1,12 @@
 <template>
   <div class="space-y-6">
+    <ViewEvent @close-view-event-window="showEventWindow = false" @event-deleted="(id) => deleteEvent(id)" @event-edited="(e) => editEvent(e)" v-if="showEventWindow" :eventId="selectedEventId" />
     <div
-      v-for="event in events"
+      v-for="event in props.events"
       :key="event.id"
       class="bg-white rounded-2xl shadow flex items-center p-4 cursor-pointer hover:bg-gray-50 transition"
     >
-      <!-- Wrap the event in a link -->
-      <NuxtLink :to="`/event/${event.id}`" class="flex items-center w-full">
+      <div @click="showWindow(event.id)" class="flex items-center w-full">
         <!-- left color block -->
         <div
           class="w-20 h-24 bg-amber-300 rounded-[10px] flex-shrink-0 mr-4"
@@ -35,44 +35,73 @@
             :class="isPast(event.start) ? 'bg-red-400' : 'bg-gray-400'"
           ></div>
         </div>
-      </NuxtLink>
+      </div>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: "EventList",
-  props: {
-    events: {
-      type: Array,
-      required: true,
-    },
-  },
-  methods: {
-    formatDateAndTime(isoString) {
-      if (!isoString) return { date: "", time: "" };
+<script setup>
+import { ref } from "vue";
 
-      const dateObj = new Date(isoString);
+const props = defineProps(['events']);
 
-      const dateOptions = { month: "short", day: "numeric", year: "numeric" };
-      const formattedDate = dateObj.toLocaleDateString("en-US", dateOptions);
+const showEventWindow = ref(false);
+const selectedEventId = ref("");
 
-      const hour = dateObj.getHours();
-      const minute = dateObj.getMinutes();
-      const ampm = hour >= 12 ? "PM" : "AM";
-      const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
-      const formattedTime = `${formattedHour}:${minute
-        .toString()
-        .padStart(2, "0")} ${ampm}`;
+function formatDateAndTime(isoString) {
+  if (!isoString) return { date: "", time: "" };
 
-      return { date: formattedDate, time: formattedTime };
-    },
-    isPast(iso) {
-      const eventDate = new Date(iso);
-      const now = new Date();
-      return eventDate < now;
-    },
-  },
-};
+  const dateObj = new Date(isoString);
+
+  const dateOptions = { month: "short", day: "numeric", year: "numeric" };
+  const formattedDate = dateObj.toLocaleDateString("en-US", dateOptions);
+
+  const hour = dateObj.getHours();
+  const minute = dateObj.getMinutes();
+  const ampm = hour >= 12 ? "PM" : "AM";
+  const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
+  const formattedTime = `${formattedHour}:${minute
+    .toString()
+    .padStart(2, "0")} ${ampm}`;
+
+  return { date: formattedDate, time: formattedTime };
+}
+
+function isPast(iso) {
+  const eventDate = new Date(iso);
+  const now = new Date();
+  return eventDate < now;
+}
+
+function showWindow(id) {
+  selectedEventId.value = id;
+  showEventWindow.value = true;
+}
+
+// given an id of an event, deletes event from the list
+function deleteEvent(deleteId) {
+
+  // search through events in event list. if event id matches, then delete it from the list
+  for (let i = 0; i < props.events.length; i++)
+  {
+    if (props.events[i].id == deleteId)
+    {
+      props.events.splice(i, 1);
+      break;
+    }
+  }
+}
+
+// given an edited version of an event, edit the event in the list
+function editEvent(newEvent) {
+  console.log(newEvent);
+  for (let i = 0; i < props.events.length; i++)
+    {
+      if (props.events[i].id == newEvent.id)
+      {
+          props.events[i] = newEvent;
+          break;
+      }
+    }
+}
 </script>

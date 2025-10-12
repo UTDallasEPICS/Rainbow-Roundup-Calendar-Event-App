@@ -66,10 +66,15 @@ export default defineEventHandler(async (event) => {
     if (body.title != null) updateData.title = body.title;
     if (body.userId != null) updateData.userId = body.userId;
     if (body.startTime != null) updateData.startTime = new Date(body.startTime);
+    if (body.start != null) updateData.startTime = new Date(body.start);
     if (body.endTime != null) updateData.endTime = new Date(body.endTime);
-    if (body.eventLat != null) updateData.eventLat = body.eventLat;
-    if (body.eventLong != null) updateData.eventLong = body.eventLong;
+    if (body.end != null) updateData.endTime = new Date(body.end);
+    if (body.location != null) updateData.location = body.location;
     if (body.capacity != null) updateData.capacity = body.capacity;
+
+    // for google maps API, we can delete if we don't add maps back in
+    if (body.eventLat != null) updateData.eventLat = body.eventLat; 
+    if (body.eventLong != null) updateData.eventLong = body.eventLong;
 
     const updatedEvent = await prisma.event.update({
       where: {
