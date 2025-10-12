@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
     }
 
     try {
-        const existingItem = await prisma.item.findUnique({
+        const existingItem = await prisma.abstractItem.findUnique({
             where: { id },
         });
 
@@ -76,7 +76,7 @@ export default defineEventHandler(async (event) => {
             );
         }
 
-        await prisma.finishedItem.deleteMany({
+        await prisma.itemVariant.deleteMany({
             where: { itemId: id },
         });
 
@@ -84,14 +84,14 @@ export default defineEventHandler(async (event) => {
             where: { itemId: id },
         });
 
-        await prisma.item.delete({
+        await prisma.abstractItem.delete({
             where: { id },
         });
 
         setResponseStatus(event, 200);
         return {
             success: true,
-            message: "Item and its related finishedItems and itemPhotos deleted successfully",
+            message: "Item and its related itemVariants and itemPhotos deleted successfully",
         };
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";

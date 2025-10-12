@@ -78,22 +78,21 @@ model Report {
   @@unique([reportedUserId, reporterUserId])
 }
 
-model FinishedItem {
+model ItemVariant {
   id                String     @id @default(uuid())
-  quantity          Int
   size              Size
   price             Float
   itemId            String      
-  item              Item        @relation(fields: [itemId], references: [id])  
+  item              AbstractItem        @relation(fields: [itemId], references: [id])  
   
   OrderItems OrderItem[]
 }
 
-model Item {
+model AbstractItem {
   id                String      @id @default(uuid())
   name              String   
 
-  FinishedItems     FinishedItem[]
+  ItemVariants     ItemVariant[]
   ItemPhotos         ItemPhoto[]
 }
 
@@ -102,7 +101,7 @@ model ItemPhoto {
   url          String   
   itemId       String
 
-  Item         Item       @relation(fields: [itemId], references: [id])
+  Item         AbstractItem       @relation(fields: [itemId], references: [id])
 }
 
 model Order {
@@ -120,10 +119,10 @@ model Order {
 model OrderItem {
   id             String         @id @default(uuid())
   orderId        String
-  finishedItemsId  String  
+  itemVariantId  String  
   
   Order          Order       @relation(fields: [orderId], references: [id])
-  FinishedItems FinishedItem @relation(fields:[finishedItemsId], references: [id])
+  ItemVariants ItemVariant @relation(fields:[itemVariantId], references: [id])
 }
 
 model VerificationToken {
