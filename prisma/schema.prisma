@@ -27,6 +27,20 @@ model User {
   Orders            Order[]
 }
 
+model Notification {
+  id              String   @id @default(uuid())
+  endpoint        String // Endpoint url to push notifications to
+  keys Keys  @relation(fields: [userId], references: [id])
+}
+
+model Keys {
+  id             String    @id @default(uuid())
+  p256dh         String
+  auth           String
+  notification   Notification[] @relation("id")
+  notificationId Int           @unique
+}
+
 model Event {
   id              String   @id
   title           String
