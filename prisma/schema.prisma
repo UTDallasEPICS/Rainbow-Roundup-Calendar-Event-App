@@ -30,15 +30,8 @@ model User {
 model Notification {
   id              String   @id @default(uuid())
   endpoint        String // Endpoint url to push notifications to
-  keys Keys  @relation(fields: [userId], references: [id])
-}
-
-model Keys {
-  id             String    @id @default(uuid())
-  p256dh         String
-  auth           String
-  notification   Notification[] @relation("id")
-  notificationId Int           @unique
+  auth            String
+  p256dh          String
 }
 
 model Event {

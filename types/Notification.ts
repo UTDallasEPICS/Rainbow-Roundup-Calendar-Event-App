@@ -7,14 +7,3 @@ export type Subscription = {
     }
   )
 };
-export type Notification = {
-  endpoint: string;
-  bagde: string;
-  data: string;
-  dir: "auto" | "lte" | "rtl";
-  icon: string;
-  lang: string;
-  requireInteraction: boolean;
-  silent: boolean;
-  tag: string;
-};
