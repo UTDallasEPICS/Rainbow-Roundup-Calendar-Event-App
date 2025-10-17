@@ -82,6 +82,8 @@ model ItemVariant {
   id                String     @id @default(uuid())
   size              Size
   price             Float
+  description       String     //Put a product description, maybe not needed. 
+  availbility       Boolean    @default(true) //For admin to disable
   itemId            String      
   item              AbstractItem        @relation(fields: [itemId], references: [id])  
   
