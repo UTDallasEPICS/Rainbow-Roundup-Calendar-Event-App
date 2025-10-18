@@ -6,7 +6,7 @@
     <div class="w-full max-w-4xl space-y-4">
       <!-- 1) Back link -->
       <NuxtLink
-        to="/"
+        to="/admin"
         class="inline-flex items-center text-zinc-700 hover:text-zinc-900"
       >
         <svg
