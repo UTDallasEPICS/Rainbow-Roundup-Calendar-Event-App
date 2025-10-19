@@ -238,6 +238,7 @@ const promptInstall = () => {
     deferredPrompt.value.prompt();
     deferredPrompt.value.userChoice.then((choiceResult) => {
       if (choiceResult.outcome === "accepted") {
+        // TODO: actually install the fucking PWA
         console.log("User accepted the install prompt");
       } else {
         console.log("User dismissed the install prompt");

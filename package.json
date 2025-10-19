@@ -55,7 +55,7 @@
     "@types/date-fns": "^2.6.3",
     "@types/google.maps": "^3.58.1",
     "@types/nodemailer": "^6.4.17",
-    "@vite-pwa/nuxt": "0.10.6",
+    "@vite-pwa/nuxt": "^0.10.6",
     "autoprefixer": "^10.4.20",
     "nuxt-scheduler": "^0.1.9",
     "postcss": "^8.4.41",
