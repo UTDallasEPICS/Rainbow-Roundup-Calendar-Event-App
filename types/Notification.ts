@@ -3,7 +3,7 @@ export type Subscription = {
   keys: (
     {
         auth: string,
-        p256df: string,
+        p256dh: string,
     }
   )
 };

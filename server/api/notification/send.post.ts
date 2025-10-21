@@ -7,19 +7,19 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const runtimeConfig = useRuntimeConfig();
   const email = "mailto:noreply@example.com";
-  const publicKey = runtimeConfig.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY; // Get keys from env file 
+  const publicKey = runtimeConfig.public.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY; // Get keys from env file 
   const privateKey = runtimeConfig.NUXT_PUSH_VAPID_PRIVATE_KEY;
   const prisma = event.context.prisma;
   const session = await getServerSession(event);
   const user = session?.user as User | undefined;
-  if (!user) {
+  if (!(user?.role === "SUPER" || user?.role ==="ADMIN")) { // since this sends to all users, only admins can do it
     throw createError({
       statusMessage: "Unauthenticated",
       statusCode: 403,
     });
   }
 
-  if (!publicKey || !privateKey) throw new Error("VAPID keys are not set");
+  if (!publicKey || !privateKey) throw new Error("VAPID keys are not set"); // You probably don't have the correct .env file if this error shows up.
 
   webpush.setVapidDetails(email, publicKey, privateKey);
   const notifications = await prisma.notification.findMany();

@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     public: {
       STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
       NUXT_GOOGLE_PLACES: process.env.NUXT_GOOGLE_PLACES,
+      NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY: process.env.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY
     },
     
     AWS_REGION: process.env.AWS_REGION,
@@ -21,6 +22,8 @@ export default defineNuxtConfig({
     smtpPass: process.env.SMTP_PASS,
     smtpFrom: process.env.SMTP_FROM,
     url: process.env.URL,
+
+    NUXT_PUSH_VAPID_PRIVATE_KEY: process.env.NUXT_PUSH_VAPID_PRIVATE_KEY
   },
 
   devtools: { enabled: true },
@@ -78,7 +81,7 @@ export default defineNuxtConfig({
   },
   pwa: {
     strategies: "injectManifest",
-    srcDir: "service-worker",
+    srcDir: "./service-worker",
     filename: "sw.ts",
     registerType: "autoUpdate",
     manifest: {

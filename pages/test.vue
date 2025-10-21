@@ -2,19 +2,135 @@
   <div>
     <input type="file" @change="handleFileChange" accept="image/*" />
     <button :disabled="!file" @click="uploadToS3">Uploaasdd</button>
-    <img
-      v-if="imageUrl"
-      :src="imageUrl"
-      alt="Profile Picture"
-      class="mt-4 w-32 h-32 rounded-full"
-    />
+    <img v-if="imageUrl" :src="imageUrl" alt="Profile Picture" class="mt-4 w-32 h-32 rounded-full" />
   </div>
+  <button @click="subscribeToNotification" class="py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2">
+    PLEASE SHOW UP</button>
+  <button @click="requestNotificationPermission"
+    class="py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2">Notifications?</button>
 </template>
 
 <script setup lang="ts">
+const isSubscribed = ref(false);
 const file = ref<File | null>(null);
 const imageUrl = ref<string | null>(null);
+const runtimeConfig = useRuntimeConfig();
+//const { $pwa } = useNuxtApp();
 
+//console.log($pwa);
+//const service2 = $pwa?.getSWRegistration();
+
+const requestNotificationPermission = async () => {
+  if ("serviceWorker" in navigator && "Notification" in window) {
+    Notification.requestPermission()
+      .then(async (permission) => {
+        console.log("Permission:", permission);
+        console.log('serviceWorker' in navigator);
+        if (permission === "granted" && 'serviceWorker' in navigator) {
+          isSubscribed.value = true;
+
+          const applicationServerKey = runtimeConfig.public.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY;
+          //const registration = await $pwa?.getSWRegistration();
+          //navigator.serviceWorker.register("../service-worker/sw.ts");
+          /*if(!registration){
+            console.log("No service worker registration");
+            return false;
+          }
+          const subscription = await service2?.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(applicationServerKey),
+          });
+          console.log("Registration",registration);
+          console.log("Subscription",subscription);*/
+          navigator.serviceWorker.ready.then(async (serviceWorkerRegistration) => {
+            const options = {
+              userVisibleOnly: true,
+              applicationServerKey,
+            };
+            console.log(serviceWorkerRegistration);
+            serviceWorkerRegistration.pushManager.subscribe(options).then(
+              async (pushSubscription) => {
+                console.log("Endpoint: ", pushSubscription.endpoint);
+                const result = await $fetch("/api/notification/subscribe", {
+                  method: "POST",
+                  body: pushSubscription,
+                });
+                // The push subscription details needed by the application
+                // server are now available, and can be sent to it using,
+                // for example, the fetch() API.
+              },
+              (error) => {
+                // During development it often helps to log errors to the
+                // console. In a production environment it might make sense to
+                // also report information about errors back to the
+                // application server.
+                console.error(error);
+              },
+            );
+            const result = await $fetch("/api/notification/send", {
+              method: "POST",
+              body: {
+                title: "Test notifination",
+                data: { url: runtimeConfig.public.siteUrl },
+              },
+            });
+          });
+
+        } else {
+          isSubscribed.value = false;
+        }
+        isSubscribed.value = Notification.permission === "granted";
+      })
+      .catch((err) => {
+        console.error("Notification permission error:", err);
+      });
+  } else {
+    console.warn("Notification API or Service Worker not supported.");
+  }
+};
+const subscribeToNotification = async () => {
+  //const userDataToSubmit = { ...signupModel.value };
+  //const useNuxtApp: typeof import('../../node_modules/nuxt/dist/app/nuxt')['useNuxtApp']
+  const { $pwa } = useNuxtApp();
+  const registration = $pwa?.getSWRegistration(); // port this code to current stuff
+  //const registration = await navigator.serviceWorker.getRegistration();
+  console.log("Registration: ", registration);
+  if (!registration) {
+    console.log("No valid registration");
+    return false;
+  }
+
+  //const subscribed = await registration.pushManager.getSubscription();
+  try {
+    const publicVapid = runtimeConfig.public.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY;
+    const subscription = await registration.pushManager.subscribe();
+    console.log("Subscription: ", subscription);
+    if (!subscription) {
+      console.log("No valid subscription");
+      return false;
+    }
+    const getAuthKey = () => {
+      const json = subscription.toJSON();
+      const authKey = json.keys?.auth;
+      return typeof authKey === "string" ? authKey : "";
+    };
+    const authKey = getAuthKey();
+    if (!authKey) {
+      console.log("No valid auth keys");
+      return false;
+    }
+    const result = await $fetch("/api/notification/subscribe", {
+      method: "POST",
+      body: subscription,
+    });
+
+    console.log(result);
+    return result;
+  } catch (err) {
+    console.error("Error submitting signup form", err);
+    //errors.value = { error: "Something went wrong during signup." };
+  }
+};
 function handleFileChange(e: Event) {
   const input = e.target as HTMLInputElement;
   if (input.files?.[0]) {
@@ -50,6 +166,22 @@ async function uploadToS3() {
 
   imageUrl.value = fileUrl;
 }
+function urlBase64ToUint8Array(base64String: string) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding)
+    .replaceAll("-", "+")
+    .replaceAll("_", "/");
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+
+  return outputArray;
+}
+
 </script>
 
 <style scoped>

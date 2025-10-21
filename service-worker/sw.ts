@@ -1,53 +1,59 @@
-/// <reference lib="WebWorker" />
+/* eslint-disable no-console */
+/// <reference lib='WebWorker' />
 /// <reference types="vite/client" />
-import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching'
-import { clientsClaim } from 'workbox-core'
-import { NavigationRoute, registerRoute } from 'workbox-routing'
 
-declare let self: ServiceWorkerGlobalScope
+import { clientsClaim } from "workbox-core";
+import { cleanupOutdatedCaches, precacheAndRoute } from "workbox-precaching";
 
-// self.__WB_MANIFEST is default injection point
-precacheAndRoute(self.__WB_MANIFEST)
+declare const self: ServiceWorkerGlobalScope;
 
-// clean old assets
-cleanupOutdatedCaches()
+self.skipWaiting();
+clientsClaim();
+precacheAndRoute(self.__WB_MANIFEST);
+cleanupOutdatedCaches();
 
-let allowlist: undefined | RegExp[]
-if (import.meta.env.DEV)
-  allowlist = [/^\/$/]
+self.addEventListener("push", onPush);
+self.addEventListener("notificationclick", onNotificationClick);
 
-// to allow work offline
-registerRoute(new NavigationRoute(
-  createHandlerBoundToURL('/'),
-  { allowlist },
-))
+function onPush(event: PushEvent) {
+  console.log("[Service Worker] push received");
 
-self.skipWaiting()
-clientsClaim()
+  if (!event.data) return;
 
-self.addEventListener('install', (event) => {
-  console.log('Service Worker installed');
-});
+  const { title, ...options } = event.data.json();
 
-self.addEventListener('activate', (event) => {
-  console.log('Service Worker activated');
-  event.waitUntil(self.clients.claim());
-});
+  event.waitUntil(self.registration.showNotification(title, options));
+}
 
-// Listen for messages from the main thread
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.action === 'showMessage') {
-    const message = event.data.message;
-    // Check if Notification permission has been granted
-    if (Notification.permission === 'granted') {
-      // Show notification
-      self.registration.showNotification('New Message', {
-        body: message,  // The message content
-        icon: 'images/icons/pwa_logo_144.png',  // Optional icon
-        badge: 'images/icons/pwa_logo_64.png',  // Optional badge
-      });
-    } else {
-      console.log('Notification permission not granted');
-    }
+function onNotificationClick(event: NotificationEvent) {
+  console.log("[Service Worker] notification clicked");
+
+  const handleNotificationClick = new Promise((resolve) => {
+    event.notification.close();
+
+    const url = event.notification.data.url;
+    if (!url) return;
+
+    resolve(openUrl(url));
+  });
+
+  event.waitUntil(handleNotificationClick);
+}
+
+function getIdealClient(clients: Readonly<WindowClient[]>) {
+  const focusedClient = clients.find((c) => c.focused);
+  const visibleClient = clients.find((c) => c.visibilityState === "visible");
+  return focusedClient || visibleClient || clients[0];
+}
+
+async function openUrl(url: string) {
+  const clients = await self.clients.matchAll({ type: "window" });
+
+  // Chrome 42-48 does not support navigate
+  if (clients.length !== 0 && "navigate" in clients[0]!) {
+    const client = getIdealClient(clients);
+    await client?.navigate(url).then((client) => client?.focus());
   }
-});
+
+  await self.clients.openWindow(url);
+}

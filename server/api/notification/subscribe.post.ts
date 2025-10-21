@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
       data: {
         endpoint: subscription.endpoint,
         auth: subscription.keys.auth,
-        p256df: subscription.keys.p256df,
+        p256dh: subscription.keys.p256dh,
       },
     });
     return { success: true, message: "Notification subscription created" };
