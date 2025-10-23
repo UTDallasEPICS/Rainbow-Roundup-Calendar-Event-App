@@ -24,131 +24,108 @@
           />
         </svg>
       </NuxtLink>
+      <span class="text-2xl font-bold text-zinc-700">
+        Manage Users
+      </span>
+      
+      <ReportsTable :reports="reports"/>
 
+      <div class="grid grid-cols-2 items-center">
+        <h1 class="text-2xl font-bold text-zinc-700 col-span-1">Users</h1>
+
+        <input
+          v-model="searchTerm"
+          type="text"
+          placeholder="Search by name…"
+          class="w-full p-2 border border-gray-300 rounded col-span-1"
+        />
+      </div>
       <div
-        class="bg-white rounded-[20px] shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] overflow-hidden"
+        class="bg-white rounded-lg shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] overflow-hidden"
       >
-        <div class="p-6">
-          <h1 class="text-2xl font-bold text-zinc-700 mb-4">User List</h1>
-
-          <input
-            v-model="searchTerm"
-            type="text"
-            placeholder="Search by name…"
-            class="w-full p-2 border border-gray-300 rounded mb-4"
-          />
-
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th
-                    @click="sortBy('firstName')"
-                    class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
-                  >
-                    First Name
-                    <span v-if="sortKey === 'firstName'">{{
-                      sortAsc ? "▲" : "▼"
-                    }}</span>
-                  </th>
-                  <th
-                    @click="sortBy('lastName')"
-                    class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
-                  >
-                    Last Name
-                    <span v-if="sortKey === 'lastName'">{{
-                      sortAsc ? "▲" : "▼"
-                    }}</span>
-                  </th>
-                  <th
-                    @click="sortBy('email')"
-                    class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
-                  >
-                    Email
-                    <span v-if="sortKey === 'email'">{{
-                      sortAsc ? "▲" : "▼"
-                    }}</span>
-                  </th>
-                  <th
-                    @click="sortBy('phone')"
-                    class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
-                  >
-                    Phone
-                    <span v-if="sortKey === 'phone'">{{
-                      sortAsc ? "▲" : "▼"
-                    }}</span>
-                  </th>
-                  <th
-                    @click="sortBy('status')"
-                    class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
-                  >
-                    Status
-                    <span v-if="sortKey === 'status'">{{
-                      sortAsc ? "▲" : "▼"
-                    }}</span>
-                  </th>
-                  <th
-                    class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700"
-                  >
-                    Warning
-                  </th>
-                  <th
-                    class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700"
-                  >
-                    Reason
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-200">
-                <tr
-                  v-for="user in displayedUsers"
-                  :key="user.email"
-                  @click="openModal(user)"
-                  class="hover:bg-gray-100 cursor-pointer"
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-amber-300">
+              <tr>
+                <th
+                  @click="sortBy('firstname')"
+                  class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
                 >
-                  <td class="px-4 py-3 text-sm text-gray-800">
-                    {{ user.firstname }}
-                  </td>
-                  <td class="px-4 py-3 text-sm text-gray-800">
-                    {{ user.lastname }}
-                  </td>
-                  <td class="px-4 py-3 text-sm text-gray-800">
-                    {{ user.email }}
-                  </td>
-                  <td class="px-4 py-3 text-sm text-gray-800">
-                    {{ user.phoneNum }}
-                  </td>
-                  <td
-                    class="px-4 py-3 text-sm"
-                    :class="
-                      user.role === 'Admin'
-                        ? 'text-red-500 font-bold'
-                        : 'text-green-600'
-                    "
-                  >
-                    {{ user.role }}
-                  </td>
-                  <td
-                    class="px-4 py-3 text-sm"
-                    :class="
-                      user.PotentialOffenses?.length > 0
-                        ? 'text-red-500 font-semibold'
-                        : 'text-gray-600'
-                    "
-                  >
-                    {{ user.PotentialOffenses?.length > 0 ? "Yes" : "No" }}
-                  </td>
-                  <td class="px-4 py-3 text-sm text-gray-800">
-                    {{
-                      user.PotentialOffenses?.length > 0
-                        ? user.PotentialOffenses[0].description
-                        : "—"
-                    }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+                  First Name
+                  <span v-if="sortKey === 'firstname'">{{
+                    sortAsc ? "▲" : "▼"
+                  }}</span>
+                </th>
+                <th
+                  @click="sortBy('lastname')"
+                  class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
+                >
+                  Last Name
+                  <span v-if="sortKey === 'lastname'">{{
+                    sortAsc ? "▲" : "▼"
+                  }}</span>
+                </th>
+                <th
+                  @click="sortBy('email')"
+                  class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
+                >
+                  Email
+                  <span v-if="sortKey === 'email'">{{
+                    sortAsc ? "▲" : "▼"
+                  }}</span>
+                </th>
+                <th
+                  @click="sortBy('phoneNum')"
+                  class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
+                >
+                  Phone
+                  <span v-if="sortKey === 'phoneNum'">{{
+                    sortAsc ? "▲" : "▼"
+                  }}</span>
+                </th>
+                <th
+                  @click="sortBy('role')"
+                  class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
+                >
+                  Role
+                  <span v-if="sortKey === 'role'">{{
+                    sortAsc ? "▲" : "▼"
+                  }}</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <tr
+                v-for="user in sortedUsers"
+                :key="user.email"
+                @click="clickUser(user)"
+                class="hover:bg-gray-100 cursor-pointer"
+              >
+                <td class="px-4 py-3 text-sm text-gray-800 border">
+                  {{ user.firstname }}
+                </td>
+                <td class="px-4 py-3 text-sm text-gray-800 border">
+                  {{ user.lastname }}
+                </td>
+                <td class="px-4 py-3 text-sm text-gray-800 border">
+                  {{ user.email }}
+                </td>
+                <td class="px-4 py-3 text-sm text-gray-800 border">
+                  {{ user.phoneNum }}
+                </td>
+                <td
+                  class="px-4 py-3 text-sm"
+                  :class="
+                    user.role === 'Admin'
+                      ? 'text-red-500 font-bold'
+                      : 'text-green-600'
+                  "
+                >
+                  {{ user.role }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -167,7 +144,7 @@
           ×
         </button>
 
-        <h2 class="text-xl font-bold text-zinc-800 mb-4">Edit Admin Status</h2>
+        <h2 class="text-xl font-bold text-zinc-800 mb-4">Edit User Role</h2>
 
         <div class="space-y-4">
           <div>
@@ -185,14 +162,14 @@
           </div>
 
           <div>
-            <label class="block font-medium mb-1">Admin Status</label>
+            <label class="block font-medium mb-1">User Role</label>
             <select
               v-model="selectedUser.role"
               class="w-full border border-gray-300 rounded px-3 py-2"
             >
               <option value="USER">User</option>
-              <option value="ADMIN">ADMIN</option>
-              <option value="SUPER">SUPER</option>
+              <option value="ADMIN">Admin</option>
+              <option value="SUPER">Super</option>
             </select>
           </div>
 
@@ -219,9 +196,9 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 const { data } = useAuth();
-console.log(data.value.user.role);
 
 const users = ref([]);
+const reports = ref([]);
 const searchTerm = ref("");
 const sortKey = ref(null);
 const sortAsc = ref(true);
@@ -237,6 +214,13 @@ onMounted(async () => {
     }
   } catch (err) {
     console.error("Error fetching users:", err);
+  }
+
+  try {
+    const response = await useFetch("/api/report", { method: "GET" });
+    reports.value = response.data.value;
+  } catch (err) {
+    console.error("Error fetching reports:", err);
   }
 });
 
@@ -267,13 +251,11 @@ const sortedUsers = computed(() => {
   });
 });
 
-const displayedUsers = sortedUsers;
-
-function openModal(user) {
-  if (data.value.user.role !== "SUPER") {
-    return; // Block access
-  }
+async function clickUser(user) {
   selectedUser.value = JSON.parse(JSON.stringify(user));
+  if (data.value.user.role !== "SUPER") { // if user is not super, do not allow edit user role
+    await goToProfile();
+  }
   isModalOpen.value = true;
 }
 
