@@ -183,6 +183,11 @@
 </div>
 
     <!-- Product Section -->
+     <ItemPreview
+     @add-to-cart="updateCart"
+ 
+     
+     ></ItemPreview>
     <div class="w-full">
       <div class="w-full max-w-[1214px] mx-auto px-4 sm:px-6 md:px-8 lg:px-0">
         <div class="flex flex-col lg:flex-row gap-8 lg:gap-0 justify-start items-center">
@@ -307,12 +312,14 @@
 </template>
 
 <script setup>
+import ItemPreview from 'C:\Users\Nathan\Documents\Rainbow-Roundup-Calendar-Event-App\components\itemPreview.vue'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 // State
 const currentSlide = ref(0)
 const currentPage = ref(0)
 const searchQuery = ref('')
+const cart = ref([])
 
 // Children's shirt image gallery
 const childrenShirtImages = ref([
@@ -404,6 +411,15 @@ const prevChildrenShirtImage = () => {
 const handleShopByStyle = () => {
   console.log('Shop by Style clicked')
 }
+
+
+
+
+const updateCart = (id) => {
+  cart.value.push(id)
+  console.log("Cart update:", cart.value)
+}
+
 
 const handleShopByFit = () => {
   console.log('Shop by Fit clicked')
