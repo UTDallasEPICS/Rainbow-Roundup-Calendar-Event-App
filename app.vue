@@ -225,7 +225,7 @@ onMounted(() => {
     sessionStorage.getItem("safariDisclaimerDismissed") !== "true"
   ) {
     showSafariDisclaimer.value = true;
-    window.addEventListener("keydown", handleKeyPress);
+    window.addEventListener("keydown", handleKeyPress); 
   }
 });
 
