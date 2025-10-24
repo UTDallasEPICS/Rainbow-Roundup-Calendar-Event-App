@@ -177,9 +177,12 @@
                     {{ userMap[signup.userId]?.firstname || "Unknown" }}
                     {{ userMap[signup.userId]?.lastname || "" }}
 
-                    <li v-if="!(signup.plusOne === 0)" class="text-gray-400 ">
-                      Plus one signups: {{signup.plusOne }}
+                    <li v-if="!((signup.plusOneKids + signup.plusOneAdults) === 0)" class="text-gray-400 ">
+                      Plus one signups: {{signup.plusOneKids + signup.plusOneAdults }}
                     </li>
+                    <li v-if="(!((signup.plusOneKids + signup.plusOneAdults) === 0)) && !(userMap[signup.userId]?.role === 'USER')" class="text-gray-400 ">
+                      Adults: {{signup.plusOneAdults }}, Kids: {{signup.plusOneKids }} <!-- The exact number of kids and adults is only visible to admins-->
+                    </li> 
                     </p>
                 </div>
                 </li>
