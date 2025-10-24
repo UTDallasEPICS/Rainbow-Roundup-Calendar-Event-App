@@ -216,12 +216,23 @@
                 </button>
             </div>
             <div v-if="rsvpChoice ==  'yes'" class="gap-3">
-              <label class="block mt-4 text-sm font-medium text-gray-700">How many other people are going to join you?</label>
+              <label class="block mt-4 text-sm font-medium text-gray-700">How many adults are going to join you?</label>
                 <div class="flex space-x-6 mt-1 border-solid border-gray-700">
                   <input
                   type="number"
-                  id="numPlusOne"
-                  v-model.number="numPlusOne"
+                  id="numPlusOneAdults"
+                  v-model.number="numPlusOneAdults"
+                  :min="0"
+                  />
+                </div>
+            </div>
+            <div v-if="rsvpChoice ==  'yes'" class="gap-3">
+              <label class="block mt-4 text-sm font-medium text-gray-700">How many kids are going to join you?</label>
+                <div class="flex space-x-6 mt-1 border-solid border-gray-700">
+                  <input
+                  type="number"
+                  id="numPlusOneKids"
+                  v-model.number="numPlusOneKids"
                   :min="0"
                   />
                 </div>
@@ -282,7 +293,8 @@ function closeWindow() {
 
 // State
 const rsvpChoice = ref('');
-const numPlusOne = ref(0);
+const numPlusOneAdults = ref(0);
+const numPlusOneKids = ref(0);
 const isEditing = ref(false);
 const editedEvent = reactive({
   id: props.eventId,
@@ -525,10 +537,11 @@ const respondToEvent = async (response) => {
 
   try {
     if (response === "yes") {
-      const numPlusOneVal = numPlusOne.value; // I created this var since js didn't like submitting numPlusOne.value in POST
+      const numPlusOneAdultsVal = numPlusOneAdults.value; // I created this var since js didn't like submitting numPlusOne.value in POST
+      const numPlusOneKidsVal = numPlusOneKids.value;
       const result = await $fetch("/api/signup", {
         method: "POST",
-        body: { userId, eventId, numPlusOneVal },
+        body: { userId, eventId, numPlusOneAdultsVal,numPlusOneKidsVal },
       });
       //console.log("Number of plus one's: ", numPlusOne.value)
       console.log("RSVP success:", result);

@@ -52,7 +52,8 @@ model SignUp {
   userId        String
   eventId       String
   Notifications Boolean
-  plusOne       Int     @default(0) // The number of plus one registrations. 0 is just the user signing up
+  plusOneKids       Int     @default(0)
+  plusOneAdults       Int     @default(0)
 
   // Foreign keys to User and Event
   User  User  @relation(fields: [userId], references: [id])
