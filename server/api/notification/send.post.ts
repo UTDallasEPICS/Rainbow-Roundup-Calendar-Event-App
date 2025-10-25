@@ -38,12 +38,19 @@ export default defineEventHandler(async (event) => {
     try {
       await webpush.sendNotification(subscription, JSON.stringify(body));
     } catch (error) {
-      if (!(error instanceof WebPushError)) throw error;
+      if (!(error instanceof WebPushError)) {
+        throw error; // this means an error not related to sending the notification to the endpoint
+      }
 
-      const isGone = error.statusCode === 410;
-
-      if (!isGone) throw error;
-      await prisma.notification.deleteMany({ where: { id: id } });
+      const isGone = error.statusCode === 410; // error 410 is returned when the subscription is expired or "gone", essentially this subscription should never again work
+      // Note: we may need to worry about 429, essentially we sent too many requests and are rate limited. 
+      // Note: the 50* class of errors are likely temporary, essentially the endpoint server is having an issue, we may want to setup retries
+      if (!isGone) {
+        throw error; // throw the error if it is an error given by the endpoint, but the subscription itself still exists and might work in future
+      }
+      else{
+        await prisma.notification.deleteMany({ where: { id: id } }); // if the subscription is gone, might as well delete it from db
+      }
     }
   }
 

@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
     console.log("Invalid notification subscribtion")
     return { success: false, error: "Please send a valid request"};
   }
-  if (!(user)) { // since this sends to all users, only admins can do it
+  if (!(user)) { // since we are tying notification subscriptions to specific users, we need the client to be authenticated
     throw createError({
       statusMessage: "Unauthenticated",
       statusCode: 403,
@@ -34,10 +34,11 @@ export default defineEventHandler(async (event) => {
       },
     });
     if(newSubscription){
+      setResponseStatus(event, 201);
       return { success: true, message: "Notification subscription created" };
     }
     else{
-      return { success: false, message: "Notification subscription could not be created" };
+      return { success: false, message: "Notification subscription could not be created" }; // shouldn't be triggered
     }
 
   }catch (error) {
@@ -49,11 +50,4 @@ export default defineEventHandler(async (event) => {
       error: "Couldn't store subscription, try again and hopefully it works",
     };
   }
-  //const storage = useStorage("db");
-
-  //await storage.setItem(`subscription:${body.keys.auth}`, body);
-
-  setResponseStatus(event, 201);
-
-  return { success: true };
 });
