@@ -14,7 +14,14 @@ export default defineEventHandler(async (event) => {
   const subscription = body as Subscription;
   if (typeof subscription == undefined){
     setResponseStatus(event, 500);
+    console.log("Invalid notification subscribtion")
     return { success: false, error: "Please send a valid request"};
+  }
+  if (!(user)) { // since this sends to all users, only admins can do it
+    throw createError({
+      statusMessage: "Unauthenticated",
+      statusCode: 403,
+    });
   }
 
   try{
@@ -23,13 +30,20 @@ export default defineEventHandler(async (event) => {
         endpoint: subscription.endpoint,
         auth: subscription.keys.auth,
         p256dh: subscription.keys.p256dh,
+        userId: user.id
       },
     });
-    return { success: true, message: "Notification subscription created" };
+    if(newSubscription){
+      return { success: true, message: "Notification subscription created" };
+    }
+    else{
+      return { success: false, message: "Notification subscription could not be created" };
+    }
 
   }catch (error) {
     console.error((error as Error).message);
     setResponseStatus(event, 500);
+    console.log("couldn't store subscription");
     return {
       success: false,
       error: "Couldn't store subscription, try again and hopefully it works",

@@ -30,24 +30,12 @@ const requestNotificationPermission = async () => {
           isSubscribed.value = true;
 
           const applicationServerKey = runtimeConfig.public.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY;
-          //const registration = await $pwa?.getSWRegistration();
-          //navigator.serviceWorker.register("../service-worker/sw.ts");
-          /*if(!registration){
-            console.log("No service worker registration");
-            return false;
-          }
-          const subscription = await service2?.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(applicationServerKey),
-          });
-          console.log("Registration",registration);
-          console.log("Subscription",subscription);*/
           navigator.serviceWorker.ready.then(async (serviceWorkerRegistration) => {
             const options = {
               userVisibleOnly: true,
               applicationServerKey,
             };
-            console.log(serviceWorkerRegistration);
+            console.log(serviceWorkerRegistration.getNotifications);
             serviceWorkerRegistration.pushManager.subscribe(options).then(
               async (pushSubscription) => {
                 console.log("Endpoint: ", pushSubscription.endpoint);
@@ -55,15 +43,8 @@ const requestNotificationPermission = async () => {
                   method: "POST",
                   body: pushSubscription,
                 });
-                // The push subscription details needed by the application
-                // server are now available, and can be sent to it using,
-                // for example, the fetch() API.
               },
               (error) => {
-                // During development it often helps to log errors to the
-                // console. In a production environment it might make sense to
-                // also report information about errors back to the
-                // application server.
                 console.error(error);
               },
             );
@@ -89,18 +70,14 @@ const requestNotificationPermission = async () => {
   }
 };
 const subscribeToNotification = async () => {
-  //const userDataToSubmit = { ...signupModel.value };
-  //const useNuxtApp: typeof import('../../node_modules/nuxt/dist/app/nuxt')['useNuxtApp']
   const { $pwa } = useNuxtApp();
   const registration = $pwa?.getSWRegistration(); // port this code to current stuff
-  //const registration = await navigator.serviceWorker.getRegistration();
   console.log("Registration: ", registration);
   if (!registration) {
     console.log("No valid registration");
     return false;
   }
 
-  //const subscribed = await registration.pushManager.getSubscription();
   try {
     const publicVapid = runtimeConfig.public.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY;
     const subscription = await registration.pushManager.subscribe();
