@@ -1,4 +1,24 @@
 <template>
+  <!-- navigating back arrow -->
+  <div class="px-6 py-4 inline-flex items-center text-zinc-700 hover:text-zinc-900 hover:cursor-pointer" @click="$router.back()">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-5 w-5 mr-2"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M15 19l-7-7 7-7"
+      />
+    </svg>
+    <p>Back</p>
+  </div>
+
+  <!-- profile -->
   <div class="flex flex-col items-center">
     <h1 class="text-3xl font-bold text-[#022150] mt-6">
       <b>Account Settings</b>
@@ -88,6 +108,29 @@
         />
       </div>
     </div>
+    <div>
+      <label class="block mt-4 text-sm font-medium text-gray-700">Do you want to enable notifications?</label>
+      <div v-if="!editMode" class="flex space-x-6 mt-1 border-solid border-gray-700"> <!-- Run if not edit mode, can't edit toggle-->
+        <input
+          type="checkbox"
+          id="GlobalNotif"
+          v-model="GlobalNotif"
+          :readonly="!editMode"
+          :class="inputClass"
+          ref="GlobalNotifRef"
+          @click.stop.prevent="!editMode"
+        />
+      </div>
+      <div v-if="editMode" class="flex space-x-6 mt-1 border-solid border-gray-700"> <!-- Run if edit mode, can edit toggle-->
+        <input
+          type="checkbox"
+          id="GlobalNotif"
+          v-model="GlobalNotif"
+          :class="inputClass"
+          ref="GlobalNotifRef"
+        />
+      </div>
+    </div>
 
     <div v-if="editMode" class="mt-10 max-w-xl">
       <div class="bg-red-50 p-4 rounded-xl mb-4 border border-red-200">
@@ -145,6 +188,7 @@ const lastName = ref(userData.value.lastname);
 const phoneNum = ref(userData.value.phoneNum);
 const email = ref(userData.value.email);
 const profilePic = ref(userData.value.profilePic);
+const GlobalNotif = ref(userData.value.GlobalNotif);
 
 const file = ref(null);
 const imageUrl = ref(null);
@@ -230,6 +274,7 @@ const saveAccount = async () => {
         phoneNum: phoneNum.value,
         email: email.value,
         profilePic: newProfilePic,
+        GlobalNotif: GlobalNotif.value,
       },
     });
   } catch (e) {

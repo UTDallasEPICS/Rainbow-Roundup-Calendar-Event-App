@@ -6,7 +6,7 @@
     <div class="w-full max-w-4xl space-y-4">
       <!-- 1) Back link -->
       <NuxtLink
-        to="/"
+        to="/admin"
         class="inline-flex items-center text-zinc-700 hover:text-zinc-900"
       >
         <svg
@@ -141,7 +141,7 @@
                   <td class="px-4 py-3 text-sm text-gray-800">
                     {{
                       user.PotentialOffenses?.length > 0
-                        ? user.PotentialOffenses[0].reason
+                        ? user.PotentialOffenses[0].description
                         : "—"
                     }}
                   </td>
@@ -198,8 +198,14 @@
 
           <div class="flex justify-end pt-4 border-t">
             <button
+              @click="goToProfile"
+              class="bg-gray-300 text-gray-800 px-4 py-2 mx-1 rounded hover:bg-gray-400 transition"
+            >
+              Visit Profile
+            </button>
+            <button
               @click="saveUserEdits"
-              class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              class="bg-blue-600 text-white px-4 py-2 ml-1 rounded hover:bg-blue-700 transition"
             >
               Save Changes
             </button>
@@ -274,6 +280,10 @@ function openModal(user) {
 function closeModal() {
   selectedUser.value = null;
   isModalOpen.value = false;
+}
+
+async function goToProfile(){
+  await navigateTo(`/profile/${selectedUser.value.id}`);
 }
 
 async function saveUserEdits() {
