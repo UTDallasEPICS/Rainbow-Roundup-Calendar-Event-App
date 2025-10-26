@@ -72,7 +72,7 @@ export default defineEventHandler(async (event) => {
     // Look into filtering for verified users later
     const emailRecipients = await prisma.user.findMany({
       where: {
-        GlobalNotif: true,
+        EmailNotif: true,
         role: "USER",
       },
       select: {

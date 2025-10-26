@@ -113,21 +113,21 @@
       <div v-if="!editMode" class="flex space-x-6 mt-1 border-solid border-gray-700"> <!-- Run if not edit mode, can't edit toggle-->
         <input
           type="checkbox"
-          id="GlobalNotif"
-          v-model="GlobalNotif"
+          id="EmailNotif"
+          v-model="EmailNotif"
           :readonly="!editMode"
           :class="inputClass"
-          ref="GlobalNotifRef"
+          ref="EmailNotifRef"
           @click.stop.prevent="!editMode"
         />
       </div>
       <div v-if="editMode" class="flex space-x-6 mt-1 border-solid border-gray-700"> <!-- Run if edit mode, can edit toggle-->
         <input
           type="checkbox"
-          id="GlobalNotif"
-          v-model="GlobalNotif"
+          id="EmailNotif"
+          v-model="EmailNotif"
           :class="inputClass"
-          ref="GlobalNotifRef"
+          ref="EmailNotifRef"
         />
       </div>
     </div>
@@ -188,7 +188,7 @@ const lastName = ref(userData.value.lastname);
 const phoneNum = ref(userData.value.phoneNum);
 const email = ref(userData.value.email);
 const profilePic = ref(userData.value.profilePic);
-const GlobalNotif = ref(userData.value.GlobalNotif);
+const EmailNotif = ref(userData.value.EmailNotif);
 
 const file = ref(null);
 const imageUrl = ref(null);
@@ -274,7 +274,7 @@ const saveAccount = async () => {
         phoneNum: phoneNum.value,
         email: email.value,
         profilePic: newProfilePic,
-        GlobalNotif: GlobalNotif.value,
+        EmailNotif: EmailNotif.value,
       },
     });
   } catch (e) {

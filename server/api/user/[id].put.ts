@@ -52,8 +52,8 @@ export default defineEventHandler(async (event) => {
       updateData.phoneNum = body.phoneNum
     if(body.profilePic)
       updateData.profilePic = body.profilePic
-    if(body.GlobalNotif != null) // This is a boolean, so a plain if statement won't work
-      updateData.GlobalNotif = body.GlobalNotif
+    if(body.EmailNotif != null) // This is a boolean, so a plain if statement won't work
+      updateData.EmailNotif = body.EmailNotif
     // Perform the update
     const updatedUser = await prisma.user.update({
       where: { id },

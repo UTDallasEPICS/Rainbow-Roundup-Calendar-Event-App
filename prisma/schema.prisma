@@ -15,7 +15,8 @@ model User {
   role          Role      @default(USER)
   phoneNum      String?   @unique // client requested phone numbers are unique
   profilePic    String    @default("/default-profile.png")
-  GlobalNotif   Boolean // Global notifications (annoncements)
+  EmailNotif    Boolean   @default(false)// Notification setting for emails
+  NativeNotif   Boolean   @default(false)
   emailVerified DateTime?
 
   SignUps           SignUp[]
@@ -31,7 +32,7 @@ model User {
 model Notification {
   id              String   @id @default(uuid())
   userId          String   @default("none") // prisma kept complaining about a default value
-  endpoint        String // Endpoint url to push notifications to
+  endpoint        String   @unique// Endpoint url to push notifications to
   auth            String
   p256dh          String
   User  User  @relation(fields: [userId], references: [id])
