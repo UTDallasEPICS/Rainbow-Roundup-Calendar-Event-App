@@ -1,6 +1,5 @@
 <template>
-  <!-- <NuxtLink :to="`/event/${id}`"> -->
-    <NuxtLink :to="`/eventsPage`">
+  <NuxtLink :to="`/eventsPage`">
     <div class="w-full px-4 sm:px-6 lg:px-8 min-w-[250px]">
       <div class="flex flex-wrap gap-4 justify-center py-4">
         <div
@@ -25,7 +24,7 @@
             </div>
 
             <!-- Save / unsave -->
-            <button
+            <!-- <button
               @click.stop.prevent="toggleSaved"
               class="absolute right-[8px] top-[8px] w-7 h-7 bg-white/70 rounded-md backdrop-blur-[3px] flex items-center justify-center"
             >
@@ -43,7 +42,8 @@
               >
                 <path d="M5 13l4 4L19 7" />
               </svg>
-            </button>
+            </button> -->
+
           </div>
 
           <!-- Content below the bar -->
@@ -52,11 +52,11 @@
           >
             <!-- Title -->
             <div class="text-black text-base sm:text-lg font-medium mt-2">
-              {{ title }}
+              {{ event.title }}
             </div>
 
             <!-- Attendees -->
-            <div class="flex items-center mt-2">
+            <!-- <div class="flex items-center mt-2">
               <div class="flex -space-x-2">
                 <img
                   v-for="(a, i) in avatars"
@@ -66,12 +66,12 @@
                 />
               </div>
               <span class="text-indigo-700 text-xs font-medium ml-2"
-                >+{{ currentCapacity }} Going</span
+                >+{{ event.currentCapacity }} Going</span
               >
-            </div>
+            </div> -->
 
             <!-- Location -->
-            <div
+            <!-- <div
               class="relative flex items-center text-indigo-950 text-xs mt-1"
             >
               <div class="w-4 h-4 mr-1 relative">
@@ -83,19 +83,10 @@
                 ></div>
               </div>
               <span class="truncate max-w-[70%] sm:max-w-full">{{
-                location
+                event.location
               }}</span>
-
-              <!-- Expand -->
-              <!-- <button
-                @click.stop.prevent="$emit('expand')"
-                class="absolute right-2 w-6 h-6 flex justify-between items-center"
-              >
-                <span class="block w-1 h-1 bg-zinc-600 rounded-full"></span>
-                <span class="block w-1 h-1 bg-zinc-600 rounded-full"></span>
-                <span class="block w-1 h-1 bg-zinc-600 rounded-full"></span>
-              </button> -->
-            </div>
+            </div> -->
+            
           </div>
         </div>
       </div>
@@ -103,35 +94,64 @@
   </NuxtLink>
 </template>
 
-<script setup lang= 'ts'>
-import { ref, watch } from "vue";
+<script setup lang="ts">
+import { ref, computed, watch } from "vue";
+import type { Event, SignUp, User } from "@prisma/client";
 
-const props = defineProps({
-  id: { type: String, required: true },
-  dateDay: { type: [String, Number], required: true },
-  dateMonth: { type: String, required: true },
-  title: { type: String, required: true },
-  currentCapacity: { type: Number, default: 0 },
-  signUps: { type: Array, default: () => [] },
-  location: { type: String, default: "" },
-  saved: { type: Boolean, default: false },
+// Extended type to include relations
+type EventWithRelations = Event & {
+  SignUps?: (SignUp & { User?: User | null })[];
+};
+
+const props = defineProps<{
+  event: EventWithRelations;
+  saved?: boolean;
+}>();
+
+const emit = defineEmits<{
+  (e: "update:saved", value: boolean): void;
+  (e: "expand"): void;
+}>();
+
+// Date calculations
+
+const dateDay = computed(() => {
+  //console.log("PROPS") <--- see it printing in the console
+  console.log("Hello World!")
+  return props.event.startTime.getDate()
+});
+  
+//console.log()
+
+ const dateMonth = computed(() => {
+   const month = new Date(props.event.startTime).getMonth();
+  const months = [
+    "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+    "JULY", "AUG", "SEP", "OCT", "NOV", "DEC"
+  ];
+  return months[month];
 });
 
-const avatars = computed(
-  // TODO: check what type we should be enforcing here
-  () => props.signUps.map((s: any) => s.User?.profilePic).filter((url) => !!url) // filter out undefined/null
-);
+// Avatars from sign ups (commented out for now)
+// const avatars = computed(() => {
+//   if (!props.event.SignUps) return [];
+//   return props.event.SignUps
+//     .map((s: any) => s.User?.profilePic)
+//     .filter((url) => !!url);
+// });
 
-const emit = defineEmits(["update:saved", "expand"]);
+// Saved state
+//const isSaved = ref(props.saved || false);
 
-const isSaved = ref(props.saved);
-watch(
-  () => props.saved,
-  (v) => (isSaved.value = v)
-);
+// watch(
+//   () => props.saved,
+//   (v) => {
+//     isSaved.value = v || false;
+//   }
+// );
 
-function toggleSaved() {
-  isSaved.value = !isSaved.value;
-  emit("update:saved", isSaved.value);
-}
-</script>
+// function toggleSaved() {
+//   isSaved.value = !isSaved.value;
+//   emit("update:saved", isSaved.value);
+// }
+// </script>
