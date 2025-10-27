@@ -7,3 +7,12 @@ export type Subscription = {
     }
   )
 };
+export type NotificationBody = {
+  title: string;
+  data:({
+    url: string,
+  })
+  icon: string;
+  badge: string;
+  body: string;
+}

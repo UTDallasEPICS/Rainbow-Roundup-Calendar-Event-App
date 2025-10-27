@@ -1,5 +1,4 @@
 import { useScheduler } from '#scheduler';
-import { sendReminderEmails } from '../utils/sendReminderEmails';
 
 export default defineNitroPlugin(() => {
   startScheduler();
@@ -17,5 +16,5 @@ function startScheduler(){
     await sendReminderNotifications(3);
     await sendReminderNotifications(7);
     
-  }).cron('36 15 * * *', 'America/Chicago');
+  }).cron('0 12 * * *', 'America/Chicago');
 }

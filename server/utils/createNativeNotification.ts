@@ -17,7 +17,7 @@ export function createNativeNotification({
   if (daysTill <= 0) {
     return undefined;
   }
-  const attendingTitle = `${title} is in ${daysTill} days:`;
+  const attendingTitle = `${title} is in ${daysTill} days`;
 
   const message = attending ?
     `We're excited to see you soon! Just a reminder that ${title} is in ${daysTill} days!!!`
