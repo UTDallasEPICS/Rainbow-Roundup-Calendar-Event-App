@@ -6,4 +6,7 @@ export type User = {
   phoneNum: string;
   role: "SUPER" | "ADMIN" | "USER";
   profilePic: string;
+  EmailNotif: boolean;
+  NativeNotif: boolean;
+  
 };
