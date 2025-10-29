@@ -1,4 +1,5 @@
-import dotenv from "dotenv";
+import dotenv, { config } from "dotenv";
+import { runtimeconfig } from "googleapis/build/src/apis/runtimeconfig";
 
 dotenv.config();
 
@@ -25,7 +26,7 @@ export default defineNuxtConfig({
 
     NUXT_PUSH_VAPID_PRIVATE_KEY: process.env.NUXT_PUSH_VAPID_PRIVATE_KEY
   },
-
+  
   devtools: { enabled: true },
   css: [
     "~/assets/css/main.css",
@@ -65,7 +66,7 @@ export default defineNuxtConfig({
   ],
   auth: {
     isEnabled: true,
-    baseURL: "http://localhost:3000/api/auth",
+    baseURL: process.env.URL + "/api/auth",
     provider: {
       type: "authjs",
       trustHost: false,

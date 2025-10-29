@@ -3,8 +3,8 @@ import { resolve } from 'path';
 import webpush, { WebPushError, type PushSubscription } from "web-push";
 import { NotificationBody } from '~/types/Notification';
 const config = useRuntimeConfig();
-const icon = resolve("public/images//icons/pwa_logo_192.png");
-const badge = resolve("public/images//icons/pwa_logo_96.png");
+const icon = "images/icons/pwa_logo_96.png";
+const badge = "images/icons/pwa_logo_64.png";
 const email = "mailto:noreply@example.com";
 const publicKey = config.public.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY; // Get keys from env file 
 const privateKey = config.NUXT_PUSH_VAPID_PRIVATE_KEY;
@@ -27,13 +27,13 @@ export async function sendNativeNotification(title: string, message: string, use
     const keys = { id, auth, p256dh };
     const endpoint = notification.endpoint;
     const subscription = { endpoint, auth, p256dh, keys } as PushSubscription;
-    console.log(message);
     const notificationBody = { title, body, data, icon, badge } as NotificationBody;
 
     if (!subscription) continue;
 
     try {
-      await webpush.sendNotification(subscription, JSON.stringify(notificationBody));
+      const pushNotification = await webpush.sendNotification(subscription, JSON.stringify(notificationBody));
+      console.log(pushNotification.headers);
     } catch (error) {
       console.log(error);
       if (!(error instanceof WebPushError)) {

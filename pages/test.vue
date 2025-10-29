@@ -25,7 +25,7 @@ const requestNotificationPermission = async () => {
     Notification.requestPermission()
       .then(async (permission) => {
         console.log("Permission:", permission);
-        console.log('serviceWorker' in navigator);
+        console.log("Does service worker exist: ", 'serviceWorker' in navigator);
         if (permission === "granted" && 'serviceWorker' in navigator) {
           isSubscribed.value = true;
 
@@ -59,6 +59,7 @@ const requestNotificationPermission = async () => {
 
         } else {
           isSubscribed.value = false;
+          console.log("Could not subscribe to notifications, either permission was not granted or your browser doesn't support service workers");
         }
         isSubscribed.value = Notification.permission === "granted";
       })
@@ -74,16 +75,15 @@ const subscribeToNotification = async () => {
   const registration = $pwa?.getSWRegistration(); // port this code to current stuff
   console.log("Registration: ", registration);
   if (!registration) {
-    console.log("No valid registration");
+    console.log("No valid service worker registration");
     return false;
   }
-
   try {
     const publicVapid = runtimeConfig.public.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY;
     const subscription = await registration.pushManager.subscribe();
     console.log("Subscription: ", subscription);
     if (!subscription) {
-      console.log("No valid subscription");
+      console.log("No valid push subscription");
       return false;
     }
     const getAuthKey = () => {
