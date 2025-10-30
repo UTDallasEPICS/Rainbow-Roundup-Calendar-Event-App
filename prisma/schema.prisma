@@ -18,6 +18,8 @@ model User {
   GlobalNotif   Boolean // Global notifications (annoncements)
   emailVerified DateTime?
 
+  isBanned    Boolean   @default(false)
+
   SignUps           SignUp[]
   CreatedEvents     Event[]
   
@@ -39,6 +41,7 @@ model Event {
   endTime         DateTime
   capacity        Int?
   currentCapacity Int?
+  isArchived    Boolean   @default(false)
 
   //Foreign Keys
   User User @relation(fields: [userId], references: [id])
@@ -53,6 +56,7 @@ model SignUp {
   eventId       String
   Notifications Boolean
   plusOne       Int     @default(0) // The number of plus one registrations. 0 is just the user signing up
+
 
   // Foreign keys to User and Event
   User  User  @relation(fields: [userId], references: [id])
@@ -71,6 +75,8 @@ model Report {
   description    String?
   reportTime     DateTime @default(now())
 
+  isArchived    Boolean   @default(false)
+
   // Foreign Keys
   ReportedUser User @relation("ReportedUser", fields: [reportedUserId], references: [id])
   ReporterUser User @relation("ReporterUser", fields: [reporterUserId], references: [id])
@@ -82,16 +88,20 @@ model Report {
 model ItemVariant {
   id                String     @id @default(uuid())
   size              Size
-  price             Float
   itemId            String      
-  item              AbstractItem        @relation(fields: [itemId], references: [id])  
-  
+  item              AbstractItem        @relation(fields: [itemId], references: [id])
+  availbility       Boolean    @default(false) //For admin to enable
+
   OrderItems OrderItem[]
 }
 
 model AbstractItem {
   id                String      @id @default(uuid())
   name              String   
+  price             Float
+  description       String
+  
+  isArchived    Boolean   @default(false)  
 
   ItemVariants     ItemVariant[]
   ItemPhotos         ItemPhoto[]
