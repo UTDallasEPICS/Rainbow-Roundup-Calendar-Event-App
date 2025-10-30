@@ -55,7 +55,7 @@
                     v-for="report in sortedReports"
                     :key="report"
                 >
-                <ReportWindow v-if="isModalOpen" @close-window="closeModal()" :report="selectedReport" />
+                <ReportWindow v-if="isModalOpen" @close-window="closeModal()" @report-deleted="(id) => deleteReport(id)" :report="selectedReport" />
                     <td class="px-4 py-3 text-sm text-gray-800 border">
                     {{ formatDateTime(report.reportTime) }}
                     </td>
@@ -133,5 +133,16 @@ function openModal(selected) {
 
 function closeModal() {
   isModalOpen.value = false;
+}
+
+function deleteReport(deleteId) {
+  for (let i = 0; i < props.reports.length; i++)
+  {
+    if (props.reports[i].id == deleteId)
+    {
+      props.reports.splice(i, 1);
+      break;
+    }
+  }
 }
 </script>

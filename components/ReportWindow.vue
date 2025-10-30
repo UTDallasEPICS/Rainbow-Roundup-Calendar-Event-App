@@ -91,14 +91,24 @@ function closeWindow() {
     emit("closeWindow");
 }
 
-function deleteReport() {
-    console.log("TO DO: delete reports")
-    emit('reportDeleted', props.report.id)
+async function deleteReport() {
+    try {
+        await $fetch(`/api/report/${props.report.id}`, {
+            method: "DELETE",
+        });
+        emit('reportDeleted', props.report.id)
+        emit("closeWindow");
+    }
+    catch (error) {
+        console.error("Error deleting report:", error);
+        alert("Error deleting report. Please try again.");
+    }
 }
 
-function banUser() {
+async function banUser() {
     console.log("TO DO: implement bans")
     emit('userBanned', props.report.ReportedUser.id)
+    emit("closeWindow");
 }
 
 </script>
