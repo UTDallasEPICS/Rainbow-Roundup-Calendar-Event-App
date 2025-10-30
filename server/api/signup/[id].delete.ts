@@ -60,7 +60,7 @@ export default defineEventHandler(async (event) => {
         where: { id: existingSignUp.eventId },
         data: {
           currentCapacity: {
-            decrement: 1 + existingSignUp.plusOne,
+            decrement: 1 + existingSignUp.plusOneAdults + existingSignUp.plusOneKids,
           },
         },
       });
