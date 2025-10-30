@@ -28,10 +28,14 @@
         Manage Users
       </span>
       
-      <ReportsTable :reports="reports"/>
-
-      <UsersTable :users="users" :title="'Users'" />
-      <UsersTable :users="users" :title="'Banned Users'" />
+      <div v-if="!isLoading" class="space-y-4">
+        <ReportsTable :reports="reports"/>
+        <UsersTable :users="users" :title="'Users'" />
+        <UsersTable :users="users" :title="'Banned Users'" />
+      </div>
+      <div v-else class="text-gray-400">
+        Loading...
+      </div>
     </div>
   </div>
 
@@ -109,6 +113,7 @@ const sortAsc = ref(true);
 const selectedUser = ref(null);
 const isModalOpen = ref(false);
 const attrs = useAttrs();
+const isLoading = ref(true);
 
 onMounted(async () => {
   try {
@@ -126,6 +131,8 @@ onMounted(async () => {
   } catch (err) {
     console.error("Error fetching reports:", err);
   }
+
+  isLoading.value = false;
 });
 
 function sortBy(key) {

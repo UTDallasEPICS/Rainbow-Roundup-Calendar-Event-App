@@ -10,7 +10,7 @@
         />
     </div>
     <div
-        v-if="reports" class="bg-white rounded-lg shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] overflow-hidden"
+        v-if="sortedReports && sortedReports.length" class="bg-white rounded-lg shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] overflow-hidden"
     >
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
@@ -83,7 +83,7 @@
         </div>
     </div>
     <div v-else class="px-4 py-3 text-gray-400">
-        No reports yet.
+        No reports.
     </div>
 </template>
 
