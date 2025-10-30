@@ -165,6 +165,7 @@ import { ref, computed, onMounted } from "vue";
 
 const props = defineProps(['users', 'title']);
 //const users = ref([]);
+const { data } = useAuth();
 const searchTerm = ref("");
 const sortKey = ref(null);
 const sortAsc = ref(true);

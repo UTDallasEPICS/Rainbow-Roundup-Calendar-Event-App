@@ -54,9 +54,8 @@
                 <tr
                     v-for="report in sortedReports"
                     :key="report"
-                    @click=""
-                    class="hover:bg-gray-100 cursor-pointer"
                 >
+                <ReportWindow v-if="isModalOpen" @close-window="closeModal()" :report="selectedReport" />
                     <td class="px-4 py-3 text-sm text-gray-800 border">
                     {{ formatDateTime(report.reportTime) }}
                     </td>
@@ -72,10 +71,11 @@
                         <span v-else>Other</span>
                     </td>
                     <td class="px-4 py-3 text-sm text-gray-800 border">
-                    {{ report.description }}
+                      <span v-if="report.description != null">{{ report.description }}</span>
+                      <span v-else class="text-gray-400 text-xs">No additional comments.</span>
                     </td>
                     <td class="px-4 py-3 text-sm text-gray-800 border">
-                        <button class="bg-gray-300 text-gray-800 px-4 py-2 mx-1 rounded hover:bg-gray-400 transition">Resolve</button>
+                        <button @click="openModal(report)" class="bg-gray-300 text-gray-800 px-4 py-2 mx-1 rounded hover:bg-gray-400 transition">Resolve</button>
                     </td>
                 </tr>
                 </tbody>
@@ -88,18 +88,17 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 
 const props = defineProps(['reports'])
 const searchTerm = ref("");
 const sortAsc = ref(true);
-const selectedUser = ref(null);
 const isModalOpen = ref(false);
+const selectedReport = ref(null);
 
 
 const sortedReports = computed(() => {
   let list = props.reports;
-  console.log(list)
   const q = searchTerm.value.trim().toLowerCase();
   if (q) {
     list = list.filter(
@@ -127,13 +126,12 @@ function formatDateTime(iso) {
   });
 }
 
+function openModal(selected) {
+  selectedReport.value = selected;
+  isModalOpen.value = true;
+}
+
 function closeModal() {
-  selectedUser.value = null;
   isModalOpen.value = false;
 }
-
-async function goToProfile(){
-  await navigateTo(`/profile/${selectedUser.value.id}`);
-}
-
 </script>
