@@ -294,8 +294,8 @@ const monthNames = [
 const carousel = ref(null);
 
 // Computed
-//const currentMonthName = computed(() => monthNames[currentMonth.value]);
-const currentMonthName = ref(monthNames[currentMonth.value])
+const currentMonthName = computed(() => {
+  return monthNames[currentMonth.value]});
 console.log(currentMonthName)
 
 const calendarDays = computed(() => {
