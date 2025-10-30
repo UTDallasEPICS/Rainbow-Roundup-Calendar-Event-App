@@ -1,4 +1,5 @@
 <template>
+    <ReportWindow v-if="isModalOpen" @close-window="closeModal()" @report-deleted="(id) => deleteReport(id)" :report="selectedReport" />
     <div class="grid grid-cols-2 items-center">
         <h1 class="text-2xl font-bold text-zinc-700 col-span-1">Reports</h1>
 
@@ -41,12 +42,9 @@
                     Type
                     </th>
                     <th
-                    class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none"
+                    class="hidden md:table-cell px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none"
                     >
                     Comments
-                    </th>
-                    <th>
-                        
                     </th>
                 </tr>
                 </thead>
@@ -54,8 +52,9 @@
                 <tr
                     v-for="report in sortedReports"
                     :key="report"
+                    @click="openModal(report)"
+                    class="hover:bg-gray-100"
                 >
-                <ReportWindow v-if="isModalOpen" @close-window="closeModal()" @report-deleted="(id) => deleteReport(id)" :report="selectedReport" />
                     <td class="px-4 py-3 text-sm text-gray-800 border">
                     {{ formatDateTime(report.reportTime) }}
                     </td>
@@ -70,12 +69,9 @@
                         <span v-else-if="report.isProfilePic">Inappropriate Profile Picture</span>
                         <span v-else>Other</span>
                     </td>
-                    <td class="px-4 py-3 text-sm text-gray-800 border">
-                      <span v-if="report.description != null">{{ report.description }}</span>
-                      <span v-else class="text-gray-400 text-xs">No additional comments.</span>
-                    </td>
-                    <td class="px-4 py-3 text-sm text-gray-800 border">
-                        <button @click="openModal(report)" class="bg-gray-300 text-gray-800 px-4 py-2 mx-1 rounded hover:bg-gray-400 transition">Resolve</button>
+                    <td class="hidden md:table-cell px-4 py-3 text-sm text-gray-800 border">
+                      <span v-if="report.description != null && report.description.length">{{ report.description }}</span>
+                      <span v-else class="text-gray-400">No additional comments.</span>
                     </td>
                 </tr>
                 </tbody>

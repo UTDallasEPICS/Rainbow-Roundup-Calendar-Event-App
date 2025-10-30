@@ -50,7 +50,7 @@
                 </div>
 
                 <!-- description -->
-                <div v-if="report.description != null">
+                <div v-if="report.description != null && report.description.length">
                     <h2 class="w-full text-lg font-semibold text-gray-800">Additional Comments</h2>
                     <div class="">
                         {{ report.description }}
