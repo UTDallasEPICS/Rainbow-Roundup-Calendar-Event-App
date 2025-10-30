@@ -26,6 +26,14 @@ export default defineNuxtConfig({
 
     NUXT_PUSH_VAPID_PRIVATE_KEY: process.env.NUXT_PUSH_VAPID_PRIVATE_KEY
   },
+  vite: {
+    resolve: {
+      alias: {
+        // Redirect the invalid import to an empty stub
+        '.prisma/client/index-browser': '/dev/null'
+      }
+    }
+  },
   
   devtools: { enabled: true },
   css: [
