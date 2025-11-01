@@ -2,8 +2,9 @@
 /// <reference lib='WebWorker' />
 /// <reference types="vite/client" />
 
-import { clientsClaim } from "workbox-core";
-import { cleanupOutdatedCaches, precacheAndRoute } from "workbox-precaching";
+import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching'
+import { clientsClaim } from 'workbox-core'
+import { NavigationRoute, registerRoute } from 'workbox-routing'
 
 declare const self: ServiceWorkerGlobalScope;
 
@@ -11,6 +12,28 @@ self.skipWaiting();
 clientsClaim();
 precacheAndRoute(self.__WB_MANIFEST);
 cleanupOutdatedCaches();
+
+let allowlist: undefined | RegExp[]
+if (import.meta.env.DEV)
+  allowlist = [/^\/$/]
+
+// to allow work offline
+registerRoute(new NavigationRoute(
+  createHandlerBoundToURL('/'),
+  { allowlist },
+))
+self.skipWaiting()
+clientsClaim()
+
+
+self.addEventListener('install', (event) => {
+  console.log('Service Worker installed');
+});
+
+self.addEventListener('activate', (event) => {
+  console.log('Service Worker activated');
+  event.waitUntil(self.clients.claim());
+});
 
 self.addEventListener("push", onPush);
 self.addEventListener("notificationclick", onNotificationClick);
