@@ -1,43 +1,102 @@
 <template>
-  <div
-    v-bind="attrs"
-    class="min-h-screen bg-gray-100 flex items-start justify-center p-6"
-  >
-    <div class="w-full max-w-4xl space-y-4">
-      <!-- 1) Back link -->
-      <NuxtLink
-        to="/admin"
-        class="inline-flex items-center text-zinc-700 hover:text-zinc-900"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5 mr-2"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
-      </NuxtLink>
-      <span class="text-2xl font-bold text-zinc-700">
-        Manage Users
-      </span>
-      
-      <div v-if="!isLoading" class="space-y-4">
-        <ReportsTable :reports="reports"/>
-        <UsersTable :users="users" :title="'Users'" />
-        <UsersTable :users="users" :title="'Banned Users'" />
-      </div>
-      <div v-else class="text-gray-400">
-        Loading...
-      </div>
+    <div class="grid grid-cols-2 items-center">
+    <h1 class="text-2xl font-bold text-zinc-700 col-span-1">{{ title }}</h1>
+
+    <input
+        v-model="searchTerm"
+        type="text"
+        placeholder="Search by name…"
+        class="w-full p-2 border border-gray-300 rounded col-span-1"
+    />
     </div>
-  </div>
+    <div
+    class="bg-white rounded-lg shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] overflow-hidden"
+    >
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-amber-300">
+            <tr>
+            <th
+                @click="sortBy('firstname')"
+                class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
+            >
+                First Name
+                <span v-if="sortKey === 'firstname'">{{
+                sortAsc ? "▲" : "▼"
+                }}</span>
+            </th>
+            <th
+                @click="sortBy('lastname')"
+                class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
+            >
+                Last Name
+                <span v-if="sortKey === 'lastname'">{{
+                sortAsc ? "▲" : "▼"
+                }}</span>
+            </th>
+            <th
+                @click="sortBy('email')"
+                class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
+            >
+                Email
+                <span v-if="sortKey === 'email'">{{
+                sortAsc ? "▲" : "▼"
+                }}</span>
+            </th>
+            <th
+                @click="sortBy('phoneNum')"
+                class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
+            >
+                Phone
+                <span v-if="sortKey === 'phoneNum'">{{
+                sortAsc ? "▲" : "▼"
+                }}</span>
+            </th>
+            <th
+                @click="sortBy('role')"
+                class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
+            >
+                Role
+                <span v-if="sortKey === 'role'">{{
+                sortAsc ? "▲" : "▼"
+                }}</span>
+            </th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+            <tr
+            v-for="user in sortedUsers"
+            :key="user.email"
+            @click="clickUser(user)"
+            class="hover:bg-gray-100 cursor-pointer"
+            >
+            <td class="px-4 py-3 text-sm text-gray-800 border">
+                {{ user.firstname }}
+            </td>
+            <td class="px-4 py-3 text-sm text-gray-800 border">
+                {{ user.lastname }}
+            </td>
+            <td class="px-4 py-3 text-sm text-gray-800 border">
+                {{ user.email }}
+            </td>
+            <td class="px-4 py-3 text-sm text-gray-800 border">
+                {{ user.phoneNum }}
+            </td>
+            <td
+                class="px-4 py-3 text-sm"
+                :class="
+                user.role === 'Admin'
+                    ? 'text-red-500 font-bold'
+                    : 'text-green-600'
+                "
+            >
+                {{ user.role }}
+            </td>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+    </div>
 
   <Teleport to="body">
     <div
@@ -103,37 +162,16 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-const { data } = useAuth();
 
-const users = ref([]);
-const reports = ref([]);
+const props = defineProps(['users', 'title']);
+//const users = ref([]);
+const { data } = useAuth();
 const searchTerm = ref("");
 const sortKey = ref(null);
 const sortAsc = ref(true);
 const selectedUser = ref(null);
 const isModalOpen = ref(false);
-const attrs = useAttrs();
-const isLoading = ref(true);
 
-onMounted(async () => {
-  try {
-    const response = await $fetch("/api/user");
-    if (response?.success) {
-      users.value = response.Users;
-    }
-  } catch (err) {
-    console.error("Error fetching users:", err);
-  }
-
-  try {
-    const response = await useFetch("/api/report", { method: "GET" });
-    reports.value = response.data.value;
-  } catch (err) {
-    console.error("Error fetching reports:", err);
-  }
-
-  isLoading.value = false;
-});
 
 function sortBy(key) {
   if (sortKey.value === key) {
@@ -145,7 +183,7 @@ function sortBy(key) {
 }
 
 const sortedUsers = computed(() => {
-  let list = [...users.value];
+  let list = props.users;
   const q = searchTerm.value.trim().toLowerCase();
   if (q) {
     list = list.filter(
