@@ -169,8 +169,9 @@
 import { ref, onMounted } from "vue";
 
 // Use the built-in auth composable instead of custom useUser
+import { authClient } from "~/server/auth"
+const { data: session } = await authClient.getSession();
 //const { data: sesgsion, signOut } = useAuth();
-const session = "WORK";
 
 // PLEASE REMEMBER TO ACTUALLY IMPLEMENT SESSION, AND SIGNOUT PROPERLY
 const dropdownOpen = ref(false);
