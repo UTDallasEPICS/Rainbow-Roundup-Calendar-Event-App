@@ -21,6 +21,8 @@ export default defineNuxtConfig({
     smtpPass: process.env.SMTP_PASS,
     smtpFrom: process.env.SMTP_FROM,
     url: process.env.URL,
+    BETTER_AUTH_URL: process.env.URL,
+    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
   },
 
   devtools: { enabled: true },

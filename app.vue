@@ -169,8 +169,10 @@
 import { ref, onMounted } from "vue";
 
 // Use the built-in auth composable instead of custom useUser
-const { data: session, signOut } = useAuth();
+//const { data: sesgsion, signOut } = useAuth();
+const session = "WORK";
 
+// PLEASE REMEMBER TO ACTUALLY IMPLEMENT SESSION, AND SIGNOUT PROPERLY
 const dropdownOpen = ref(false);
 const mobileMenuOpen = ref(false);
 const isSubscribed = ref(false);
@@ -282,7 +284,8 @@ const requestNotificationPermission = () => {
 };
 
 const logout = async () => {
-  await signOut({ callbackUrl: "/" });
+  //await signOut({ callbackUrl: "/" });
+  console.log("Implement logout")
 };
 
 const navigate = (section) => {

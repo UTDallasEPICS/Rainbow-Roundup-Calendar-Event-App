@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { nanoid } from 'nanoid';
 import { sendVerificationEmail } from '../../utils/sendVerificationEmail';
+import { authClient } from '~/server/auth';
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
@@ -37,7 +38,11 @@ export default defineEventHandler(async (event) => {
       },
     });
 
-    await sendVerificationEmail(body.email, token);
+    //await sendVerificationEmail(body.email, token);
+    await authClient.emailOTP.sendVerificationOTP({
+      email: body.email, // required
+      type: "email-verification", // required
+    });
 
     return { success: true, message: "Verification email sent." };
   } catch (err) {

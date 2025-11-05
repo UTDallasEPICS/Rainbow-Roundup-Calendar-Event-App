@@ -6,10 +6,20 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import { prisma } from '../../utils/prisma';
 import { createTransport } from "nodemailer";
+import { emailOTP } from "better-auth/plugins/email-otp";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { betterAuth } from "better-auth";
+import { toNextJsHandler } from "better-auth/next-js";
+import { auth } from '~/server/auth';
+
 
 const config = useRuntimeConfig(); // Access runtime configuration (e.g., SMTP settings)
 
-export default NuxtAuthHandler({
+
+export default defineEventHandler((event) => {
+	return auth.handler(toWebRequest(event));
+});
+/*export default NuxtAuthHandler({
   secret: "placeholder-secret",
   adapter: (PrismaAdapter(prisma)), // Use Prisma as the adapter for NuxtAuth
   session: {
@@ -25,7 +35,7 @@ export default NuxtAuthHandler({
           pass: config.smtpPass, // SMTP password
         },
       },
-      
+
       from: config.smtpFrom, // Default sender email address for verification emails
       sendVerificationRequest({
         identifier: email,
@@ -137,4 +147,4 @@ export default NuxtAuthHandler({
       }
     },
   },
-});
+});*/
