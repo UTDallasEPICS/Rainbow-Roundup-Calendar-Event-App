@@ -33,7 +33,6 @@ export async function sendNativeNotification(title: string, message: string, use
 
     try {
       const pushNotification = await webpush.sendNotification(subscription, JSON.stringify(notificationBody));
-      console.log(pushNotification.headers);
     } catch (error) {
       console.log(error);
       if (!(error instanceof WebPushError)) {

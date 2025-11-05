@@ -1,15 +1,15 @@
-//import { v, validate } from "~/server/utils/valibot";
 import { getServerSession } from "#auth";
-import { keys } from "vuetify/lib/util/helpers.mjs";
 import { Subscription } from "~/types/Notification";
 import { User } from "~/types/session";
+import { sendNativeNotification } from "~/server/utils/sendNotification";
+
 
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
+  const config = useRuntimeConfig();
   const session = await getServerSession(event);
   const user = session?.user as User | undefined;
-  //const storage = session?.notification as User | undefined;
   const body = await readBody(event);
   const subscription = body as Subscription;
   if (typeof subscription == undefined) {
@@ -43,6 +43,9 @@ export default defineEventHandler(async (event) => {
           data: updateData,
         })
       }
+      const title = "New device subscribed to notifications";
+      const message = "A new device was subscribed to notifications";
+      sendNativeNotification(title, message,user.id, config.url);
       return { success: true, message: "Notification subscription created" };
     }
     else {
