@@ -4,8 +4,7 @@ import {
   formatEventForGoogle,
   formatEventForResponse,
 } from "~/server/utils/eventFormatter.ts";
-import { getServerSession } from "#auth";
-import type { User } from "../../../types/session";
+import { authClient } from '~/server/auth';import type { User } from "../../../types/session";
 
 /**
  * Handles the creation of a new event in Google Calendar.
@@ -35,7 +34,7 @@ import type { User } from "../../../types/session";
  * @returns The formatted details of the newly created event.
  */
 export default defineEventHandler(async (event) => {
-  const session = await getServerSession(event);
+  const { data: session } = await authClient.getSession();
 
   const user = session?.user as User | undefined;
 

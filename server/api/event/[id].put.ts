@@ -5,12 +5,14 @@ import {
   readBody,
   setResponseStatus,
 } from "h3";
-import { getServerSession } from "#auth";
+//import { getServerSession } from "#auth";
+import { authClient } from "~/server/auth"
+
 import type { User } from "../../../types/session";
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
-  const session = await getServerSession(event);
+  const { data: session } = await authClient.getSession();
 
   const user = session?.user as User | undefined;
 

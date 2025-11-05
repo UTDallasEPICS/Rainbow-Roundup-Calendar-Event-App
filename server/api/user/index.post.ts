@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
     });
 
     //await sendVerificationEmail(body.email, token);
-    await authClient.emailOTP.sendVerificationOTP({
+    await authClient.emailOtp.sendVerificationOtp({
       email: body.email, // required
       type: "email-verification", // required
     });

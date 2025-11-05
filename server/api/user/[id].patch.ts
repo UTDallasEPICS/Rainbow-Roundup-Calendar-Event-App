@@ -1,12 +1,16 @@
 import { PrismaClient } from "@prisma/client";
-import { getServerSession } from "#auth";
+//import { getServerSession } from "#auth";
+import { authClient } from "~/server/auth"
 import type { User } from "../../../types/session";
 
+
 export default defineEventHandler(async (event) => {
+  // const getServerSession = await authClient.getSession();
+  const { data: session } = await authClient.getSession(); // rename the returned data to "session" for more descriptiveness!
   const prisma = event.context.prisma;
   // Debugging: Log the params to verify the URL structure
   const id = getRouterParam(event, "id");
-  const session = await getServerSession(event);
+  // const session = getServerSession.data;
   const user = session?.user as User | undefined;
   
   if (!id) {

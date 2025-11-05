@@ -9,8 +9,8 @@ export default defineEventHandler(async (event) => {
     if (id) {
       // Fetch a single event by ID with relations (admin and signUps)
       const singleEvent = await prisma.event.findUnique({
-        where: { id }, //getRouterParam already defines id as a string no need to cast
-        include: { User: true, SignUps: true,},
+        where: { id }, //getRouterParam already defines id as a strisng no need to cast
+        include: { User: true, SignUps: true,}, // omit sensitive info
       });
 
       if (!singleEvent) {

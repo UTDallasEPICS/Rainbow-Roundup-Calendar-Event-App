@@ -1,11 +1,11 @@
 import { defineEventHandler, setResponseStatus, getRouterParam, createError } from "h3";
 import type { User } from "../../../types/session";
-import { getServerSession } from "#auth";
+import { authClient } from "~/server/auth"
 
 export default defineEventHandler(async (event) => {
     const id = getRouterParam(event, "id"); 
     const prisma = event.context.prisma;
-    const session = await getServerSession(event);
+    const { data: session } = await authClient.getSession();
     const user = session?.user as User | undefined;
 
     if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {

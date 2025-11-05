@@ -2,12 +2,11 @@ import { PrismaClient } from '@prisma/client';
 
 import { User } from "../../../types/session";
 
-import { getServerSession } from '#auth';
-
+import { authClient } from '~/server/auth';
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const prisma = event.context.prisma;
-  const session = await getServerSession(event);
+  const { data: session } = await authClient.getSession();
   const user = session?.user as User | undefined;
 
   if (!user || !user?.role) {

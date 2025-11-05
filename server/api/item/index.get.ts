@@ -1,6 +1,5 @@
 import { defineEventHandler, setResponseStatus, createError } from "h3";
 import type { User } from "../../../types/session";
-import { getServerSession } from "#auth";
 import { asCleanDays } from "@fullcalendar/core/internal";
 
 export default defineEventHandler(async (event) => {

@@ -1,10 +1,10 @@
 import { defineEventHandler, setResponseStatus, createError } from "h3";
 import type { User } from "../../../types/session";
-import { getServerSession } from "#auth";
+import { authClient } from "~/server/auth"
 
 export default defineEventHandler(async (event) => {
     const prisma = event.context.prisma;
-    const session = await getServerSession(event);
+    const { data: session } = await authClient.getSession();
     const user = session?.user as User | undefined;
 
     // Auth check: only SUPER or ADMIN

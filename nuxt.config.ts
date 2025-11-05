@@ -59,10 +59,10 @@ export default defineNuxtConfig({
     "@vite-pwa/nuxt",
     "@nuxt/ui",
     "@nuxt/eslint",
-    "@sidebase/nuxt-auth",
+    //"@sidebase/nuxt-auth",
     "nuxt-scheduler",
   ],
-  auth: {
+  /*auth: {
     isEnabled: true,
     baseURL: "http://localhost:3000/api/auth",
     provider: {
@@ -71,7 +71,7 @@ export default defineNuxtConfig({
       defaultProvider: "email",
       addDefaultCallbackUrl: true,
     },
-  },
+  },*/
   compatibilityDate: "2024-10-24",
 
   plugins: ["~/plugins/fullcalendar.client"],
