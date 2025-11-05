@@ -41,8 +41,8 @@ export default defineEventHandler(async (event) => {
             role: true,
             profilePic: true,
             SignUps: true,
-            EmailNotif: true,
-            NativeNotif:true,
+            emailNotif: true,
+            nativeNotif:true,
           },
         });
       } else if (currentUser.role === "ADMIN" || currentUser.role === "SUPER") {

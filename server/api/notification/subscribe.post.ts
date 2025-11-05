@@ -35,9 +35,9 @@ export default defineEventHandler(async (event) => {
     });
     if (newSubscription) {
       setResponseStatus(event, 201);
-      if (!user.NativeNotif) { // if the user's native notification preference is false, set it to true.
+      if (!user.nativeNotif) { // if the user's native notification preference is false, set it to true.
         const updateData: any = {}; // Note: this only runs if the users device is currently subscribing to notifications (not those already subscribed)
-        updateData.NativeNotif = true;
+        updateData.nativeNotif = true;
         await prisma.user.update({
           where: { id: user.id },
           data: updateData,

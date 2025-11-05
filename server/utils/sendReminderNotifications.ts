@@ -18,7 +18,7 @@ export async function sendReminderNotifications(days: number) {
                 },
             },
             User: {
-                NativeNotif: true,
+                nativeNotif: true,
                 emailVerified: { not: null },
             },
         },

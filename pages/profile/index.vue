@@ -113,42 +113,42 @@
       <div v-if="!editMode" class="flex space-x-6 mt-1 border-solid border-gray-700"> <!-- Run if not edit mode, can't edit toggle-->
         <input
           type="checkbox"
-          id="EmailNotif"
-          v-model="EmailNotif"
+          id="emailNotif"
+          v-model="emailNotif"
           :readonly="!editMode"
           :class="inputClass"
-          ref="EmailNotifRef"
+          ref="emailNotifRef"
           @click.stop.prevent="!editMode"
         />
       </div>
       <div v-if="editMode" class="flex space-x-6 mt-1 border-solid border-gray-700"> <!-- Run if edit mode, can edit toggle-->
         <input
           type="checkbox"
-          id="EmailNotif"
-          v-model="EmailNotif"
+          id="emailNotif"
+          v-model="emailNotif"
           :class="inputClass"
-          ref="EmailNotifRef"
+          ref="emailNotifRef"
         />
       </div>
       <label class="block mt-4 text-sm font-medium text-gray-700">Allow on device notifications?</label>
       <div v-if="!editMode" class="flex space-x-6 mt-1 border-solid border-gray-700"> <!-- Run if not edit mode, can't edit toggle-->
         <input
           type="checkbox"
-          id="NativeNotif"
-          v-model="NativeNotif"
+          id="nativeNotif"
+          v-model="nativeNotif"
           :readonly="!editMode"
           :class="inputClass"
-          ref="NativeNotifRef"
+          ref="nativeNotifRef"
           @click.stop.prevent="!editMode"
         />
       </div>
       <div v-if="editMode" class="flex space-x-6 mt-1 border-solid border-gray-700"> <!-- Run if edit mode, can edit toggle-->
         <input
           type="checkbox"
-          id="NativeNotif"
-          v-model="NativeNotif"
+          id="nativeNotif"
+          v-model="nativeNotif"
           :class="inputClass"
-          ref="NativeNotifRef"
+          ref="nativeNotifRef"
         />
       </div>
     </div>
@@ -210,8 +210,8 @@ const lastName = ref(userData.value.lastname);
 const phoneNum = ref(userData.value.phoneNum);
 const email = ref(userData.value.email);
 const profilePic = ref(userData.value.profilePic);
-const EmailNotif = ref(userData.value.EmailNotif);
-const NativeNotif = ref(userData.value.NativeNotif);
+const emailNotif = ref(userData.value.emailNotif);
+const nativeNotif = ref(userData.value.nativeNotif);
 
 const file = ref(null);
 const imageUrl = ref(null);
@@ -297,8 +297,8 @@ const saveAccount = async () => {
         phoneNum: phoneNum.value,
         email: email.value,
         profilePic: newProfilePic,
-        EmailNotif: EmailNotif.value,
-        NativeNotif: NativeNotif.value,
+        emailNotif: emailNotif.value,
+        nativeNotif: nativeNotif.value,
       },
     });
   } catch (e) {

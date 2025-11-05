@@ -46,7 +46,7 @@ export default defineEventHandler(async (event) => {
     if (body.lastname) updateData.lastname = body.lastname;
     if (body.phoneNum) updateData.phoneNum = body.phoneNum;
     if (body.profilePic) updateData.profilePic = body.profilePic;
-    if (body.EmailNotif) updateData.EmailNotif = body.EmailNotif;
+    if (body.emailNotif) updateData.emailNotif = body.emailNotif;
     if (body.role) updateData.role = body.role;
     // Perform the update
     const updatedUser = await prisma.user.update({

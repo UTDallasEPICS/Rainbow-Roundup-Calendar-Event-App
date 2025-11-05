@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
         phoneNum: pending.phoneNum,
         profilePic: pending.profilePic,
         role: "USER",
-        EmailNotif: false,
+        emailNotif: false,
         emailVerified: new Date(),
       },
     });

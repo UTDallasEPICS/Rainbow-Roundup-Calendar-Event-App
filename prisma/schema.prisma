@@ -15,8 +15,8 @@ model User {
   role          Role      @default(USER)
   phoneNum      String?   @unique // client requested phone numbers are unique
   profilePic    String    @default("/default-profile.png")
-  EmailNotif    Boolean   @default(false)// Notification setting for emails
-  NativeNotif   Boolean   @default(false)
+  emailNotif    Boolean   @default(false)       // Notification setting for emails
+  nativeNotif   Boolean   @default(false)
   emailVerified DateTime?
 
   SignUps           SignUp[]
