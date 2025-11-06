@@ -1,109 +1,148 @@
 <script setup lang="ts">
-import { Size } from '@prisma/client'
-import type { FinishedItem } from '@prisma/client'
+import { ref, computed } from "vue";
+import type { AbstractItem } from "~/types/prismaTypes";
 
-const item = {
-    id: "89723786312678312iu",
-    name: "cool shirt",
-    FinishedItems: [
-        {
-            id: "298173",
-            quantity: 5,
-            size: Size.XXS,
-            price: 20.99, 
-            itemId: "coolestShirt",
-            
+const props = defineProps<{
+  item: AbstractItem;
+}>();
 
-        }, {}, {},
-    ]
-}
+// ✅ Emit the variant ID when adding to cart (CHANGED)
+const emit = defineEmits<{
+  (e: "add-to-cart", variantId: string): void;
+}>(); 
 
-/* 
-Need to have scrolling functionality
-Should exist as a component
-Must be clickable and link to that items info page
-*/
+// -------------------------
+// IMAGE GALLERY
+// -------------------------
+const currentIndex = ref(0);
+const selectedVariantId = ref<string | null>(null);
+const selectImage = (index: number) => {
+  currentIndex.value = index;
+};
 
+// -------------------------
+// SIZE SELECTION
+// -------------------------
+const selectedSize = ref<string | null>(null);
 
-// 
-// use useFetch() to grab the information from the server directory (the server directory is your backend. it can call the database functions to grab the data)
-// useFetch(`/api/item/${primary key}`, method GET) <- kind of what this would look like, not exactly the right syntax
-// 
-// use @click for the component to make the component navigate you to the item info page
-// scrolling functionality (chatpgpt this)
+const nextImage = () => {
+  if (!props.item.ItemPhotos?.length) return;
+  currentIndex.value =
+    (currentIndex.value + 1) % props.item.ItemPhotos.length;
+};
 
+const prevImage = () => {
+  if (!props.item.ItemPhotos?.length) return;
+  currentIndex.value =
+    (currentIndex.value - 1 + props.item.ItemPhotos.length) %
+    props.item.ItemPhotos.length;
+};
 
-/* defineProps({
-  id: { type: String, required: true },
-  name: { type: String, required: true },
-  price: { type: Number, required: true },
-  images: { type: Array, default: () => [] },   // e.g. ["img1.jpg", "img2.jpg"]
-  sizes: { type: Array, default: () => [] },    // e.g. ["S", "M", "L", "XL"]
-  inventory: { type: Number, default: 0 }
-}) */
+// Add to cart logic
+const handleAddToCart = () => {
+  if (!selectedVariantId.value) return;
+  emit("add-to-cart", selectedVariantId.value);
+};
 
-//const props = defineProps({item: FinishedItem}) //It is finalizeditem rn, will be itemvariant 
-//Pull in one thing
+// Router navigation when clicking the main image
+const router = useRouter();
+const goToItemPage = () => {
+  router.push(`/item/${props.item.id}`);
+};
 
-const router = useRouter() 
-
-//const {data, pending, error }  = await useFetch("/api/item/:id"); //Where to store this?
-
-const emit = defineEmits(["add-to-cart"])
-
-const handleAddToCart = () => 
-    emit("add-to-cart") //Add to index.vue @add-to-cart="updateCart",
-    // Define the addToCartMethod{
-    //    this.$emit('add-to-cart', this.variants[this.selectedVariant].id)   
-    // } 
-    
-/* Add to index.vue
-updateCart(){
-  this.cart += 1;
-} 
-  or
-updateCart(id){
-  this.cart.push(id)
-}
-
-*/
 </script>
 
 <template>
-  <div class="product-card border rounded-xl shadow-md p-4"> // "w-full lg:w-1/2 flex flex-col justify-start items-center"
-    <!-- Product images -->
-    <div class="relative"> <!-- changable name -->
-      <img :src="ItemPhoto.url" :alt="ItemVariant.description" class="w-full h-64 object-cover rounded-lg" />
-    </div>
-      <!-- images are located in the public page rn -->
-    <!-- Product info -->
-    <h2 class="text-xl font-semibold mt-3">{{ name }}</h2>
-    <p class="text-lg text-gray-700">${{ price.toFixed(2) }}</p>
+  <div class="flex gap-10 p-6 border rounded-xl shadow-md w-full">
 
-    <!-- Sizes -->
-    <div v-if="sizes.length" class="mt-2">
-      <span class="font-medium">Sizes:</span>
-      <div class="flex gap-2 mt-1">
-        <span v-for="size in sizes" :key="size" class="border px-2 py-1 rounded-md">
-          {{ size }}
-        </span>
+    <!-- ✅ LEFT SIDE — MAIN IMAGE + THUMBNAILS (NEW LAYOUT) -->
+    <div class="flex flex-col items-center w-1/2">
+
+      <!-- ✅ MAIN IMAGE -->
+      <div class="relative w-full">
+        <img
+          :src="props.item.ItemPhotos?.[currentIndex]?.url"
+          class="w-full h-96 object-contain rounded-lg"
+        />
+
+        <!-- ✅ LEFT ARROW -->
+        <button
+          @click="prevImage"
+          class="absolute left-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow"
+        >
+          ‹
+        </button>
+
+        <!-- ✅ RIGHT ARROW -->
+        <button
+          @click="nextImage"
+          class="absolute right-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow"
+        >
+          ›
+        </button>
+      </div>
+
+      <!-- ✅ THUMBNAILS (NEW) -->
+      <div class="flex gap-3 mt-4">
+        <img
+          v-for="(photo, index) in props.item.ItemPhotos"
+          :key="photo.id"
+          :src="photo.url"
+          @click="selectImage(index)"
+          class="w-20 h-20 object-cover rounded-md border cursor-pointer transition"
+          :class="{
+            'border-blue-500 scale-105': index === currentIndex,
+            'border-gray-300': index !== currentIndex,
+          }"
+        />
       </div>
     </div>
 
-    <!-- Inventory -->
-    <p class="mt-2 text-sm text-gray-500">
-      {{ availability === true ? `in stock` : "Out of stock" }}
-    </p>
+    <!-- ✅ RIGHT SIDE — TITLE, PRICE, SIZES, ADD TO CART -->
+    <div class="flex flex-col justify-start w-1/2">
 
-    <!-- Add to Cart Button -->
-    <button
-      @click="handleAddToCart"
-      :disabled="availability === false" 
-      class="mt-3 w-full bg-blue-600 text-white py-2 rounded-lg disabled:bg-gray-400"
-    >
-      {{ availability > 0 ? "Add to Cart" : "Sold Out" }} //going to make a variable that admin users can change, if they want to be able to make someone available to order it
-    </button>
+      <!-- ✅ TITLE & PRICE -->
+      <h2 class="text-2xl font-semibold">{{ props.item.name }}</h2>
+      <p class="text-xl text-gray-700 mt-1">${{ props.item.price }}</p>
+
+      <!-- ✅ SIZES (CLICKABLE) -->
+      <div class="mt-4">
+        <span class="font-medium">Sizes:</span>
+
+        <div class="flex gap-3 mt-2">
+          <button
+            v-for="variant in props.item.ItemVariants"
+            :key="variant.id"
+            :class="[
+              'px-3 py-1 rounded-md border transition',
+              selectedVariantId === variant.id
+                ? 'bg-black text-white border-black'
+                : 'bg-white text-black border-gray-400'
+            ]"
+            @click="selectedVariantId = variant.id"
+          >
+            {{ variant.size }}
+          </button>
+        </div>
+      </div>
+
+      <!-- ✅ AVAILABILITY -->
+      <p class="mt-4 text-sm text-gray-500">
+        {{
+          props.item.ItemVariants.some(v => v.availbility)
+            ? 'In stock'
+            : 'Out of stock'
+        }}
+      </p>
+
+      <!-- ✅ ADD TO CART -->
+      <button
+        class="mt-6 py-3 bg-blue-600 text-white rounded-lg disabled:bg-gray-400"
+        :disabled="!selectedVariantId"
+        @click="handleAddToCart"
+      >
+        {{ selectedVariantId ? "Add to Cart" : "Select a Size" }}
+      </button>
+    </div>
   </div>
 </template>
-
-

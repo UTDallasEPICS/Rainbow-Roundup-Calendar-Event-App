@@ -184,10 +184,14 @@
 
     <!-- Product Section -->
      <ItemPreview
-     @add-to-cart="updateCart"
- 
-     
+     v-for="item in items"
+     :key="item.id"
+     :item="item"
+     @add-to-cart="addToCart"
      ></ItemPreview>
+
+
+
     <div class="w-full">
       <div class="w-full max-w-[1214px] mx-auto px-4 sm:px-6 md:px-8 lg:px-0">
         <div class="flex flex-col lg:flex-row gap-8 lg:gap-0 justify-start items-center">
@@ -312,8 +316,48 @@
 </template>
 
 <script setup>
-import ItemPreview from 'C:\Users\Nathan\Documents\Rainbow-Roundup-Calendar-Event-App\components\itemPreview.vue'
+
+import ItemPreview from "/components/ItemPreview.vue";
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+/*
+const items = ref([
+  {
+    id: "test123",
+    name: "Cool Shirt",
+    price: 20.99,
+
+    ItemPhotos: [
+      { id: "1", url: "/img_firstshirt.png", itemId: "test123" },
+      { id: "2", url: "/img_1.1.png", itemId: "test123" },
+      { id: "3", url: "/img_1.2.png", itemId: "test123" }
+    ],
+
+    ItemVariants: [
+      {
+        id: "v1",
+        size: "XXS",
+        description: "Small but mighty",
+        availbility: true,
+        itemId: "test123",
+      },
+      {
+        id: "v2",
+        size: "XL",
+        description: "Large and proud",
+        availbility: false,
+        itemId: "test123",
+      },
+      {
+        id: "v3",
+        size: "XXL",
+        description: "Big confidence energy",
+        availbility: true,
+        itemId: "test123",
+      },
+    ],
+  }
+])
+*/
 
 // State
 const currentSlide = ref(0)
@@ -415,10 +459,9 @@ const handleShopByStyle = () => {
 
 
 
-const updateCart = (id) => {
-  cart.value.push(id)
-  console.log("Cart update:", cart.value)
-}
+const addToCart = (variantId) => {
+  cart.value.push(variantId);
+};
 
 
 const handleShopByFit = () => {
