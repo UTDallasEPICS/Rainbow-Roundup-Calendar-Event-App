@@ -51,7 +51,9 @@
     "vue3-google-map": "^0.21.1",
     "vuetify": "^3.7.0-beta.1",
     "workbox": "^0.0.0",
-    "workbox-precaching": "^7.3.0"
+    "workbox-core": "^7.3.0",
+    "workbox-precaching": "^7.3.0",
+    "workbox-routing": "^7.3.0"
   },
   "devDependencies": {
     "@types/date-fns": "^2.6.3",
