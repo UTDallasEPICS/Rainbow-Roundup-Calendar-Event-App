@@ -54,8 +54,10 @@ async function fetchGoogleCalendarEvents(): Promise<GoogleEvent[]> {
 async function fetchLocalDatabaseExtras(): Promise<LocalEventData[]> {
   try {
     const extras = await $fetch<LocalEventData[]>("/api/event");
+    console.log("extra section", extras)
     return extras ?? [];
-  } catch (error) {
+  } 
+  catch (error) {
     console.error("Error fetching local event extras:", error);
     return [];
   }

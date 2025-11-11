@@ -7,10 +7,14 @@
           <!-- Slides -->
           <div class="flex transition-transform duration-500 ease-in-out" ref="carousel">
             <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 flex items-center justify-center p-4">
-              <img src="/images/rrup_logo.png" alt="Rainbow Roundup Logo" class="max-h-52 md:max-h-80 object-contain">
+              <img src="/images/rrup_logo.png" 
+              alt="Rainbow Roundup Logo" 
+              class="max-h-52 md:max-h-80 object-contain">
             </div>
             <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 flex items-center justify-center p-4">
-              <img src="/images/icons/pwa_logo_mb_ss.png" alt="Sharing Header Graphic" class="max-h-52 md:max-h-80 object-contain">
+              <img src="/images/icons/pwa_logo_mb_ss.png" 
+              alt="Sharing Header Graphic" 
+              class="max-h-52 md:max-h-80 object-contain">
             </div>
           </div>
 
@@ -99,6 +103,7 @@
                   :key="i"
                   :event="event"
                 />
+                  
               </div>
               <div v-else class="text-gray-500">No events for this day.</div>
             </div>
@@ -296,8 +301,6 @@ const carousel = ref(null);
 // Computed
 const currentMonthName = computed(() => {
   return monthNames[currentMonth.value]});
-console.log(currentMonthName)
-
 const calendarDays = computed(() => {
   const year = currentYear.value;
   const month = currentMonth.value;

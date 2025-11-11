@@ -1,6 +1,8 @@
 <template>
-  <NuxtLink :to="`/eventsPage`">
-    <div class="w-full px-4 sm:px-6 lg:px-8 min-w-[250px]">
+    <ViewEvent @close-view-event-window="showEventWindow = false" 
+    v-if="showEventWindow" :eventId="event.id" />
+    <div class="w-full px-4 sm:px-6 lg:px-8 min-w-[250px]" @click= "showEventWindow=true" >
+      
       <div class="flex flex-wrap gap-4 justify-center py-4">
         <div
           class="w-full sm:w-64 md:w-60 lg:w-72 h-48 sm:h-52 relative bg-white rounded-[20px] shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] overflow-hidden p-4 flex flex-col justify-between"
@@ -91,7 +93,6 @@
         </div>
       </div>
     </div>
-  </NuxtLink>
 </template>
 
 <script setup lang="ts">
@@ -102,6 +103,7 @@ import type { Event, SignUp, User } from "@prisma/client";
 type EventWithRelations = Event & {
   SignUps?: (SignUp & { User?: User | null })[];
 };
+const showEventWindow = ref(false);
 
 const props = defineProps<{
   event: EventWithRelations;
