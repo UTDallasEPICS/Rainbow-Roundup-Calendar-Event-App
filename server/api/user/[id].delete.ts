@@ -38,14 +38,17 @@ export default defineEventHandler(async (event) => {
       };
     }
     //cascade deletes
-    await prisma.announcement.deleteMany({ where: { userId: id } });
     await prisma.signUp.deleteMany({ where: { userId: id } });
-    await prisma.event.deleteMany({ where: { userId: id } });
-    await prisma.report.deleteMany({ where: { reporterUserId: id } });
-    await prisma.report.deleteMany({ where: { reportedUserId: id } });
+    //await prisma.event.deleteMany({ where: { userId: id } });
+    //await prisma.report.deleteMany({ where: { reporterUserId: id } });
+    //await prisma.report.deleteMany({ where: { reportedUserId: id } });
+    
     // Attempt to delete the user from the database
-    await prisma.user.delete({
+    await prisma.user.update({
       where: { id: String(id) },
+      data: {
+        isBanned: true,
+      }
     });
     setResponseStatus(event, 200);
     return {

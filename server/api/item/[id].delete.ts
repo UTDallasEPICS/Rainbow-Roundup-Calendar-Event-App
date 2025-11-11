@@ -46,52 +46,59 @@ export default defineEventHandler(async (event) => {
             };
         }
 
-        // delete photos from s3 bucket
-        const itemPhotos : any = prisma.itemPhoto.findMany({
-            where: {itemId: id},
-            select: {url: true,},
-        });
-        if (itemPhotos.length === 0) {
-            setResponseStatus(event, 500);
-            return {
-                success: false,
-                error: "Failed to query itemPhotos",
-            };
-        }
-        for (const itemPhoto of itemPhotos) {
-            const search = itemPhoto.url.match(/itemPhotos\/\d+-[^\/?]+/);     // extract key from url
-            if (!search) {
-                setResponseStatus(event, 500);
-                return {
-                    success: false,
-                    error: `Object key was not able to be extracted from s3 url if itemPhoto: ${itemPhoto.id}`,
-                }
-            }
-            const key = search[0];
-            s3.send(
-                new DeleteObjectCommand({
-                    Bucket: config.NUXT_AWS_S3_BUCKET_NAME,
-                    Key: key,
-                }),
-            );
-        }
-
-        await prisma.itemVariant.deleteMany({
-            where: { itemId: id },
-        });
-
-        await prisma.itemPhoto.deleteMany({
-            where: { itemId: id },
-        });
-
-        await prisma.abstractItem.delete({
+        // set abstract item to archived
+        await prisma.abstractItem.update({
             where: { id },
-        });
+            data: { isArchived: true }
+            
+        })
+
+        // // delete photos from s3 bucket
+        // const itemPhotos : any = prisma.itemPhoto.findMany({
+        //     where: {itemId: id},
+        //     select: {url: true,},
+        // });
+        // if (itemPhotos.length === 0) {
+        //     setResponseStatus(event, 500);
+        //     return {
+        //         success: false,
+        //         error: "Failed to query itemPhotos",
+        //     };
+        // }
+        // for (const itemPhoto of itemPhotos) {
+        //     const search = itemPhoto.url.match(/itemPhotos\/\d+-[^\/?]+/);     // extract key from url
+        //     if (!search) {
+        //         setResponseStatus(event, 500);
+        //         return {
+        //             success: false,
+        //             error: `Object key was not able to be extracted from s3 url if itemPhoto: ${itemPhoto.id}`,
+        //         }
+        //     }
+        //     const key = search[0];
+        //     s3.send(
+        //         new DeleteObjectCommand({
+        //             Bucket: config.NUXT_AWS_S3_BUCKET_NAME,
+        //             Key: key,
+        //         }),
+        //     );
+        // }
+
+        // await prisma.itemVariant.deleteMany({
+        //     where: { itemId: id },
+        // });
+
+        // await prisma.itemPhoto.deleteMany({
+        //     where: { itemId: id },
+        // });
+
+        // await prisma.abstractItem.delete({
+        //     where: { id },
+        // });
 
         setResponseStatus(event, 200);
         return {
             success: true,
-            message: "Item and its related itemVariants and itemPhotos deleted successfully",
+            message: "Item marked as hidden",
         };
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";

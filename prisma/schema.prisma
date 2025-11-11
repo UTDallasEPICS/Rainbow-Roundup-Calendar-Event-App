@@ -90,7 +90,7 @@ model ItemVariant {
   size              Size
   itemId            String      
   item              AbstractItem        @relation(fields: [itemId], references: [id])
-  availbility       Boolean    @default(false) //For admin to enable
+  availability       Boolean    @default(false) //For admin to enable
 
   OrderItems OrderItem[]
 }

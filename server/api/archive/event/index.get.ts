@@ -1,14 +1,26 @@
-// gets **UNARCHIVED** events
+// gets **ARCHIVED** events
 
 import { PrismaClient } from "@prisma/client";
+import { getServerSession } from "#auth";
+import type { User } from "@prisma/client"
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
 
   try {
+    const session = await getServerSession(event);
+    const user = session?.user as User | undefined;
+    
+    if (!user || !["SUPER", "ADMIN"].includes(user.role)) {
+        throw createError({
+        statusCode: 403,
+        statusMessage: "Unauthenticated",
+        });
+    }
+
     const events = await prisma.event.findMany({
       where: {
-        isArchived: false
+        isArchived: true
       },
       include: {
         User: true, // Event creator

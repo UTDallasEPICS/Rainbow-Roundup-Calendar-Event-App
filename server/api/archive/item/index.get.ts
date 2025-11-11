@@ -1,15 +1,24 @@
 import { defineEventHandler, setResponseStatus, createError } from "h3";
-import type { User } from "../../../types/session";
+import type { User } from "@prisma/client";
 import { getServerSession } from "#auth";
-import { asCleanDays } from "@fullcalendar/core/internal";
 
 export default defineEventHandler(async (event) => {
     const prisma = event.context.prisma;
     
     try {
+        const session = await getServerSession(event);
+        const user = session?.user as User | undefined;
+        
+        if (!user || !["SUPER", "ADMIN"].includes(user.role)) {
+            throw createError({
+            statusCode: 403,
+            statusMessage: "Unauthenticated",
+            });
+        }
+        
         const items = await prisma.abstractItem.findMany({
             where: {
-                isArchived: false
+                isArchived: true
             },
             include: {
                 ItemVariants: true,
