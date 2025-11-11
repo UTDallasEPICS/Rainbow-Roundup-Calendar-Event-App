@@ -192,6 +192,7 @@ try {
       );
       
       return {
+        id: event.id,
         date: localDate,
         startTime: localDate,
         time: localDate.toLocaleTimeString('en-US', { 
