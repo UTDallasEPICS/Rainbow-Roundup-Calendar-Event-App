@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { nanoid } from 'nanoid';
-import { sendVerificationEmail } from '../../utils/sendVerificationEmail';
-import { authClient } from '~/server/auth';
+import { auth, authClient } from '~/server/auth';
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
@@ -26,15 +25,14 @@ export default defineEventHandler(async (event) => {
       setResponseStatus(event, 400);
       return { success: false, error: "An account with that phone number already exists" };
     }
-    await prisma.pendingUser.create({
+    await prisma.user.create({
       data: {
         email: body.email,
         firstname: body.firstname,
         lastname: body.lastname,
         phoneNum: body.phoneNum || null,
         profilePic: body.profilePic || "/default-profile.png",
-        token,
-        expires,
+        GlobalNotif: false,
       },
     });
 

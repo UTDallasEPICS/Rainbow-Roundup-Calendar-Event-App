@@ -16,7 +16,7 @@ model User {
   phoneNum      String?   @unique // client requested phone numbers are unique
   profilePic    String    @default("/default-profile.png") @map("image") // better wants an image field
   GlobalNotif   Boolean // Global notifications (annoncements)
-  emailVerified DateTime?
+  emailVerified Boolean   @default(false)
 
   SignUps           SignUp[]
   CreatedEvents     Event[]

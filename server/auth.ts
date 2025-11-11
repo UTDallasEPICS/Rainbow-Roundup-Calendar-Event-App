@@ -10,6 +10,7 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "sqlite",
     }),
+    basePath: "/api/auth",
     pages: {
         signIn: "/login", // Custom sign-in page URL
         newUser: "/signup", // Custom sign-up page URL
@@ -60,5 +61,7 @@ export const authClient = createAuthClient({
     //you can pass client configuration here
     plugins: [
         emailOTPClient()
-    ]
+    ],
+    basePath: "/api/auth",
+    baseURL: process.env.URL,
 })
