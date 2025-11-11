@@ -106,9 +106,23 @@ async function deleteReport() {
 }
 
 async function banUser() {
-    console.log("TO DO: implement bans")
-    emit('userBanned', props.report.ReportedUser.id)
-    emit("closeWindow");
+    try {
+    await $fetch(`/api/user/${props.report.ReportedUser.id}`, {
+        method: "PUT",
+        body: {
+          isBanned: true
+        },
+      });
+
+      emit('userBanned', props.report.ReportedUser.id)
+    deleteReport()
+
+    
+  } catch (e) {
+    console.error('Failed to ban account:', e)
+  }
+
+    
 }
 
 </script>

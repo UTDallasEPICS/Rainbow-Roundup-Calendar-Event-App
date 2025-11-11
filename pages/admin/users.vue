@@ -29,7 +29,7 @@
       </span>
       
       <div v-if="!isLoading" class="space-y-4">
-        <ReportsTable :reports="reports"/>
+        <ReportsTable :reports="reports" @user-banned="(id) => banUser(id)"/>
         <UsersTable :users="users" :title="'Users'" />
         <UsersTable :users="bannedUsers" :title="'Banned Users'" />
         <UsersTable :users="archivedUsers" :title="'Archived Users'" />
@@ -95,5 +95,15 @@ onMounted(async () => {
   isLoading.value = false;
 });
 
-
+// move an unbanned user to the banned user table
+function banUser(banId) {
+  for (let i = 0; i < users.value.length; i++)
+  {
+    if (users.value[i].id == banId)
+    {
+      bannedUsers.value.push(users.value.splice(i, 1))
+      break;
+    }
+  }
+}
 </script>
