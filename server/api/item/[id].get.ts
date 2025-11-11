@@ -1,4 +1,6 @@
 import { defineEventHandler, setResponseStatus, getRouterParam, createError } from "h3";
+import { getServerSession } from "#auth";
+import type { User } from "../../../types/session";
 
 export default defineEventHandler(async (event) => {
     const id = getRouterParam(event, 'id');
@@ -29,6 +31,20 @@ export default defineEventHandler(async (event) => {
                 success: false,
                 error: "Order not found",
             };
+        }
+
+        // only admin/super can access archives
+        if (item.isArchived)
+        {
+            const session = await getServerSession(event);
+            const user = session?.user as User | undefined;
+
+            if (!user || (!["SUPER", "ADMIN"].includes(user.role) && user.id !== id)) {
+            throw createError({
+                statusCode: 403,
+                statusMessage: "Unauthenticated",
+            });
+            }
         }
 
         setResponseStatus(event, 200);

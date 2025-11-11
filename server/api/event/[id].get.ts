@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
+import { getServerSession } from "#auth";
+import type { User } from "../../../types/session";
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
@@ -22,6 +24,21 @@ export default defineEventHandler(async (event) => {
           error: `No event found with ID: ${id}`,
         };
       }
+
+      // only admin/super can access archives
+      if (singleEvent.isArchived)
+      {
+        const session = await getServerSession(event);
+        const user = session?.user as User | undefined;
+
+        if (!user || (!["SUPER", "ADMIN"].includes(user.role) && user.id !== id)) {
+          throw createError({
+            statusCode: 403,
+            statusMessage: "Unauthenticated",
+          });
+        }
+      }
+
       setResponseStatus(event, 200);
       return {
         success: true,
