@@ -18,6 +18,7 @@ model User {
   GlobalNotif   Boolean // Global notifications (annoncements)
   emailVerified DateTime?
 
+  isArchived Boolean    @default(false)
   isBanned    Boolean   @default(false)
 
   SignUps           SignUp[]
