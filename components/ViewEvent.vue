@@ -147,9 +147,9 @@
         </div>
 
         <!-- Map -->
-        <!-- <div v-if="!isLoading && isEditing">
-            <Map @update:location="updateLocation" />
-        </div> -->
+        <div v-if="!isLoading">
+             <Map :address="editedEvent.location" />
+        </div>
 
         <div v-if="!isLoading && !isEditing">
             <!-- Divider -->
