@@ -1,5 +1,5 @@
 <template>
-    <ReportWindow v-if="isModalOpen" @close-window="closeModal()" @report-deleted="(id) => deleteReport(id)" :report="selectedReport" />
+    <ReportWindow v-if="isModalOpen" @close-window="closeModal()" @report-deleted="(id) => deleteReport(id)" @user-banned="(id) => banUser(id)" :report="selectedReport" />
     <div class="grid grid-cols-2 items-center">
         <h1 class="text-2xl font-bold text-zinc-700 col-span-1">Reports</h1>
 
@@ -87,6 +87,7 @@
 import { ref, computed } from "vue";
 
 const props = defineProps(['reports'])
+const emit = defineEmits(["userBanned"]);
 const searchTerm = ref("");
 const sortAsc = ref(true);
 const isModalOpen = ref(false);
@@ -140,5 +141,9 @@ function deleteReport(deleteId) {
       break;
     }
   }
+}
+
+function banUser(banId) {
+  emit('userBanned', banId)
 }
 </script>

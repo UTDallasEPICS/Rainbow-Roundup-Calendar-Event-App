@@ -53,7 +53,7 @@ export default defineEventHandler(async (event) => {
             include: {
                 OrderItems: {
                     include: {
-                        FinishedItems: {
+                        ItemVariants: {
                             include: { item: true },
                         },
                     },

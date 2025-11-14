@@ -24,13 +24,15 @@ export default defineEventHandler(async (event) => {
         error: 'No report with matching id'
       }
     }
-    //cascade deletes
-    await prisma.report.deleteMany({ where: { reporterUserId: id } });
-    await prisma.report.deleteMany({ where: { reportedUserId: id } });
-    // Attempt to delete the report from the database
-    await prisma.report.delete({
-      where: { id: String(id) },
-    });
+
+    // mark reports as archived
+    await prisma.report.update({
+      where: { id },
+      data: { isArchived: true }
+    })
+
+    console.log("UPDATED")
+
     setResponseStatus(event, 200)
     return {
       success: true,
