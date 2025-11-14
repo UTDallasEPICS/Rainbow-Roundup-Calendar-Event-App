@@ -126,15 +126,11 @@ async function onSubmit() {
     })
 
     if (error) {
-      // The SDK may return an error object; adapt this part to your SDK's shape
       throw new Error(error.message ?? 'Verification failed')
     }
 
     // If the call succeeded, show a success toast / message
     successMessage.value = '✅ Your email has been verified!'
-    // Optionally redirect the user or clear the form
-    // form.email = ''
-    // form.otp = ''
   } catch (err: any) {
     console.error(err)
     errorMessage.value = err.message || 'An unexpected error occurred.'

@@ -170,7 +170,9 @@ import { ref, onMounted } from "vue";
 
 // Use the built-in auth composable instead of custom useUser
 import { authClient } from "~/server/auth"
-const { data: session } = await authClient.useSession();
+const { data: session, signOut } = await authClient.getSession();
+
+console.log(session);
 //const { data: sesgsion, signOut } = useAuth();
 
 // PLEASE REMEMBER TO ACTUALLY IMPLEMENT SESSION, AND SIGNOUT PROPERLY
@@ -285,8 +287,9 @@ const requestNotificationPermission = () => {
 };
 
 const logout = async () => {
-  //await signOut({ callbackUrl: "/" });
-  console.log("Implement logout")
+  await authClient.signOut();
+  navigateTo('/');
+  //console.log("Implement logout")
 };
 
 const navigate = (section) => {

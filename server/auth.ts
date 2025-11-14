@@ -15,6 +15,29 @@ export const auth = betterAuth({
         signIn: "/login", // Custom sign-in page URL
         newUser: "/signup", // Custom sign-up page URL
     },
+    user: {
+        additionalFields: {
+            phone: {
+                type: 'string',
+                required: false,
+            },
+            firstname: {
+                type: 'string',
+                required: false,
+
+            },
+            lastname: {
+                type: 'string',
+                required: false,
+
+            },
+            role: {
+                type: 'string',
+                required: true,
+
+            },
+        }
+    },
     callbacks: {
         async signIn({ user, account, email }) { // todo: understand if account and email need ot be cut
             // If no email is provided, sign-in should fail
@@ -44,12 +67,11 @@ export const auth = betterAuth({
         emailOTP({
             async sendVerificationOTP({ email, otp, type }) {
                 if (type === "sign-in") {
-                    console.log("Implement this later");
+                    await sendVerificationEmail(email, otp, true);
                 } else if (type === "email-verification") {
                     // Send the OTP for email verification
-                    console.log("Implement this later");
                     const token = otp;
-                    await sendVerificationEmail(email, otp);
+                    await sendVerificationEmail(email, otp, false);
                 } else {
                     // Send the OTP for password reset
                 }
