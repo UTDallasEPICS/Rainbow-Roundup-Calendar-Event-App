@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-definePageMeta({
-  auth: { unauthenticatedOnly: true, navigateAuthenticatedTo: "/" },
-});
+
 
 import { authClient } from "~/server/auth"
-const responseMessage = ref('')
+const { data: session } = await authClient.getSession();
+if(session){
+  navigateTo("/");
+}
+const responseMessage = ref('');
 const email = ref("");
 const otp = ref("");
 const formMode = ref("email");
@@ -32,7 +34,7 @@ const submitOTP = async () => {
   else{
     responseMessage.value = "Successfully logged in!";
     redirectPath.value = "/";
-    
+    window.location.reload();
   }
   formMode.value = "done";
 };

@@ -167,12 +167,15 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-
 // Use the built-in auth composable instead of custom useUser
-import { authClient } from "~/server/auth"
-const { data: session, signOut } = await authClient.getSession();
+import { auth, authClient } from "~/server/auth"
+const session = ref(null)
+onMounted(async () => {
+  const { data } = await authClient.getSession()
+  session.value = data
+})
 
-console.log(session);
+
 //const { data: sesgsion, signOut } = useAuth();
 
 // PLEASE REMEMBER TO ACTUALLY IMPLEMENT SESSION, AND SIGNOUT PROPERLY
@@ -288,10 +291,9 @@ const requestNotificationPermission = () => {
 
 const logout = async () => {
   await authClient.signOut();
-  navigateTo('/');
+  window.location.reload(true);
   //console.log("Implement logout")
 };
-
 const navigate = (section) => {
   // close mobile menu when navigating
   mobileMenuOpen.value = false;
