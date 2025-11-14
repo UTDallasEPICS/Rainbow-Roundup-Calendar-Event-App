@@ -56,6 +56,8 @@ export default defineEventHandler(async (event) => {
       updateData.emailNotif = body.emailNotif
       if(body.nativeNotif != null) // This is a boolean, so a plain if statement won't work
       updateData.nativeNotif = body.nativeNotif
+    if (body.role) updateData.role = body.role;
+    if (body.isBanned != null) {updateData.isBanned = body.isBanned}
     // Perform the update
     const updatedUser = await prisma.user.update({
       where: { id },
