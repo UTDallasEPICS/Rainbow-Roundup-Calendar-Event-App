@@ -25,7 +25,8 @@ export default NuxtAuthHandler({
           pass: config.smtpPass, // SMTP password
         },
       },
-      from: "noreply@example.com", // Default sender email address for verification emails
+      
+      from: config.smtpFrom, // Default sender email address for verification emails
       sendVerificationRequest({
         identifier: email,
         url,
