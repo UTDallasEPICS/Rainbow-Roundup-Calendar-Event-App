@@ -44,13 +44,16 @@ export default defineEventHandler(async (event) => {
 
 
     // TODO: Set up deletion in the Google Events Calendar as well as deleting from the Prisma Database
-    await prisma.event.delete({
+    await prisma.event.update({
       where: { id },
+      data: {
+        isArchived: true
+      }
     });
     setResponseStatus(event, 200);
     return {
       success: true,
-      message: "Event deleted successfully",
+      message: "Event archived successfully",
       event: existingEvent,
     };
   } catch (error) {

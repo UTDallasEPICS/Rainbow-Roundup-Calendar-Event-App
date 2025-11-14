@@ -1,6 +1,7 @@
 import { defineEventHandler, setResponseStatus, createError, readBody } from "h3";
 import type { User } from "../../../types/session";
 import { authClient } from "~/server/auth"
+import { Size } from "@prisma/client";
 
 export default defineEventHandler(async (event) => {
     const prisma = event.context.prisma;
@@ -17,24 +18,26 @@ export default defineEventHandler(async (event) => {
     try {
         const body = await readBody(event);
 
-        if (!body.name || !body.itemVariants) {
+        if (!body.name || !body.price) {
             setResponseStatus(event, 400);
             return {
                 success: false,
-                error: "Request must include name and itemVariants fields",
+                error: "Request must include name and price fields",
             };
         }
-        if (!Array.isArray(body.itemVariants)) {
-            setResponseStatus(event, 400);
-            return {
-                success: false,
-                error: "itemVariants field must be an array",
-            };
-        }
+        // if (!Array.isArray(body.itemVariants)) {
+        //     setResponseStatus(event, 400);
+        //     return {
+        //         success: false,
+        //         error: "itemVariants field must be an array",
+        //     };
+        // }
 
         const item = await prisma.abstractItem.create({
             data: {
                 name: body.name,
+                price: body.price,
+                description: body.description,
             },
         });
 
@@ -46,37 +49,52 @@ export default defineEventHandler(async (event) => {
             };
         }
 
-        await Promise.all(
-            body.itemVariants.map(async (itemVariant: Record<string, any>) => {
-                const size = itemVariant.size;
-                const price = parseFloat(itemVariant.price);
-                if (!size || !price) {
-                    throw createError({
-                        statusCode: 400,
-                        statusMessage: "Request must include an array of itemVariants with size and price fields",
-                    });
-                }
-                if (!["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL"].includes(size)) {
-                    throw createError({
-                        statusCode: 400,
-                        statusMessage: "Invalid size, valid sizes: XXS, XS, S, M, L, XL, XXL, XXXL",
-                    });
-                }
-                const finItem = await prisma.itemVariant.create({
-                    data: {
-                        size,
-                        price,
-                        itemId: item.id,
+        // await Promise.all(
+        //     body.itemVariants.map(async (itemVariant: Record<string, any>) => {
+        //         const size = itemVariant.size;
+        //         const price = parseFloat(itemVariant.price);
+        //         if (!size || !price) {
+        //             throw createError({
+        //                 statusCode: 400,
+        //                 statusMessage: "Request must include an array of itemVariants with size and price fields",
+        //             });
+        //         }
+        //         if (!["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL"].includes(size)) {
+        //             throw createError({
+        //                 statusCode: 400,
+        //                 statusMessage: "Invalid size, valid sizes: XXS, XS, S, M, L, XL, XXL, XXXL",
+        //             });
+        //         }
+        //         const finItem = await prisma.itemVariant.create({
+        //             data: {
+        //                 size,
+        //                 itemId: item.id,
+        //             },
+        //         });
+        //         if (!finItem) {
+        //             throw createError({
+        //                 statusCode: 500,
+        //                 statusMessage: "Finished Item creation failed",
+        //             });
+        //         }
+        //     })
+        // );
+
+        // creating variants XXS, XS, S, M, L, XL, XXL, XXXL
+        const sizes: Size[] = [Size.XXS, Size.XS, Size.S, Size.M, Size.L, Size.XL, Size.XXL, Size.XXXL]
+     
+        for (let i = 0; i < sizes.length; i++)
+        {
+            await prisma.itemVariant.create({
+                data: {
+                    item: {
+                        connect: { id: item.id }
                     },
-                });
-                if (!finItem) {
-                    throw createError({
-                        statusCode: 500,
-                        statusMessage: "Finished Item creation failed",
-                    });
+                    size: sizes[i],
+                    availability: false,
                 }
             })
-        );
+        }
 
         const updatedItem = await prisma.abstractItem.findUnique({
             where: { id: item.id },

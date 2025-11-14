@@ -83,7 +83,7 @@
                 {{ user.phoneNum }}
             </td>
             <td
-                class="px-4 py-3 text-sm"
+                class="px-4 py-3 text-sm text-gray-800 border"
                 :class="
                 user.role === 'Admin'
                     ? 'text-red-500 font-bold'

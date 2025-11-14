@@ -155,6 +155,7 @@
                   d="M9.143 17.082a24.248 24.248 0 0 0 3.844.148m-3.844-.148a23.856 23.856 0 0 1-5.455-1.31 8.964 8.964 0 0 0 2.3-5.542m3.155 6.852a3 3 0 0 0 5.667 1.97m1.965-2.277L21 21m-4.225-4.225a23.81 23.81 0 0 0 3.536-1.003A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6.53 6.53m10.245 10.245L6.53 6.53M3 3l3.53 3.53" />
               </svg>
             </span>
+            <span>{{ notificationError }}</span>
           </button>
         </nav>
       </div>
@@ -183,7 +184,9 @@ const dropdownOpen = ref(false);
 const mobileMenuOpen = ref(false);
 const isSubscribed = ref(false);
 const deferredPrompt = ref(null);
-
+const runtimeConfig = useRuntimeConfig();
+const notificationError = ref("");
+const { $pwa } = useNuxtApp();
 // Toggles resized mobile menu view
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value;
@@ -261,29 +264,55 @@ const updateSubscriptionStatus = () => {
   isSubscribed.value = Notification.permission === "granted";
 };
 
+notificationError.value = computed(() => {
+  if (!($pwa?.getSWRegistration())) {
+    notificationError.value = "Not supported in your browser";
+  }
+  else {
+    try {
+      const user = session.value.user;
+    }
+    catch {
+      notificationError.value = "Please login to register notifications"; // 
+    }
+  }
+})
 const requestNotificationPermission = () => {
   if ("serviceWorker" in navigator && "Notification" in window) {
     Notification.requestPermission()
-      .then((permission) => {
+      .then(async (permission) => {
         console.log("Permission:", permission);
-        if (permission === "granted") {
+        console.log("Does service worker exist: ", 'serviceWorker' in navigator);
+        if (permission === "granted" && 'serviceWorker' in navigator) {
           isSubscribed.value = true;
-          navigator.serviceWorker.ready.then((registration) => {
-            if (registration.active) {
-              registration.active.postMessage({
-                action: "showMessage",
-                message: "Notifications enabled!",
-              });
-            }
+          console.log("Both service worker and permission are good!");
+          const applicationServerKey = runtimeConfig.public.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY;
+          navigator.serviceWorker.ready.then(async (serviceWorkerRegistration) => {
+            const options = {
+              userVisibleOnly: true,
+              applicationServerKey,
+            };
+            //console.log(serviceWorkerRegistration.getNotifications);
+            serviceWorkerRegistration.pushManager.subscribe(options).then(
+              async (pushSubscription) => {
+                //console.log("Endpoint: ", pushSubscription.endpoint);
+                const result = await $fetch("/api/notification/subscribe", {
+                  method: "POST",
+                  body: pushSubscription,
+                });
+              },
+              (error) => {
+                console.error(error);
+              },
+            );
           });
+
         } else {
           isSubscribed.value = false;
+          console.log("Could not subscribe to notifications, either permission was not granted or your browser doesn't support service workers");
         }
-        updateSubscriptionStatus();
+        isSubscribed.value = Notification.permission === "granted";
       })
-      .catch((err) => {
-        console.error("Notification permission error:", err);
-      });
   } else {
     console.warn("Notification API or Service Worker not supported.");
   }
