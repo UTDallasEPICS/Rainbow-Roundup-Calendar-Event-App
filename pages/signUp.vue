@@ -86,6 +86,8 @@
 </template>
 
 <script setup lang="ts">
+import type { RefSymbol } from '@vue/reactivity';
+
 const router = useRouter();
 
 function removeImage() {
@@ -181,6 +183,10 @@ const submitSignupForm = async () => {
       successMessage.value = 'Signup failed, check that you do not already have an account';
       console.error("Error submitting signup form");
       errors.value = { error: "Signup failed." };
+      if(error.value?.statusCode === 400){
+        router.push("login"); // The current api only gives 400's if the user already exists. 
+        // if not already, their email will be autoverified on login, so might as well send them there
+      }
 
     }
   } catch (err) {

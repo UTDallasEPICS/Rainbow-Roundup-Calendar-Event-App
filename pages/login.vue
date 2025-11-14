@@ -22,7 +22,8 @@ const submitEmail = async () => {
   formMode.value = "otp";
 };
 const submitOTP = async () => {
-  if (!email.value) return;
+  // Note: if the user has not verified their email, but successfully logs in, it autoverifies the email since you just used it to login
+  if (!email.value) return; 
   const { data, error } = await authClient.signIn.emailOtp({
     email: email.value, // required
     otp: otp.value, // required
