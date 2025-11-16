@@ -184,7 +184,8 @@ const submitSignupForm = async () => {
       console.error("Error submitting signup form");
       errors.value = { error: "Signup failed." };
       if(error.value?.statusCode === 400){
-        router.push("login"); // The current api only gives 400's if the user already exists. 
+        navigateTo("/login");
+        console.log("redirecting to login...");
         // if not already, their email will be autoverified on login, so might as well send them there
       }
 

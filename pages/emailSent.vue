@@ -164,6 +164,7 @@ async function onSubmit() {
     }
 
     successMessage.value = '✅ Your email has been verified!'
+    navigateTo("/login");
     // Optional: redirect or update global auth state
   } catch (err: any) {
     console.error(err)
