@@ -36,6 +36,26 @@ export const auth = betterAuth({
                 required: true,
 
             },
+            profilePic: {
+                type: 'string',
+                required: true,
+            },
+            nativeNotif: {
+                type: 'boolean',
+                required: true,
+            },
+            isArchived: {
+                type: 'boolean',
+                required: true,
+            },
+            isBanned: {
+                type: 'boolean',
+                required: true,
+            },
+            emailNotif: {
+                type: 'boolean',
+                required: true,
+            },
         }
     },
     callbacks: {
@@ -88,29 +108,6 @@ export const authClient = createAuthClient({
     plugins: [
         emailOTPClient()
     ],
-    user: {
-        additionalFields: {
-            phone: {
-                type: 'string',
-                required: false,
-            },
-            firstname: {
-                type: 'string',
-                required: false,
-
-            },
-            lastname: {
-                type: 'string',
-                required: false,
-
-            },
-            role: {
-                type: 'string',
-                required: true,
-
-            },
-        }
-    },
     basePath: "/api/auth",
     baseURL: process.env.URL,
 });
