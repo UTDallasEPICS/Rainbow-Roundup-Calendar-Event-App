@@ -4,7 +4,6 @@ import { emailOTP } from "better-auth/plugins"
 import { PrismaClient } from '@prisma/client';
 import { createAuthClient } from "better-auth/vue"
 import { emailOTPClient } from "better-auth/client/plugins"
-import { useRequestHeaders } from "nuxt/app";
 
 const prisma = new PrismaClient();
 export const auth = betterAuth({

@@ -102,10 +102,10 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 
 const router = useRouter();
-//const { data: session, status } = useAuth(); // extract data from useAuth and rename to session
 import { authClient } from "~/server/auth"
 const { data: session, status } = await authClient.getSession();
-const userData = session.value.user;
+const userData = session.user;
+console.log(session.value);
 //const isAuthenticated = computed(() => status.value === "authenticated");
 const showModal = ref(false);
 const eventForm = ref({

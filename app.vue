@@ -169,7 +169,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 // Use the built-in auth composable instead of custom useUser
-import { auth, authClient } from "~/server/auth"
+import { authClient } from "~/server/auth"
 const session = ref(null)
 onMounted(async () => {
   const { data } = await authClient.getSession()
@@ -177,9 +177,6 @@ onMounted(async () => {
 })
 
 
-//const { data: sesgsion, signOut } = useAuth();
-
-// PLEASE REMEMBER TO ACTUALLY IMPLEMENT SESSION, AND SIGNOUT PROPERLY
 const dropdownOpen = ref(false);
 const mobileMenuOpen = ref(false);
 const isSubscribed = ref(false);

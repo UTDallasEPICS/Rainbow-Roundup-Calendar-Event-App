@@ -144,8 +144,8 @@ const route = useRoute()
 const router = useRouter()
 
 // Get user session using Nuxt Auth composable
-const { status, data: session } = useAuth()
-
+import { authClient } from "~/server/auth"
+const { data: session } = await authClient.getSession();
 // Reactive user data and loading state
 const userData = ref(null)
 const loading = ref(false)

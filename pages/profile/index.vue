@@ -183,11 +183,8 @@
   </div>
 </template>
 
-<script setup>
+<script  setup>
 import { ref, computed } from "vue";
-definePageMeta({
-   middleware: "sidebase-auth",
- });
 const editMode = ref(false);
 
 const inputClass = computed(() =>
@@ -198,9 +195,13 @@ const inputClass = computed(() =>
 
 const route = useRoute();
 const id = route.params.id;
-
-const { status, data: session, signOut } = useAuth(); // We are deconstructing data from useAuth and renaming it to session.
-const userID = session.value.user.id;
+import { authClient } from "~/server/auth";
+const { data: session } = await authClient.getSession();
+console.log(session?.user);
+if(!session){
+  //navigateTo("/login");
+}
+const userID = session.user.id;
 
 const { data, refresh } = await useFetch(`/api/user/${userID}`);
 const userData = ref(data.value.user);

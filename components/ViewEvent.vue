@@ -317,8 +317,8 @@ const isResponding = ref(false);
 const rsvpResponse = ref(null);
 
 // Auth & routing
-const { data: user } = useAuth();
 
+const user = session.user;
 const route = useRoute();
 const router = useRouter();
 const eventId = props.eventId;
