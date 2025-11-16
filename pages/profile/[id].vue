@@ -143,7 +143,7 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 
-// Get user session using Nuxt Auth composable
+// Get user session using better Auth composable
 import { authClient } from "~/server/auth"
 const { data: session } = await authClient.getSession();
 // Reactive user data and loading state
@@ -170,7 +170,7 @@ const fetchUser = async () => {
 // Watch session and route param; fetch user only when both ready
 // Check for proof of session and if user ID is known
 watchEffect(async () => {
-  if (session.value && route.params.id) {
+  if (session && route.params.id) {
     console.log('Fetching user for id:', route.params.id, 'with session user:', session.value?.user)
     await fetchUser()
     console.log('Fetched userData:', userData.value)
