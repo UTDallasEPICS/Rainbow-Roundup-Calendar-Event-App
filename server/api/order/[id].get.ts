@@ -1,9 +1,11 @@
 import { defineEventHandler, setResponseStatus, getRouterParam, createError } from "h3";
 import type { User } from "../../../types/session";
-import { authClient } from "~/server/auth"
+import { auth } from "~/server/auth"
 export default defineEventHandler(async (event) => {
     const userId = getRouterParam(event, "id"); 
-    const { data: session } = await authClient.getSession();
+    const session = await auth.api.getSession({
+      headers:  event.headers
+    })
     const user = session?.user as User | undefined;
     const prisma = event.context.prisma;
 

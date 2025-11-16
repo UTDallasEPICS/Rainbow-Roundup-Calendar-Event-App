@@ -1,8 +1,8 @@
 // file: ~/server/api/auth/[...].ts
-import { NuxtAuthHandler } from "#auth";
+//import { NuxtAuthHandler } from "#auth";
 import Auth0Provider from "next-auth/providers/auth0";
 import EmailProvider from "next-auth/providers/email";
-import { PrismaAdapter } from "@auth/prisma-adapter";
+//import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import { prisma } from '../../utils/prisma';
 import { createTransport } from "nodemailer";

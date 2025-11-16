@@ -1,6 +1,6 @@
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
 //import { getServerSession } from "#auth";
-import { authClient } from "~/server/auth"
+import { auth } from "~/server/auth"
 import { createTransport } from "nodemailer";
 import { createNewEventEmail } from "../../utils/createNewEventEmail.ts";
 import { resolve } from "path";
@@ -11,7 +11,9 @@ const config = useRuntimeConfig();  // Access config for smtp
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const prisma = event.context.prisma;
-  const { data: session } = await authClient.getSession();
+  const session = await auth.api.getSession({
+      headers:  event.headers
+  })
   const user = session?.user as User | undefined;
 
   if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {

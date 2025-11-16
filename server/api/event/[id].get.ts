@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
-import { getServerSession } from "#auth";
+//import { getServerSession } from "#auth";
+import { auth } from "~/server/auth"
 import type { User } from "../../../types/session";
 
 export default defineEventHandler(async (event) => {
@@ -26,7 +27,10 @@ export default defineEventHandler(async (event) => {
       // only admin/super can access archives
       if (singleEvent.isArchived)
       {
-        const session = await getServerSession(event);
+        //const session = await getServerSession(event);
+        const session = await auth.api.getSession({
+              headers:  event.headers
+        })
         const user = session?.user as User | undefined;
 
         if (!user || (!["SUPER", "ADMIN"].includes(user.role) && user.id !== id)) {

@@ -4,6 +4,7 @@ import { emailOTP } from "better-auth/plugins"
 import { PrismaClient } from '@prisma/client';
 import { createAuthClient } from "better-auth/vue"
 import { emailOTPClient } from "better-auth/client/plugins"
+import { useRequestHeaders } from "nuxt/app";
 
 const prisma = new PrismaClient();
 export const auth = betterAuth({
@@ -70,10 +71,14 @@ export const auth = betterAuth({
                     await sendVerificationEmail(email, otp, true);
                 } else if (type === "email-verification") {
                     // Send the OTP for email verification
-                    const token = otp;
-                    await sendVerificationEmail(email, otp, false);
+                    const userExists = await prisma.user.findUnique({ // we don't want people to send emails for users that dont exist
+                        where: { email: email },
+                    });
+                    if (userExists){
+                        await sendVerificationEmail(email, otp, false);
+                    }
                 } else {
-                    // Send the OTP for password reset
+                    // Send the OTP for password reset, but we dont have that
                 }
             },
         })
@@ -84,6 +89,29 @@ export const authClient = createAuthClient({
     plugins: [
         emailOTPClient()
     ],
+    user: {
+        additionalFields: {
+            phone: {
+                type: 'string',
+                required: false,
+            },
+            firstname: {
+                type: 'string',
+                required: false,
+
+            },
+            lastname: {
+                type: 'string',
+                required: false,
+
+            },
+            role: {
+                type: 'string',
+                required: true,
+
+            },
+        }
+    },
     basePath: "/api/auth",
     baseURL: process.env.URL,
-})
+});

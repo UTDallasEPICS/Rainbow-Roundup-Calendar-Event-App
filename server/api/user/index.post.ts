@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
         lastname: body.lastname,
         phoneNum: body.phoneNum || null,
         profilePic: body.profilePic || "/default-profile.png",
-        GlobalNotif: false,
+        emailNotif: false,
       },
     });
 

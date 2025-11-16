@@ -4,13 +4,15 @@ Cannot log in properly, profile page is not working, and data is not being popul
 SEEMS TO BE FIXED: 6/28
 */
 import { PrismaClient } from "@prisma/client";
-import { authClient } from "~/server/auth"
+import { auth } from "~/server/auth"
 import type { User } from "../../../types/session";
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
   const id = getRouterParam(event, "id");
-  const { data: session } = await authClient.getSession();
+  const session = await auth.api.getSession({
+      headers:  event.headers
+  })
   const currentUser = session?.user as User | undefined;
   // DEBUGGING
   // console.log('debug: ', currentUser)

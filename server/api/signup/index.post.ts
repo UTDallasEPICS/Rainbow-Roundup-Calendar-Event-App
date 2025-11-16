@@ -1,7 +1,7 @@
 import { PrismaClient, Event } from "@prisma/client";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
 //import { getServerSession } from "#auth";
-import { authClient } from '~/server/auth';
+import { auth } from '~/server/auth';
 import type { User } from "../../../types/session";
 
 export default defineEventHandler(async (event) => {
@@ -9,8 +9,10 @@ export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
   const numPlusOneVal = 0;
   //prevent duplicate signups
-  const session = await authClient.getSession();
-  const user = session.user as User | undefined;
+  const session = await auth.api.getSession({
+      headers:  event.headers
+  })
+  const user = session?.user as User | undefined;
   if (!user) {
     throw createError({
       statusMessage: "Unauthenticated",
