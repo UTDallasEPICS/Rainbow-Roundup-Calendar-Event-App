@@ -199,7 +199,7 @@ import { authClient } from "~/server/auth";
 const { data: session } = await authClient.getSession();
 console.log(session?.user);
 if(!session){
-  //navigateTo("/login");
+  navigateTo("/login");
 }
 const userID = session.user.id;
 
