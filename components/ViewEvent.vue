@@ -505,7 +505,7 @@ function formatDateTime(iso) {
 }
 
 const userRSVP = computed(() => {
-  const userId = user.value?.user?.id;
+  const userId = user?.id;
   if (!userId || !event.value?.signUps) return null;
 
   return event.value.signUps.some((s) => s.userId === userId) ? "yes" : "no";
@@ -524,14 +524,14 @@ const respondToEvent = async (response) => {
   if (isResponding.value) return; // Prevent spamming by blocking clicks
   isResponding.value = true;
 
-  if (!user.value || !user.value.user?.id) {
-    router.push("/login"); // Or use router.push("/") if using Vue Router directly
+  if (!user.value || !user?.id) {
+    //router.push("/login"); // Or use router.push("/") if using Vue Router directly
   }
 
   rsvpResponse.value = response;
   console.log(`User responded: ${response}`);
 
-  const userId = user.value?.user.id;
+  const userId = user.id;
   const eventId = event.value?.id;
 
   if (!userId || !eventId) {
