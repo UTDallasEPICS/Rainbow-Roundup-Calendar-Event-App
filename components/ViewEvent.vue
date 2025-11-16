@@ -19,7 +19,7 @@
     <div class="absolute top-4 right-4 flex space-x-2 z-10">
         <!-- Edit/Save/Cancel Controls -->
         <div
-            v-if="['ADMIN', 'SUPER'].includes(user?.user?.role)"
+            v-if="['ADMIN', 'SUPER'].includes(user?.role)"
         >
             <button
             v-if="!isEditing"

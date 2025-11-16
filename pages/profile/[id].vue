@@ -179,17 +179,18 @@ watchEffect(async () => {
 
 // Role-based computed permissions
 const isSelf = computed(() => {
-  return session.value?.user?.id === userData.value?.id
+  return session.user?.id === userData.value?.id
 })
 
 const isAdmin = computed(() => {
-  const role = session.value?.user?.role
+  const role = session.user?.role
   const targetRole = userData.value?.role
   if (!role || !targetRole) return false
   if (role === 'SUPER') return true
   if (role === 'ADMIN' && targetRole !== 'ADMIN') return true
   return false
 })
+console.log(isAdmin)
 
 const canViewPrivateFields = computed(() => {
   return isSelf.value || isAdmin.value
