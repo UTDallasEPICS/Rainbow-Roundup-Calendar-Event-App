@@ -15,6 +15,12 @@ export const auth = betterAuth({
         signIn: "/login", // Custom sign-in page URL
         newUser: "/signup", // Custom sign-up page URL
     },
+    session: { // add a signed 5 minute cookie to user, if it exists and is valid, return session with fewer db calls
+        cookieCache: { // this is added because loading session can be slow even on local connection, adding this makes it a bit faster
+            enabled: true, // docs on it https://www.better-auth.com/docs/concepts/session-management#session-caching
+            maxAge: 5 * 60 // Cache duration in seconds
+        }
+    },
     user: {
         additionalFields: {
             phone: {

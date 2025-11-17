@@ -219,7 +219,6 @@ const fetchUser = async () => { // This ensures that the api is called and the f
     profilePic.value = userData?.value?.profilePic;
     emailNotif.value = userData?.value?.emailNotif;
     nativeNotif.value = userData?.value?.nativeNotif;
-    if
   } catch (e) {
     console.error('Failed to fetch user:', e)
     console.log("Redirecting cause not logged in")
@@ -234,10 +233,6 @@ watchEffect(async () => {
     console.log('Fetched userData:', userData.value?.id)
   }
 })
-if(!session){
-  //navigateTo("/login");
-  //console.log("Redirecting cause not logged in")
-}
 
 //const userData = response.value?.user || null
 
