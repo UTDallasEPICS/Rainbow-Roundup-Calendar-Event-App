@@ -3,35 +3,59 @@
     <!-- Centered Carousel -->
     <div class="w-full bg-white flex flex-col items-center">
       <div class="w-full max-w-screen-2xl pt-2">
-        <div class="relative w-full overflow-hidden bg-white">
-          <!-- Slides -->
-          <div class="flex transition-transform duration-500 ease-in-out" ref="carousel">
-            <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 flex items-center justify-center p-4">
-              <img src="/images/rrup_logo.png" 
-              alt="Rainbow Roundup Logo" 
-              class="max-h-52 md:max-h-80 object-contain">
-            </div>
-            <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 flex items-center justify-center p-4">
-              <img src="/images/icons/pwa_logo_mb_ss.png" 
-              alt="Sharing Header Graphic" 
-              class="max-h-52 md:max-h-80 object-contain">
-            </div>
-          </div>
+        <div class="relative w-full overflow-hidden bg-white pb-10">
+  <!-- Slides -->
+  <div class="flex transition-transform duration-500 ease-in-out" ref="carousel">
+    <!-- Slides 1 -->
+    <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 flex items-center justify-center p-4">
+      <img src="/images/icons/pwa_logo_512.png" 
+      alt="Rainbow Roundup Logo" 
+      class="max-h-52 md:max-h-96 object-contain w-auto">
+    </div>
+    <!-- Slides 2 -->
+    <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 relative">
+      <img src="/images/carousel_1.png" 
+      alt="Sharing Header Graphic" 
+      class="absolute inset-0 w-full h-full object-cover">
+    </div>
+    <!-- Slides 3 -->
+    <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 relative">
+      <img src="/images/carousel_2.png" 
+      alt="Sharing Header Graphic" 
+      class="absolute inset-0 w-full h-full object-cover">
+    </div>
+    <!-- Slides 4 -->
+    <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 relative">
+      <img src="/images/carousel_3.png" 
+      alt="Sharing Header Graphic" 
+      class="absolute inset-0 w-full h-full object-cover">
+    </div>
+  </div>
 
-          <!-- Carousel Controls -->
-          <div class="absolute inset-x-0 bottom-3 flex justify-center space-x-2">
-            <button
-              v-for="i in totalSlides"
-              :key="i"
-              @click="goToSlide(i - 1)"
-              class="w-3 h-3 rounded-full transition border border-transparent"
-              :class="{
-                'bg-blue-600': currentSlide === (i - 1),
-                'bg-black/30': currentSlide !== (i - 1)
-              }"
-            ></button>
-          </div>
-        </div>
+  <!-- Navigation Arrows - positioned absolutely over the carousel -->
+  <button @click="prevSlide" 
+    class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition w-10 h-10 flex items-center justify-center z-10">
+    &lt;
+  </button>
+  <button @click="nextSlide" 
+    class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition w-10 h-10 flex items-center justify-center z-10">
+    &gt;
+  </button>
+
+  <!-- Carousel Dots -->
+  <div class="absolute inset-x-0 bottom-3 flex justify-center space-x-2 z-10">
+    <button
+      v-for="i in totalSlides"
+      :key="i"
+      @click="goToSlide(i - 1)"
+      class="w-3 h-3 rounded-full transition border border-transparent"
+      :class="{
+        'bg-blue-600': currentSlide === (i - 1),
+        'bg-black/30': currentSlide !== (i - 1)
+      }"
+    ></button>
+  </div>
+</div>
       </div>
     </div>
 
@@ -216,7 +240,7 @@ const today = new Date();
 today.setHours(0,0,0,0);
 
 const currentSlide = ref(0);
-const totalSlides = 2;
+const totalSlides = 4;
 const interval = ref(null);
 
 const currentMonth = ref(today.getMonth());

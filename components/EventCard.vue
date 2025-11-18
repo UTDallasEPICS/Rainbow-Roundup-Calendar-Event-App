@@ -5,22 +5,45 @@
       
       <div class="flex flex-wrap gap-4 justify-center py-4">
         <div
-          class="w-full sm:w-64 md:w-60 lg:w-72 h-48 sm:h-52 relative bg-white rounded-[20px] shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] overflow-hidden p-4 flex flex-col justify-between"
+          class="w-full 
+          sm:w-64 
+          md:w-60 
+          lg:w-72 h-48 
+          sm:h-52 relative bg-white rounded-[20px] 
+          shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] 
+          overflow-hidden p-4 
+          flex flex-col justify-between"
         >
           <!-- Amber bar -->
           <div
-            class="w-[90%] h-16 bg-amber-300 rounded-[10px] absolute top-[10px] left-1/2 -translate-x-1/2"
+            class="w-[90%] 
+            h-16 
+            bg-amber-300 
+            rounded-[10px] 
+            absolute top-[10px] 
+            left-1/2 -translate-x-1/2"
           >
             <!-- Date square -->
             <div
-              class="absolute left-[8px] top-[8px] w-11 h-11 bg-white/70 rounded-[10px] backdrop-blur-[3px] flex flex-col items-center justify-center"
+              class="absolute left-[8px] 
+              top-[8px] 
+              w-11 h-11 
+              bg-white/70 
+              rounded-[10px] 
+              backdrop-blur-[3px] 
+              flex flex-col 
+              items-center justify-center"
             >
               <span
-                class="text-red-400 text-lg font-bold uppercase leading-none"
+                class="text-red-400 
+                text-lg 
+                font-bold uppercase leading-none"
                 >{{ dateDay }}</span
               >
               <span
-                class="text-red-400 text-[10px] font-medium uppercase leading-3"
+                class="text-red-400 
+                text-[10px] 
+                font-medium uppercase leading-3"
                 >{{ dateMonth }}</span
               >
             </div>
@@ -50,10 +73,17 @@
 
           <!-- Content below the bar -->
           <div
-            class="absolute inset-x-0 top-0 flex flex-col pt-[75px] px-4 box-border"
+            class="absolute 
+            inset-x-0 top-0 
+            flex flex-col 
+            pt-[75px] 
+            px-4 box-border"
           >
             <!-- Title -->
-            <div class="text-black text-base sm:text-lg font-medium mt-2">
+            <div class="text-black 
+            text-base 
+            sm:text-lg 
+            font-medium mt-2">
               {{ event.title }}
             </div>
 
