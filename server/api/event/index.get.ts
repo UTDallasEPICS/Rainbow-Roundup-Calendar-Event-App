@@ -1,3 +1,5 @@
+// gets **UNARCHIVED** events
+
 import { PrismaClient } from "@prisma/client";
 
 export default defineEventHandler(async (event) => {
@@ -5,6 +7,9 @@ export default defineEventHandler(async (event) => {
 
   try {
     const events = await prisma.event.findMany({
+      where: {
+        isArchived: false
+      },
       include: {
         User: true, // Event creator
         SignUps: {

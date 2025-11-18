@@ -176,12 +176,19 @@
                     <p class="font-medium text-indigo-600 hover:text-indigo-800">
                     {{ userMap[signup.userId]?.firstname || "Unknown" }}
                     {{ userMap[signup.userId]?.lastname || "" }}
+
+                    <li v-if="!((signup.plusOneKids + signup.plusOneAdults) === 0)" class="text-gray-400 ">
+                      Plus one signups: {{signup.plusOneKids + signup.plusOneAdults }}
+                    </li>
+                    <li v-if="(((signup.plusOneKids + signup.plusOneAdults) > 0))" class="text-gray-400 ">
+                      Adults: {{signup.plusOneAdults }}, Kids: {{signup.plusOneKids }}
+                    </li> 
                     </p>
                 </div>
                 </li>
-                <li v-if="!event.signUps.length" class="text-gray-400 italic">
+                <div v-if="!event.signUps.length" class="text-gray-400 italic">
                 No one has signed up yet.
-                </li>
+                </div>
             </ul>
             </div>
 
@@ -189,10 +196,10 @@
             <p class="text-sm font-medium text-gray-800">Will you attend?</p>
             <div class="flex gap-3">
                 <button
-                @click="respondToEvent('yes')"
+                @click="rsvpClickResponse('yes')"
                 :class="[
                     'flex-1 py-2 text-sm font-semibold rounded-full shadow-sm transition',
-                    userRSVP === 'yes'
+                    (rsvpChoice === 'yes' || userRSVP === 'yes') && rsvpChoice != 'no' && (isResponding === false) // The ? runs if the statement is true, : runs otherwise
                     ? 'bg-green-400 text-white'
                     : 'bg-green-200 hover:bg-green-300',
                 ]"
@@ -200,17 +207,59 @@
                 Yes
                 </button>
                 <button
-                @click="respondToEvent('no')"
+                @click="rsvpClickResponse('no')"
                 :class="[
                     'flex-1 py-2 text-sm font-semibold rounded-full shadow-sm transition',
-                    userRSVP === 'no'
-                    ? 'bg-red-400 text-white'
+                    (rsvpChoice === 'no' || userRSVP === 'no') && rsvpChoice != 'yes' && (isResponding === false)// The ? runs if the statement is true, : runs otherwise
+                    ? 'bg-red-600 text-white'
                     : 'bg-red-200 hover:bg-red-300',
                 ]"
                 >
                 No
                 </button>
             </div>
+            <div v-if="rsvpChoice ==  'yes'" class="gap-3">
+              <label class="block mt-4 text-sm font-medium text-gray-700">How many adults are going to join you?</label>
+                <div class="flex space-x-6 mt-1 border-solid border-gray-700">
+                  <input
+                  type="number"
+                  id="numPlusOneAdults"
+                  v-model.number="numPlusOneAdults"
+                  :min="0"
+                  />
+                </div>
+            </div>
+            <div v-if="rsvpChoice ==  'yes'" class="gap-3">
+              <label class="block mt-4 text-sm font-medium text-gray-700">How many kids are going to join you?</label>
+                <div class="flex space-x-6 mt-1 border-solid border-gray-700">
+                  <input
+                  type="number"
+                  id="numPlusOneKids"
+                  v-model.number="numPlusOneKids"
+                  :min="0"
+                  />
+                </div>
+            </div>
+            <div v-if="rsvpChoice ==  'no'" class="gap-3">
+              <label class="block mt-4 text-sm font-medium text-gray-700">Note that this will additionally remove all 'plus one' signups</label>
+            </div>
+            <div v-if="rsvpChoice" class="flex gap-3">
+              
+                <button
+                @click="respondToEvent(rsvpChoice)"
+                :class="[
+                    'flex-1 py-2 text-sm font-semibold rounded-full shadow-sm transition',
+                    'bg-blue-500 hover:bg-blue-600',
+                ]"
+                >
+                Save
+                </button>
+            </div>
+            <div v-if="isResponding" class="flex gap-3">
+              
+                <label class="block mt-4 text-sm font-medium text-gray-700">Processing...</label>
+            </div>
+            
             </div>
         </div>
         <!-- Event ID -->
@@ -246,6 +295,9 @@ function closeWindow() {
 }
 
 // State
+const rsvpChoice = ref('');
+const numPlusOneAdults = ref(0);
+const numPlusOneKids = ref(0);
 const isEditing = ref(false);
 const editedEvent = reactive({
   id: props.eventId,
@@ -456,6 +508,15 @@ const userRSVP = computed(() => {
 
   return event.value.signUps.some((s) => s.userId === userId) ? "yes" : "no";
 });
+const rsvpClickResponse = async (response) => {
+  if(userRSVP.value === response){
+    console.log('That option is already selected')
+  }
+  else{
+    rsvpChoice.value = response;
+  }
+  return;
+}
 
 const respondToEvent = async (response) => {
   if (isResponding.value) return; // Prevent spamming by blocking clicks
@@ -479,10 +540,13 @@ const respondToEvent = async (response) => {
 
   try {
     if (response === "yes") {
+      const numPlusOneAdultsVal = numPlusOneAdults.value; // I created this var since js didn't like submitting numPlusOne.value in POST
+      const numPlusOneKidsVal = numPlusOneKids.value;
       const result = await $fetch("/api/signup", {
         method: "POST",
-        body: { userId, eventId },
+        body: { userId, eventId, numPlusOneAdultsVal,numPlusOneKidsVal },
       });
+      //console.log("Number of plus one's: ", numPlusOne.value)
       console.log("RSVP success:", result);
     } else if (response === "no") {
       console.log(userId);
@@ -500,6 +564,7 @@ const respondToEvent = async (response) => {
         console.log("RSVP removed successfully:", result);
       }
     }
+    rsvpChoice.value = '';
     await loadEvent();
   } catch (err) {
     console.error("RSVP action failed:", err);

@@ -41,6 +41,8 @@ export default defineEventHandler(async (event) => {
             role: true,
             profilePic: true,
             SignUps: true,
+            emailNotif: true,
+            nativeNotif:true,
           },
         });
       } else if (currentUser.role === "ADMIN" || currentUser.role === "SUPER") {
@@ -57,7 +59,11 @@ export default defineEventHandler(async (event) => {
       } else {
         // Basic public fields only
         singleUser = await prisma.user.findUnique({
-          where: { id },
+          where: { 
+            id,
+            isBanned: false,
+            isArchived: false
+           },
           select: {
             id: true,
             firstname: true,

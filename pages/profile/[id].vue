@@ -3,12 +3,37 @@
 -->
 
 <template>
-  <div class="flex flex-col items-center">
-    <h1 class="text-3xl font-bold text-[#022150] mt-6"><b>Account Settings</b></h1>
+  <!-- navigating back arrow -->
+  <div class="px-6 py-4 inline-flex items-center text-zinc-700 hover:text-zinc-900 hover:cursor-pointer" @click="$router.back()">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-5 w-5 mr-2"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M15 19l-7-7 7-7"
+      />
+    </svg>
+    <p>Back</p>
+  </div>
+
+  <!-- no user found text-->
+  <div v-if="userData == null && !loading" class="flex flex-col items-center" >
+    <h1 class="text-3xl font-bold text-[#022150] mt-6"><b>Unable to find user.</b></h1>
+  </div>
+
+  <!-- profile -->
+  <div v-else class="flex flex-col items-center">
+    <h1 class="text-3xl font-bold text-[#022150] mt-6"><b>User Details</b></h1>
 
     <div class="flex flex-col items-center mt-4 mb-6">
       <!-- Fixed image path: public/ maps to root / -->
-      <img class="w-40 h-40 rounded-full object-cover" src="/images/ProfileImage.png" alt="Profile Page">
+      <img class="w-40 h-40 rounded-full object-cover" :src="userData?.profilePic || '/public/default-profile.png'" alt="Profile Page">
     </div>
 
     <!-- First name -->
@@ -55,7 +80,7 @@
     <div v-if="showReportModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-40 backdrop-blur-sm">
       <div class="bg-white rounded-xl p-6 w-[90%] max-w-md">
         <div class="flex flex-col items-center mb-4">
-          <img :src="userData?.imageUrl || '/images/ProfileImage.png'" alt="User profile" class="w-24 h-24 rounded-full object-cover" />
+          <img :src="userData?.profilePic || '/public/default-profile.png'" alt="User profile" class="w-24 h-24 rounded-full object-cover" />
           <p class="mt-2 text-lg font-semibold text-gray-800">{{ userData?.username }}</p>
         </div>
 
@@ -92,18 +117,18 @@
       </p>
     </div>
     <!-- Delete section visible only to admin/super -->
-    <div v-if="isAdmin" class="mt-10 max-w-xl">
-      <div class="bg-red-50 p-4 rounded-xl mb-4 border border-red-200">
-        <div>
-          <p class="text-md font-bold text-red-700">Delete this account?</p>
-          <p class="text-sm text-red-500 mb-2">This action is permanent and cannot be undone.</p>
-        </div>
+    <div v-if="isAdmin" class="mt-6 mb-10 max-w-xl">
+      <div v-if="!userData?.isArchived && !userData?.isBanned" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-xl font-bold">
         <button
-          class="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-xl"
-          @click="deleteAccount"
+          @click="banAccount"
         >
-          Delete
+          Ban User
         </button>
+      </div>
+      
+      <!-- unban account -->
+      <div v-else-if="userData?.isBanned" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-xl font-bold">
+        <button @click="revokeBan()">Revoke Ban</button>
       </div>
     </div>
   </div>
@@ -124,6 +149,7 @@ const { status, data: session } = useAuth()
 // Reactive user data and loading state
 const userData = ref(null)
 const loading = ref(false)
+
 
 // Fetch user info from API
 const fetchUser = async () => {
@@ -179,14 +205,18 @@ const email = computed(() => userData.value?.email ?? '')
 const inputClass = 'px-3 py-2 rounded-xl focus:outline-none bg-gray-100 text-gray-600 cursor-not-allowed'
 
 // Handler for account deletion
-const deleteAccount = async () => {
+const banAccount = async () => {
   try {
     await $fetch(`/api/user/${route.params.id}`, {
-      method: 'DELETE'
-    })
-    return router.push({ path: '/', replace: true })
+        method: "PUT",
+        body: {
+          isBanned: true
+        },
+      });
+
+    userData.isBanned = true;
   } catch (e) {
-    console.error('Failed to delete account:', e)
+    console.error('Failed to ban account:', e)
   }
 }
 
@@ -249,5 +279,16 @@ const handleEscapeKey = (event) => {
   if (event.key === 'Escape') {
     showReportModal.value = false
   }
+}
+
+async function revokeBan() {
+  await $fetch(`/api/user/${route.params.id}`, {
+        method: "PUT",
+        body: {
+          isBanned: false
+        },
+      });
+
+  userData.isBanned = false;
 }
 </script>

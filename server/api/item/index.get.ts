@@ -8,6 +8,9 @@ export default defineEventHandler(async (event) => {
     
     try {
         const items = await prisma.abstractItem.findMany({
+            where: {
+                isArchived: false
+            },
             include: {
                 ItemVariants: true,
                 ItemPhotos: true,

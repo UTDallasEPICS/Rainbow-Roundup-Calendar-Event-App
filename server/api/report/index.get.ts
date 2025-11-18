@@ -4,6 +4,9 @@ export default defineEventHandler(async (event) => {
     const prisma = event.context.prisma;
     try{
         const events = await prisma.report.findMany({
+            where: {
+                isArchived: false
+            },
             include: {
                 ReportedUser: true,
                 ReporterUser: true
