@@ -4,7 +4,7 @@ import { authClient } from "~/server/auth"
 const { data: session } = await authClient.getSession();
 const logout = async () => {
   await authClient.signOut();
-  navigateTo("/");
+  window.location.href = '/';
   //console.log("Implement logout")
 };
 </script>

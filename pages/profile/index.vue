@@ -175,7 +175,7 @@
       <br />
       <button
         class="w-[264px] border-none text-white text-lg text-center cursor-pointer mt-3 py-4 rounded-xl bg-red-500 hover:bg-red-600"
-        @click="() => signOut({ callbackUrl: '/login' })"
+        @click="() => logout()"
       >
         Log Out
       </button>
@@ -302,6 +302,10 @@ const deleteAccount = async () => {
   } catch (e) {
     return e;
   }
+};
+const logout = async () => {
+  await authClient.signOut();
+  window.location.href = '/login'
 };
 
 const saveAccount = async () => {
