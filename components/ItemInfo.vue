@@ -82,7 +82,7 @@ const goToItemPage = () => {
         </button>
       </div>
 
-      <!-- ✅ THUMBNAILS (NEW) -->
+      <!-- THUMBNAILS (NEW) -->
       <div class="flex gap-3 mt-4">
         <img
           v-for="(photo, index) in props.item.ItemPhotos"
@@ -98,14 +98,14 @@ const goToItemPage = () => {
       </div>
     </div>
 
-    <!-- ✅ RIGHT SIDE — TITLE, PRICE, SIZES, ADD TO CART -->
+    <!-- RIGHT SIDE — TITLE, PRICE, SIZES, ADD TO CART -->
     <div class="flex flex-col justify-start w-1/2">
 
-      <!-- ✅ TITLE & PRICE -->
+      <!-- TITLE & PRICE -->
       <h2 class="text-2xl font-semibold">{{ props.item.name }}</h2>
       <p class="text-xl text-gray-700 mt-1">${{ props.item.price }}</p>
 
-      <!-- ✅ SIZES (CLICKABLE) -->
+      <!-- SIZES (CLICKABLE) -->
       <div class="mt-4">
         <span class="font-medium">Sizes:</span>
 
@@ -135,7 +135,7 @@ const goToItemPage = () => {
         }}
       </p>
 
-      <!-- ✅ ADD TO CART -->
+      <!-- ADD TO CART -->
       <button
         class="mt-6 py-3 bg-blue-600 text-white rounded-lg disabled:bg-gray-400"
         :disabled="!selectedVariantId"

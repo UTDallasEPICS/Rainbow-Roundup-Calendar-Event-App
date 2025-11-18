@@ -190,24 +190,25 @@
       {{ error }}
 
     </div>
-        <!-- Product Section -->
-        <ItemPreview
+        <div class="w-full max-w-[1214px] mx-auto px-4 sm:px-6 md:px-8 lg:px-0">
+    <h2 class="text-3xl font-semibold mb-8 text-center">Explore Our Collection</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+      <ItemPreview
         v-for="item in items"
         :key="item.id"
         :item="item"
-        @add-to-cart="addToCart"
-        ></ItemPreview>
+      />
+    </div>
+  </div>
 
         <div class="w-full h-[60px] sm:h-[80px] md:h-[100px] lg:h-[120px]"></div>
       </div>
     </template>
 
     <script setup>
-
-    import ItemPreview from "/components/ItemPreview.vue";
-    import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-    import { useFetch } from "#app";
-
+    
+    //import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+    //import { useFetch } from "#app";
 
     /*
     const item = ref([
@@ -247,7 +248,7 @@
         ],
       }
     ])
-    */
+    //*/
 
     // State
     const currentSlide = ref(0);
@@ -274,6 +275,7 @@
         if (res && res.success && Array.isArray(res.data)) {
           items.value = res.data; // ✅ assign Prisma data
         } else {
+          console.log(data);
           console.warn("Invalid response format:", res);
           items.value = [];
         }
