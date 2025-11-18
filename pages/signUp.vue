@@ -176,7 +176,7 @@ const submitSignupForm = async () => {
         }
       }
 
-      router.push("emailSent");
+      router.push("login");
       successMessage.value = "A verification email has been sent to your address. Please check your inbox to complete registration.";
       // Optionally clear form fields here
     } else {

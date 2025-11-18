@@ -15,6 +15,7 @@ const formMode = ref("email");
 const redirectPath = ref("");
 const submitEmail = async () => {
   if (!email.value) return;
+  formMode.value = "loading";
   const { data, error } = await authClient.emailOtp.sendVerificationOtp({
     email: email.value, // required
     type: "sign-in", // required
@@ -35,7 +36,7 @@ const submitOTP = async () => {
   else{
     responseMessage.value = "Successfully logged in!";
     redirectPath.value = "/";
-    window.location.reload();
+    window.location.href = '/'
   }
   formMode.value = "done";
 };
@@ -43,6 +44,10 @@ const submitOTP = async () => {
 
 <template>
   <div class="w-full min-h-screen flex items-center justify-center bg-white px-6 py-12">
+    <h2 class="text-2xl sm:text-3xl font-extrabold text-center text-[#022150] mb-8"
+    v-if="formMode ==='loading'">
+      Loading, please wait...
+    </h2>
     <form @submit.prevent="submitEmail" class="w-full max-w-xl rounded-2xl p-8 sm:p-10 flex flex-col items-center"
       v-if="formMode === 'email'">
       <h2 class="text-2xl sm:text-3xl font-extrabold text-center text-[#022150] mb-8">

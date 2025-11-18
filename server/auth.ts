@@ -96,12 +96,13 @@ export const auth = betterAuth({
                     await sendVerificationEmail(email, otp, true);
                 } else if (type === "email-verification") {
                     // Send the OTP for email verification
-                    const userExists = await prisma.user.findUnique({ // we don't want people to send emails for users that dont exist
+                    // I'm leaving this code here in case we need it in future, currently we use login for email verfication
+                    /*const userExists = await prisma.user.findUnique({ // we don't want people to send emails for users that dont exist
                         where: { email: email },
                     });
                     if (userExists){
                         await sendVerificationEmail(email, otp, false);
-                    }
+                    }*/
                 } else {
                     // Send the OTP for password reset, but we dont have that
                 }

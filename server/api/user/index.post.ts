@@ -36,11 +36,7 @@ export default defineEventHandler(async (event) => {
       },
     });
 
-    //await sendVerificationEmail(body.email, token);
-    await authClient.emailOtp.sendVerificationOtp({
-      email: body.email, // required
-      type: "email-verification", // required
-    });
+    // note: due to better auth migration, sending an email verification email is no longer needed.
 
     return { success: true, message: "Verification email sent." };
   } catch (err) {
