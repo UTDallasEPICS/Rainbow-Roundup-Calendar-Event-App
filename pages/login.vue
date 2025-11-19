@@ -52,9 +52,13 @@ const submitOTP = async () => {
     redirectPath.value = "/login";
   }
   else{
+    reloadNuxtApp({
+      path: "/login", // this is a reload because it refuses to load session with a redirect to home. So I reload, it gets the session, then navigate to home
+      persistState: false,
+      force: true
+    })
     responseMessage.value = "Successfully logged in!";
     redirectPath.value = "/";
-    window.location.href = '/'
   }
   formMode.value = "done";
 };
