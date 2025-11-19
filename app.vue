@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="bg-white"> <!-- forces light mode-->
     <!-- Safari Disclaimer Popup -->
     <div v-if="showSafariDisclaimer" class="fixed inset-0 z-50 flex items-center justify-center"
       @keydown.esc="closeSafariDisclaimer" tabindex="0" aria-modal="true" role="dialog">
@@ -162,7 +162,7 @@
     </div>
 
     <!-- Nuxt Page Component to display content -->
-    <NuxtPage class="min-h-screen bg-white" />
+    <NuxtPage class="min-h-screen" />
   </div>
 </template>
 
