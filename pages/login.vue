@@ -19,8 +19,24 @@ const submitEmail = async () => {
   const { data, error } = await authClient.emailOtp.sendVerificationOtp({
     email: email.value, // required
     type: "sign-in", // required
+    
   });
-  formMode.value = "otp";
+  if(error){
+    if(error.message){
+      responseMessage.value = error.message;
+    }
+    else{
+      responseMessage.value = error.statusText;
+    }
+    console.log(error);
+    formMode.value = "done";
+  }
+  else if(data?.success){
+    formMode.value = "otp";
+  }
+  else{
+    formMode.value = "done";
+  }
 };
 const submitOTP = async () => {
   // Note: if the user has not verified their email, but successfully logs in, it autoverifies the email since you just used it to login

@@ -298,7 +298,8 @@ const deleteAccount = async () => {
     await $fetch(`/api/user/${session.session.userId}`, {
       method: "DELETE",
     });
-    return navigateTo("/", { redirectCode: 301 });
+    await authClient.signOut();
+    window.location.href = '/'
   } catch (e) {
     return e;
   }
