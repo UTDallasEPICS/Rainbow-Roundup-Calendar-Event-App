@@ -92,6 +92,7 @@ export const auth = betterAuth({
     },
     plugins: [
         emailOTP({
+            disableSignUp: true,
             async sendVerificationOTP({ email, otp, type }) {
                 if (type === "sign-in") {
                     const user = await prisma.user.findUnique({ // we don't want people banned/archived users to login

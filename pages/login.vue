@@ -16,8 +16,9 @@ const redirectPath = ref("");
 const submitEmail = async () => {
   if (!email.value) return;
   formMode.value = "loading";
+  const lowerEmail = email.value.toLowerCase();
   const { data, error } = await authClient.emailOtp.sendVerificationOtp({
-    email: email.value, // required
+    email: lowerEmail, // required
     type: "sign-in", // required
     
   });
@@ -41,8 +42,9 @@ const submitEmail = async () => {
 const submitOTP = async () => {
   // Note: if the user has not verified their email, but successfully logs in, it autoverifies the email since you just used it to login
   if (!email.value) return; 
+  const lowerEmail = email.value.toLowerCase();
   const { data, error } = await authClient.signIn.emailOtp({
-    email: email.value, // required
+    email: lowerEmail, // required
     otp: otp.value, // required
   });
   if (error) {
