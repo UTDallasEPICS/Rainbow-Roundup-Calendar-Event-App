@@ -4,7 +4,7 @@ import {
   formatEventForGoogle,
   formatEventForResponse,
 } from "~/server/utils/eventFormatter.ts";
-import { getServerSession } from "#auth";
+import { auth } from '~/server/auth';
 import type { User } from "../../../types/session";
 
 /**
@@ -35,7 +35,9 @@ import type { User } from "../../../types/session";
  * @returns The formatted details of the newly created event.
  */
 export default defineEventHandler(async (event) => {
-  const session = await getServerSession(event);
+  const session = await auth.api.getSession({
+      headers:  event.headers
+  })
 
   const user = session?.user as User | undefined;
 

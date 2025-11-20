@@ -143,9 +143,9 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 
-// Get user session using Nuxt Auth composable
-const { status, data: session } = useAuth()
-
+// Get user session using better Auth composable
+import { authClient } from "~/server/auth"
+const { data: session } = await authClient.getSession();
 // Reactive user data and loading state
 const userData = ref(null)
 const loading = ref(false)
@@ -170,7 +170,7 @@ const fetchUser = async () => {
 // Watch session and route param; fetch user only when both ready
 // Check for proof of session and if user ID is known
 watchEffect(async () => {
-  if (session.value && route.params.id) {
+  if (session && route.params.id) {
     console.log('Fetching user for id:', route.params.id, 'with session user:', session.value?.user)
     await fetchUser()
     console.log('Fetched userData:', userData.value)
@@ -179,17 +179,18 @@ watchEffect(async () => {
 
 // Role-based computed permissions
 const isSelf = computed(() => {
-  return session.value?.user?.id === userData.value?.id
+  return session.user?.id === userData.value?.id
 })
 
 const isAdmin = computed(() => {
-  const role = session.value?.user?.role
+  const role = session.user?.role
   const targetRole = userData.value?.role
   if (!role || !targetRole) return false
   if (role === 'SUPER') return true
   if (role === 'ADMIN' && targetRole !== 'ADMIN') return true
   return false
 })
+console.log(isAdmin)
 
 const canViewPrivateFields = computed(() => {
   return isSelf.value || isAdmin.value

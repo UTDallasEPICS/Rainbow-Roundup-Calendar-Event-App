@@ -19,7 +19,7 @@
     <div class="absolute top-4 right-4 flex space-x-2 z-10">
         <!-- Edit/Save/Cancel Controls -->
         <div
-            v-if="['ADMIN', 'SUPER'].includes(user?.user?.role)"
+            v-if="['ADMIN', 'SUPER'].includes(user?.role)"
         >
             <button
             v-if="!isEditing"
@@ -283,7 +283,9 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from "vue";
-import { useAuth } from "#imports"; // todo: figure out why useAuth is called here or if we don't need to touch it. 
+//import { useAuth } from "#imports"; // todo: figure out why useAuth is called here or if we don't need to touch it. 
+import { authClient } from "~/server/auth"
+const { data: session } = await authClient.getSession();
 import { fetchCombinedEventById } from "../server/utils/fetchCombinedEvents";
 import { useRoute, useRouter } from "vue-router";
 import { Size } from "@prisma/client";
@@ -315,8 +317,8 @@ const isResponding = ref(false);
 const rsvpResponse = ref(null);
 
 // Auth & routing
-const { data: user } = useAuth();
 
+const user = session.user;
 const route = useRoute();
 const router = useRouter();
 const eventId = props.eventId;
@@ -503,7 +505,7 @@ function formatDateTime(iso) {
 }
 
 const userRSVP = computed(() => {
-  const userId = user.value?.user?.id;
+  const userId = user?.id;
   if (!userId || !event.value?.signUps) return null;
 
   return event.value.signUps.some((s) => s.userId === userId) ? "yes" : "no";
@@ -522,14 +524,14 @@ const respondToEvent = async (response) => {
   if (isResponding.value) return; // Prevent spamming by blocking clicks
   isResponding.value = true;
 
-  if (!user.value || !user.value.user?.id) {
-    router.push("/login"); // Or use router.push("/") if using Vue Router directly
+  if (!user.value || !user?.id) {
+    //router.push("/login"); // Or use router.push("/") if using Vue Router directly
   }
 
   rsvpResponse.value = response;
   console.log(`User responded: ${response}`);
 
-  const userId = user.value?.user.id;
+  const userId = user.id;
   const eventId = event.value?.id;
 
   if (!userId || !eventId) {

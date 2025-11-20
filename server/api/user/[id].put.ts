@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { getServerSession } from "#auth";
+import { auth } from "~/server/auth"
 import type { User } from "../../../types/session";
 
 export default defineEventHandler(async (event) => {
@@ -18,7 +18,9 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
   try {
-    const session = await getServerSession(event);
+    const session = await auth.api.getSession({
+          headers:  event.headers
+    })
     const user = session?.user as User | undefined;
 
     if (!user || (!["SUPER", "ADMIN"].includes(user.role) && user.id !== id)) {

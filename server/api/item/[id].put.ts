@@ -14,13 +14,15 @@ body should include:
 
 import { defineEventHandler, setResponseStatus, getRouterParam, createError, readBody } from "h3";
 import type { User } from "../../../types/session";
-import { getServerSession } from "#auth";
+import { auth } from "~/server/auth"
 import { Size } from "@prisma/client"
 
 export default defineEventHandler(async (event) => {
     const id = getRouterParam(event, "id");
     const prisma = event.context.prisma;
-    const session = await getServerSession(event);
+    const session = await auth.api.getSession({
+        headers:  event.headers
+    })
     const user = session?.user as User | undefined;
 
     if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
