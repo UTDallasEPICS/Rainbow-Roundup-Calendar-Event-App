@@ -24,7 +24,7 @@
             </div>
 
             <!-- table -->
-             <div class="grid grid-cols-2 items-center justify-between my-4">
+             <div class="grid grid-cols-2 items-center justify-between my-4 space-x-1">
 
                 <input
                 v-model="searchTerm"
@@ -34,7 +34,10 @@
                 />
 
                 <div class="text-right">
-                    <button class="bg-amber-300 p-2 rounded-md font-bold hover:bg-amber-400 cursor-pointer transition duration-150" @click="openAddItem()">+ Add Item</button>
+                    <button class="bg-amber-300 p-2 rounded-md font-bold hover:bg-amber-400 cursor-pointer transition duration-150" @click="openAddItem()">
+                        <span>+</span>
+                        <span class="hidden sm:inline"> Add Item</span>
+                    </button>
                 </div>
             </div>
             <div
@@ -64,7 +67,7 @@
                                 Availability
                             </th>
                             <th
-                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none"
+                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none hidden md:table-cell"
                             >
                                 Description
                             </th>
@@ -99,10 +102,8 @@
             <div v-else class="px-4 py-3 text-gray-400">
                 No merch.
             </div>
-            
         </div>
     </div>
-    test
 </template>
 
 <script setup>
