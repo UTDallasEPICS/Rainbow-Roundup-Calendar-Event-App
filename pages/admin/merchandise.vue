@@ -1,4 +1,5 @@
 <template>
+    <EditItem v-if="isItemModalOpen" :item="selectedItem" @close-window="closeItemModal()"/>
     <div class="min-h-screen bg-gray-100 flex items-start justify-center p-8">
         <div class="max-w-4xl px-6 py-4 w-full">
             <!-- header -->
@@ -48,13 +49,10 @@
                         <thead class="bg-amber-300">
                         <tr>
                             <th
-                            @click="sortAsc = !sortAsc"
+                            
                             class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
                             >
                                 Item Name
-                            <span>
-                                {{ sortAsc ? "▲" : "▼" }}
-                            </span>
                             </th>
                             <th
                             class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none"
@@ -62,9 +60,13 @@
                                 Price
                             </th>
                             <th
+                            @click="sortAsc = !sortAsc"
                             class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none"
                             >
                                 Availability
+                                <span>
+                                    {{ sortAsc ? "▲" : "▼" }}
+                                </span>
                             </th>
                             <th
                             class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none hidden md:table-cell"
@@ -86,9 +88,9 @@
                             <td class="px-4 py-3 text-sm text-gray-800 border">
                                 $ {{ merch.price }}
                             </td>
-                            <td class="px-4 py-3 text-sm text-gray-800 border">
-                                <span v-if="!merch.isArchived">Visible</span>
-                                <span v-else>Hidden</span>
+                            <td class="px-4 py-3 text-sm border">
+                                <span v-if="!merch.isArchived" class="text-lime-600">Visible</span>
+                                <span v-else class="text-red-600">Hidden</span>
                             </td>
                             <td class="hidden md:table-cell px-4 py-3 text-sm text-gray-800 border">
                                 <span v-if="merch.description != null && merch.description.length">{{ merch.description }}</span>
@@ -117,12 +119,12 @@ const searchTerm = ref("");
 const sortAsc = ref(true);
 const isItemModalOpen = ref(false);
 const isAddItemOpen = ref(false);
-const selectedMerch = ref(null);
+const selectedItem = ref(null);
 const merchandise = ref([]);
 
 const test = {
-    name: "Test Item 2",
-    price: 30,
+    name: "Test Item 3",
+    price: 50.99,
     description: "Description here AAA",
     isArchived: false,
 }
@@ -134,25 +136,21 @@ onMounted(async () => {
         //     body: test
         // })
 
-        // this part is acting really inconsistent on my end, but i'll do further testing to see what the issue is
-        const response = await useFetch("../api/item/", {
+        const { data: items, success } = await $fetch("/api/item/", {
             method: "GET"
         })
-        console.log(response)
-        
-        if (!response.success) {
-            //merchandise.value = response.data.value.data
-            console.log("success false")
-        }
 
-        merchandise.value = response.data.value.data
-        
-        console.log(response.data.value)
-        console.log(merchandise.value)
+        const { data: archivedItems } = await $fetch("/api/archive/item", { method: "GET" })
+
+        merchandise.value = items.concat(archivedItems);
 
     }
     catch (error) {
         console.error("Could not fetch items: ", error)
+    }
+    finally
+    {
+        isLoading.value = false;
     }
 })
 
@@ -167,14 +165,14 @@ const sortedMerch = computed(() => {
   }
 
   return list.sort((a, b) => {
-    const A = String(a["name"] || "").toLowerCase();
-    const B = String(b["name"] || "").toLowerCase();
+    const A = String(a["isArchived"] || "").toLowerCase();
+    const B = String(b["isArchived"] || "").toLowerCase();
     return sortAsc.value ? A.localeCompare(B) : B.localeCompare(A);
   });
 });
 
 function openItemModal(selected) {
-  selectedMerch.value = selected;
+  selectedItem.value = selected;
   isItemModalOpen.value = true;
 }
 
