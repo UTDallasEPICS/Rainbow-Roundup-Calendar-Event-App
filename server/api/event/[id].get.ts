@@ -53,6 +53,7 @@ export default defineEventHandler(async (event) => {
         error: "include an ID in your query next time dipshit", //never gonna see this in actual use case
       };
     }
+    
   } catch (error) {
     setResponseStatus(event, 500);
     const errorMessage =
