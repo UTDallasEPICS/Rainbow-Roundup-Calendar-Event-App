@@ -1,6 +1,6 @@
 <template>
     <div class="min-h-screen bg-gray-100 flex items-start justify-center p-8">
-        <div class="max-w-4xl px-6 py-4">
+        <div class="max-w-4xl px-6 py-4 w-full">
             <!-- header -->
             <div class="flex flex-row items-center">
                 <NuxtLink to="/admin" class="self-center">
@@ -22,13 +22,170 @@
                     Manage Merchandise
                 </span>
             </div>
-         
+
+            <!-- table -->
+             <div class="grid grid-cols-2 items-center justify-between my-4">
+
+                <input
+                v-model="searchTerm"
+                type="text"
+                placeholder="Search by name…"
+                class="w-full p-2 border border-gray-300 rounded col-span-1"
+                />
+
+                <div class="text-right">
+                    <button class="bg-amber-300 p-2 rounded-md font-bold hover:bg-amber-400 cursor-pointer transition duration-150" @click="openAddItem()">+ Add Item</button>
+                </div>
+            </div>
+            <div
+                v-if="sortedMerch && sortedMerch.length" class="bg-white rounded-lg shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] overflow-hidden"
+            >
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-amber-300">
+                        <tr>
+                            <th
+                            @click="sortAsc = !sortAsc"
+                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
+                            >
+                                Item Name
+                            <span>
+                                {{ sortAsc ? "▲" : "▼" }}
+                            </span>
+                            </th>
+                            <th
+                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none"
+                            >
+                                Price
+                            </th>
+                            <th
+                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none"
+                            >
+                                Availability
+                            </th>
+                            <th
+                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none"
+                            >
+                                Description
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                        <tr
+                            v-for="merch in sortedMerch"
+                            :key="merch"
+                            @click="openItemModal(merch)"
+                            class="hover:bg-gray-100 cursor-pointer"
+                        >
+                            <td class="px-4 py-3 text-sm text-gray-800 border">
+                                {{ merch.name }}
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-800 border">
+                                $ {{ merch.price }}
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-800 border">
+                                <span v-if="!merch.isArchived">Visible</span>
+                                <span v-else>Hidden</span>
+                            </td>
+                            <td class="hidden md:table-cell px-4 py-3 text-sm text-gray-800 border">
+                                <span v-if="merch.description != null && merch.description.length">{{ merch.description }}</span>
+                                <span v-else class="text-gray-400">No description.</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div v-else class="px-4 py-3 text-gray-400">
+                No merch.
+            </div>
+            
         </div>
     </div>
+    test
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, computed, onMounted } from "vue";
+import { authClient } from "~/server/auth"
 
+const { data: session } = await authClient.getSession();
+const isLoading = ref(true);
 
+const searchTerm = ref("");
+const sortAsc = ref(true);
+const isItemModalOpen = ref(false);
+const isAddItemOpen = ref(false);
+const selectedMerch = ref(null);
+const merchandise = ref([]);
+
+const test = {
+    name: "Test Item 2",
+    price: 30,
+    description: "Description here AAA",
+    isArchived: false,
+}
+
+onMounted(async () => {
+    try {
+        // useFetch("/api/item", {
+        //     method: "POST",
+        //     body: test
+        // })
+
+        // this part is acting really inconsistent on my end, but i'll do further testing to see what the issue is
+        const response = await useFetch("../api/item/", {
+            method: "GET"
+        })
+        console.log(response)
+        
+        if (!response.success) {
+            //merchandise.value = response.data.value.data
+            console.log("success false")
+        }
+
+        merchandise.value = response.data.value.data
+        
+        console.log(response.data.value)
+        console.log(merchandise.value)
+
+    }
+    catch (error) {
+        console.error("Could not fetch items: ", error)
+    }
+})
+
+const sortedMerch = computed(() => {
+  let list = merchandise.value;
+  const q = searchTerm.value.trim().toLowerCase();
+  if (q) {
+    list = list.filter(
+      (u) =>
+        u.name.toLowerCase().includes(q)
+    );
+  }
+
+  return list.sort((a, b) => {
+    const A = String(a["name"] || "").toLowerCase();
+    const B = String(b["name"] || "").toLowerCase();
+    return sortAsc.value ? A.localeCompare(B) : B.localeCompare(A);
+  });
+});
+
+function openItemModal(selected) {
+  selectedMerch.value = selected;
+  isItemModalOpen.value = true;
+}
+
+function closeItemModal() {
+  isItemModalOpen.value = false;
+}
+
+function openAddItem() {
+    isAddItemOpen = true;
+}
+
+function closeAddItem() {
+    isAddItemOpen = false;
+}
 </script>
