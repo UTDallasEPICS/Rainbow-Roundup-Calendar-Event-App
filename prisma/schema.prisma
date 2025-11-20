@@ -19,6 +19,9 @@ model User {
   nativeNotif   Boolean   @default(false)
   emailVerified DateTime?
 
+  isArchived Boolean    @default(false)
+  isBanned    Boolean   @default(false)
+
   SignUps           SignUp[]
   Notification      Notification[]
   CreatedEvents     Event[]
@@ -50,6 +53,7 @@ model Event {
   endTime         DateTime
   capacity        Int?
   currentCapacity Int?
+  isArchived    Boolean   @default(false)
 
   //Foreign Keys
   User User @relation(fields: [userId], references: [id])
@@ -65,6 +69,7 @@ model SignUp {
   Notifications Boolean
   plusOneKids       Int     @default(0)
   plusOneAdults       Int     @default(0)
+
 
   // Foreign keys to User and Event
   User  User  @relation(fields: [userId], references: [id])
@@ -83,27 +88,30 @@ model Report {
   description    String?
   reportTime     DateTime @default(now())
 
+  isArchived    Boolean   @default(false)
+
   // Foreign Keys
   ReportedUser User @relation("ReportedUser", fields: [reportedUserId], references: [id])
   ReporterUser User @relation("ReporterUser", fields: [reporterUserId], references: [id])
-
-  // A single report by a user on another user
-  @@unique([reportedUserId, reporterUserId])
 }
 
 model ItemVariant {
   id                String     @id @default(uuid())
   size              Size
-  price             Float
   itemId            String      
-  item              AbstractItem        @relation(fields: [itemId], references: [id])  
-  
+  item              AbstractItem        @relation(fields: [itemId], references: [id])
+  availability       Boolean    @default(false) //For admin to enable
+
   OrderItems OrderItem[]
 }
 
 model AbstractItem {
   id                String      @id @default(uuid())
   name              String   
+  price             Float
+  description       String
+  
+  isArchived    Boolean   @default(false)  
 
   ItemVariants     ItemVariant[]
   ItemPhotos         ItemPhoto[]

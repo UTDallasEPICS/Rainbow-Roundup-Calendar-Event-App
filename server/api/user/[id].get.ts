@@ -59,7 +59,11 @@ export default defineEventHandler(async (event) => {
       } else {
         // Basic public fields only
         singleUser = await prisma.user.findUnique({
-          where: { id },
+          where: { 
+            id,
+            isBanned: false,
+            isArchived: false
+           },
           select: {
             id: true,
             firstname: true,

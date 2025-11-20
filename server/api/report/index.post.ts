@@ -26,6 +26,7 @@ export default defineEventHandler(async (event) => {
         isProfilePic: body.isProfilePic || false,
         isOther: body.isOther || false,
         description: body.description,
+        isArchived: false,
       },
     });
 
