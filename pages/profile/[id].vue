@@ -3,132 +3,134 @@
 -->
 
 <template>
-  <!-- navigating back arrow -->
-  <div class="px-6 py-4 inline-flex items-center text-zinc-700 hover:text-zinc-900 hover:cursor-pointer" @click="$router.back()">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      class="h-5 w-5 mr-2"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      stroke-width="2"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        d="M15 19l-7-7 7-7"
-      />
-    </svg>
-    <p>Back</p>
-  </div>
-
-  <!-- no user found text-->
-  <div v-if="userData == null && !loading" class="flex flex-col items-center" >
-    <h1 class="text-3xl font-bold text-[#022150] mt-6"><b>Unable to find user.</b></h1>
-  </div>
-
-  <!-- profile -->
-  <div v-else class="flex flex-col items-center">
-    <h1 class="text-3xl font-bold text-[#022150] mt-6"><b>User Details</b></h1>
-
-    <div class="flex flex-col items-center mt-4 mb-6">
-      <!-- Fixed image path: public/ maps to root / -->
-      <img class="w-40 h-40 rounded-full object-cover" :src="userData?.profilePic || '/public/default-profile.png'" alt="Profile Page">
-    </div>
-
-    <!-- First name -->
-     <!-- Changed all v-models to :value to only display data -->
-    <div>
-      <label class="block text-sm font-medium text-gray-700">First Name</label>
-      <div class="flex space-x-6 mt-1 border-solid border-gray-700">
-        <input type="text" id="first-name" :value="firstName" readonly :class="inputClass" />
-      </div>
-    </div>
-
-    <!-- Last name -->
-    <div>
-      <label class="block mt-4 text-sm font-medium text-gray-700">Last Name</label>
-      <div class="flex space-x-6 mt-1 border-solid border-gray-700">
-        <input type="text" id="last-name" :value="lastName" readonly :class="inputClass" />
-      </div>
-    </div>
-
-    <!-- Phone number -->
-    <div v-if="canViewPrivateFields">
-      <label class="block mt-4 text-sm font-medium text-gray-700">Phone Number</label>
-      <div class="flex space-x-6 mt-1 border-solid border-gray-700">
-        <input type="tel" id="phone-number" :value="phoneNumber" readonly :class="inputClass" />
-      </div>
-    </div>
-    <!-- Email -->
-    <div v-if="canViewPrivateFields">
-      <label class="block mt-4 text-sm font-medium text-gray-700">Email</label>
-      <div class="flex space-x-6 mt-1 border-solid border-gray-700">
-        <input type="email" id="email" :value="email" readonly :class="inputClass" />
-      </div>
-    </div>
-    <!-- Report button: only show if viewing another user's profile -->
-    <div v-if="!isSelf" class="mt-6">
-      <button
-        class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded-xl"
-        @click="reportUser"
+  <div class="min-h-screen">
+    <!-- navigating back arrow -->
+    <div class="px-6 py-4 inline-flex items-center text-zinc-700 hover:text-zinc-900 hover:cursor-pointer" @click="$router.back()">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-5 w-5 mr-2"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
       >
-        Report
-      </button>
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15 19l-7-7 7-7"
+        />
+      </svg>
+      <p>Back</p>
     </div>
-    <!-- Report Modal -->
-    <div v-if="showReportModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-40 backdrop-blur-sm">
-      <div class="bg-white rounded-xl p-6 w-[90%] max-w-md">
-        <div class="flex flex-col items-center mb-4">
-          <img :src="userData?.profilePic || '/public/default-profile.png'" alt="User profile" class="w-24 h-24 rounded-full object-cover" />
-          <p class="mt-2 text-lg font-semibold text-gray-800">{{ userData?.username }}</p>
-        </div>
 
-        <div class="mb-3">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Reason</label>
-          <select v-model="reportReason" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none">
-            <option disabled value="">-- Select a reason --</option>
-            <option>Inappropriate Username</option>
-            <option>Inappropriate Profile Picture</option>
-            <option>Other</option>
-          </select>
-        </div>
+    <!-- no user found text-->
+    <div v-if="userData == null && !loading" class="flex flex-col items-center" >
+      <h1 class="text-3xl font-bold text-[#022150] mt-6"><b>Unable to find user.</b></h1>
+    </div>
 
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Description (optional)</label>
-          <textarea v-model="reportDescription" rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none" placeholder="Write more details here..."></textarea>
-        </div>
+    <!-- profile -->
+    <div v-else class="flex flex-col items-center">
+      <h1 class="text-3xl font-bold text-[#022150] mt-6"><b>User Details</b></h1>
 
-        <div class="flex justify-end space-x-2">
-          <button @click="showReportModal = false" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-md">Cancel</button>
-          <button @click="submitReport" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md">Submit</button>
+      <div class="flex flex-col items-center mt-4 mb-6">
+        <!-- Fixed image path: public/ maps to root / -->
+        <img class="w-40 h-40 rounded-full object-cover" :src="userData?.profilePic || '/public/default-profile.png'" alt="Profile Page">
+      </div>
+
+      <!-- First name -->
+      <!-- Changed all v-models to :value to only display data -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">First Name</label>
+        <div class="flex space-x-6 mt-1 border-solid border-gray-700">
+          <input type="text" id="first-name" :value="firstName" readonly :class="inputClass" />
         </div>
       </div>
-    </div>
-    <div v-if="reportMessage" class="mt-4 text-center">
-      <p
-        :class="{
-          'text-green-600': reportMessageType === 'success',
-          'text-red-600': reportMessageType === 'error'
-        }"
-        class="font-semibold"
-      >
-        {{ reportMessage }}
-      </p>
-    </div>
-    <!-- Delete section visible only to admin/super -->
-    <div v-if="isAdmin" class="mt-6 mb-10 max-w-xl">
-      <div v-if="!userData?.isArchived && !userData?.isBanned" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-xl font-bold">
+
+      <!-- Last name -->
+      <div>
+        <label class="block mt-4 text-sm font-medium text-gray-700">Last Name</label>
+        <div class="flex space-x-6 mt-1 border-solid border-gray-700">
+          <input type="text" id="last-name" :value="lastName" readonly :class="inputClass" />
+        </div>
+      </div>
+
+      <!-- Phone number -->
+      <div v-if="canViewPrivateFields">
+        <label class="block mt-4 text-sm font-medium text-gray-700">Phone Number</label>
+        <div class="flex space-x-6 mt-1 border-solid border-gray-700">
+          <input type="tel" id="phone-number" :value="phoneNumber" readonly :class="inputClass" />
+        </div>
+      </div>
+      <!-- Email -->
+      <div v-if="canViewPrivateFields">
+        <label class="block mt-4 text-sm font-medium text-gray-700">Email</label>
+        <div class="flex space-x-6 mt-1 border-solid border-gray-700">
+          <input type="email" id="email" :value="email" readonly :class="inputClass" />
+        </div>
+      </div>
+      <!-- Report button: only show if viewing another user's profile -->
+      <div v-if="!isSelf" class="mt-6">
         <button
-          @click="banAccount"
+          class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded-xl"
+          @click="reportUser"
         >
-          Ban User
+          Report
         </button>
       </div>
-      
-      <!-- unban account -->
-      <div v-else-if="userData?.isBanned" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-xl font-bold">
-        <button @click="revokeBan()">Revoke Ban</button>
+      <!-- Report Modal -->
+      <div v-if="showReportModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-40 backdrop-blur-sm">
+        <div class="bg-white rounded-xl p-6 w-[90%] max-w-md">
+          <div class="flex flex-col items-center mb-4">
+            <img :src="userData?.profilePic || '/public/default-profile.png'" alt="User profile" class="w-24 h-24 rounded-full object-cover" />
+            <p class="mt-2 text-lg font-semibold text-gray-800">{{ userData?.username }}</p>
+          </div>
+
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+            <select v-model="reportReason" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none">
+              <option disabled value="">-- Select a reason --</option>
+              <option>Inappropriate Username</option>
+              <option>Inappropriate Profile Picture</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Description (optional)</label>
+            <textarea v-model="reportDescription" rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none" placeholder="Write more details here..."></textarea>
+          </div>
+
+          <div class="flex justify-end space-x-2">
+            <button @click="showReportModal = false" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-md">Cancel</button>
+            <button @click="submitReport" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md">Submit</button>
+          </div>
+        </div>
+      </div>
+      <div v-if="reportMessage" class="mt-4 text-center">
+        <p
+          :class="{
+            'text-green-600': reportMessageType === 'success',
+            'text-red-600': reportMessageType === 'error'
+          }"
+          class="font-semibold"
+        >
+          {{ reportMessage }}
+        </p>
+      </div>
+      <!-- Delete section visible only to admin/super -->
+      <div v-if="isAdmin" class="mt-6 mb-10 max-w-xl">
+        <div v-if="!userData?.isArchived && !userData?.isBanned" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-xl font-bold">
+          <button
+            @click="banAccount"
+          >
+            Ban User
+          </button>
+        </div>
+        
+        <!-- unban account -->
+        <div v-else-if="userData?.isBanned" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-xl font-bold">
+          <button @click="revokeBan()">Revoke Ban</button>
+        </div>
       </div>
     </div>
   </div>
