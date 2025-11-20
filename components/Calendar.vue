@@ -49,6 +49,8 @@
               class="input w-full"
             />
 
+            <Map :address="eventForm.location" />
+
             <!-- DELETE if we don't end up using google maps API  -->
             <!-- <Map @update:location="updateLocation" /> -->
 
