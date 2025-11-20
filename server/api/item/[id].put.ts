@@ -1,11 +1,28 @@
+/*
+body should include:
+    id
+    name
+    price
+    description
+    isArchived
+    ItemVariants (array)
+        size
+        availability
+
+    Only ItemVariants that are to be updated need to be in the array
+*/
+
 import { defineEventHandler, setResponseStatus, getRouterParam, createError, readBody } from "h3";
 import type { User } from "../../../types/session";
-import { getServerSession } from "#auth";
+import { auth } from "~/server/auth"
+import { Size } from "@prisma/client"
 
 export default defineEventHandler(async (event) => {
     const id = getRouterParam(event, "id");
     const prisma = event.context.prisma;
-    const session = await getServerSession(event);
+    const session = await auth.api.getSession({
+        headers:  event.headers
+    })
     const user = session?.user as User | undefined;
 
     if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
@@ -25,48 +42,37 @@ export default defineEventHandler(async (event) => {
 
     try {
         const body = await readBody(event);
+        const updateData: any = {};
+        if (body.name) { updateData.name = body.name; }
+        if (body.price) { updateData.price = body.price; }
+        if (body.description) { updateData.description = body.description; }
+        if (body.isArchived || body.isArchived == false) { updateData.isArchived = body.isArchived; }
 
-        if (body.name) {
-            await prisma.abstractItem.update({
-                where: { id },
-                data: { name: body.name },
-            });
-        }
 
-        if (Array.isArray(body.ItemVariants)) {
-            await prisma.itemVariant.deleteMany({
-                where: { itemId: id },
-            });
+        await prisma.abstractItem.update({
+            where: { id },
+            data: updateData,
+        });
 
-            await Promise.all(
-                body.itemVariants.map(async (fi: Record<string, any>) => {
-                    const size = fi.size;
-                    const price = parseFloat(fi.price);
+        // update item variants
+        for (let i = 0; i < body.ItemVariants.length; i++)
+        {
+            let updateVariantData: any = {};
+            if (body.ItemVariants[i].id)
+            {
+                if (body.ItemVariants[i].size) { updateVariantData.size = body.ItemVariants[i].size; }
+                if (body.ItemVariants[i].availability != null) { updateVariantData.availability = body.ItemVariants[i].availability; }
+                
 
-                    if (!size || !price) {
-                        throw createError({
-                            statusCode: 400,
-                            statusMessage: "Each itemVariant must include size and price",
-                        });
-                    }
-
-                    if (!["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL"].includes(size)) {
-                        throw createError({
-                            statusCode: 400,
-                            statusMessage: "Invalid size. Valid sizes: XXS, XS, S, M, L, XL, XXL, XXXL",
-                        });
-                    }
-
-                    await prisma.itemVariant.create({
-                        data: {
-                            size,
-                            price,
-                            itemId: id,
-                        },
-                    });
+                await prisma.itemVariant.update({
+                    where: {
+                        id: body.ItemVariants[i].id
+                    },
+                    data: updateVariantData
                 })
-            );
+            }
         }
+        
 
         const updatedItem = await prisma.abstractItem.findUnique({
             where: { id },

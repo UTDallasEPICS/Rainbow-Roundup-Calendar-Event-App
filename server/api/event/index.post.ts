@@ -1,5 +1,6 @@
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
-import { getServerSession } from "#auth";
+//import { getServerSession } from "#auth";
+import { auth } from "~/server/auth"
 import { createTransport } from "nodemailer";
 import { createNewEventEmail } from "../../utils/createNewEventEmail.ts";
 import { resolve } from "path";
@@ -10,7 +11,9 @@ const config = useRuntimeConfig();  // Access config for smtp
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const prisma = event.context.prisma;
-  const session = await getServerSession(event);
+  const session = await auth.api.getSession({
+      headers:  event.headers
+  })
   const user = session?.user as User | undefined;
 
   if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
@@ -72,7 +75,7 @@ export default defineEventHandler(async (event) => {
     // Look into filtering for verified users later
     const emailRecipients = await prisma.user.findMany({
       where: {
-        GlobalNotif: true,
+        emailNotif: true,
         role: "USER",
       },
       select: {

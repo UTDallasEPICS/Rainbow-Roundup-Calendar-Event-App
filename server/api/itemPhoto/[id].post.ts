@@ -1,7 +1,7 @@
 import { defineEventHandler, setResponseStatus, readMultipartFormData } from "h3";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import type { User } from "../../../types/session";
-import { getServerSession } from "#auth";
+import { auth } from "~/server/auth"
 
 const config = useRuntimeConfig();
 const s3 = new S3Client({
@@ -15,7 +15,9 @@ const s3 = new S3Client({
 export default defineEventHandler(async (event) => {
     const id = getRouterParam(event, 'id');
     const prisma = event.context.prisma;
-    const session = await getServerSession(event);
+    const session = await auth.api.getSession({
+      headers:  event.headers
+    })
     const user = session?.user as User | undefined;
     const form = await readMultipartFormData(event);
 

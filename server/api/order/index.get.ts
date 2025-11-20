@@ -1,10 +1,12 @@
 import { defineEventHandler, setResponseStatus, createError } from "h3";
 import type { User } from "../../../types/session";
-import { getServerSession } from "#auth";
+import { auth } from "~/server/auth"
 
 export default defineEventHandler(async (event) => {
     const prisma = event.context.prisma;
-    const session = await getServerSession(event);
+    const session = await auth.api.getSession({
+      headers:  event.headers
+    })
     const user = session?.user as User | undefined;
 
     // Auth check: only SUPER or ADMIN
@@ -20,7 +22,7 @@ export default defineEventHandler(async (event) => {
             include: {
                 OrderItems: {
                     include: {
-                        FinishedItems: {
+                        ItemVariants: {
                             include: {
                                 item: true,
                             },

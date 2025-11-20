@@ -1,13 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
-import { getServerSession } from "#auth";
+import { auth } from '~/server/auth';
 import type { User } from "../../../types/session";
 
 export default defineEventHandler(async (event) => {
   // Access the dynamic route parameters to get the signup ID
   const prisma = event.context.prisma;
   const id = getRouterParam(event, "id"); // Extract the ID from the dynamic route
-  const session = await getServerSession(event);
+  const session = await auth.api.getSession({
+      headers:  event.headers
+  })
 
   const user = session?.user as User | undefined;
 
@@ -60,7 +62,7 @@ export default defineEventHandler(async (event) => {
         where: { id: existingSignUp.eventId },
         data: {
           currentCapacity: {
-            decrement: 1 + existingSignUp.plusOne,
+            decrement: 1 + existingSignUp.plusOneAdults + existingSignUp.plusOneKids,
           },
         },
       });

@@ -49,6 +49,8 @@
               class="input w-full"
             />
 
+            <Map :address="eventForm.location" />
+
             <!-- DELETE if we don't end up using google maps API  -->
             <!-- <Map @update:location="updateLocation" /> -->
 
@@ -102,9 +104,11 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 
 const router = useRouter();
-const { data: session, status } = useAuth(); // extract data from useAuth and rename to session
-const userData = session.value.user;
-const isAuthenticated = computed(() => status.value === "authenticated");
+import { authClient } from "~/server/auth"
+const { data: session, status } = await authClient.getSession();
+const userData = session.user;
+console.log(session.value);
+//const isAuthenticated = computed(() => status.value === "authenticated");
 const showModal = ref(false);
 const eventForm = ref({
   title: "",

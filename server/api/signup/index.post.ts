@@ -1,13 +1,17 @@
 import { PrismaClient, Event } from "@prisma/client";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
-import { getServerSession } from "#auth";
+//import { getServerSession } from "#auth";
+import { auth } from '~/server/auth';
 import type { User } from "../../../types/session";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const prisma = event.context.prisma;
+  const numPlusOneVal = 0;
   //prevent duplicate signups
-  const session = await getServerSession(event);
+  const session = await auth.api.getSession({
+      headers:  event.headers
+  })
   const user = session?.user as User | undefined;
   if (!user) {
     throw createError({
@@ -38,7 +42,7 @@ export default defineEventHandler(async (event) => {
   //check existence of event
   if (targetEvent) {
     if (targetEvent.capacity != null && targetEvent.currentCapacity != null) {
-      if (targetEvent.currentCapacity + body.numPlusOneVal >= targetEvent.capacity) {
+      if (targetEvent.currentCapacity + body.numPlusOneAdultsVal + body.numPlusOneKidsVal >= targetEvent.capacity) {
         setResponseStatus(event, 400);
         return {
           success: false,
@@ -63,7 +67,8 @@ export default defineEventHandler(async (event) => {
         userId: body.userId,
         eventId: body.eventId,
         Notifications: body.notifications || false,
-        plusOne: body.numPlusOneVal || 0,
+        plusOneAdults: body.numPlusOneAdultsVal || 0,
+        plusOneKids: body.numPlusOneKidsVal || 0,
       },
     });
     // increment current capacity
@@ -76,7 +81,7 @@ export default defineEventHandler(async (event) => {
         where: { id: body.eventId },
         data: {
           currentCapacity: {
-            increment: 1 + body.numPlusOneVal,
+            increment: 1 + body.numPlusOneKidsVal + body.numPlusOneAdultsVal,
           },
         },
       });

@@ -5,6 +5,10 @@ export default defineEventHandler(async (event) => {
 
   try {
     const users = await prisma.user.findMany({
+      where: {
+        isBanned: false,
+        isArchived: false,
+      },
       include: {
         CreatedEvents: true,
         SignUps: true,

@@ -1,4 +1,5 @@
-import dotenv from "dotenv";
+import dotenv, { config } from "dotenv";
+import { runtimeconfig } from "googleapis/build/src/apis/runtimeconfig";
 
 dotenv.config();
 
@@ -8,6 +9,7 @@ export default defineNuxtConfig({
     public: {
       STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
       NUXT_GOOGLE_PLACES: process.env.NUXT_GOOGLE_PLACES,
+      NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY: process.env.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY
     },
     
     AWS_REGION: process.env.AWS_REGION,
@@ -21,8 +23,20 @@ export default defineNuxtConfig({
     smtpPass: process.env.SMTP_PASS,
     smtpFrom: process.env.SMTP_FROM,
     url: process.env.URL,
-  },
+    BETTER_AUTH_URL: process.env.URL,
+    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
 
+    NUXT_PUSH_VAPID_PRIVATE_KEY: process.env.NUXT_PUSH_VAPID_PRIVATE_KEY
+  },
+  vite: {
+    resolve: {
+      alias: {
+        // Redirect the invalid import to an empty stub
+        '.prisma/client/index-browser': '/dev/null'
+      }
+    }
+  },
+  
   devtools: { enabled: true },
   css: [
     "~/assets/css/main.css",
@@ -57,19 +71,19 @@ export default defineNuxtConfig({
     "@vite-pwa/nuxt",
     "@nuxt/ui",
     "@nuxt/eslint",
-    "@sidebase/nuxt-auth",
+    //"@sidebase/nuxt-auth",
     "nuxt-scheduler",
   ],
-  auth: {
+  /*auth: {
     isEnabled: true,
-    baseURL: "http://localhost:3000/api/auth",
+    baseURL: process.env.URL + "/api/auth",
     provider: {
       type: "authjs",
       trustHost: false,
       defaultProvider: "email",
       addDefaultCallbackUrl: true,
     },
-  },
+  },*/
   compatibilityDate: "2024-10-24",
 
   plugins: ["~/plugins/fullcalendar.client"],
@@ -78,7 +92,7 @@ export default defineNuxtConfig({
   },
   pwa: {
     strategies: "injectManifest",
-    srcDir: "service-worker",
+    srcDir: "./service-worker",
     filename: "sw.ts",
     registerType: "autoUpdate",
     manifest: {

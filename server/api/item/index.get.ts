@@ -1,6 +1,5 @@
 import { defineEventHandler, setResponseStatus, createError } from "h3";
 import type { User } from "../../../types/session";
-import { getServerSession } from "#auth";
 import { asCleanDays } from "@fullcalendar/core/internal";
 
 export default defineEventHandler(async (event) => {
@@ -8,6 +7,9 @@ export default defineEventHandler(async (event) => {
     
     try {
         const items = await prisma.abstractItem.findMany({
+            where: {
+                isArchived: false
+            },
             include: {
                 ItemVariants: true,
                 ItemPhotos: true,

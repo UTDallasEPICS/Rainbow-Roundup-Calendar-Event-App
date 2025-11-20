@@ -22,13 +22,18 @@
     <p>Back</p>
   </div>
 
+  <!-- no user found text-->
+  <div v-if="userData == null && !loading" class="flex flex-col items-center" >
+    <h1 class="text-3xl font-bold text-[#022150] mt-6"><b>Unable to find user.</b></h1>
+  </div>
+
   <!-- profile -->
-  <div class="flex flex-col items-center">
-    <h1 class="text-3xl font-bold text-[#022150] mt-6"><b>Account Settings</b></h1>
+  <div v-else class="flex flex-col items-center">
+    <h1 class="text-3xl font-bold text-[#022150] mt-6"><b>User Details</b></h1>
 
     <div class="flex flex-col items-center mt-4 mb-6">
       <!-- Fixed image path: public/ maps to root / -->
-      <img class="w-40 h-40 rounded-full object-cover" src="/images/ProfileImage.png" alt="Profile Page">
+      <img class="w-40 h-40 rounded-full object-cover" :src="userData?.profilePic || '/public/default-profile.png'" alt="Profile Page">
     </div>
 
     <!-- First name -->
@@ -75,7 +80,7 @@
     <div v-if="showReportModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-40 backdrop-blur-sm">
       <div class="bg-white rounded-xl p-6 w-[90%] max-w-md">
         <div class="flex flex-col items-center mb-4">
-          <img :src="userData?.imageUrl || '/images/ProfileImage.png'" alt="User profile" class="w-24 h-24 rounded-full object-cover" />
+          <img :src="userData?.profilePic || '/public/default-profile.png'" alt="User profile" class="w-24 h-24 rounded-full object-cover" />
           <p class="mt-2 text-lg font-semibold text-gray-800">{{ userData?.username }}</p>
         </div>
 
@@ -112,18 +117,18 @@
       </p>
     </div>
     <!-- Delete section visible only to admin/super -->
-    <div v-if="isAdmin" class="mt-10 max-w-xl">
-      <div class="bg-red-50 p-4 rounded-xl mb-4 border border-red-200">
-        <div>
-          <p class="text-md font-bold text-red-700">Delete this account?</p>
-          <p class="text-sm text-red-500 mb-2">This action is permanent and cannot be undone.</p>
-        </div>
+    <div v-if="isAdmin" class="mt-6 mb-10 max-w-xl">
+      <div v-if="!userData?.isArchived && !userData?.isBanned" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-xl font-bold">
         <button
-          class="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-xl"
-          @click="deleteAccount"
+          @click="banAccount"
         >
-          Delete
+          Ban User
         </button>
+      </div>
+      
+      <!-- unban account -->
+      <div v-else-if="userData?.isBanned" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-xl font-bold">
+        <button @click="revokeBan()">Revoke Ban</button>
       </div>
     </div>
   </div>
@@ -138,12 +143,13 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 
-// Get user session using Nuxt Auth composable
-const { status, data: session } = useAuth()
-
+// Get user session using better Auth composable
+import { authClient } from "~/server/auth"
+const { data: session } = await authClient.getSession();
 // Reactive user data and loading state
 const userData = ref(null)
 const loading = ref(false)
+
 
 // Fetch user info from API
 const fetchUser = async () => {
@@ -164,7 +170,7 @@ const fetchUser = async () => {
 // Watch session and route param; fetch user only when both ready
 // Check for proof of session and if user ID is known
 watchEffect(async () => {
-  if (session.value && route.params.id) {
+  if (session && route.params.id) {
     console.log('Fetching user for id:', route.params.id, 'with session user:', session.value?.user)
     await fetchUser()
     console.log('Fetched userData:', userData.value)
@@ -173,17 +179,18 @@ watchEffect(async () => {
 
 // Role-based computed permissions
 const isSelf = computed(() => {
-  return session.value?.user?.id === userData.value?.id
+  return session.user?.id === userData.value?.id
 })
 
 const isAdmin = computed(() => {
-  const role = session.value?.user?.role
+  const role = session.user?.role
   const targetRole = userData.value?.role
   if (!role || !targetRole) return false
   if (role === 'SUPER') return true
   if (role === 'ADMIN' && targetRole !== 'ADMIN') return true
   return false
 })
+console.log(isAdmin)
 
 const canViewPrivateFields = computed(() => {
   return isSelf.value || isAdmin.value
@@ -199,14 +206,18 @@ const email = computed(() => userData.value?.email ?? '')
 const inputClass = 'px-3 py-2 rounded-xl focus:outline-none bg-gray-100 text-gray-600 cursor-not-allowed'
 
 // Handler for account deletion
-const deleteAccount = async () => {
+const banAccount = async () => {
   try {
     await $fetch(`/api/user/${route.params.id}`, {
-      method: 'DELETE'
-    })
-    return router.push({ path: '/', replace: true })
+        method: "PUT",
+        body: {
+          isBanned: true
+        },
+      });
+
+    userData.isBanned = true;
   } catch (e) {
-    console.error('Failed to delete account:', e)
+    console.error('Failed to ban account:', e)
   }
 }
 
@@ -269,5 +280,16 @@ const handleEscapeKey = (event) => {
   if (event.key === 'Escape') {
     showReportModal.value = false
   }
+}
+
+async function revokeBan() {
+  await $fetch(`/api/user/${route.params.id}`, {
+        method: "PUT",
+        body: {
+          isBanned: false
+        },
+      });
+
+  userData.isBanned = false;
 }
 </script>

@@ -28,8 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-const { data } = useAuth();
+import { ref, computed, onMounted } from "vue"
 
 
 </script>

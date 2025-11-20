@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="bg-white"> <!-- forces light mode-->
     <!-- Safari Disclaimer Popup -->
     <div v-if="showSafariDisclaimer" class="fixed inset-0 z-50 flex items-center justify-center"
       @keydown.esc="closeSafariDisclaimer" tabindex="0" aria-modal="true" role="dialog">
@@ -70,8 +70,11 @@
           </NuxtLink>
           <a href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE" @click="navigate('Donate')"
             class="text-gray-700 hover:text-black">Donate</a>
-          <NuxtLink v-if="!session" to="/signup" @click="navigate('Sign Up')" class="text-gray-700 hover:text-black">
+          <NuxtLink v-if="loadingAuth" to="/signup" @click="navigate('Sign Up')" class="text-gray-700 hover:text-black">
+            Loading Session</NuxtLink>
+          <NuxtLink v-else-if="(!session) && !loadingAuth" to="/signup" @click="navigate('Sign Up')" class="text-gray-700 hover:text-black">
             Sign Up/Log In</NuxtLink>
+          
           <button v-else @click="logout" class="text-gray-700 hover:text-black">
             Logout
           </button>
@@ -129,9 +132,12 @@
           <a href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
             class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             @click="handleMobileNavClick">Donate</a>
-          <NuxtLink v-if="!session" to="/signup"
-            class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
-            @click.native="handleMobileNavClick">Sign Up/Log In</NuxtLink>
+          <NuxtLink v-if="loadingAuth" to="/"  class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+            @click.native="handleMobileNavClick">
+            Loading Session</NuxtLink>
+          <NuxtLink v-else-if="(!session) && !loadingAuth" to="/signup" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+            @click.native="handleMobileNavClick">
+            Sign Up/Log In</NuxtLink>
           <button v-else @click="logout(); handleMobileNavClick()"
             class="block py-2 text-left text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2">Logout</button>
           <button @click="promptInstall(); handleMobileNavClick()"
@@ -155,27 +161,38 @@
                   d="M9.143 17.082a24.248 24.248 0 0 0 3.844.148m-3.844-.148a23.856 23.856 0 0 1-5.455-1.31 8.964 8.964 0 0 0 2.3-5.542m3.155 6.852a3 3 0 0 0 5.667 1.97m1.965-2.277L21 21m-4.225-4.225a23.81 23.81 0 0 0 3.536-1.003A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6.53 6.53m10.245 10.245L6.53 6.53M3 3l3.53 3.53" />
               </svg>
             </span>
+            <span>{{ notificationError }}</span>
           </button>
         </nav>
       </div>
     </div>
 
     <!-- Nuxt Page Component to display content -->
-    <NuxtPage class="min-h-screen bg-white" />
+    <NuxtPage class="min-h-screen" />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
-
 // Use the built-in auth composable instead of custom useUser
-const { data: session, signOut } = useAuth();
+import { authClient } from "~/server/auth"
+const session = ref(null)
+const loadingAuth = ref(true)
+onMounted(async () => {
+  loadingAuth.value = true
+  const { data } = await authClient.getSession()
+  loadingAuth.value = false
+  session.value = data
+})
+
 
 const dropdownOpen = ref(false);
 const mobileMenuOpen = ref(false);
 const isSubscribed = ref(false);
 const deferredPrompt = ref(null);
-
+const runtimeConfig = useRuntimeConfig();
+const notificationError = ref("");
+const { $pwa } = useNuxtApp();
 // Toggles resized mobile menu view
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value;
@@ -253,38 +270,65 @@ const updateSubscriptionStatus = () => {
   isSubscribed.value = Notification.permission === "granted";
 };
 
+notificationError.value = computed(() => {
+  if (!($pwa?.getSWRegistration())) {
+    notificationError.value = "Not supported in your browser";
+  }
+  else {
+    try {
+      const user = session.value.user;
+    }
+    catch {
+      notificationError.value = "Please login to register notifications"; // 
+    }
+  }
+})
 const requestNotificationPermission = () => {
   if ("serviceWorker" in navigator && "Notification" in window) {
     Notification.requestPermission()
-      .then((permission) => {
+      .then(async (permission) => {
         console.log("Permission:", permission);
-        if (permission === "granted") {
+        console.log("Does service worker exist: ", 'serviceWorker' in navigator);
+        if (permission === "granted" && 'serviceWorker' in navigator) {
           isSubscribed.value = true;
-          navigator.serviceWorker.ready.then((registration) => {
-            if (registration.active) {
-              registration.active.postMessage({
-                action: "showMessage",
-                message: "Notifications enabled!",
-              });
-            }
+          console.log("Both service worker and permission are good!");
+          const applicationServerKey = runtimeConfig.public.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY;
+          navigator.serviceWorker.ready.then(async (serviceWorkerRegistration) => {
+            const options = {
+              userVisibleOnly: true,
+              applicationServerKey,
+            };
+            //console.log(serviceWorkerRegistration.getNotifications);
+            serviceWorkerRegistration.pushManager.subscribe(options).then(
+              async (pushSubscription) => {
+                //console.log("Endpoint: ", pushSubscription.endpoint);
+                const result = await $fetch("/api/notification/subscribe", {
+                  method: "POST",
+                  body: pushSubscription,
+                });
+              },
+              (error) => {
+                console.error(error);
+              },
+            );
           });
+
         } else {
           isSubscribed.value = false;
+          console.log("Could not subscribe to notifications, either permission was not granted or your browser doesn't support service workers");
         }
-        updateSubscriptionStatus();
+        isSubscribed.value = Notification.permission === "granted";
       })
-      .catch((err) => {
-        console.error("Notification permission error:", err);
-      });
   } else {
     console.warn("Notification API or Service Worker not supported.");
   }
 };
 
 const logout = async () => {
-  await signOut({ callbackUrl: "/" });
+  await authClient.signOut();
+  window.location.reload(true);
+  //console.log("Implement logout")
 };
-
 const navigate = (section) => {
   // close mobile menu when navigating
   mobileMenuOpen.value = false;
