@@ -66,6 +66,9 @@ model Event {
 
   // Relation to SignUps
   SignUps          SignUp[]
+
+  // holds all the array to be picked up at a particular event
+  orders    Order[]  // back relation
 }
 
 model SignUp {
@@ -135,11 +138,16 @@ model Order {
   id              String        @id @default(uuid())
   userId          String
   status          OrderStatus   
-  paymentInfo     String?
+  orderType       OrderType
+  shippingAddress String? // If the order is "shipping" type, have an address, should be null otherwise
+  pickupEventID   String? // If the user is picking it up an event, this the event's ID.
+  trackingNumber  Int?
+//  paymentInfo     String?
   placedAt        DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
   User            User          @relation(fields: [userId], references: [id])
+  event           Event?        @relation(fields: [pickupEventID], references: [id])
   OrderItems      OrderItem[]
 }
 
@@ -182,6 +190,11 @@ enum OrderStatus {
   CONFIRMED
   PAID
   DELIVERED
+}
+
+enum OrderType {
+  PICKUP
+  SHIPPING
 }
 
 enum Fit {
