@@ -123,19 +123,22 @@ const selectedItem = ref(null);
 const merchandise = ref([]);
 
 const test = {
-    name: "Test Item 3",
-    price: 50.99,
-    description: "Description here AAA",
+    name: "Test Item 1",
+    price: 20.99,
+    description: "Description here",
     isArchived: false,
+}
+
+async function testAdd() {
+    await $fetch("/api/item", {
+            method: "POST",
+            body: test
+        })
 }
 
 onMounted(async () => {
     try {
-        // useFetch("/api/item", {
-        //     method: "POST",
-        //     body: test
-        // })
-
+        //testAdd()
         const { data: items, success } = await $fetch("/api/item/", {
             method: "GET"
         })

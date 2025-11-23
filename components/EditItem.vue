@@ -51,23 +51,32 @@
 
                 <!-- sizes -->
                 <div>
-                    <h2 class="w-full text-lg font-semibold text-gray-800">Sizes</h2>
+                    <h2 class="w-full text-lg font-semibold text-gray-800">Sizes
+                        <span class="text-gray-400 text-sm font-normal">Click to enable/disable.</span>
+                    </h2> 
+                    
                     <div class="flex flex-row flex-wrap gap-3">
-                        <div v-for="variant in item.ItemVariants" class="border border-gray-300 w-20 rounded p-2">
+                        <div v-for="variant in item.ItemVariants" class="border border-gray-300 size-14 rounded p-2 cursor-pointer" :class="{ 'bg-gray-200': !variant.availability, 'text-gray-500': !variant.availability }">
                             <div class="align-center self-center text-center py-2">
                             {{ variant.size }}
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- images -->
+                <div>
+                    <h2 class="w-full text-lg font-semibold text-gray-800">Images</h2>
+                    flexbox of images, add image box at the end
+                </div>
                 
                 <!-- manage buttons -->
                  <div class="w-full flex justify-center gap-4">
                     <button class="bg-lime-300 px-4 py-2 mx-1 rounded hover:bg-lime-400 cursor-pointer transition" @click="saveChanges()">
-                        Save Changes
+                        Save
                     </button>
                     <button class="bg-gray-300 px-4 py-2 mx-1 rounded hover:bg-gray-400 cursor-pointer transition" @click="cancelEdit()">
-                        Revert Changes
+                        Revert
                     </button>
                 
                  </div>
