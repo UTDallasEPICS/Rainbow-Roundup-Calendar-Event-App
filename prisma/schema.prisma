@@ -104,7 +104,6 @@ model Report {
 model ItemVariant {
   id                String     @id @default(uuid())
   size              Size
-  price             Float
   itemId            String      
   item              AbstractItem        @relation(fields: [itemId], references: [id])
   availability       Boolean    @default(false) //For admin to enable
@@ -115,6 +114,10 @@ model ItemVariant {
 model AbstractItem {
   id                String      @id @default(uuid())
   name              String   
+  price             Float
+  description       String
+  
+  isArchived    Boolean   @default(false)  
 
   ItemVariants     ItemVariant[]
   ItemPhotos         ItemPhoto[]
