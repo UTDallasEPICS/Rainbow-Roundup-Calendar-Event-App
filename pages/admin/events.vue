@@ -57,11 +57,16 @@
             <!-- Loading State -->
             <div v-if="loading" class="w-full max-w-4xl flex justify-center py-10">
                 <div class="text-gray-600 text-lg animate-pulse">Loading events...</div>
-                <EventsTable :users="archivedEvents" :title="'Archived Events'" />
             </div>
             <!-- Scrollable events list -->
-            <div class="w-full max-w-4xl flex-1 overflow-y-auto px-6 pb-6">
+            <div v-else class="w-full max-w-4xl flex-1 overflow-y-auto px-6 pb-6">
                 <EventList :events="filteredEvents" />
+              <h2 class="text-2xl font-bold text-zinc-700 col-span-1 mt-7">Archived Events</h2>
+                <EventList :events="archivedEvents" />
+              
+            </div>
+            <div>
+                
             </div>
 
         </div>
@@ -86,33 +91,54 @@ const filteredEvents = computed(() => {
 })
 
 onMounted(async () => {
+  try {
+    const data = await fetchCombinedEvents();
+    events.value = data;
+    const response = await $fetch("/api/archive/event/", {
+            method: "GET"
+    })
+    archivedEvents.value = response
 
-    try {
-      const data = await fetchCombinedEvents();
-      events.value = data;
-    } catch (err) {
-      console.error("Error fetching events:", err);
-    } finally {
-      loading.value = false;
+    }
+    catch (error) {
+        console.error("Could not fetch events: ", error)
+    }
+    finally
+    {
+        loading.value = false;
     }
 
-try {
-    const response = await $fetch("/api/archive/event");
-    console.log(response)
-    if (response?.events) {
 
-      // sort into archived events
-      for (let i = 0; i < response.events.length; i++)
-      {
-        if (response.events[i])
-        {
-          archivedUsers.value.push(response.Users[i]);
-        }
-      }
-    }
-  } catch (err) {
-    console.error("Error fetching users:", err);
-  }
+//     try {
+//       const data = await fetchCombinedEvents();
+//       events.value = data;
+
+//       const response = await $fetch("/api/archive/event");
+//     console.log(response)
+
+//     } catch (err) {
+//       console.error("Error fetching events:", err);
+//     } finally {
+//       loading.value = false;
+//     }
+
+// try {
+//     const response = await $fetch("/api/archive/event");
+//     console.log(response)
+//     if (response?.events) {
+
+//       sort into archived events
+//       for (let i = 0; i < response.events.length; i++)
+//       {
+//         if (response.events[i])
+//         {
+//           archivedUsers.value.push(response.Users[i]);
+//         }
+//       }
+//     }
+//   } catch (err) {
+//     console.error("Error fetching users:", err);
+//   }
 
     
 })
