@@ -57,6 +57,7 @@
             <!-- Loading State -->
             <div v-if="loading" class="w-full max-w-4xl flex justify-center py-10">
                 <div class="text-gray-600 text-lg animate-pulse">Loading events...</div>
+                <EventsTable :users="archivedEvents" :title="'Archived Events'" />
             </div>
             <!-- Scrollable events list -->
             <div class="w-full max-w-4xl flex-1 overflow-y-auto px-6 pb-6">
@@ -75,6 +76,7 @@ import { ref, computed } from "vue"
 const events = ref([])
 const loading = ref(true)
 const searchQuery = ref("")
+const archivedEvents = ref([])
 
 const filteredEvents = computed(() => {
     if (!searchQuery.value.trim()) return events.value;
@@ -93,6 +95,33 @@ onMounted(async () => {
     } finally {
       loading.value = false;
     }
+
+try {
+    const response = await $fetch("/api/archive/event");
+    if (response?.events) {
+
+      // sort into archived events
+      for (let i = 0; i < response.events.length; i++)
+      {
+        if (response.events[i])
+        {
+          archivedUsers.value.push(response.Users[i]);
+        }
+      }
+    }
+  } catch (err) {
+    console.error("Error fetching users:", err);
+  }
+
+  try {
+    const response = await useFetch("/api/report", { method: "GET" });
+    reports.value = response.data.value;
+  } catch (err) {
+    console.error("Error fetching reports:", err);
+  }
+
+  isLoading.value = false;
+    
 })
 
 // export default {
