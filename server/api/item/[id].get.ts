@@ -1,6 +1,7 @@
 import { defineEventHandler, setResponseStatus, getRouterParam, createError } from "h3";
-import { getServerSession } from "#auth";
+import { auth } from "~/server/auth"
 import type { User } from "../../../types/session";
+//import { getServerSession } from "next-auth";
 
 export default defineEventHandler(async (event) => {
     const id = getRouterParam(event, 'id');
@@ -36,7 +37,10 @@ export default defineEventHandler(async (event) => {
         // only admin/super can access archives
         if (item.isArchived)
         {
-            const session = await getServerSession(event);
+            //const session = await getServerSession(event);
+            const session = await auth.api.getSession({
+                  headers:  event.headers
+            })
             const user = session?.user as User | undefined;
 
             if (!user || (!["SUPER", "ADMIN"].includes(user.role) && user.id !== id)) {

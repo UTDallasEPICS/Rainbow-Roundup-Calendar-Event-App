@@ -19,7 +19,7 @@
     <div class="absolute top-4 right-4 flex space-x-2 z-10">
         <!-- Edit/Save/Cancel Controls -->
         <div
-            v-if="['ADMIN', 'SUPER'].includes(user?.user?.role)"
+            v-if="['ADMIN', 'SUPER'].includes(user?.role)"
         >
             <button
             v-if="!isEditing"
@@ -69,8 +69,10 @@
               class="w-full text-2xl font-semibold text-gray-800 border border-gray-300 rounded p-1 focus:outline-none focus:ring-2 focus:ring-indigo-300"
             />
           </div>
+          
           <p v-if="!isLoading && !isEditing" class="text-sm text-gray-500">
-            {{ formatDateTime(event.start) }} – {{ formatDateTime(event.end) }}
+            {{ formatDateTime(event.start) }} •
+            {{ formatDateTime(event.end) }}
             <span
               class="ml-2 uppercase bg-gray-100 px-2 py-0.5 rounded-full text-xs font-medium"
             >
@@ -147,9 +149,9 @@
         </div>
 
         <!-- Map -->
-        <!-- <div v-if="!isLoading && isEditing">
-            <Map @update:location="updateLocation" />
-        </div> -->
+        <div v-if="!isLoading">
+             <Map :address="editedEvent.location" />
+        </div>
 
         <div v-if="!isLoading && !isEditing">
             <!-- Divider -->
@@ -283,7 +285,9 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from "vue";
-import { useAuth } from "#imports"; // todo: figure out why useAuth is called here or if we don't need to touch it. 
+//import { useAuth } from "#imports"; // todo: figure out why useAuth is called here or if we don't need to touch it. 
+import { authClient } from "~/server/auth"
+const { data: session } = await authClient.getSession();
 import { fetchCombinedEventById } from "../server/utils/fetchCombinedEvents";
 import { useRoute, useRouter } from "vue-router";
 import { Size } from "@prisma/client";
@@ -293,7 +297,7 @@ const emit = defineEmits(["closeViewEventWindow", "eventDeleted", "eventEdited"]
 function closeWindow() {
     emit("closeViewEventWindow");
 }
-
+console.log("Hello");
 // State
 const rsvpChoice = ref('');
 const numPlusOneAdults = ref(0);
@@ -315,8 +319,8 @@ const isResponding = ref(false);
 const rsvpResponse = ref(null);
 
 // Auth & routing
-const { data: user } = useAuth();
 
+const user = session.user;
 const route = useRoute();
 const router = useRouter();
 const eventId = props.eventId;
@@ -330,7 +334,9 @@ const userMap = ref({});
 function toLocalISOString(date) {
   const tzOffset = date.getTimezoneOffset() * 60000; // offset in milliseconds
   const localISOTime = new Date(date - tzOffset).toISOString().slice(0, 16);
+  console.log("hello again");
   return localISOTime.slice(0, 16);
+
 }
 
 // Load and initialize
@@ -503,7 +509,7 @@ function formatDateTime(iso) {
 }
 
 const userRSVP = computed(() => {
-  const userId = user.value?.user?.id;
+  const userId = user?.id;
   if (!userId || !event.value?.signUps) return null;
 
   return event.value.signUps.some((s) => s.userId === userId) ? "yes" : "no";
@@ -522,14 +528,14 @@ const respondToEvent = async (response) => {
   if (isResponding.value) return; // Prevent spamming by blocking clicks
   isResponding.value = true;
 
-  if (!user.value || !user.value.user?.id) {
-    router.push("/login"); // Or use router.push("/") if using Vue Router directly
+  if (!user.value || !user?.id) {
+    //router.push("/login"); // Or use router.push("/") if using Vue Router directly
   }
 
   rsvpResponse.value = response;
   console.log(`User responded: ${response}`);
 
-  const userId = user.value?.user.id;
+  const userId = user.id;
   const eventId = event.value?.id;
 
   if (!userId || !eventId) {

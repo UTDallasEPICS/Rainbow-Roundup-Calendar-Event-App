@@ -43,7 +43,6 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-const { data } = useAuth();
 
 const users = ref([]);
 const bannedUsers = ref([]);

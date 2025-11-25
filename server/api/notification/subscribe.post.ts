@@ -1,15 +1,19 @@
-import { getServerSession } from "#auth";
+import { auth } from "~/server/auth"
 import { Subscription } from "~/types/Notification";
 import { User } from "~/types/session";
 import { sendNativeNotification } from "~/server/utils/sendNotification";
+import { searchconsole } from "googleapis/build/src/apis/searchconsole";
 
 
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
   const config = useRuntimeConfig();
-  const session = await getServerSession(event);
+  const session = await auth.api.getSession({
+    headers:  event.headers
+  })
   const user = session?.user as User | undefined;
+  console.log(session);
   const body = await readBody(event);
   const subscription = body as Subscription;
   if (typeof subscription == undefined) {

@@ -26,7 +26,7 @@
     <div class="flex flex-col items-center mt-4 mb-6">
       <img
         class="w-40 h-40 rounded-full object-cover"
-        :src="imageUrl || profilePic || '/public/default-profile.png'"
+        :src="imageUrl || profilePic || '/default-profile.png'"
         alt="Profile Page"
       />
       <input
@@ -175,7 +175,7 @@
       <br />
       <button
         class="w-[264px] border-none text-white text-lg text-center cursor-pointer mt-3 py-4 rounded-xl bg-red-500 hover:bg-red-600"
-        @click="() => signOut({ callbackUrl: '/login' })"
+        @click="() => logout()"
       >
         Log Out
       </button>
@@ -183,35 +183,59 @@
   </div>
 </template>
 
-<script setup>
+<script  setup>
 import { ref, computed } from "vue";
-definePageMeta({
-   middleware: "sidebase-auth",
- });
 const editMode = ref(false);
-
+definePageMeta({
+  ssr: false   // page will be rendered purely on the client. I put this here since it keeps trying to render server side, breaking the auth
+})
 const inputClass = computed(() =>
   editMode.value
     ? "px-3 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 border border-gray-400"
     : "px-3 py-2 rounded-xl focus:outline-none bg-gray-100 text-gray-600 cursor-not-allowed"
 );
-
+const firstName = ref(null);
+const lastName = ref(null);
+const phoneNum = ref(null);
+const email = ref(null);
+const profilePic = ref(null);
+const emailNotif = ref(null);
+const nativeNotif = ref(null);
 const route = useRoute();
 const id = route.params.id;
+import { authClient } from "~/server/auth";
+const { data: session } = await authClient.getSession();
+const userData = ref(null);
+const fetchUser = async () => { // This ensures that the api is called and the form filled only when the session is fully loaded
+  try {
+    const { data: response, error } = await useFetch(`/api/user/${session?.session.userId}`, {
+      credentials: 'include'
+    })
+    userData.value = response.value?.user || null
+    firstName.value = userData.value?.firstname;
+    lastName.value = userData.value?.lastname;
+    phoneNum.value = userData.value?.phoneNum;
+    email.value = userData.value?.email;
+    profilePic.value = userData?.value?.profilePic;
+    emailNotif.value = userData?.value?.emailNotif;
+    nativeNotif.value = userData?.value?.nativeNotif;
+  } catch (e) {
+    console.error('Failed to fetch user:', e)
+    console.log("Redirecting cause not logged in")
+  } finally {
+    console.log("Loaded user")
+  }
+}
+watchEffect(async () => {
+  if (session) {
+    console.log('Fetching session user:', session?.session.userId)
+    await fetchUser()
+    console.log('Fetched userData:', userData.value?.id)
+  }
+})
 
-const { status, data: session, signOut } = useAuth(); // We are deconstructing data from useAuth and renaming it to session.
-const userID = session.value.user.id;
+//const userData = response.value?.user || null
 
-const { data, refresh } = await useFetch(`/api/user/${userID}`);
-const userData = ref(data.value.user);
-
-const firstName = ref(userData.value.firstname);
-const lastName = ref(userData.value.lastname);
-const phoneNum = ref(userData.value.phoneNum);
-const email = ref(userData.value.email);
-const profilePic = ref(userData.value.profilePic);
-const emailNotif = ref(userData.value.emailNotif);
-const nativeNotif = ref(userData.value.nativeNotif);
 
 const file = ref(null);
 const imageUrl = ref(null);
@@ -271,13 +295,18 @@ const toggleEditMode = async () => {
 
 const deleteAccount = async () => {
   try {
-    await $fetch(`/api/user/${userID}`, {
+    await $fetch(`/api/user/${session.session.userId}`, {
       method: "DELETE",
     });
-    return navigateTo("/", { redirectCode: 301 });
+    await authClient.signOut();
+    window.location.href = '/'
   } catch (e) {
     return e;
   }
+};
+const logout = async () => {
+  await authClient.signOut();
+  window.location.href = '/login'
 };
 
 const saveAccount = async () => {
@@ -289,7 +318,7 @@ const saveAccount = async () => {
       profilePic.value = newProfilePic;
     }
 
-    await $fetch(`/api/user/${userID}`, {
+    await $fetch(`/api/user/${session.session.userId}`, {
       method: "PUT",
       body: {
         firstname: firstName.value,

@@ -165,7 +165,9 @@ import { ref, computed, onMounted } from "vue";
 
 const props = defineProps(['users', 'title']);
 //const users = ref([]);
-const { data } = useAuth();
+import { authClient } from "~/server/auth"
+const { data: session } = await authClient.getSession();
+const sessionUser = session.user;
 const searchTerm = ref("");
 const sortKey = ref(null);
 const sortAsc = ref(true);
@@ -202,7 +204,7 @@ const sortedUsers = computed(() => {
 
 async function clickUser(user) {
   selectedUser.value = JSON.parse(JSON.stringify(user));
-  if (data.value.user.role !== "SUPER") { // if user is not super, do not allow edit user role
+  if (sessionUser.role !== "SUPER") { // if user is not super, do not allow edit user role
     await goToProfile();
   }
   isModalOpen.value = true;

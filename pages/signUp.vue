@@ -86,6 +86,8 @@
 </template>
 
 <script setup lang="ts">
+import type { RefSymbol } from '@vue/reactivity';
+
 const router = useRouter();
 
 function removeImage() {
@@ -152,8 +154,8 @@ async function uploadToS3(file: File) {
 
 const submitSignupForm = async () => {
   errors.value = {};
+  signupModel.value.email = signupModel.value.email.toLowerCase();
   const userDataToSubmit = { ...signupModel.value };
-
   try {
 
     const { data, error } = await useFetch("/api/user", { // todo: change to $fetch
@@ -174,13 +176,18 @@ const submitSignupForm = async () => {
         }
       }
 
-      router.push("emailSent");
+      router.push("login");
       successMessage.value = "A verification email has been sent to your address. Please check your inbox to complete registration.";
       // Optionally clear form fields here
     } else {
       successMessage.value = 'Signup failed, check that you do not already have an account';
       console.error("Error submitting signup form");
       errors.value = { error: "Signup failed." };
+      if(error.value?.statusCode === 400){
+        navigateTo("/login");
+        console.log("redirecting to login...");
+        // if not already, their email will be autoverified on login, so might as well send them there
+      }
 
     }
   } catch (err) {

@@ -2,14 +2,15 @@
 
 import { EventImpl } from "@fullcalendar/core/internal.js";
 import { PrismaClient } from "@prisma/client";
-import { getServerSession } from "#auth";
+import { auth } from "~/server/auth"
 import type { User } from "../../../types/session";
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
   const id = getRouterParam(event, "id");
-  const session = await getServerSession(event);
-
+  const session = await auth.api.getSession({
+      headers:  event.headers
+  })
   const user = session?.user as User | undefined;
   
   if (!id) {
@@ -40,13 +41,14 @@ export default defineEventHandler(async (event) => {
       };
     }
     //cascade deletes
-    await prisma.signUp.deleteMany({ where: { userId: id } });
+    await prisma.signUp.deleteMany({ where: { userId: id } }); // delete all user sign ups
+    await prisma.session.deleteMany({ where: { userId: id } }); // delete all user sessions, due to caching, it can take 5 min for the session to expire.
     
     // Attempt to delete the user from the database
     await prisma.user.update({
       where: { id: String(id) },
       data: {
-        isBanned: true,
+        isArchived: true,
       }
     });
     setResponseStatus(event, 200);
