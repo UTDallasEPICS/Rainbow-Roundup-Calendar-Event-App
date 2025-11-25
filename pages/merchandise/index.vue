@@ -264,17 +264,15 @@
     //Fetching items from the database
     onMounted(async () => {
       try {
-        const { data, error: fetchError } = await useFetch("/api/item", {
+        const { data, error: fetchError } = await $fetch("/api/item", {
           method: "GET"
         });
 
-        if (fetchError.value) {
-          throw new Error(fetchError.value.message || "Error fetching items");
+        if (fetchError) {
+          throw new Error(fetchError.message || "Error fetching items");
         }
-        
-        const res = data.value;
-        console.log(res)
-        items.value = res.data;
+
+        items.value = data;
         // if (res && res.success && Array.isArray(res.data)) {
         //   items.value = res.data; // ✅ assign Prisma data
         // } else {
