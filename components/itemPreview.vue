@@ -30,7 +30,7 @@ const prevImage = () => {
 
 // Navigate to detailed item page
 const goToItemPage = () => {
-  router.push(`/item/${props.item.id}`);
+  router.push(`merchandise/item/${props.item.id}`);
 };
 </script>
 
@@ -79,8 +79,7 @@ const goToItemPage = () => {
     <!-- ✅ PRICE & TITLE -->
     <div class="mt-6 text-center">
       <div v-if="props.item.price" class="flex justify-center items-center gap-3">
-        <p class="text-gray-400 text-xl line-through">${{ props.item.price.toFixed(2) }}</p>
-        <p class="text-red-500 text-xl italic">${{ props.item.price.toFixed(2) }}</p>
+        <p class="text-xl">${{ props.item.price.toFixed(2) }}</p>
       </div>
       <p v-else class="text-black text-xl">${{ props.item.price.toFixed(2) }}</p>
 

@@ -182,6 +182,9 @@
       </div>
     </div>
 
+    
+        <div class="w-full max-w-[1214px] mx-auto px-4 sm:px-6 md:px-8 lg:px-0">
+    <h2 class="text-3xl font-semibold mb-8 text-center">Explore Our Collection</h2>
     <div v-if="loading" class="text-center py-10 text-gray-500">
       Loading items...
     </div>
@@ -190,9 +193,7 @@
       {{ error }}
 
     </div>
-        <div class="w-full max-w-[1214px] mx-auto px-4 sm:px-6 md:px-8 lg:px-0">
-    <h2 class="text-3xl font-semibold mb-8 text-center">Explore Our Collection</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
       <ItemPreview
         v-for="item in items"
         :key="item.id"
@@ -272,13 +273,15 @@
         }
         
         const res = data.value;
-        if (res && res.success && Array.isArray(res.data)) {
-          items.value = res.data; // ✅ assign Prisma data
-        } else {
-          console.log(data);
-          console.warn("Invalid response format:", res);
-          items.value = [];
-        }
+        console.log(res)
+        items.value = res.data;
+        // if (res && res.success && Array.isArray(res.data)) {
+        //   items.value = res.data; // ✅ assign Prisma data
+        // } else {
+        //   console.log(data);
+        //   console.warn("Invalid response format:", res);
+        //   items.value = [];
+        // }
       } catch (err) {
         error.value = err?.message || "Unknown error fetching items";
         console.error("Failed to fetch items:", err);
