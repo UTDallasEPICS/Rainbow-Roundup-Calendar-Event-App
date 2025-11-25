@@ -77,21 +77,24 @@
                             </button>
                             <img :src="image.url" class="size-24 md:size-48"></img>
                         </div>
-                        <input type="file" accept="image/*" class="flex align-center justify-center text-center border-4 border-dashed border-gray-300 text-gray-500 rounded-xl size-24 md:size-48 cursor-pointer" @click="handleFileChange">
+                        <label for="photo-upload" class="flex align-center justify-center text-center border-4 border-dashed border-gray-300 text-gray-500 rounded-xl size-24 md:size-48 cursor-pointer" @click="handleFileChange">
                             + Add Photo
-                        </input>
+                        </label>
+                        <input type="file" accept="image/*" id="photo-upload">
                     </div>
                 </div>
 
                 <!-- visibility -->
                 <div>
                     <h2 class="w-full text-lg font-semibold text-gray-800">Visibiity</h2>
-                    <input type="radio" name="archived" v-model="archived" value="false">
-                        <label for="false">Available</label>
-                    </input>
-                    <input type="radio" name="archived" v-model="archived" value="true">
-                        <label for="true">Hidden</label>
-                    </input>
+                    <div class="flex gap-2">
+                        <input type="radio" name="archived" v-model="archived" value="false">
+                            <label for="false">Available</label>
+                        </input>
+                        <input type="radio" name="archived" v-model="archived" value="true">
+                            <label for="true">Hidden</label>
+                        </input>
+                    </div>
                 </div>
                 
                 <!-- manage buttons -->
@@ -133,9 +136,6 @@ const archived = ref((props.item.isArchived ? "true" : "false"))
 async function saveChanges() {
     try {
         editedItem.isArchived = (archived.value == "true" ? true : false)
-        // await $fetch(`/api/report/${props.report.id}`, {
-        //     method: "DELETE",
-        // });
         props.item.name = editedItem.name
         props.item.price = editedItem.price
         props.item.description = editedItem.description
@@ -157,12 +157,11 @@ async function saveChanges() {
 }
 
 async function cancelEdit() {
-    //editedItem.value = props.item
     editedItem.id = props.item.id
     editedItem.name = props.item.name
     editedItem.price = props.item.price
     editedItem.description = props.item.description
-    //editedItem.isArchived = props.item.isArchived
+    editedItem.isArchived = props.item.isArchived
     archived.value = (props.item.isArchived ? "true" : "false")
     editedItem.ItemVariants = props.item.ItemVariants.map(a => {return {...a}}),
     editedItem.ItemPhotos = props.item.ItemPhotos
