@@ -98,6 +98,7 @@ onMounted(async () => {
 
 try {
     const response = await $fetch("/api/archive/event");
+    console.log(response)
     if (response?.events) {
 
       // sort into archived events
@@ -113,14 +114,6 @@ try {
     console.error("Error fetching users:", err);
   }
 
-  try {
-    const response = await useFetch("/api/report", { method: "GET" });
-    reports.value = response.data.value;
-  } catch (err) {
-    console.error("Error fetching reports:", err);
-  }
-
-  isLoading.value = false;
     
 })
 
