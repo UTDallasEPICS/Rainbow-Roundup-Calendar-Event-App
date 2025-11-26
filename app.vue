@@ -70,8 +70,11 @@
           </NuxtLink>
           <a href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE" @click="navigate('Donate')"
             class="text-gray-700 hover:text-black">Donate</a>
-          <NuxtLink v-if="!session" to="/signup" @click="navigate('Sign Up')" class="text-gray-700 hover:text-black">
+          <NuxtLink v-if="loadingAuth" to="/signup" @click="navigate('Sign Up')" class="text-gray-700 hover:text-black">
+            Loading Session</NuxtLink>
+          <NuxtLink v-else-if="(!session) && !loadingAuth" to="/signup" @click="navigate('Sign Up')" class="text-gray-700 hover:text-black">
             Sign Up/Log In</NuxtLink>
+          
           <button v-else @click="logout" class="text-gray-700 hover:text-black">
             Logout
           </button>
@@ -129,9 +132,12 @@
           <a href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
             class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             @click="handleMobileNavClick">Donate</a>
-          <NuxtLink v-if="!session" to="/signup"
-            class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
-            @click.native="handleMobileNavClick">Sign Up/Log In</NuxtLink>
+          <NuxtLink v-if="loadingAuth" to="/"  class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+            @click.native="handleMobileNavClick">
+            Loading Session</NuxtLink>
+          <NuxtLink v-else-if="(!session) && !loadingAuth" to="/signup" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+            @click.native="handleMobileNavClick">
+            Sign Up/Log In</NuxtLink>
           <button v-else @click="logout(); handleMobileNavClick()"
             class="block py-2 text-left text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2">Logout</button>
           <button @click="promptInstall(); handleMobileNavClick()"
@@ -171,8 +177,11 @@ import { ref, onMounted } from "vue";
 // Use the built-in auth composable instead of custom useUser
 import { authClient } from "~/server/auth"
 const session = ref(null)
+const loadingAuth = ref(true)
 onMounted(async () => {
+  loadingAuth.value = true
   const { data } = await authClient.getSession()
+  loadingAuth.value = false
   session.value = data
 })
 

@@ -16,17 +16,35 @@ const redirectPath = ref("");
 const submitEmail = async () => {
   if (!email.value) return;
   formMode.value = "loading";
+  const lowerEmail = email.value.toLowerCase();
   const { data, error } = await authClient.emailOtp.sendVerificationOtp({
-    email: email.value, // required
+    email: lowerEmail, // required
     type: "sign-in", // required
+    
   });
-  formMode.value = "otp";
+  if(error){
+    if(error.message){
+      responseMessage.value = error.message;
+    }
+    else{
+      responseMessage.value = error.statusText;
+    }
+    console.log(error);
+    formMode.value = "done";
+  }
+  else if(data?.success){
+    formMode.value = "otp";
+  }
+  else{
+    formMode.value = "done";
+  }
 };
 const submitOTP = async () => {
   // Note: if the user has not verified their email, but successfully logs in, it autoverifies the email since you just used it to login
   if (!email.value) return; 
+  const lowerEmail = email.value.toLowerCase();
   const { data, error } = await authClient.signIn.emailOtp({
-    email: email.value, // required
+    email: lowerEmail, // required
     otp: otp.value, // required
   });
   if (error) {
@@ -34,9 +52,13 @@ const submitOTP = async () => {
     redirectPath.value = "/login";
   }
   else{
+    reloadNuxtApp({
+      path: "/login", // this is a reload because it refuses to load session with a redirect to home. So I reload, it gets the session, then navigate to home
+      persistState: false,
+      force: true
+    })
     responseMessage.value = "Successfully logged in!";
     redirectPath.value = "/";
-    window.location.href = '/'
   }
   formMode.value = "done";
 };

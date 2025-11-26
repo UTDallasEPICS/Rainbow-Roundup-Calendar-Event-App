@@ -1,9 +1,10 @@
-import { betterAuth } from "better-auth";
+import { APIError, betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { emailOTP } from "better-auth/plugins"
 import { PrismaClient } from '@prisma/client';
 import { createAuthClient } from "better-auth/vue"
 import { emailOTPClient } from "better-auth/client/plugins"
+import { showError } from "nuxt/app";
 
 const prisma = new PrismaClient();
 export const auth = betterAuth({
@@ -91,9 +92,20 @@ export const auth = betterAuth({
     },
     plugins: [
         emailOTP({
+            disableSignUp: true,
             async sendVerificationOTP({ email, otp, type }) {
                 if (type === "sign-in") {
-                    await sendVerificationEmail(email, otp, true);
+                    const user = await prisma.user.findUnique({ // we don't want people banned/archived users to login
+                        where: { email: email },
+                    });
+                    if(!(user?.isArchived || user?.isBanned)){
+                        await sendVerificationEmail(email, otp, true);
+                    }
+                    else{
+                        throw new APIError("FORBIDDEN", {
+                            message: "Your account is no longer active",
+                        });
+                    }
                 } else if (type === "email-verification") {
                     // Send the OTP for email verification
                     // I'm leaving this code here in case we need it in future, currently we use login for email verfication

@@ -154,8 +154,8 @@ async function uploadToS3(file: File) {
 
 const submitSignupForm = async () => {
   errors.value = {};
+  signupModel.value.email = signupModel.value.email.toLowerCase();
   const userDataToSubmit = { ...signupModel.value };
-
   try {
 
     const { data, error } = await useFetch("/api/user", { // todo: change to $fetch

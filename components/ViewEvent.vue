@@ -69,8 +69,10 @@
               class="w-full text-2xl font-semibold text-gray-800 border border-gray-300 rounded p-1 focus:outline-none focus:ring-2 focus:ring-indigo-300"
             />
           </div>
+          
           <p v-if="!isLoading && !isEditing" class="text-sm text-gray-500">
-            {{ formatDateTime(event.start) }} – {{ formatDateTime(event.end) }}
+            {{ formatDateTime(event.start) }} •
+            {{ formatDateTime(event.end) }}
             <span
               class="ml-2 uppercase bg-gray-100 px-2 py-0.5 rounded-full text-xs font-medium"
             >
@@ -147,9 +149,9 @@
         </div>
 
         <!-- Map -->
-        <!-- <div v-if="!isLoading && isEditing">
-            <Map @update:location="updateLocation" />
-        </div> -->
+        <div v-if="!isLoading">
+             <Map :address="editedEvent.location" />
+        </div>
 
         <div v-if="!isLoading && !isEditing">
             <!-- Divider -->
@@ -295,7 +297,7 @@ const emit = defineEmits(["closeViewEventWindow", "eventDeleted", "eventEdited"]
 function closeWindow() {
     emit("closeViewEventWindow");
 }
-
+console.log("Hello");
 // State
 const rsvpChoice = ref('');
 const numPlusOneAdults = ref(0);
@@ -332,7 +334,9 @@ const userMap = ref({});
 function toLocalISOString(date) {
   const tzOffset = date.getTimezoneOffset() * 60000; // offset in milliseconds
   const localISOTime = new Date(date - tzOffset).toISOString().slice(0, 16);
+  console.log("hello again");
   return localISOTime.slice(0, 16);
+
 }
 
 // Load and initialize
