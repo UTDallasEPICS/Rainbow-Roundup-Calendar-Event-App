@@ -224,7 +224,7 @@ async function saveUserEdits() {
 
   try {
     await $fetch(`/api/user/${selectedUser.value.id}`, {
-      method: "PATCH",
+      method: "PUT",
       body: updateData,
       headers: { "Content-Type": "application/json" },
     });
