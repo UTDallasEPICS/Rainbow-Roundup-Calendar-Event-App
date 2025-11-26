@@ -80,7 +80,7 @@
                         <label for="photo-upload" class="flex align-center justify-center text-center border-4 border-dashed border-gray-300 text-gray-500 rounded-xl size-24 md:size-48 cursor-pointer" >
                             + Add Photo
                         </label>
-                        <input type="file" accept="image/*" id="photo-upload" @change="handleFileChange">
+                        <input type="file" accept="image/*" id="photo-upload" @change="handleFileChange" class="hidden">
                     </div>
                 </div>
 
