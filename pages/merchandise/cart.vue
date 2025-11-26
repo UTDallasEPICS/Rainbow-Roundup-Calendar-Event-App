@@ -1,178 +1,186 @@
-<!--The Stripe integration needs to be done in order for the checkout and payment methods to work-->
-<!--Seeing if this works-->
-
 <template>
-  <div class="container mx-auto px-4 py-8">
-    <div class="flex flex-col lg:flex-row gap-8">
-      <!-- Left Section - Cart Items -->
-      <div class="lg:w-2/3">
-        <div class="flex justify-between items-center mb-6">
-          <h1 class="text-2xl font-bold">YOUR CART</h1>
-          <button 
-            class="text-black border-2 border-black bg-blue-400 hover:bg-blue-600 px-4 py-2 rounded-md transition-colors duration-200"
-            @click="continueShopping"
-          >
-            Continue Shopping
-          </button>
+  <div v-if="item" class="max-w-[900px] mx-auto p-6 font-sans">
+    <h1 class="text-2xl mb-4 font-bold">{{ item.name }}</h1>
+
+    <div class="flex gap-8 items-start">
+      <!--Image needs to be fixed-->
+      <img :src="item?.ItemPhotos?.[0]?.url || '/images/tshirt.png'" alt="Item image" class="w-[300px] h-auto rounded-lg object-cover shadow-md">
+      <div class="flex-1">
+        <p class="text-lg mb-6 leading-snug">{{ item.ItemVariants?.[0]?.description ||
+            "No description available for this product."}}</p>
+
+        <div class="space-y-4 font-semibold">
+          <label class="block mb-4 font-semibold">
+            Size:
+            <select v-model="selectedSize" class="ml-2 px-2 py-1 text-base rounded border border-gray-300">
+              <option disabled value="">Select size</option>
+              <option v-for="size in availableSizes" :key="size">{{ size }}</option>
+            </select>
+          </label>
+
+          <label class="block mb-4 font-semibold">
+            Quantity:
+            <input
+              type="number"
+              v-model.number="quantity"
+              min="1"
+              class="ml-2 px-2 py-1 text-base rounded border border-gray-300 w-16"
+            />
+          </label>
         </div>
 
-        <!-- Cart Items -->
-        <div v-if="cartItems.length > 0" class="space-y-6">
-          <div v-for="(item, index) in cartItems" :key="item.id" class="flex justify-between items-start border-b pb-6">
-            <div class="flex gap-4">
-              <img :src="item.image" :alt="item.name" class="w-24 h-24 object-cover rounded">
-              <div>
-                <h3 class="font-medium">{{ item.name }}</h3>
-                <p class="text-gray-600 text-sm">{{ item.description }}</p>
-                <div class="flex items-center mt-2">
-                  <button @click="updateQuantity(index, -1)" class="px-2 border rounded-l">
-                    -
-                  </button>
-                  <span class="px-4 border-t border-b">{{ item.quantity }}</span>
-                  <button @click="updateQuantity(index, 1)" class="px-2 border rounded-r">
-                    +
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div class="text-right">
-              <p class="font-medium">${{ (item.price * item.quantity).toFixed(2) }}</p>
-              <button @click="removeItem(index)" class="text-red-500 text-sm mt-2">Remove</button>
-            </div>
-          </div>
-        </div>
-
-        <div v-else class="text-center py-12">
-          <p>Your cart is empty</p>
-          <button 
-            @click="continueShopping" 
-            class="mt-4 text-black border-2 border-black bg-blue-400 hover:bg-blue-600 px-6 py-2 rounded-md transition-colors duration-200 mx-auto"
-          >
-            Continue Shopping
-          </button>
-        </div>
-      </div>
-
-      <!-- Right Section - Order Summary -->
-      <div class="lg:w-1/3">
-        <div class="bg-gray-50 p-6 rounded-lg sticky top-8">
-          <h2 class="text-xl font-bold mb-6">ORDER SUMMARY</h2>
-          <div class="space-y-4 mb-6">
-            <div class="flex justify-between">
-              <span>Subtotal</span>
-              <span>${{ subtotal.toFixed(2) }}</span>
-            </div>
-            <div class="flex justify-between font-bold text-lg">
-              <span>Total</span>
-              <span>${{ subtotal.toFixed(2) }}</span>
-            </div>
-          </div>
-
-          <!-- Save Info Section -->
-          <div class="mb-6">
-            <label class="flex items-start">
-              <input type="checkbox" v-model="saveInfo" class="mt-1 mr-2">
-              <div>
-                <span class="text-sm block">Save my information for faster checkout</span>
-                <p class="text-xs text-gray-500 mt-1">
-                  Securely pay on RainbowRoundUp Test and everywhere Link is accepted.
-                </p>
-                <div class="mt-2 flex items-center">
-                  <span class="mr-2">📧</span>
-                  <input
-                    type="tel"
-                    v-model="phoneNumber"
-                    placeholder="(201) 555-0123"
-                    class="bg-gray-100 border-0 focus:ring-0 p-1 text-sm w-full placeholder-gray-400"
-                  >
-                </div>
-              </div>
-            </label>
-          </div>
-
-          <button @click="checkout" 
-                  class="w-full bg-green-400 text-white py-3 rounded-md font-bold mb-4 hover:bg-green-600 transition-colors">
-            Checkout
-          </button>
-
-          <div class="text-center text-xs text-gray-500">
-            <p>Powered by Stripe</p>
-            <div class="flex justify-center gap-2 mt-1">
-              <a href="#" class="hover:underline">Terms</a>
-              <a href="#" class="hover:underline">Privacy</a>
-            </div>
-          </div>
-        </div>
+        <p class="text-xl my-6">
+          Total: <strong>${{ formattedPrice }}</strong>
+        </p>
+<button
+          :disabled="!canAddToCart"
+          @click="addToCart"
+          class="bg-blue-500 text-white px-4 py-2 text-lg rounded-md cursor-pointer transition-colors duration-300 enabled:hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed"
+        >
+          Add to Cart
+        </button>
+     
+          <ItemInfo :item="item" 
+          @add-to-cart="handleAddToCartFromItemInfo" />
+      
       </div>
     </div>
   </div>
+
+  <div v-else class="max-w-[600px] mx-auto mt-12 text-lg text-center">
+    <p>Loading item details...</p>
+  </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      cartItems: [
-        {
-          id: 1,
-          name: 'Rainbow Pride T-Shirt',
-          description: 'Unisex size M',
-          price: 24.99,
-          quantity: 1,
-          image: '/images/tshirt.png'
-        },
-        {
-          id: 2,
-          name: 'Pride Flag Hoodie',
-          description: 'Black hoodie with rainbow print',
-          price: 49.99,
-          quantity: 1,
-          image: '/images/hoodie.png'
-        },
-        {
-          id: 3,
-          name: 'Pride Onesie',
-          description: 'Baby onesie with rainbow design',
-          price: 19.99,
-          quantity: 2,
-          image: '/images/onsie.png'
-        },
-        {
-          id: 4,
-          name: 'Classic Pride Shirt',
-          description: 'White shirt with rainbow stripes',
-          price: 29.99,
-          quantity: 1,
-          image: '/images/shirt.png'
-        }
-      ],
-      saveInfo: false,
-      phoneNumber: ''
-    }
-  },
-  computed: {
-    subtotal() {
-      return this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-    }
-  },
-  methods: {
-    updateQuantity(index, change) {
-      const newQuantity = this.cartItems[index].quantity + change
-      if (newQuantity > 0) {
-        this.cartItems[index].quantity = newQuantity
-      } else {
-        this.removeItem(index)
-      }
-    },
-    removeItem(index) {
-      this.cartItems.splice(index, 1)
-    },
-    continueShopping() {
-      this.$router.push('/merchandise')
-    },
-    checkout() {
-      alert(`Processing payment of $${this.subtotal.toFixed(2)}`)
-    }
+<script setup lang='ts'>
+// protect page behind auth system
+
+import { ref, computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import type { AbstractItem, ItemVariant } from "~/types/prismaTypes";
+import { useCartStore } from '~/api/pinia/store' // adjust path if needed
+
+// Pinia cart store
+const cart = useCartStore()
+
+const route = useRoute();
+const router = useRouter();
+
+const item = ref<AbstractItem | null>(null);
+const availableSizes = ref<string[]>([]);
+const selectedSize = ref<string>("");
+const quantity = ref(1);
+const imageUrl = ref('');
+
+// load item on mount
+onMounted(async () => {
+  try {
+    const res = await fetch(`/api/item/${route.params.id}`);
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Failed to fetch item');
+
+    item.value = data.data;
+
+    // Set available sizes
+    availableSizes.value = item.value?.ItemVariants?.map(
+      (v: ItemVariant) => v.size
+    ) ?? [];
+    // Set defaults to empty so user must select
+    selectedSize.value = "";
+  } catch (error) {
+    console.error('Failed to load item:', error);
+    alert('Failed to load item.');
+    router.push('/merchandise');
   }
-}
+});
+
+const formattedPrice = computed<string>(() => {
+  if (!item.value) return '0.00';
+
+  const basePrice = item.value.price;
+    
+  if (!Number.isFinite(basePrice) || quantity.value < 1) return '0.00';
+  return (basePrice * quantity.value).toFixed(2);
+});
+
+const canAddToCart = computed<boolean>(() => {
+  return (
+    item.value !== null &&
+    selectedSize.value !== "" &&
+    quantity.value > 0
+  );
+});
+
+/**
+ * Called when user clicks the "Add to Cart" button on this page.
+ * This pushes a CartItem into the Pinia store (no server POST required).
+ */
+const addToCart = () => {
+  if (!canAddToCart.value) {
+    alert('Please select size and quantity.');
+    return;
+  }
+
+  // find the variant matching selectedSize
+  const selectedVariant = item.value?.ItemVariants?.find(
+    (v: ItemVariant) => v.size === selectedSize.value
+  );
+
+  if (!selectedVariant) {
+    alert('Selected variant not found.');
+    return;
+  }
+
+  // Build the cart item payload that matches the store's expected shape
+  const cartItem = {
+    variantId: (selectedVariant as any).id,
+    productId: item.value!.id,
+    name: item.value!.name,
+    description:
+      (selectedVariant as any).description ??
+      item.value!.ItemVariants?.[0]?.description ??
+      '',
+    image: item.value!.ItemPhotos?.[0]?.url ?? '/images/tshirt.png',
+    price: ((selectedVariant as any).price ?? item.value!.price ?? 0) as number,
+    quantity: quantity.value
+  };
+
+  // add to pinia store - your store's addItem will merge if same variant exists
+  cart.addItem(cartItem);
+
+  alert(`${cartItem.quantity} × "${cartItem.name}" (${selectedSize.value}) added to cart`);
+
+  // Optionally reset selection (uncomment if desired)
+  // selectedSize.value = ''
+  // quantity.value = 1
+};
+
+
+/**
+ * Handler for itemInfo.vue emit.
+ * If itemInfo emits `add-to-cart` with a variantId, this function will add that to the cart.
+ * Wire it in template: <ItemInfo :item="item" @add-to-cart="handleAddToCartFromItemInfo" />
+ */
+const handleAddToCartFromItemInfo = (variantId: string) => {
+  if (!item.value) return;
+
+  const chosenVariant = item.value.ItemVariants?.find((v: any) => v.id === variantId);
+  const price = (chosenVariant as any)?.price ?? item.value.price ?? 0;
+  const description = (chosenVariant as any)?.description ?? item.value.ItemVariants?.[0]?.description ?? '';
+  const image = item.value.ItemPhotos?.[0]?.url ?? '/images/tshirt.png';
+
+  cart.addItem({
+    variantId,
+    productId: item.value.id,
+    name: item.value.name,
+    description,
+    image,
+    price,
+    quantity: 1
+  });
+
+  alert('Added to cart');
+};
+
 </script>
