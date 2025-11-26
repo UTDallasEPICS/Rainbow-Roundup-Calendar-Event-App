@@ -77,10 +77,10 @@
                             </button>
                             <img :src="image.url" class="size-24 md:size-48"></img>
                         </div>
-                        <label for="photo-upload" class="flex align-center justify-center text-center border-4 border-dashed border-gray-300 text-gray-500 rounded-xl size-24 md:size-48 cursor-pointer" @click="handleFileChange">
+                        <label for="photo-upload" class="flex align-center justify-center text-center border-4 border-dashed border-gray-300 text-gray-500 rounded-xl size-24 md:size-48 cursor-pointer" >
                             + Add Photo
                         </label>
-                        <input type="file" accept="image/*" id="photo-upload">
+                        <input type="file" accept="image/*" id="photo-upload" @change="handleFileChange">
                     </div>
                 </div>
 
@@ -125,8 +125,6 @@ const editedItem = reactive({
     ItemVariants: props.item.ItemVariants.map(a => {return {...a}}),
     ItemPhotos: props.item.ItemPhotos,
 });
-console.log(editedItem);
-
 function closeWindow() {
     emit("closeWindow");
 }
@@ -171,33 +169,22 @@ function changeSizeAvailability(variant) {
     variant.availability = !variant.availability;
 }
 
-const imageurl = ref("")
+
 function handleFileChange(event) {
   const input = event.target;
   if (input.files?.[0]) {
-    const file = input.files[0];
-
-    const reader = new FileReader();
-    reader.onload = () => {
-        imageurl.value = reader.result;
-    };
-    reader.readAsDataURL(file);
-    console.log(file);
+    addPhoto(input.files[0])
   }
 }
 
-function previewImage(file) {
-  const reader = new FileReader();
-  reader.onload = () => {
-    imageUrl.value = reader.result;
-  };
-  reader.readAsDataURL(file);
-}
 
-async function addPhoto() {
+async function addPhoto(file) {
+    const form = new FormData()
+    form.append("image", file)
+
     const { data: image } = await $fetch(`/api/itemPhoto/${props.item.id}`, {
         method: "POST",
-        body: file
+        body: form
     });
 
     // add new image to item obj
@@ -208,5 +195,13 @@ async function deletePhoto(id) {
     await $fetch(`/api/itemPhoto/${id}`, {
         method: "DELETE",
     });
+
+    for (let i = 0; i < editedItem.ItemPhotos.length; i++)
+    {
+        if (id == editedItem.ItemPhotos[i].id)
+        {
+            editedItem.ItemPhotos.splice(i, 1)
+        }
+    }
 }
 </script>
