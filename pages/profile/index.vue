@@ -185,6 +185,7 @@
 
 <script  setup>
 import { ref, computed } from "vue";
+import { authClient } from "~/server/auth";
 const editMode = ref(false);
 definePageMeta({
   ssr: false   // page will be rendered purely on the client. I put this here since it keeps trying to render server side, breaking the auth
@@ -203,7 +204,8 @@ const emailNotif = ref(null);
 const nativeNotif = ref(null);
 const route = useRoute();
 const id = route.params.id;
-import { authClient } from "~/server/auth";
+
+
 const { data: session } = await authClient.getSession();
 const userData = ref(null);
 const fetchUser = async () => { // This ensures that the api is called and the form filled only when the session is fully loaded
