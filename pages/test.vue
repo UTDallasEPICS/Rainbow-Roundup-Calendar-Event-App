@@ -8,6 +8,8 @@
     PLEASE SHOW UP</button>
   <button @click="requestNotificationPermission"
     class="py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2">Notifications?</button>
+    <button @click="sendOrder"
+    class="py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2">Send Test Order</button>
 </template>
 
 <script setup lang="ts">
@@ -70,6 +72,22 @@ const requestNotificationPermission = async () => {
     console.warn("Notification API or Service Worker not supported.");
   }
 };
+const sendOrder = async() => {
+  console.log("Order sending...")
+  const orderItems=  [{itemVariantId: "1a9ea8f1-c03c-4534-abe6-693ce7a4c1bf"}] // Create an item with /api/item post and get an itemVariantId from db, this probably won't work for you
+  const { error, data } = await $fetch("/api/order", {
+    method: "POST",
+    body: {
+      status: "PENDING",
+      orderItems: orderItems,
+      orderType: "SHIPPING",
+      shippingAddress: "r3egf4rwvc",
+    },
+  });
+  console.log("Error: ", error)
+  console.log('Data', data)
+
+}
 const subscribeToNotification = async () => {
   const { $pwa } = useNuxtApp();
   const registration = $pwa?.getSWRegistration(); // port this code to current stuff

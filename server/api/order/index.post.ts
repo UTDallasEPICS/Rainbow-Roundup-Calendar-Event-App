@@ -1,5 +1,5 @@
 import { defineEventHandler, setResponseStatus, createError, readBody } from "h3";
-import type { User } from "../../../types/session";
+import type { User } from "@prisma/client";
 import { auth } from "~/server/auth"
 
 export default defineEventHandler(async (event) => {
@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     })
     const user = session?.user as User | undefined;
 
-    if (!user?.role) {
+    if (!user?.emailVerified) {
         throw createError({
             statusMessage: "Unauthenticated",
             statusCode: 403,
@@ -20,14 +20,13 @@ export default defineEventHandler(async (event) => {
         const body = await readBody(event);
 
         if (
-            !body?.userId ||
-            !body?.status ||
             !Array.isArray(body?.orderItems)
+            || !body.orderType
         ) {
             setResponseStatus(event, 400);
             return {
                 success: false,
-                error: "Invalid request. Must include userId, status, and orderItems[].",
+                error: "Invalid request. Must include orderType and orderItems.",
             };
         }
 
@@ -38,16 +37,36 @@ export default defineEventHandler(async (event) => {
                 error: "orderItems[] must contain at least one item.",
             };
         }
+        if(body.orderType === "PICKUP"){
+            
+            if(!body.pickupEvent){
+                return{
+                    success: false,
+                    error: "Pickup orders need to have an associated event"
+                }
+            }
+        }
+        if(body.orderType === "DELIVERY"){
+            
+            if(!body.shippingAddress){
+                return{
+                    success: false,
+                    error: "Delivery orders need to have an address"
+                }
+            }
+        }
 
         const order = await prisma.order.create({
             data: {
-                userId: body.userId,
-                status: body.status,            
-                paymentInfo: body.paymentInfo ?? null,
+                userId: user.id,
+                status: "UNCONFIRMED",       // All orders are initially unconfirmed
+                orderType: body.orderType,
+                shippingAddress: body?.shippingAddress, // You need either shippingAddress, or pickupEventId, the other can be null
+                pickupEventID: body?.pickupEventID,     
                 OrderItems: {
                     create: body.orderItems.map(
-                        (oi: { finishedItemsId: string }) => ({
-                            finishedItemsId: oi.finishedItemsId,
+                        (oi: { itemVariantId: string }) => ({
+                            itemVariantId: oi.itemVariantId,
                         })
                     ),
                 },
@@ -69,6 +88,7 @@ export default defineEventHandler(async (event) => {
             data: order,
         };
     } catch (error) {
+        console.log(error)
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
         setResponseStatus(event, 500);
         return {
