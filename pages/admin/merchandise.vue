@@ -184,10 +184,10 @@ function closeItemModal() {
 }
 
 function openAddItem() {
-    isAddItemOpen = true;
+    isAddItemOpen.value = true;
 }
 
 function closeAddItem() {
-    isAddItemOpen = false;
+    isAddItemOpen.value = false;
 }
 </script>
