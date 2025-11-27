@@ -1,16 +1,17 @@
 <template>
-<!-- background -->
-    <div
-        class="fixed top-0 right-0 z-30 h-full w-full bg-black/70 backdrop-blur-sm"
-    />
-    
+
 
 <!-- window -->
     <div
-    class="fixed top-0 right-0 z-40 min-h-screen w-full flex items-center justify-center p-4 sm:p-6 font-sans overflow-y-auto"
+    class="z-40 fixed top-0 right-0 min-h-screen flex w-full items-center justify-center p-4 sm:p-6 font-sans overflow-y-auto"
     >
+        <!-- background -->
         <div
-        class="z-40 w-full max-w-xl bg-white rounded-2xl shadow-md relative overflow-auto max-h-[70vh]"
+            class="fixed top-0 right-0 z-30 h-full w-full bg-black/70 backdrop-blur-sm" @click="closeWindow()"
+        />
+    
+        <div
+        class="z-50 w-full max-w-xl bg-white rounded-2xl shadow-md relative overflow-auto max-h-[70vh]"
         >
             <div class="absolute top-4 right-4 flex space-x-2 z-10">
                     <button @click="closeWindow()">
