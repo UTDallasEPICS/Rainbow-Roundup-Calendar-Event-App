@@ -1,31 +1,55 @@
 <template>
-  <!-- <NuxtLink :to="`/event/${id}`"> -->
-    <NuxtLink :to="`/eventsPage`">
-    <div class="w-full px-4 sm:px-6 lg:px-8 min-w-[250px]">
+    <ViewEvent @close-view-event-window="showEventWindow = false" 
+    v-if="showEventWindow" :eventId="event.id" />
+    <div class="w-full px-4 sm:px-6 lg:px-8 min-w-[250px]" @click= "showEventWindow=true" >
+      
       <div class="flex flex-wrap gap-4 justify-center py-4">
         <div
-          class="w-full sm:w-64 md:w-60 lg:w-72 h-48 sm:h-52 relative bg-white rounded-[20px] shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] overflow-hidden p-4 flex flex-col justify-between"
+          class="w-full 
+          sm:w-64 
+          md:w-60 
+          lg:w-72 h-48 
+          sm:h-52 relative bg-white rounded-[20px] 
+          shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] 
+          overflow-hidden p-4 
+          flex flex-col justify-between"
         >
           <!-- Amber bar -->
           <div
-            class="w-[90%] h-16 bg-amber-300 rounded-[10px] absolute top-[10px] left-1/2 -translate-x-1/2"
+            class="w-[90%] 
+            h-16 
+            bg-amber-300 
+            rounded-[10px] 
+            absolute top-[10px] 
+            left-1/2 -translate-x-1/2"
           >
             <!-- Date square -->
             <div
-              class="absolute left-[8px] top-[8px] w-11 h-11 bg-white/70 rounded-[10px] backdrop-blur-[3px] flex flex-col items-center justify-center"
+              class="absolute left-[8px] 
+              top-[8px] 
+              w-11 h-11 
+              bg-white/70 
+              rounded-[10px] 
+              backdrop-blur-[3px] 
+              flex flex-col 
+              items-center justify-center"
             >
               <span
-                class="text-red-400 text-lg font-bold uppercase leading-none"
+                class="text-red-400 
+                text-lg 
+                font-bold uppercase leading-none"
                 >{{ dateDay }}</span
               >
               <span
-                class="text-red-400 text-[10px] font-medium uppercase leading-3"
+                class="text-red-400 
+                text-[10px] 
+                font-medium uppercase leading-3"
                 >{{ dateMonth }}</span
               >
             </div>
 
             <!-- Save / unsave -->
-            <button
+            <!-- <button
               @click.stop.prevent="toggleSaved"
               class="absolute right-[8px] top-[8px] w-7 h-7 bg-white/70 rounded-md backdrop-blur-[3px] flex items-center justify-center"
             >
@@ -43,20 +67,28 @@
               >
                 <path d="M5 13l4 4L19 7" />
               </svg>
-            </button>
+            </button> -->
+
           </div>
 
           <!-- Content below the bar -->
           <div
-            class="absolute inset-x-0 top-0 flex flex-col pt-[75px] px-4 box-border"
+            class="absolute 
+            inset-x-0 top-0 
+            flex flex-col 
+            pt-[75px] 
+            px-4 box-border"
           >
             <!-- Title -->
-            <div class="text-black text-base sm:text-lg font-medium mt-2">
-              {{ title }}
+            <div class="text-black 
+            text-base 
+            sm:text-lg 
+            font-medium mt-2">
+              {{ event.title }}
             </div>
 
             <!-- Attendees -->
-            <div class="flex items-center mt-2">
+            <!-- <div class="flex items-center mt-2">
               <div class="flex -space-x-2">
                 <img
                   v-for="(a, i) in avatars"
@@ -66,12 +98,12 @@
                 />
               </div>
               <span class="text-indigo-700 text-xs font-medium ml-2"
-                >+{{ currentCapacity }} Going</span
+                >+{{ event.currentCapacity }} Going</span
               >
-            </div>
+            </div> -->
 
             <!-- Location -->
-            <div
+            <!-- <div
               class="relative flex items-center text-indigo-950 text-xs mt-1"
             >
               <div class="w-4 h-4 mr-1 relative">
@@ -83,55 +115,75 @@
                 ></div>
               </div>
               <span class="truncate max-w-[70%] sm:max-w-full">{{
-                location
+                event.location
               }}</span>
-
-              <!-- Expand -->
-              <!-- <button
-                @click.stop.prevent="$emit('expand')"
-                class="absolute right-2 w-6 h-6 flex justify-between items-center"
-              >
-                <span class="block w-1 h-1 bg-zinc-600 rounded-full"></span>
-                <span class="block w-1 h-1 bg-zinc-600 rounded-full"></span>
-                <span class="block w-1 h-1 bg-zinc-600 rounded-full"></span>
-              </button> -->
-            </div>
+            </div> -->
+            
           </div>
         </div>
       </div>
     </div>
-  </NuxtLink>
 </template>
 
-<script setup lang= 'ts'>
-import { ref, watch } from "vue";
+<script setup lang="ts">
+import { ref, computed, watch } from "vue";
+import type { Event, SignUp, User } from "@prisma/client";
 
-const props = defineProps({
-  id: { type: String, required: true },
-  dateDay: { type: [String, Number], required: true },
-  dateMonth: { type: String, required: true },
-  title: { type: String, required: true },
-  currentCapacity: { type: Number, default: 0 },
-  signUps: { type: Array, default: () => [] },
-  location: { type: String, default: "" },
-  saved: { type: Boolean, default: false },
+// Extended type to include relations
+type EventWithRelations = Event & {
+  SignUps?: (SignUp & { User?: User | null })[];
+};
+const showEventWindow = ref(false);
+
+const props = defineProps<{
+  event: EventWithRelations;
+  saved?: boolean;
+}>();
+
+const emit = defineEmits<{
+  (e: "update:saved", value: boolean): void;
+  (e: "expand"): void;
+}>();
+
+// Date calculations
+
+const dateDay = computed(() => {
+  //console.log("PROPS") <--- see it printing in the console
+  console.log("Hello World!")
+  return props.event.startTime.getDate()
+});
+  
+//console.log()
+
+ const dateMonth = computed(() => {
+   const month = new Date(props.event.startTime).getMonth();
+  const months = [
+    "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+    "JULY", "AUG", "SEP", "OCT", "NOV", "DEC"
+  ];
+  return months[month];
 });
 
-const avatars = computed(
-  // TODO: check what type we should be enforcing here
-  () => props.signUps.map((s: any) => s.User?.profilePic).filter((url) => !!url) // filter out undefined/null
-);
+// Avatars from sign ups (commented out for now)
+// const avatars = computed(() => {
+//   if (!props.event.SignUps) return [];
+//   return props.event.SignUps
+//     .map((s: any) => s.User?.profilePic)
+//     .filter((url) => !!url);
+// });
 
-const emit = defineEmits(["update:saved", "expand"]);
+// Saved state
+//const isSaved = ref(props.saved || false);
 
-const isSaved = ref(props.saved);
-watch(
-  () => props.saved,
-  (v) => (isSaved.value = v)
-);
+// watch(
+//   () => props.saved,
+//   (v) => {
+//     isSaved.value = v || false;
+//   }
+// );
 
-function toggleSaved() {
-  isSaved.value = !isSaved.value;
-  emit("update:saved", isSaved.value);
-}
-</script>
+// function toggleSaved() {
+//   isSaved.value = !isSaved.value;
+//   emit("update:saved", isSaved.value);
+// }
+// </script>
