@@ -35,7 +35,7 @@
                 />
 
                 <div class="text-right">
-                    <button class="bg-amber-300 p-2 rounded-md font-bold hover:bg-amber-400 cursor-pointer transition duration-150" @click="openAddItem()">
+                    <button class="bg-blue-300 p-2 rounded-md font-bold hover:bg-blue-400 cursor-pointer transition duration-150" @click="openAddItem()">
                         <span>+</span>
                         <span class="hidden sm:inline"> Add Item</span>
                     </button>
@@ -46,7 +46,7 @@
             >
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-amber-300">
+                        <thead class="bg-blue-300">
                         <tr>
                             <th
                             
