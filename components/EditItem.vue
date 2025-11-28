@@ -24,7 +24,8 @@
             <div class="p-6 space-y-6">
                 <!-- title -->
                 <div>
-                    <h1 class="w-full text-xl font-semibold text-gray-800">Edit {{ item.name }}</h1>
+                    <h1 v-if="isNew" class="w-full text-xl font-semibold text-gray-800">Add Item</h1>
+                    <h1 v-else class="w-full text-xl font-semibold text-gray-800">Edit {{ item.name }}</h1>
                 </div>
 
                 <!-- name & price -->
@@ -51,7 +52,7 @@
                 </div>
 
                 <!-- sizes -->
-                <div>
+                <div v-if="!isNew">
                     <h2 class="w-full text-lg font-semibold text-gray-800">Sizes
                         <span class="text-gray-400 text-sm font-normal">Click to enable/disable.</span>
                     </h2> 
@@ -66,7 +67,7 @@
                 </div>
 
                 <!-- images -->
-                <div>
+                <div v-if="!isNew">
                     <h2 class="w-full text-lg font-semibold text-gray-800">Images
                         <span class="text-gray-400 text-sm font-normal">Changes to images cannot be reverted.</span>
                     </h2>
@@ -103,8 +104,11 @@
                     <button class="bg-lime-300 px-4 py-2 mx-1 rounded hover:bg-lime-400 cursor-pointer transition" @click="saveChanges()">
                         Save
                     </button>
-                    <button class="bg-gray-300 px-4 py-2 mx-1 rounded hover:bg-gray-400 cursor-pointer transition" @click="cancelEdit()">
+                    <button v-if="!isNew" class="bg-gray-300 px-4 py-2 mx-1 rounded hover:bg-gray-400 cursor-pointer transition" @click="cancelEdit()">
                         Revert
+                    </button>
+                    <button v-else class="bg-gray-300 px-4 py-2 mx-1 rounded hover:bg-gray-400 cursor-pointer transition" @click="closeWindow()">
+                        Cancel
                     </button>
                 
                  </div>
@@ -115,12 +119,19 @@
 
 <script setup>
 const props = defineProps(['item']);
-const emit = defineEmits(["closeWindow", "saveChanges"]);
+const emit = defineEmits(["closeWindow", "itemCreated"]);
+
+const isNew = computed(() => {
+    if (!props.item || props.item.id == "") {
+        return true
+    }
+    return false
+})
 
 const editedItem = reactive({
     id: props.item.id,
     name: props.item.name,
-    price: props.item.price,
+    price: parseFloat(props.item.price),
     description: props.item.description,
     isArchived: props.item.isArchived,
     ItemVariants: props.item.ItemVariants.map(a => {return {...a}}),
@@ -135,19 +146,40 @@ const archived = ref((props.item.isArchived ? "true" : "false"))
 async function saveChanges() {
     try {
         editedItem.isArchived = (archived.value == "true" ? true : false)
-        props.item.name = editedItem.name
-        props.item.price = editedItem.price
-        props.item.description = editedItem.description
-        props.item.isArchived = editedItem.isArchived
-        props.item.ItemVariants = editedItem.ItemVariants
+        editedItem.price = parseFloat(editedItem.price).toFixed(2)
+        
+        // verify input
+        if (!editedItem.name || editedItem.name == "") {
+            alert("Item must have a name.")
 
-        await $fetch(`/api/item/${props.item.id}`, {
-            method: "PUT",
-            body: props.item
-        });
+        }
+        else if (editedItem.price <= 0) {
+            alert("Price cannot be 0 or less.")
+        }
+        else {
 
-        emit('saveChanges', props.item.id)
-        emit("closeWindow");
+            if (!isNew.value) {
+                await $fetch(`/api/item/${props.item.id}`, {
+                    method: "PUT",
+                    body: editedItem
+                });
+            }
+            else {
+                const newItem = await $fetch(`/api/item/`, {
+                    method: "POST",
+                    body: editedItem
+                });
+
+                emit('itemCreated', newItem.data)
+            }
+
+            props.item.name = editedItem.name
+            props.item.price = editedItem.price
+            props.item.description = editedItem.description
+            props.item.isArchived = editedItem.isArchived
+            props.item.ItemVariants = editedItem.ItemVariants
+            emit("closeWindow");
+        }
     }
     catch (error) {
         console.error("Error saving changes:", error);
@@ -205,4 +237,6 @@ async function deletePhoto(id) {
         }
     }
 }
+
+
 </script>

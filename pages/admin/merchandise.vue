@@ -1,5 +1,5 @@
 <template>
-    <EditItem v-if="isItemModalOpen" :item="selectedItem" @close-window="closeItemModal()"/>
+    <EditItem v-if="isItemModalOpen" :item="selectedItem" @close-window="closeItemModal()" @item-created="(i) => {addItem(i)}"/>
     <div class="min-h-screen bg-gray-100 flex items-start justify-center p-8">
         <div class="max-w-4xl px-6 py-4 w-full">
             <!-- header -->
@@ -86,7 +86,7 @@
                                 {{ merch.name }}
                             </td>
                             <td class="px-4 py-3 text-sm text-gray-800 border">
-                                $ {{ merch.price }}
+                                $ {{ merch.price.toFixed(2) }}
                             </td>
                             <td class="px-4 py-3 text-sm border">
                                 <span v-if="!merch.isArchived" class="text-lime-600">Visible</span>
@@ -101,6 +101,9 @@
                     </table>
                 </div>
             </div>
+            <div v-else-if="isLoading" class="px-4 py-3 text-gray-400">
+                Loading...
+            </div>
             <div v-else class="px-4 py-3 text-gray-400">
                 No merch.
             </div>
@@ -111,6 +114,7 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { authClient } from "~/server/auth"
+import { Size } from "@prisma/client"
 
 const { data: session } = await authClient.getSession();
 const isLoading = ref(true);
@@ -118,23 +122,8 @@ const isLoading = ref(true);
 const searchTerm = ref("");
 const sortAsc = ref(true);
 const isItemModalOpen = ref(false);
-const isAddItemOpen = ref(false);
 const selectedItem = ref(null);
 const merchandise = ref([]);
-
-const test = {
-    name: "Test Item 1",
-    price: 20.99,
-    description: "Description here",
-    isArchived: false,
-}
-
-async function testAdd() {
-    await $fetch("/api/item", {
-            method: "POST",
-            body: test
-        })
-}
 
 onMounted(async () => {
     try {
@@ -184,10 +173,26 @@ function closeItemModal() {
 }
 
 function openAddItem() {
-    isAddItemOpen.value = true;
+
+    const newItem = {
+        id: "",
+        name: "",
+        price: 0,
+        description: "",
+        isArchived: false,
+        ItemVariants: [],
+        ItemPhotos: [],
+    }
+
+    selectedItem.value = newItem
+
+    
+    isItemModalOpen.value = true;
 }
 
-function closeAddItem() {
-    isAddItemOpen.value = false;
+function addItem(newItem) {
+    merchandise.value.push(newItem);
+    isItemModalOpen.value = false;
 }
+
 </script>
