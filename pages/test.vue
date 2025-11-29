@@ -74,18 +74,18 @@ const requestNotificationPermission = async () => {
 };
 const sendOrder = async() => {
   console.log("Order sending...")
-  const orderItems=  [{itemVariantId: "1a9ea8f1-c03c-4534-abe6-693ce7a4c1bf"}] // Create an item with /api/item post and get an itemVariantId from db, this probably won't work for you
-  const { error, data } = await $fetch("/api/order", {
+  const orderItems=  [{itemVariantId: "rijvwfr",quantity: 1}, {itemVariantId: "b7794d73-68ba-4448-8f5e-f0b5b36a6b7c", quantity: 3}] // Create an item with /api/item post and get an itemVariantId from db, this probably won't work for you
+  const { error, data, success } = await $fetch("/api/order", {
     method: "POST",
     body: {
-      status: "PENDING",
       orderItems: orderItems,
-      orderType: "SHIPPING",
-      shippingAddress: "r3egf4rwvc",
+      orderType: "PICKUP",
+      pickupEventID: "ttp343f6j586nehib9448hq1u0", // set this to an event id that exists in db
     },
   });
   console.log("Error: ", error)
   console.log('Data', data)
+  console.log('Success', success)
 
 }
 const subscribeToNotification = async () => {

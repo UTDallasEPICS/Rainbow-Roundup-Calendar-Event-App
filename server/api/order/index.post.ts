@@ -2,6 +2,17 @@ import { defineEventHandler, setResponseStatus, createError, readBody } from "h3
 import type { User } from "@prisma/client";
 import { auth } from "~/server/auth"
 
+
+type OrderItem = {
+    itemVariantId: string
+    quantity?: number   // optional, default is 1
+}
+function validateQuantities(items: OrderItem[]): boolean {
+    return items.every(item => {
+    if (item.quantity === undefined) return true // it is fine if there is no quantity, defaults to 1 in db
+    return Number.isFinite(item.quantity) && item.quantity >= 1 // ensures it is a proper number and that it is at least 1
+    })
+}
 export default defineEventHandler(async (event) => {
     const prisma = event.context.prisma;
     const session = await auth.api.getSession({
@@ -39,7 +50,7 @@ export default defineEventHandler(async (event) => {
         }
         if(body.orderType === "PICKUP"){
             
-            if(!body.pickupEvent){
+            if(!body.pickupEventID){
                 return{
                     success: false,
                     error: "Pickup orders need to have an associated event"
@@ -55,6 +66,12 @@ export default defineEventHandler(async (event) => {
                 }
             }
         }
+        if (!validateQuantities(body.orderItems)) { // Note: no need to validate itemVariantId, since prisma will throw an error with invalid id's
+            return {
+                success: false,
+                error: 'Each quantity, if provided, must be at least 1'
+            }
+        }
 
         const order = await prisma.order.create({
             data: {
@@ -65,8 +82,9 @@ export default defineEventHandler(async (event) => {
                 pickupEventID: body?.pickupEventID,     
                 OrderItems: {
                     create: body.orderItems.map(
-                        (oi: { itemVariantId: string }) => ({
+                        (oi: { itemVariantId: string, quantity: string }) => ({
                             itemVariantId: oi.itemVariantId,
+                            quantity: oi.quantity
                         })
                     ),
                 },

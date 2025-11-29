@@ -155,7 +155,7 @@ model OrderItem {
   id             String         @id @default(uuid())
   orderId        String
   itemVariantId  String  
-  
+  quantity       Int            @default(1)
   Order          Order       @relation(fields: [orderId], references: [id])
   ItemVariants ItemVariant @relation(fields:[itemVariantId], references: [id])
 }
