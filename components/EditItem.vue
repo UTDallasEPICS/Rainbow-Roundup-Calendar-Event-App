@@ -146,7 +146,7 @@ const archived = ref((props.item.isArchived ? "true" : "false"))
 async function saveChanges() {
     try {
         editedItem.isArchived = (archived.value == "true" ? true : false)
-        editedItem.price = parseFloat(editedItem.price).toFixed(2)
+        editedItem.price = parseFloat(editedItem.price)
         
         // verify input
         if (!editedItem.name || editedItem.name == "") {
