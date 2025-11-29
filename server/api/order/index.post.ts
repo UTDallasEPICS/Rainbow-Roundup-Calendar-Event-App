@@ -97,6 +97,7 @@ export default defineEventHandler(async (event) => {
                         },
                     },
                 },
+                User: true
             },
         });
 
