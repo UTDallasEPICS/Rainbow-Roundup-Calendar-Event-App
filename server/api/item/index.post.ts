@@ -2,6 +2,7 @@ import { defineEventHandler, setResponseStatus, createError, readBody } from "h3
 import type { User } from "../../../types/session";
 import { auth } from "~/server/auth"
 import { Size } from "@prisma/client";
+import { type Prisma } from '@prisma/client'
 
 export default defineEventHandler(async (event) => {
     const prisma = event.context.prisma;
@@ -40,6 +41,7 @@ export default defineEventHandler(async (event) => {
                 name: body.name,
                 price: body.price,
                 description: body.description,
+                isArchived: body.isArchived
             },
         });
 
