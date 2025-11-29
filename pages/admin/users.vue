@@ -100,7 +100,7 @@ function banUser(banId) {
   {
     if (users.value[i].id == banId)
     {
-      bannedUsers.value.push(users.value.splice(i, 1))
+      bannedUsers.value.push(users.value.splice(i, 1)[0])
       break;
     }
   }
