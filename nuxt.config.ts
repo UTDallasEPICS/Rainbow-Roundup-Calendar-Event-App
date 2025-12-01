@@ -73,6 +73,7 @@ export default defineNuxtConfig({
     "@nuxt/eslint",
     //"@sidebase/nuxt-auth",
     "nuxt-scheduler",
+    '@pinia/nuxt'
   ],
   /*auth: {
     isEnabled: true,

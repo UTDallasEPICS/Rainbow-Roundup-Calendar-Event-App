@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useRouter } from 'vue-router'
 import type { AbstractItem } from "~/types/prismaTypes";
 
 const props = defineProps<{
@@ -30,7 +31,7 @@ const prevImage = () => {
 
 // Navigate to detailed item page
 const goToItemPage = () => {
-  router.push(`merchandise/item/${props.item.id}`);
+  router.push(`/merchandise/item/${props.item.id}`);
 };
 </script>
 
@@ -38,7 +39,7 @@ const goToItemPage = () => {
   <div
     class="flex flex-col items-center w-full max-w-[496px] mx-auto cursor-pointer"
   >
-    <!-- ✅ MAIN IMAGE -->
+    <!-- MAIN IMAGE -->
     <div class="relative w-full" @click="goToItemPage">
       <img
         :src="props.item.ItemPhotos?.[currentIndex]?.url"
@@ -61,7 +62,7 @@ const goToItemPage = () => {
       </button>
     </div>
 
-    <!-- ✅ THUMBNAILS -->
+    <!-- THUMBNAILS -->
     <div class="flex justify-center items-center w-full mt-4 gap-4">
       <img
         v-for="(photo, index) in props.item.ItemPhotos"
@@ -76,7 +77,7 @@ const goToItemPage = () => {
       />
     </div>
 
-    <!-- ✅ PRICE & TITLE -->
+    <!-- PRICE & TITLE -->
     <div class="mt-6 text-center">
       <div v-if="props.item.price" class="flex justify-center items-center gap-3">
         <p class="text-xl">${{ props.item.price.toFixed(2) }}</p>

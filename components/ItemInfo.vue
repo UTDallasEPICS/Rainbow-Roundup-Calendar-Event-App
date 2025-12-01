@@ -6,24 +6,23 @@ const props = defineProps<{
   item: AbstractItem;
 }>();
 
-// ✅ Emit the variant ID when adding to cart (CHANGED)
+// Emit the variant ID when adding to cart (CHANGED)
 const emit = defineEmits<{
-  (e: "add-to-cart", variantId: string): void;
+  (e: "add-to-cart", variantId: string, qty: number): void;
 }>(); 
 
-// -------------------------
-// IMAGE GALLERY
-// -------------------------
+
+// Image Gallery
 const currentIndex = ref(0);
 const selectedVariantId = ref<string | null>(null);
 const selectImage = (index: number) => {
   currentIndex.value = index;
 };
 
-// -------------------------
-// SIZE SELECTION
-// -------------------------
+
+// Size Selection
 const selectedSize = ref<string | null>(null);
+const quantity = ref<number>(1);
 
 const nextImage = () => {
   if (!props.item.ItemPhotos?.length) return;
@@ -38,16 +37,26 @@ const prevImage = () => {
     props.item.ItemPhotos.length;
 };
 
+// helper to determine availability 
+function variantIsAvailable(v: any): boolean {
+  if (typeof v.availability === 'boolean') return v.availability;
+  return true;
+}
+
 // Add to cart logic
 const handleAddToCart = () => {
   if (!selectedVariantId.value) return;
-  emit("add-to-cart", selectedVariantId.value);
+  const qty = quantity.value
+  if (quantity.value < 1){
+    const qty = 1;
+  }
+  emit("add-to-cart", selectedVariantId.value, qty);
 };
 
 // Router navigation when clicking the main image
 const router = useRouter();
 const goToItemPage = () => {
-  router.push(`/item/${props.item.id}`);
+  router.push(`/merchandise/item/${props.item.id}`);
 };
 
 </script>
@@ -55,17 +64,17 @@ const goToItemPage = () => {
 <template>
   <div class="flex gap-10 p-6 border rounded-xl shadow-md w-full">
 
-    <!-- ✅ LEFT SIDE — MAIN IMAGE + THUMBNAILS (NEW LAYOUT) -->
+    <!-- LEFT SIDE — MAIN IMAGE + THUMBNAILS (NEW LAYOUT) -->
     <div class="flex flex-col items-center w-1/2">
 
-      <!-- ✅ MAIN IMAGE -->
+      <!-- MAIN IMAGE -->
       <div class="relative w-full">
         <img
           :src="props.item.ItemPhotos?.[currentIndex]?.url"
           class="w-full h-96 object-contain rounded-lg"
         />
 
-        <!-- ✅ LEFT ARROW -->
+        <!-- LEFT ARROW -->
         <button
           @click="prevImage"
           class="absolute left-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow"
@@ -73,7 +82,7 @@ const goToItemPage = () => {
           ‹
         </button>
 
-        <!-- ✅ RIGHT ARROW -->
+        <!-- RIGHT ARROW -->
         <button
           @click="nextImage"
           class="absolute right-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow"
@@ -82,7 +91,7 @@ const goToItemPage = () => {
         </button>
       </div>
 
-      <!-- THUMBNAILS (NEW) -->
+      <!-- THUMBNAILS -->
       <div class="flex gap-3 mt-4">
         <img
           v-for="(photo, index) in props.item.ItemPhotos"
@@ -126,10 +135,18 @@ const goToItemPage = () => {
         </div>
       </div>
 
-      <!-- ✅ AVAILABILITY -->
+       <!-- Number selection -->
+      <div class="mt-4">
+        <label class="flex items-center gap-3">
+          <span class="font-medium">Quantity</span>
+          <input v-model.number="quantity" min="1" type="number" class="w-20 px-2 py-1 border rounded" />
+        </label>
+      </div>
+
+      <!-- AVAILABILITY -->
       <p class="mt-4 text-sm text-gray-500">
         {{
-          props.item.ItemVariants.some(v => v.availbility)
+          props.item.ItemVariants.some(v => variantIsAvailable(v))
             ? 'In stock'
             : 'Out of stock'
         }}
