@@ -27,9 +27,6 @@
             <div v-else-if="order == null || order == undefined || !order">
                 <h1 class="text-3xl font-bold mt-6"><b>Unable to find order.</b></h1>
             </div>
-            <div v-else-if="!isAdmin || !isSelf">
-                <h1 class="text-3xl font-bold mt-6"><b>Unauthorized.</b></h1>
-            </div>
             <div v-else class="w-full my-6 space-y-3"> 
                 <!-- title -->
                 <div class="flex justify-between items-center">
@@ -125,7 +122,6 @@ import { useRoute, useRouter } from 'vue-router'
 
 // Access the route and router
 const route = useRoute()
-const router = useRouter()
 
 // Get user session using better Auth composable
 import { authClient } from "~/server/auth"
@@ -146,7 +142,6 @@ try {
         }
     })
     order.value = response.data.value.data
-    console.log(order)
     calculateOrderPrice()
 } catch (e) {
     console.error('Failed to fetch order:', e)
@@ -155,16 +150,11 @@ try {
     isLoading.value = false
 }
 
-// Role-based computed permissions
-const isSelf = computed(() => {
-  return session.user?.id === order.value?.User.id
-})
-
 const isAdmin = computed(() => {
-  const role = session.user?.role
+  const role = session?.user?.role
   if (!role) return false
   if (role === 'SUPER') return true
-  if (role === 'ADMIN' && targetRole !== 'ADMIN') return true
+  if (role === 'ADMIN') return true
   return false
 })
 
