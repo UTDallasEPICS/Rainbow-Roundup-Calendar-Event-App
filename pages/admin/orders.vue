@@ -32,7 +32,7 @@
         <OrdersTable :orders="orders" :title="'Active Orders'" />
         <OrdersTable :orders="archivedOrders" :title="'Archived Orders'" />
       </div>
-      <div v-else class="text-gray-400">
+      <div v-else class="w-full text-center text-gray-400">
         Loading...
       </div>
     </div>
