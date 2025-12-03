@@ -41,7 +41,7 @@
                     </div>
                 </div>
                 <!-- box -->
-                <div class="w-full my-3 rounded-lg bg-white">
+                <div class="w-full my-3 rounded-lg bg-white shadow-lg">
                     <!-- header color -->
                     <div class="h-8 bg-blue-300 rounded-t-lg"></div>
 
@@ -103,11 +103,37 @@
 
                         <!-- right side -->
                         <div class="col-span-1 flex flex-col gap-2 p-4">
-                            <!-- <div v-if="">
-
-                            </div> -->
+                            <div>
+                                <h2 class="text-lg font-bold">Order Type</h2>
+                                <p>{{ order.orderType }}</p>
+                            </div>
+                            <!-- pickup -->
+                            <div v-if="order.orderType == 'PICKUP' || order.orderType == OrderType.PICKUP" class="flex flex-col gap-2">
+                                <div>
+                                    <h2 class="text-lg font-bold">Pickup At</h2>
+                                    <p>event here</p>
+                                </div>
+                            </div>
+                            <!-- shipping -->
+                            <div v-else class="flex flex-col gap-2">
+                                <div>
+                                    <h2 class="text-lg font-bold">Shipping Address</h2>
+                                    <p>{{ order.shippingAddress }}</p>
+                                </div>
+                                <div>
+                                    <h2 class="text-lg font-bold">USPS Tracking Number</h2>
+                                    <p v-if="order.trackingNumber != null && order.trackingNumber != undefined">
+                                        {{ order.trackingNumber }}
+                                    </p>
+                                    <p v-else class="text-gray-400 text-sm font-normal">N/A</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
+
+                <div v-if="!isAdmin" class="text-gray-400 text-sm font-normal text-center mt-2">
+                    Email info@rrup.org to make changes to your order.
                 </div>
                 
             </div>
@@ -116,9 +142,9 @@
 </template>
 
 <script setup>
-import { onMounted, onBeforeUnmount } from 'vue'
-import { ref, computed, watchEffect } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { OrderType } from '@prisma/client'
 
 // Access the route and router
 const route = useRoute()
