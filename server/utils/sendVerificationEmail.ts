@@ -2,7 +2,7 @@ import { createTransport } from "nodemailer";
 
 export const sendVerificationEmail = async (email: string, token: string) => {
   const config = useRuntimeConfig();
-  const siteUrl = config.url || "http://localhost:3000";
+  const siteUrl = config.public.ORIGIN || "http://localhost:3000";
 
   const transporter = createTransport({
     host: config.smtpHost,

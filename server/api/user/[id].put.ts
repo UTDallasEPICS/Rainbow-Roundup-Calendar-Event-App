@@ -42,7 +42,6 @@ export default defineEventHandler(async (event) => {
     }
 
     const updateData: any = {};
-<<<<<<< HEAD
     if (body.email) updateData.email = body.email;
     if (body.firstname) updateData.firstname = body.firstname;
     if (body.lastname) updateData.lastname = body.lastname;
@@ -52,22 +51,6 @@ export default defineEventHandler(async (event) => {
     if (body.role) updateData.role = body.role;
     if (body.isBanned != null) {updateData.isBanned = body.isBanned}
 
-=======
-    if(body.email) 
-      updateData.email = body.email
-    if(body.firstname) 
-      updateData.firstname = body.firstname
-    if(body.lastname) 
-      updateData.lastname = body.lastname
-    if(body.phoneNum) 
-      updateData.phoneNum = body.phoneNum
-    if(body.profilePic)
-      updateData.profilePic = body.profilePic
-    if(body.emailNotif != null) // This is a boolean, so a plain if statement won't work
-      updateData.emailNotif = body.emailNotif
-      if(body.nativeNotif != null) // This is a boolean, so a plain if statement won't work
-      updateData.nativeNotif = body.nativeNotif
->>>>>>> origin/main
     // Perform the update
     const updatedUser = await prisma.user.update({
       where: { id },

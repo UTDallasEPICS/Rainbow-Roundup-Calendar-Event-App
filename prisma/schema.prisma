@@ -15,30 +15,19 @@ model User {
   role          Role      @default(USER)
   phoneNum      String?   @unique // client requested phone numbers are unique
   profilePic    String    @default("/default-profile.png")
-  emailNotif    Boolean   @default(false)       // Notification setting for emails
-  nativeNotif   Boolean   @default(false)
+  GlobalNotif   Boolean // Global notifications (annoncements)
   emailVerified DateTime?
 
   isArchived Boolean    @default(false)
   isBanned    Boolean   @default(false)
 
   SignUps           SignUp[]
-  Notification      Notification[]
   CreatedEvents     Event[]
   
   // Report relations
   Reports           Report[] @relation("ReporterUser")       // Reports this user has made
   PotentialOffenses Report[] @relation("ReportedUser")       // Reports this user has received
   Orders            Order[]
-}
-
-model Notification {
-  id              String   @id @default(uuid())
-  userId          String   @default("none") // prisma kept complaining about a default value
-  endpoint        String   @unique// Endpoint url to push notifications to
-  auth            String
-  p256dh          String
-  User  User  @relation(fields: [userId], references: [id])
 }
 
 model Event {
@@ -67,8 +56,7 @@ model SignUp {
   userId        String
   eventId       String
   Notifications Boolean
-  plusOneKids       Int     @default(0)
-  plusOneAdults       Int     @default(0)
+  plusOne       Int     @default(0) // The number of plus one registrations. 0 is just the user signing up
 
 
   // Foreign keys to User and Event

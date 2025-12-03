@@ -1,4 +1,4 @@
-import type { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { prisma } from '../utils/prisma';
 
 declare module 'h3' {

@@ -36,7 +36,7 @@ export async function sendReminderEmails(days: number) {
         },
       },
       User: {
-        emailNotif: true,
+        GlobalNotif: true,
         emailVerified: { not: null },
       },
     },
@@ -127,7 +127,7 @@ export async function sendReminderEmails(days: number) {
     for (const event of events) {
       const usersNotSignedUp = await prisma.user.findMany({
         where: {
-          emailNotif: true,
+          GlobalNotif: true,
           emailVerified: { not: null, },
           SignUps: {
             none: { eventId: event.id, }

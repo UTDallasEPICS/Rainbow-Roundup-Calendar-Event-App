@@ -2,112 +2,19 @@
   <div>
     <input type="file" @change="handleFileChange" accept="image/*" />
     <button :disabled="!file" @click="uploadToS3">Uploaasdd</button>
-    <img v-if="imageUrl" :src="imageUrl" alt="Profile Picture" class="mt-4 w-32 h-32 rounded-full" />
+    <img
+      v-if="imageUrl"
+      :src="imageUrl"
+      alt="Profile Picture"
+      class="mt-4 w-32 h-32 rounded-full"
+    />
   </div>
-  <button @click="subscribeToNotification" class="py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2">
-    PLEASE SHOW UP</button>
-  <button @click="requestNotificationPermission"
-    class="py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2">Notifications?</button>
 </template>
 
 <script setup lang="ts">
-const isSubscribed = ref(false);
 const file = ref<File | null>(null);
 const imageUrl = ref<string | null>(null);
-const runtimeConfig = useRuntimeConfig();
-//const { $pwa } = useNuxtApp();
 
-//console.log($pwa);
-//const service2 = $pwa?.getSWRegistration();
-
-const requestNotificationPermission = async () => {
-  if ("serviceWorker" in navigator && "Notification" in window) {
-    Notification.requestPermission()
-      .then(async (permission) => {
-        console.log("Permission:", permission);
-        console.log("Does service worker exist: ", 'serviceWorker' in navigator);
-        if (permission === "granted" && 'serviceWorker' in navigator) {
-          isSubscribed.value = true;
-
-          const applicationServerKey = runtimeConfig.public.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY;
-          navigator.serviceWorker.ready.then(async (serviceWorkerRegistration) => {
-            const options = {
-              userVisibleOnly: true,
-              applicationServerKey,
-            };
-            console.log(serviceWorkerRegistration.getNotifications);
-            serviceWorkerRegistration.pushManager.subscribe(options).then(
-              async (pushSubscription) => {
-                console.log("Endpoint: ", pushSubscription.endpoint);
-                const result = await $fetch("/api/notification/subscribe", {
-                  method: "POST",
-                  body: pushSubscription,
-                });
-              },
-              (error) => {
-                console.error(error);
-              },
-            );
-            const result = await $fetch("/api/notification/send", {
-              method: "POST",
-              body: {
-                title: "Test notifination",
-                data: { url: runtimeConfig.public.siteUrl },
-              },
-            });
-          });
-
-        } else {
-          isSubscribed.value = false;
-          console.log("Could not subscribe to notifications, either permission was not granted or your browser doesn't support service workers");
-        }
-        isSubscribed.value = Notification.permission === "granted";
-      })
-      .catch((err) => {
-        console.error("Notification permission error:", err);
-      });
-  } else {
-    console.warn("Notification API or Service Worker not supported.");
-  }
-};
-const subscribeToNotification = async () => {
-  const { $pwa } = useNuxtApp();
-  const registration = $pwa?.getSWRegistration(); // port this code to current stuff
-  console.log("Registration: ", registration);
-  if (!registration) {
-    console.log("No valid service worker registration");
-    return false;
-  }
-  try {
-    const publicVapid = runtimeConfig.public.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY;
-    const subscription = await registration.pushManager.subscribe();
-    console.log("Subscription: ", subscription);
-    if (!subscription) {
-      console.log("No valid push subscription");
-      return false;
-    }
-    const getAuthKey = () => {
-      const json = subscription.toJSON();
-      const authKey = json.keys?.auth;
-      return typeof authKey === "string" ? authKey : "";
-    };
-    const authKey = getAuthKey();
-    if (!authKey) {
-      console.log("No valid auth keys");
-      return false;
-    }
-    const result = await $fetch("/api/notification/subscribe", {
-      method: "POST",
-      body: subscription,
-    });
-
-    console.log(result);
-    return result;
-  } catch (err) {
-    console.error("Error submitting signup form", err);
-    //errors.value = { error: "Something went wrong during signup." };
-  }
-};
 function handleFileChange(e: Event) {
   const input = e.target as HTMLInputElement;
   if (input.files?.[0]) {
@@ -143,22 +50,6 @@ async function uploadToS3() {
 
   imageUrl.value = fileUrl;
 }
-function urlBase64ToUint8Array(base64String: string) {
-  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding)
-    .replaceAll("-", "+")
-    .replaceAll("_", "/");
-
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-
-  for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
-  }
-
-  return outputArray;
-}
-
 </script>
 
 <style scoped>

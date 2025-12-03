@@ -106,7 +106,7 @@ const signupModel = ref({
   role: "USER",
   phoneNum: "",
   profilePic: "",
-  emailNotif: false,
+  GlobalNotif: false,
 });
 
 function handleFileChange(e: Event) {

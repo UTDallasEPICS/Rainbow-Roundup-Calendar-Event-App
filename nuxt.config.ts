@@ -1,5 +1,4 @@
-import dotenv, { config } from "dotenv";
-import { runtimeconfig } from "googleapis/build/src/apis/runtimeconfig";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -9,7 +8,6 @@ export default defineNuxtConfig({
     public: {
       STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
       NUXT_GOOGLE_PLACES: process.env.NUXT_GOOGLE_PLACES,
-      NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY: process.env.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY
     },
     
     AWS_REGION: process.env.AWS_REGION,
@@ -23,18 +21,8 @@ export default defineNuxtConfig({
     smtpPass: process.env.SMTP_PASS,
     smtpFrom: process.env.SMTP_FROM,
     url: process.env.URL,
+  },
 
-    NUXT_PUSH_VAPID_PRIVATE_KEY: process.env.NUXT_PUSH_VAPID_PRIVATE_KEY
-  },
-  vite: {
-    resolve: {
-      alias: {
-        // Redirect the invalid import to an empty stub
-        '.prisma/client/index-browser': '/dev/null'
-      }
-    }
-  },
-  
   devtools: { enabled: true },
   css: [
     "~/assets/css/main.css",
@@ -74,7 +62,7 @@ export default defineNuxtConfig({
   ],
   auth: {
     isEnabled: true,
-    baseURL: process.env.URL + "/api/auth",
+    baseURL: "http://localhost:3000/api/auth",
     provider: {
       type: "authjs",
       trustHost: false,
@@ -90,7 +78,7 @@ export default defineNuxtConfig({
   },
   pwa: {
     strategies: "injectManifest",
-    srcDir: "./service-worker",
+    srcDir: "service-worker",
     filename: "sw.ts",
     registerType: "autoUpdate",
     manifest: {
