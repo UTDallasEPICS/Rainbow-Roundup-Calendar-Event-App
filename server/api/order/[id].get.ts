@@ -31,6 +31,11 @@ export default defineEventHandler(async (event) => {
                     },
                 },
                 User: true,
+                event: {
+                    include: {
+                        SignUps: true
+                    }
+                }
             },
         });
 

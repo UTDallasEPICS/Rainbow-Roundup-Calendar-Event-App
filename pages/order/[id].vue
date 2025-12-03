@@ -111,7 +111,7 @@
                             <div v-if="order.orderType == 'PICKUP' || order.orderType == OrderType.PICKUP" class="flex flex-col gap-2">
                                 <div>
                                     <h2 class="text-lg font-bold">Pickup At</h2>
-                                    <p>event here</p>
+                                    <EventCard :event="order.event" />
                                 </div>
                             </div>
                             <!-- shipping -->
