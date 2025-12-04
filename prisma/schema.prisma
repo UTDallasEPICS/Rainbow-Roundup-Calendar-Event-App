@@ -141,7 +141,7 @@ model Order {
   orderType       OrderType
   shippingAddress String? // If the order is "shipping" type, have an address, should be null otherwise
   pickupEventID   String? // If the user is picking it up an event, this the event's ID.
-  trackingNumber  Int?
+  trackingNumber  String?
 //  paymentInfo     String?
   placedAt        DateTime      @default(now())
   updatedAt       DateTime      @updatedAt

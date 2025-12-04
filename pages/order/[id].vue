@@ -372,16 +372,6 @@ async function saveChanges() {
             return
         }
 
-        if (editedOrder.trackingNumber || editedOrder.trackingNumber != null)
-        {
-            editedOrder.trackingNumber = parseInt(editedOrder.trackingNumber)
-            if (!editedOrder.trackingNumber) {
-                alert("Tracking number must be a number.")
-                editedOrder.trackingNumber = null;
-                return;
-            }
-        }
-
         // set pickup event stuff to null
         editedOrder.pickupEventID == null;
     }
