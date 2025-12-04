@@ -43,20 +43,43 @@ export default defineEventHandler(async (event) => {
     try {
         const body = await readBody(event);
 
-        if (!body.status && !body.paymentInfo && !Array.isArray(body.orderItems)) {
-            setResponseStatus(event, 400);
-            return {
-                success: false,
-                error: "Must include at least one field to update (status, paymentInfo, or orderItems).",
-            };
+        // if (!body.status && !body.paymentInfo && !Array.isArray(body.orderItems)) {
+        //     setResponseStatus(event, 400);
+        //     return {
+        //         success: false,
+        //         error: "Must include at least one field to update (status, paymentInfo, or orderItems).",
+        //     };
+        // }
+
+        const updateData: any = {};
+        if (body.status != null) {
+            updateData.status = body.status
         }
+        if (body.orderType != null) { 
+            updateData.orderType = body.orderType
+        }
+        if (body.pickupEventID != null || body.pickupEventID != '') {
+            // check eventID
+            const event = await prisma.event.findUnique({
+                where: {
+                    id: body.pickupEventID
+                }
+            })
+            if (!event) {
+                throw createError({
+                    statusMessage: "Event id " + body.pickupEventID + " does not exist",
+                    statusCode: 403,
+                });
+            }
+        }
+        updateData.pickupEventID = body.pickupEventID
+        updateData.shippingAddress = body.shippingAddress
+        updateData.trackingNumber = body.trackingNumber
+        
 
         const updatedOrder = await prisma.order.update({
             where: { id },
-            data: {
-                status: body.status,
-                paymentInfo: body.paymentInfo,
-            },
+            data: updateData,
         });
 
         if (Array.isArray(body.orderItems)) {

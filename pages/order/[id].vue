@@ -217,7 +217,7 @@
                             <div v-else class="flex flex-col gap-2">
                                 <div>
                                     <h2 class="text-lg font-bold">Shipping Address</h2>
-                                    <input v-model="editedOrder.shippingAddress" class="w-full border border-gray-400 p-1 rounded"></input>
+                                    <textarea v-model="editedOrder.shippingAddress" class="w-full border border-gray-400 p-1 rounded resize-none" rows="3"></textarea>
                                 </div>
                                 <div>
                                     <h2 class="text-lg font-bold">USPS Tracking Number</h2>
@@ -336,6 +336,7 @@ async function saveChanges() {
     console.log(editedOrder)
 
     // verify inputs
+    var event
 
     // if pickup order
     if (editedOrder.orderType == 'PICKUP' || editedOrder.orderType == OrderType.PICKUP) {
@@ -354,6 +355,7 @@ async function saveChanges() {
             if (!response.success) {
                 alert("Failed to verify pickup event ID. Please try again.")
             }
+            event = response.Event
         }
         catch (err) {
             alert("Failed to verify event ID: " + err)
@@ -366,6 +368,16 @@ async function saveChanges() {
         editedOrder.trackingNumber = null;
     }
     else {
+        if (editedOrder.shippingAddress == null || !editedOrder.shippingAddress) {
+            alert("Shipping address is required.")
+            return
+        }
+
+        if (editedOrder.trackingNumber || editedOrder.trackingNumber != null)
+        {
+            editedOrder.trackingNumber = parseInt(editedOrder.trackingNumber)
+        }
+
         // set pickup event stuff to null
         editedOrder.pickupEventID == null;
     }
@@ -375,17 +387,19 @@ async function saveChanges() {
             method: "PUT",
             body: editedOrder
         })
+        order.value.status = editedOrder.status
+        order.value.orderType = editedOrder.orderType
+        order.value.pickupEventID = editedOrder.pickupEventID
+        order.value.shippingAddress = editedOrder.shippingAddress
+        order.value.trackingNumber = editedOrder.trackingNumber
+        order.value.event = event
+        isEditing.value = false
     }
     catch (err) {
         alert("Unable to save changes. Please try again. Error: " + err)
     }
 
-    order.value.status = editedOrder.status
-    order.value.orderType = editedOrder.orderType
-    order.value.pickupEventID = editedOrder.pickupEventID
-    order.value.shippingAddress = editedOrder.shippingAddress
-    order.value.trackingNumber = editedOrder.trackingNumber
-    isEditing.value = false
+    
 }
 
 function cancelEdit() {
