@@ -149,8 +149,8 @@ const emit = defineEmits<{
 
 const dateDay = computed(() => {
   //console.log("PROPS") <--- see it printing in the console
-  console.log("Hello World!")
-  return props.event.startTime.getDate()
+  const date = new Date (props.event.startTime).getDate()
+  return date
 });
   
 //console.log()
