@@ -231,7 +231,7 @@
                                 Save
                             </button>
                             <button class="bg-gray-300 px-4 py-2 mx-1 rounded hover:bg-gray-400 cursor-pointer transition" @click="cancelEdit()">
-                                Revert
+                                Cancel
                             </button>
                         </div>
                     </div>
@@ -332,8 +332,6 @@ function makeEdits() {
 }
 
 async function saveChanges() {
-    // put changes
-    console.log(editedOrder)
 
     // verify inputs
     var event
@@ -376,6 +374,11 @@ async function saveChanges() {
         if (editedOrder.trackingNumber || editedOrder.trackingNumber != null)
         {
             editedOrder.trackingNumber = parseInt(editedOrder.trackingNumber)
+            if (!editedOrder.trackingNumber) {
+                alert("Tracking number must be a number.")
+                editedOrder.trackingNumber = null;
+                return;
+            }
         }
 
         // set pickup event stuff to null
@@ -403,7 +406,6 @@ async function saveChanges() {
 }
 
 function cancelEdit() {
-    setEditedOrderToOrder();
     isEditing.value = false
 }
 
