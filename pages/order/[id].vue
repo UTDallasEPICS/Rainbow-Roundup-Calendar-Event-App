@@ -150,7 +150,6 @@
                             </div>
                             <div>
                                 <label for="status" class="text-lg font-bold">Order Status</label>
-                                <!-- <p>{{ order.status }}</p> -->
                                 <div class="border border-gray-400 p-1 rounded">
                                     <select name="status" v-model="editedOrder.status" class="w-full">
                                         <option value="UNCONFIRMED">UNCONFIRMED</option>
@@ -200,27 +199,29 @@
                         <div class="col-span-1 flex flex-col gap-2 p-4">
                             <div>
                                 <h2 class="text-lg font-bold">Order Type</h2>
-                                <p>{{ order.orderType }}</p>
+                                <div class="border border-gray-400 p-1 rounded">
+                                    <select name="orderType" v-model="editedOrder.orderType" class="w-full">
+                                        <option value="PICKUP">PICKUP</option>
+                                        <option value="SHIPPING">SHIPPING</option>
+                                    </select>
+                                </div>
                             </div>
                             <!-- pickup -->
-                            <div v-if="order.orderType == 'PICKUP' || order.orderType == OrderType.PICKUP" class="flex flex-col gap-2">
+                            <div v-if="editedOrder.orderType == 'PICKUP' || editedOrder.orderType == OrderType.PICKUP" class="flex flex-col gap-2">
                                 <div>
-                                    <h2 class="text-lg font-bold">Pickup At</h2>
-                                    <EventCard :event="order.event" />
+                                    <h2 class="text-lg font-bold">Pickup Event ID</h2>
+                                    <input v-model="editedOrder.pickupEventID" class="w-full border border-gray-400 p-1 rounded"></input>
                                 </div>
                             </div>
                             <!-- shipping -->
                             <div v-else class="flex flex-col gap-2">
                                 <div>
                                     <h2 class="text-lg font-bold">Shipping Address</h2>
-                                    <p>{{ order.shippingAddress }}</p>
+                                    <input v-model="editedOrder.shippingAddress" class="w-full border border-gray-400 p-1 rounded"></input>
                                 </div>
                                 <div>
                                     <h2 class="text-lg font-bold">USPS Tracking Number</h2>
-                                    <p v-if="order.trackingNumber != null && order.trackingNumber != undefined">
-                                        {{ order.trackingNumber }}
-                                    </p>
-                                    <p v-else class="text-gray-400 text-sm font-normal">N/A</p>
+                                    <input v-model="editedOrder.trackingNumber" class="w-full border border-gray-400 p-1 rounded"></input>
                                 </div>
                             </div>
                         </div>
@@ -265,13 +266,11 @@ const totalOrderPrice = ref(0)
 const isEditing = ref(false);
 
 const editedOrder = reactive({
-    id: null,
     status: OrderStatus.UNCONFIRMED,
     orderType: OrderType.PICKUP,
     shippingAddress: null,
     pickupEventID: null,
     trackingNumber: 0,
-    placedAt: Date.now(),
     updatedAt: Date.now(),
 })
 
@@ -332,8 +331,60 @@ function makeEdits() {
     isEditing.value = true;
 }
 
-function saveChanges() {
+async function saveChanges() {
     // put changes
+    console.log(editedOrder)
+
+    // verify inputs
+
+    // if pickup order
+    if (editedOrder.orderType == 'PICKUP' || editedOrder.orderType == OrderType.PICKUP) {
+        if (!editedOrder.pickupEventID || editedOrder.pickupEventID == '' || editedOrder.pickupEventID == null)
+        {
+            alert("Pickup Event ID is required.")
+            return;
+        }
+
+        // check event existence
+        try {
+            const response = await $fetch(`/api/event/${editedOrder.pickupEventID}`, {
+                method: "GET"
+            })
+
+            if (!response.success) {
+                alert("Failed to verify pickup event ID. Please try again.")
+            }
+        }
+        catch (err) {
+            alert("Failed to verify event ID: " + err)
+            return;
+        }
+         
+        
+        // set shipping to null
+        editedOrder.shippingAddress = null;
+        editedOrder.trackingNumber = null;
+    }
+    else {
+        // set pickup event stuff to null
+        editedOrder.pickupEventID == null;
+    }
+
+    try {
+        await $fetch(`/api/order/${order.value.id}`, {
+            method: "PUT",
+            body: editedOrder
+        })
+    }
+    catch (err) {
+        alert("Unable to save changes. Please try again. Error: " + err)
+    }
+
+    order.value.status = editedOrder.status
+    order.value.orderType = editedOrder.orderType
+    order.value.pickupEventID = editedOrder.pickupEventID
+    order.value.shippingAddress = editedOrder.shippingAddress
+    order.value.trackingNumber = editedOrder.trackingNumber
     isEditing.value = false
 }
 
@@ -343,14 +394,11 @@ function cancelEdit() {
 }
 
 function setEditedOrderToOrder() {
-    editedOrder.id = order.value.id
     editedOrder.status = order.value.status
     editedOrder.orderType = order.value.orderType
     editedOrder.shippingAddress = order.value.shippingAddress
     editedOrder.pickupEventID = order.value.pickupEventID
     editedOrder.trackingNumber = order.value.trackingNumber
-    editedOrder.placedAt = new Date(order.value.placedAt)
-    editedOrder.updatedAt = new Date(order.value.updatedAt)
 }
 
 </script>
