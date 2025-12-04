@@ -318,8 +318,10 @@ function formatDateTime(iso) {
 function calculateOrderPrice() { 
     let price = 0;
 
-    for (let i = 0; i < order.value.OrderItems.length; i++) {
-        price += (order.value.OrderItems[i].ItemVariants.item.price * order.value.OrderItems[i].quantity);
+    if (order.value.OrderItems != null) {
+        for (let i = 0; i < order.value.OrderItems.length; i++) {
+            price += (order.value.OrderItems[i].ItemVariants.item.price * order.value.OrderItems[i].quantity);
+        }
     }
 
    totalOrderPrice.value = price;
@@ -332,7 +334,6 @@ function makeEdits() {
 }
 
 async function saveChanges() {
-
     // verify inputs
     var event
 
