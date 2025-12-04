@@ -84,10 +84,10 @@ export default defineEventHandler(async (event) => {
             updateData.shippingAddress = null
             updateData.trackingNumber = null 
         }
-        else if (body.orderType == 'PICKUP' || body.orderType == OrderType.PICKUP ) {
-            if (!body.shippingAddress || body.shippingAddress == 'SHIPING') {
+        else if (body.orderType == 'SHIPPING' || body.orderType == OrderType.SHIPPING ) {
+            if (!body.shippingAddress || body.shippingAddress == '') {
                 throw createError({
-                    statusMessage: "Event id " + body.pickupEventID + " does not exist",
+                    statusMessage: "Shipping address is required.",
                     statusCode: 403,
                 });
             }
