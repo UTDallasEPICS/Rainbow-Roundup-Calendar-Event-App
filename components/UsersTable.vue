@@ -14,7 +14,7 @@
     >
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-amber-300">
+        <thead class="bg-green-300">
             <tr>
             <th
                 @click="sortBy('firstname')"
