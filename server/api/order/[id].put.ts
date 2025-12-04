@@ -1,6 +1,7 @@
 import { defineEventHandler, setResponseStatus, getRouterParam, createError, readBody } from "h3";
 import type { User } from "../../../types/session";
 import { auth } from "~/server/auth"
+import { OrderType } from "@prisma/client";
 
 export default defineEventHandler(async (event) => {
     const id = getRouterParam(event, "id"); 
@@ -55,10 +56,17 @@ export default defineEventHandler(async (event) => {
         if (body.status != null) {
             updateData.status = body.status
         }
-        if (body.orderType != null) { 
+        if (body.orderType == null) { 
+            throw createError({
+                statusMessage: "Invalid order type",
+                statusCode: 403,
+            });
+        }
+        else {
             updateData.orderType = body.orderType
         }
-        if (body.pickupEventID != null || body.pickupEventID != '') {
+
+        if (body.orderType == 'PICKUP' || body.orderType == OrderType.PICKUP ) {
             // check eventID
             const event = await prisma.event.findUnique({
                 where: {
@@ -71,10 +79,24 @@ export default defineEventHandler(async (event) => {
                     statusCode: 403,
                 });
             }
+
+            updateData.pickupEventID = body.pickupEventID
+            updateData.shippingAddress = null
+            updateData.trackingNumber = null 
         }
-        updateData.pickupEventID = body.pickupEventID
-        updateData.shippingAddress = body.shippingAddress
-        updateData.trackingNumber = body.trackingNumber
+        else if (body.orderType == 'PICKUP' || body.orderType == OrderType.PICKUP ) {
+            if (!body.shippingAddress || body.shippingAddress == 'SHIPING') {
+                throw createError({
+                    statusMessage: "Event id " + body.pickupEventID + " does not exist",
+                    statusCode: 403,
+                });
+            }
+
+            updateData.pickupEventID = null
+            updateData.shippingAddress = body.shippingAddress
+            updateData.trackingNumber = body.trackingNumber 
+        }
+    
         
 
         const updatedOrder = await prisma.order.update({
@@ -123,6 +145,7 @@ export default defineEventHandler(async (event) => {
         };
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+        console.log(error)
         setResponseStatus(event, 500);
         return {
             success: false,
