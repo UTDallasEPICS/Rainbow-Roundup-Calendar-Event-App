@@ -129,7 +129,7 @@ function formatDateTime(iso) {
   });
 }
 
-function goToOrder(id) {
-    alert("TO DO: add navigation")
+async function goToOrder(id) {
+    await navigateTo(`/order/${id}`);
 }
 </script>

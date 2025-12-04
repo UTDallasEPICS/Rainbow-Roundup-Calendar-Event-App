@@ -35,7 +35,7 @@
                         <p>{{ order.id }}</p>
                     </h1>
                     <div v-if="isAdmin && !isEditing" class="text-right">
-                        <button class="bg-blue-300 p-2 rounded-md font-bold hover:bg-blue-400 cursor-pointer transition duration-150" @click="makeEdits()">
+                        <button class="bg-purple-300 p-2 rounded-md font-bold hover:bg-purple-400 cursor-pointer transition duration-150" @click="makeEdits()">
                             Edit
                         </button>
                     </div>
@@ -43,7 +43,7 @@
                 <!-- box -->
                 <div class="w-full my-3 rounded-lg bg-white shadow-lg">
                     <!-- header color -->
-                    <div class="h-8 bg-blue-300 rounded-t-lg"></div>
+                    <div class="h-8 bg-purple-300 rounded-t-lg"></div>
 
                     <div v-if="!isEditing" class="grid grid-cols-1 md:grid-cols-2">
                         <!-- left side -->
