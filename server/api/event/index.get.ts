@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
         }, // Who signed up
       },
       orderBy: {
-        startTime: "asc",
+        startTime: "desc",
       },
     });
 
