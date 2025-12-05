@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) =>{
         })
         setResponseStatus(event, 200)
         SignUps.forEach(signup => {
-            if (!(user?.role === "SUPER" || user?.role === "ADMIN")){signup
+            if (!(user?.role === "SUPER" || user?.role === "ADMIN")){
             signup.plusOneAdults = signup.plusOneAdults + signup.plusOneKids
             signup.plusOneKids = 0
         }
