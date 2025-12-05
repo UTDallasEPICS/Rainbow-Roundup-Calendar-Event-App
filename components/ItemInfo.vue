@@ -114,7 +114,7 @@ const goToItemPage = () => {
       <h2 class="text-2xl font-semibold">{{ props.item.name }}</h2>
       <p class="text-xl text-gray-700 mt-1">${{ props.item.price }}</p>
 
-      <!-- SIZES (CLICKABLE) -->
+      <!-- SIZES -->
       <div class="mt-4">
         <span class="font-medium">Sizes:</span>
 

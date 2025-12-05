@@ -1,4 +1,4 @@
-    <template>
+<template>
       <div class="min-h-screen bg-global-1 flex flex-col justify-start items-center">
         <!-- Header Section -->
         <header class="w-full bg-header-1 px-4 sm:px-5 md:px-6 lg:px-[20px] py-4">
@@ -14,7 +14,7 @@
               </div>
 
               <!-- Search Bar -->
-               
+              <!-- 
               <div class="w-full lg:w-[64%] max-w-2xl">
                 <form @submit.prevent="handleSearch" class="relative w-full">
                   <div class="relative flex items-center">
@@ -35,13 +35,14 @@
                   </div>
                 </form>
               </div>
+            -->
               <!-- Cart and Login -->
               <div class="flex items-center gap-4 sm:gap-6 lg:gap-8 flex-shrink-0">
-                <button class="focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-lg transition-transform hover:scale-105 active:scale-95">
+                <NuxtLink to="/merchandise/cart" class="focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-lg transition-transform hover:scale-105 active:scale-95">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="sm:size-6 md:size-10 lg:size-14">
                     <path d="M2.25 2.25a.75.75 0 0 0 0 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 0 0-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 0 0 0-1.5H5.378A2.25 2.25 0 0 1 7.5 15h11.218a.75.75 0 0 0 .674-.421 60.358 60.358 0 0 0 2.96-7.228.75.75 0 0 0-.525-.965A60.864 60.864 0 0 0 5.68 4.509l-.232-.867A1.875 1.875 0 0 0 3.636 2.25H2.25ZM3.75 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM16.5 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" />
                   </svg>
-                </button>
+                </NuxtLink>
               </div>
             </div>
           </div>
@@ -78,6 +79,7 @@
             </div>
           </div>
         </div>-->
+
 
     <!-- Hero Slider -->
     <div class="w-full mt-[82px]">
@@ -128,7 +130,7 @@
 
                 <div class="text-center px-4 sm:px-6 md:px-8">
                   <h2 class="text-global-1 text-lg sm:text-xl md:text-2xl lg:text-[30px] font-medium leading-tight sm:leading-normal md:leading-relaxed lg:leading-[37px] mb-4 sm:mb-6 md:mb-8">
-                    Hero Banner
+                    Support Us!
                   </h2>
                 </div>
 
@@ -208,49 +210,8 @@
 
     <script setup>
     
-    //import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-    //import { useFetch } from "#app";
 
-    /*
-    const item = ref([
-      {
-        id: "test123",
-        name: "Cool Shirt",
-        price: 20.99,
-
-        ItemPhotos: [
-          { id: "1", url: "/img_firstshirt.png", itemId: "test123" },
-          { id: "2", url: "/img_1.1.png", itemId: "test123" },
-          { id: "3", url: "/img_1.2.png", itemId: "test123" }
-        ],
-
-        ItemVariants: [
-          {
-            id: "v1",
-            size: "XXS",
-            description: "Small but mighty",
-            availbility: true,
-            itemId: "test123",
-          },
-          {
-            id: "v2",
-            size: "XL",
-            description: "Large and proud",
-            availbility: false,
-            itemId: "test123",
-          },
-          {
-            id: "v3",
-            size: "XXL",
-            description: "Big confidence energy",
-            availbility: true,
-            itemId: "test123",
-          },
-        ],
-      }
-    ])
-    //*/
-
+    const router = useRouter()
     // State
     const currentSlide = ref(0);
     const currentPage = ref(0);
@@ -274,7 +235,7 @@
 
         items.value = data;
         // if (res && res.success && Array.isArray(res.data)) {
-        //   items.value = res.data; // ✅ assign Prisma data
+        //   items.value = res.data; // assign Prisma data
         // } else {
         //   console.log(data);
         //   console.warn("Invalid response format:", res);
@@ -383,7 +344,7 @@
       }, 150)
     }
     */
-    // Methods
+    // Methods (mostly not needed now)
     const handleShopByStyle = () => {
       console.log('Shop by Style clicked')
     }
@@ -420,6 +381,10 @@
       currentSlide.value = index
     }
 
+    function goToCart() {
+     router.push('/merchandise/cart')
+    }
+
     const handlePageChange = (pageIndex) => {
       currentPage.value = pageIndex
     }
@@ -429,4 +394,3 @@
       clearInterval(autoPlayInterval)
     })
     </script>
-    
