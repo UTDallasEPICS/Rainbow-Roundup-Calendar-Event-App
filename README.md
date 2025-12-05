@@ -53,6 +53,7 @@ Rainbow Roundup is a calendar event management platform built to unify and uplif
 
 - View and update name, phone, and profile  of your own user
 - Can delete your own user
+- Can also toggle preferences for emaila and native notifications
 
 ### `/profile/:id`
 
@@ -119,6 +120,11 @@ Rainbow Roundup is a calendar event management platform built to unify and uplif
 ### `/admin/analytics` (TODO)
 
 - View system engagement data (RSVP counts, user activity, etc.)
+
+### Additional background functionality
+- Send email reminders for upcoming events to users who have enabled that preference
+- Send native notifications for upcoming events to user users who have enabled that preference
+- Reminder are sent at noon 3 and 7 days before the event
 
 ---
 
@@ -207,26 +213,20 @@ There are currently **no legacy systems** or required data imports from a previo
 
    ```bash
    npx prisma generate
-   npx prisma migrate dev --name init
    ```
 
-5. **Seed the Database (if applicable)**
 
-   ```bash
-   npx prisma db seed
-   ```
-
-6. **Start the Development Server**
+5. **Start the Development Server**
 
    ```bash
    npm run dev
    ```
 
-7. **Authentication Setup**
+6. **Authentication Setup**
    - Configure email credentials in `.env`
-   -  Do ``` npx prisma studio ``` to see the DB
-   -  Change your user role to SUPER or ADMIN
+   -  Run ``` npx prisma studio ``` to see the DB
+   -  Change your user role to SUPER or ADMIN (or leave it as USER to experience the website as regular USER)
 
 ---
 
-For any deployment-specific scripts or secrets, refer to the `README.md` or `/scripts` directory.
+To get secrets, please contact your mentor.
