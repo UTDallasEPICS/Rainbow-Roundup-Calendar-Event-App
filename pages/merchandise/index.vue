@@ -14,6 +14,7 @@
               </div>
 
               <!-- Search Bar -->
+               
               <div class="w-full lg:w-[64%] max-w-2xl">
                 <form @submit.prevent="handleSearch" class="relative w-full">
                   <div class="relative flex items-center">
@@ -34,7 +35,6 @@
                   </div>
                 </form>
               </div>
-
               <!-- Cart and Login -->
               <div class="flex items-center gap-4 sm:gap-6 lg:gap-8 flex-shrink-0">
                 <button class="focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-lg transition-transform hover:scale-105 active:scale-95">
@@ -159,7 +159,7 @@
     </div>
     
     <!-- Pagination Indicator -->
-    <div class="w-full mt-4 sm:mt-6 md:mt-8 lg:mt-[16px] mb-4 sm:mb-6 md:mb-8 lg:mb-[16px]">
+   <!-- <div class="w-full mt-4 sm:mt-6 md:mt-8 lg:mt-[16px] mb-4 sm:mb-6 md:mb-8 lg:mb-[16px]">
       <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8">
         <div class="flex justify-center">
           <div class="w-full sm:w-3/4 md:w-1/2 lg:w-[8%]">
@@ -181,14 +181,14 @@
         </div>
       </div>
     </div>
-
+  -->
     
         <div class="w-full max-w-[1214px] mx-auto px-4 sm:px-6 md:px-8 lg:px-0">
     <h2 class="text-3xl font-semibold mb-8 text-center">Explore Our Collection</h2>
     <div v-if="loading" class="text-center py-10 text-gray-500">
       Loading items...
     </div>
-
+  
     <div v-else-if="error" class="text-center py-10 text-red-600">
       {{ error }}
 
