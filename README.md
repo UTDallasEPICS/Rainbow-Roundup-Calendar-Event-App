@@ -140,10 +140,14 @@ Rainbow Roundup is a calendar event management platform built to unify and uplif
 
 - Stores user profile pictures securely
 
-### **Nuxt Auth (Magic Link Authentication)**
+### **Better Auth Integration (Email OTP)**
 
-- Handles authentication using Nuxt Auth module with email-based magic links
+- Handles authentication using Better Autg module with email-based OTP's
 - Manages session tokens securely on the client and server
+- There is additionally a cookie caching feature
+   - When a user pulls the user from better auth, a 5 minute securely signed cookie is returned
+   - This cookie contains all user information, reducing calls to the DB for the 5 minutes it is active (since every page pulls user session)
+   - Since the cookie is securely signed, it will be invalid if tampered with by the user.
 
 ---
 
@@ -152,7 +156,7 @@ Rainbow Roundup is a calendar event management platform built to unify and uplif
 - **Meta Framework**: Nuxt.js (Vue-based, fullstack)
 - **Database**: SQLite3
 - **ORM**: Prisma
-- **Authentication**: Next-Auth (via Nuxt Auth module)
+- **Authentication**: Better Auth Email OTP (via the Better auth module, and its Email OTP plugin)
 - **Storage**: AWS S3 (for profile images)
 - **Testing**: Vitest
 - **UI**: Tailwind CSS + Headless UI
@@ -162,10 +166,12 @@ Rainbow Roundup is a calendar event management platform built to unify and uplif
 
 ## Deployment Notes
 
-The application is hosted on **AWS** infrastructure, using:
+The application will be hosted hosted on **AWS** infrastructure, using:
 
-- **S3** for media storage
-- (Future) Cloud-based database and deployment pipelines
+- **AWS S3** for media storage
+- **Docker** To build the project into a container
+- **Github workflows** Builds and pushed the container image to Amazon ECR registry
+- **AWS EC2** To host the built docker container
 
 ---
 
