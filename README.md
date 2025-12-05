@@ -58,6 +58,7 @@ Rainbow Roundup is a calendar event management platform built to unify and uplif
 ### `/profile/:id`
 
 - View a specific user's profile
+- Create a report against a user for an inappropriate name, profile picture, or other
 - Super admin is also able to ban or revoke bans of a user on this page
 
 ### `/admin/`
@@ -71,13 +72,12 @@ Rainbow Roundup is a calendar event management platform built to unify and uplif
    - Change user information (name, emails, role)
 - View all user information
    - Including banned and archived users
-- View reported users
-   - For each report, the user is able to either delete the report, or ban the user
-- Note: Regular admin is able to view all this information and visit profiles, but is unable to modify any of it
+- View pending reports
+   - For each report, the admin is able to either delete the report, or ban the user
 
 ### `/admin/events`
 
-- Allows admin to manage events
+- Allows admin to view events and see archived ones
 
 ### `/admin/merchandise`
 
@@ -97,12 +97,12 @@ Rainbow Roundup is a calendar event management platform built to unify and uplif
    - pickup orders are meant to be picked up at a certain event and need an associated event id
    - shipping orders are meant to be delivered and need to have a shipping address 
       - The admin can add a tracking number to the order once that is available
-- Orders are initially unconfirmed when placed by user but can be marked as CONFIRMED, UNPAID, PAID, and DELIVERED by super admins
-- Super admins can change the following field in an order
+- Orders are initially unconfirmed when placed by user but can be marked as CONFIRMED, UNPAID, PAID, and DELIVERED by admins
+- Admins can change the following field in an order
    - Order status, Order type
    - If shiiping order, the admin can additionally change shipping address and USPS tracking number
    - If pickup order, the admin can additionally change the pickup event id
-- Fields that super admin can view
+- Fields that admin can view
    - Order date and time
    - order id
    - order status
@@ -140,7 +140,7 @@ Rainbow Roundup is a calendar event management platform built to unify and uplif
 
 ### **Stripe** (Planned)
 
-- Enable donations or ticketed event payments in future versions
+- Enable donations or merchandise payments in future versions
 
 ### **AWS S3**
 
