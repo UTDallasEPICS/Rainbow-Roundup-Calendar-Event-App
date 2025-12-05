@@ -1,7 +1,13 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
+//import SignUp from "~/pages/signUp.vue";
+import { auth } from "~/server/auth";
 
 export default defineEventHandler(async (event) =>{
     const prisma = event.context.prisma;
+    const session = await auth.api.getSession({
+            headers:  event.headers
+        })
+    const user = session?.user as User | undefined;
     try{
         const SignUps = await prisma.signUp.findMany({
             include: {
@@ -10,6 +16,14 @@ export default defineEventHandler(async (event) =>{
             }
         })
         setResponseStatus(event, 200)
+        SignUps.forEach(signup => {
+            if (!(user?.role === "SUPER" || user?.role === "ADMIN")){
+            signup.plusOneAdults = signup.plusOneAdults + signup.plusOneKids
+            signup.plusOneKids = 0
+        }
+        //console.log(signup)
+        })
+        
         return SignUps;
     } catch (error) {
         setResponseStatus(event, 500);

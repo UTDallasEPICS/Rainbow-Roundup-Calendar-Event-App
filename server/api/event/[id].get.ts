@@ -7,7 +7,10 @@ import type { User } from "../../../types/session";
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
   const id = getRouterParam(event, "id");
-  
+  const session = await auth.api.getSession({
+                headers:  event.headers
+            })
+  const user = session?.user as User | undefined;
   try {
     if (id) {
       // Fetch a single event by ID with relations (admin and signUps)
@@ -40,7 +43,12 @@ export default defineEventHandler(async (event) => {
           });
         }
       }
-
+      if(!(user?.role === "SUPER" || user?.role === "ADMIN")){
+        singleEvent.SignUps.forEach(signup =>{
+          signup.plusOneAdults = signup.plusOneAdults + signup.plusOneKids
+          signup.plusOneKids = 0
+        })
+      }
       setResponseStatus(event, 200);
       return {
         success: true,

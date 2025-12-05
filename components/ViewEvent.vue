@@ -182,7 +182,8 @@
                     <li v-if="!((signup.plusOneKids + signup.plusOneAdults) === 0)" class="text-gray-400 ">
                       Plus one signups: {{signup.plusOneKids + signup.plusOneAdults }}
                     </li>
-                    <li v-if="(((signup.plusOneKids + signup.plusOneAdults) > 0))" class="text-gray-400 ">
+                    <li v-if="(signup.plusOneKids + signup.plusOneAdults) > 0 &&
+                          (session.user?.role === 'ADMIN' || session.user?.role === 'SUPER')" class="text-gray-400 ">
                       Adults: {{signup.plusOneAdults }}, Kids: {{signup.plusOneKids }}
                     </li> 
                     </p>

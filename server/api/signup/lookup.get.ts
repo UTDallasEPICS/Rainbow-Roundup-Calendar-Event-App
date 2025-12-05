@@ -1,11 +1,16 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import { defineEventHandler, getQuery, setResponseStatus } from "h3";
+import { auth } from "~/server/auth";
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma as PrismaClient;
   const query = getQuery(event);
   const userId = query.userId as string;
   const eventId = query.eventId as string;
+  const session = await auth.api.getSession({
+        headers:  event.headers
+    })
+  const user = session?.user as User | undefined;
 
   try {
     if (!userId || !eventId) {
@@ -32,6 +37,10 @@ export default defineEventHandler(async (event) => {
         success: false,
         error: `No signup found for userId=${userId} and eventId=${eventId}`,
       };
+    }
+    if (!(user?.role === "SUPER" || user?.role === "ADMIN")){
+      signUp.plusOneAdults = signUp.plusOneAdults + signUp.plusOneKids
+      signUp.plusOneKids = 0
     }
 
     setResponseStatus(event, 200);
