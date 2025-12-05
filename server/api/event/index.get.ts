@@ -1,9 +1,14 @@
 // gets **UNARCHIVED** events
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
+import { auth } from "~/server/auth";
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
+  const session = await auth.api.getSession({
+              headers:  event.headers
+          })
+  const user = session?.user as User | undefined;
 
   try {
     // Simple query first - no includes
@@ -25,6 +30,15 @@ export default defineEventHandler(async (event) => {
     });
 
     console.log('Events found:', events.length); // Debug log
+    if(!(user?.role === "SUPER" || user?.role === "ADMIN")){
+      events.forEach(iEvent => {
+      iEvent.SignUps.every( signup => {
+        signup.plusOneAdults = signup.plusOneAdults + signup.plusOneKids
+        signup.plusOneKids = 0
+      })
+    })
+    }
+    
     
     return events;
   } catch (error) {
