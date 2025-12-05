@@ -19,7 +19,7 @@
     <div class="absolute top-4 right-4 flex space-x-2 z-10">
         <!-- Edit/Save/Cancel Controls -->
         <div
-            v-if="['ADMIN', 'SUPER'].includes(user?.role)"
+            v-if="['ADMIN', 'SUPER'].includes(user?.role)  && !isArchived"
         >
             <button
             v-if="!isEditing"
@@ -297,12 +297,13 @@ const emit = defineEmits(["closeViewEventWindow", "eventDeleted", "eventEdited"]
 function closeWindow() {
     emit("closeViewEventWindow");
 }
-console.log("Hello");
+
 // State
 const rsvpChoice = ref('');
 const numPlusOneAdults = ref(0);
 const numPlusOneKids = ref(0);
 const isEditing = ref(false);
+const isArchived = ref(true)
 const editedEvent = reactive({
   id: props.eventId,
   title: "",
@@ -334,7 +335,6 @@ const userMap = ref({});
 function toLocalISOString(date) {
   const tzOffset = date.getTimezoneOffset() * 60000; // offset in milliseconds
   const localISOTime = new Date(date - tzOffset).toISOString().slice(0, 16);
-  console.log("hello again");
   return localISOTime.slice(0, 16);
 
 }
@@ -346,6 +346,7 @@ async function loadEvent() {
     event.value = eventdata;
     const startTime = new Date(eventdata.start);
     const endTime = new Date(eventdata.end);
+    console.log(eventdata)
 
     Object.assign(editedEvent, {
       title: eventdata.title,
@@ -368,6 +369,9 @@ async function loadEvent() {
       });
       userMap.value = Object.fromEntries(users.map((u) => [u.id, u]));
     }
+
+    isArchived.value = eventdata.isArchived
+
   } catch (e) {
     console.error("Load failed", e);
   } finally {
@@ -580,23 +584,5 @@ const respondToEvent = async (response) => {
     }, 1500);
   }
 };
-
-// function updateLocation(location) {
-//   editedEvent.eventLat = location.lat;
-//   editedEvent.eventLong = location.lng;
-
-//   // If we have a name/address from Autocomplete, use them.
-//   if (location.name || location.address) {
-//     editedEvent.location = location.name || location.address || "";
-//     editedEvent.address = location.address || "";
-//   } else {
-//     // If no name/address, default to coordinates
-//     const coordsString = `Lat: ${location.lat.toFixed(
-//       6
-//     )}, Lng: ${location.lng.toFixed(6)}`;
-//     editedEvent.location = coordsString;
-//     editedEvent.address = coordsString;
-//   }
-// }
 </script>
 
