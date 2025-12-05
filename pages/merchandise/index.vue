@@ -48,7 +48,7 @@
         </header>
 
         <!-- Navigation Menu -->
-        <div class="w-full mt-[34px]">
+      <!-- <div class="w-full mt-[34px]">
           <div class="w-full max-w-[1600px] mx-auto">
             <div class="flex flex-col sm:flex-row w-full">
               <button
@@ -77,87 +77,87 @@
               </button>
             </div>
           </div>
-        </div>
+        </div>-->
 
-        <!-- Hero Slider -->
-        <div class="w-full mt-[82px]">
-          <div class="w-full max-w-[1600px] mx-auto">
-            <div class="relative w-full overflow-hidden">
-              <div class="relative w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[474px]">
-                <div
-                  v-for="(slide, index) in heroSlides"
-                  :key="slide.id"
-                  class="absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out"
-                  :class="{'opacity-100 z-10': currentSlide === index, 'opacity-0 z-0': currentSlide !== index}"
+    <!-- Hero Slider -->
+    <div class="w-full mt-[82px]">
+      <div class="w-full max-w-[1600px] mx-auto">
+        <div class="relative w-full overflow-hidden">
+          <div class="relative w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[474px]">
+            <div
+              v-for="(slide, index) in heroSlides"
+              :key="slide.id"
+              class="absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out"
+              :class="{'opacity-100 z-10': currentSlide === index, 'opacity-0 z-0': currentSlide !== index}"
+            >
+              <div
+                class="absolute inset-0 w-full h-full bg-slider-1"
+                :style="{ backgroundColor: slide.backgroundColor }"
+              />
+             
+              <div
+                v-if="slide.backgroundImage"
+                class="absolute inset-0 w-full h-full bg-cover bg-center"
+                :style="{ backgroundImage: `url(${slide.backgroundImage})` }"
+              />
+
+              <div class="absolute inset-0 flex flex-col justify-center items-center z-20">
+                <button
+                  v-if="heroSlides.length > 1"
+                  @click="prevSlide"
+                  class="absolute left-4 sm:left-6 md:left-8 lg:left-0 top-1/2 transform -translate-y-1/2 w-[60px] h-[60px] sm:w-[70px] sm:h-[70px] md:w-[80px] md:h-[80px] lg:w-[84px] lg:h-[88px] bg-cover bg-center focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 transition-transform hover:scale-105 active:scale-95 z-30"
+                  style="background-image: url('/public/img_ellipse_1512.svg')"
+                  aria-label="Previous slide"
+                  >
+                  <span class="text-slider-2 text-lg sm:text-xl md:text-2xl lg:text-[30px] font-medium leading-[37px]">
+                    &lt;
+                  </span>
+                </button>
+
+                <button
+                  v-if="heroSlides.length > 1"
+                  @click="nextSlide"
+                  class="absolute right-4 sm:right-6 md:right-8 lg:right-0 top-1/2 transform -translate-y-1/2 w-[60px] h-[60px] sm:w-[70px] sm:h-[70px] md:w-[80px] md:h-[80px] lg:w-[84px] lg:h-[88px] bg-cover bg-center focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 transition-transform hover:scale-105 active:scale-95 z-30"
+                  style="background-image: url('/public/img_ellipse_1512.svg')"
+                  aria-label="Next slide"
                 >
-                  <div
-                    class="absolute inset-0 w-full h-full bg-slider-1"
-                    :style="{ backgroundColor: slide.backgroundColor }"
-                  />
-                
-                  <div
-                    v-if="slide.backgroundImage"
-                    class="absolute inset-0 w-full h-full bg-cover bg-center"
-                    :style="{ backgroundImage: `url(${slide.backgroundImage})` }"
-                  />
+                  <span class="text-slider-2 text-lg sm:text-xl md:text-2xl lg:text-[30px] font-medium leading-[37px]">
+                    &gt;
+                  </span>
+                </button>
 
-                  <div class="absolute inset-0 flex flex-col justify-center items-center z-20">
-                    <button
-                      v-if="heroSlides.length > 1"
-                      @click="prevSlide"
-                      class="absolute left-4 sm:left-6 md:left-8 lg:left-0 top-1/2 transform -translate-y-1/2 w-[60px] h-[60px] sm:w-[70px] sm:h-[70px] md:w-[80px] md:h-[80px] lg:w-[84px] lg:h-[88px] bg-cover bg-center focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 transition-transform hover:scale-105 active:scale-95 z-30"
-                      style="background-image: url('/public/img_ellipse_1512.svg')"
-                      aria-label="Previous slide"
-                      >
-                      <span class="text-slider-2 text-lg sm:text-xl md:text-2xl lg:text-[30px] font-medium leading-[37px]">
-                        &lt;
-                      </span>
-                    </button>
-
-                    <button
-                      v-if="heroSlides.length > 1"
-                      @click="nextSlide"
-                      class="absolute right-4 sm:right-6 md:right-8 lg:right-0 top-1/2 transform -translate-y-1/2 w-[60px] h-[60px] sm:w-[70px] sm:h-[70px] md:w-[80px] md:h-[80px] lg:w-[84px] lg:h-[88px] bg-cover bg-center focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 transition-transform hover:scale-105 active:scale-95 z-30"
-                      style="background-image: url('/public/img_ellipse_1512.svg')"
-                      aria-label="Next slide"
-                    >
-                      <span class="text-slider-2 text-lg sm:text-xl md:text-2xl lg:text-[30px] font-medium leading-[37px]">
-                        &gt;
-                      </span>
-                    </button>
-
-                    <div class="text-center px-4 sm:px-6 md:px-8">
-                      <h2 class="text-global-1 text-lg sm:text-xl md:text-2xl lg:text-[30px] font-medium leading-tight sm:leading-normal md:leading-relaxed lg:leading-[37px] mb-4 sm:mb-6 md:mb-8">
-                        Hero Banner
-                      </h2>
-                    </div>
-
-                    <div class="bg-global-1 px-4 sm:px-8 md:px-12 lg:px-[60px] py-3 sm:py-4 md:py-5 lg:py-[12px] rounded-lg sm:rounded-xl shadow-[0px_4px_4px_#0000003f] mx-4 sm:mx-6 md:mx-8">
-                      <h1 class="text-global-1 text-2xl sm:text-3xl md:text-4xl lg:text-[60px] font-extralight leading-tight sm:leading-normal md:leading-relaxed lg:leading-[73px] text-center">
-                        {{ slide.title || "Explore Our Collection" }}
-                      </h1>
-                    </div>
-                  </div>
+                <div class="text-center px-4 sm:px-6 md:px-8">
+                  <h2 class="text-global-1 text-lg sm:text-xl md:text-2xl lg:text-[30px] font-medium leading-tight sm:leading-normal md:leading-relaxed lg:leading-[37px] mb-4 sm:mb-6 md:mb-8">
+                    Hero Banner
+                  </h2>
                 </div>
-              </div>
 
-              <div v-if="heroSlides.length > 1" class="absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-[16px] left-1/2 transform -translate-x-1/2 z-30">
-                <div class="flex items-center justify-center gap-2 sm:gap-3">
-                  <button
-                    v-for="(_, index) in heroSlides"
-                    :key="index"
-                    @click="goToSlide(index)"
-                    class="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 rounded-full transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
-                    :class="{'bg-pagerindicator-1 scale-110 shadow-sm': currentSlide === index, 'bg-gray-400 hover:bg-gray-300 active:scale-95': currentSlide !== index}"
-                    :aria-label="`Go to slide ${index + 1}`"
-                    :aria-current="currentSlide === index ? 'page' : undefined"
-                  />
+                <div class="bg-global-1 px-4 sm:px-8 md:px-12 lg:px-[60px] py-3 sm:py-4 md:py-5 lg:py-[12px] rounded-lg sm:rounded-xl shadow-[0px_4px_4px_#0000003f] mx-4 sm:mx-6 md:mx-8">
+                  <h1 class="text-global-1 text-2xl sm:text-3xl md:text-4xl lg:text-[60px] font-extralight leading-tight sm:leading-normal md:leading-relaxed lg:leading-[73px] text-center">
+                    {{ slide.title || "Explore Our Collection" }}
+                  </h1>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
+          <div v-if="heroSlides.length > 1" class="absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-[16px] left-1/2 transform -translate-x-1/2 z-30">
+            <div class="flex items-center justify-center gap-2 sm:gap-3">
+              <button
+                v-for="(_, index) in heroSlides"
+                :key="index"
+                @click="goToSlide(index)"
+                class="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 rounded-full transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+                :class="{'bg-pagerindicator-1 scale-110 shadow-sm': currentSlide === index, 'bg-gray-400 hover:bg-gray-300 active:scale-95': currentSlide !== index}"
+                :aria-label="`Go to slide ${index + 1}`"
+                :aria-current="currentSlide === index ? 'page' : undefined"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <!-- Pagination Indicator -->
     <div class="w-full mt-4 sm:mt-6 md:mt-8 lg:mt-[16px] mb-4 sm:mb-6 md:mb-8 lg:mb-[16px]">
       <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8">
