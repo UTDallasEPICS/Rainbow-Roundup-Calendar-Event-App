@@ -77,6 +77,8 @@ import { useCartStore } from '~/stores/cart'
 const router = useRouter()
 const cart = useCartStore()
 
+//Need to ask Kimberly about if Tax is included or not
+
 const cartItems = computed(() => cart.items)
 const subtotal = computed(() => cart.subtotal)
 
@@ -103,10 +105,10 @@ function continueShopping() {
 //checks to see if checkout is availble
 function checkout() {
   if (cart.items.length === 0) {
-    alert('Your cart is empty.')
+    alert('Your cart is empty!')
     return
   }
-  // Make a checkout page soon
-  router.push('/merchandise/checkout')
+  // Make a checkout page soon (might also change path)
+  router.push('/merchandise /checkout')
 }
 </script>
