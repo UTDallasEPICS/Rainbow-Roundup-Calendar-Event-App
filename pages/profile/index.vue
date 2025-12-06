@@ -55,7 +55,7 @@
           :readonly="!editMode"
           :class="inputClass"
           ref="firstNameRef"
-          @keydown.enter.prevent="focusNext(lastNameRef)""
+          @keydown.enter.prevent="focusNext(lastNameRef)"
         />
       </div>
     </div>
