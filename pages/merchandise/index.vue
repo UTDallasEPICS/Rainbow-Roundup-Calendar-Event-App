@@ -15,7 +15,7 @@
 
               <!-- Search Bar -->
                
-              <div class="w-full lg:w-[64%] max-w-2xl">
+              <!-- <div class="w-full lg:w-[64%] max-w-2xl">
                 <form @submit.prevent="handleSearch" class="relative w-full">
                   <div class="relative flex items-center">
                     <div class="absolute left-3 sm:left-4 z-10 flex items-center justify-center">
@@ -32,13 +32,13 @@
                       placeholder="Search"
                       class="w-full bg-searchview-1 text-searchview-1 placeholder-searchview-1 border border-solid border-black rounded-[22px] sm:rounded-[32px] md:rounded-[44px] px-3 sm:px-4 md:px-6 lg:px-[98px] py-2 sm:py-2.5 md:py-3 lg:py-[12px] text-sm sm:text-base md:text-lg lg:text-[40px] font-medium leading-tight sm:leading-normal md:leading-relaxed lg:leading-[49px] text-center focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-all duration-200 pl-10 sm:pl-12 md:pl-14 lg:pl-[98px] hover:bg-gray-50"
                     />
-                  </div>
+                   </div>
                 </form>
-              </div>
+              </div> -->
               <!-- Cart and Login -->
               <div class="flex items-center gap-4 sm:gap-6 lg:gap-8 flex-shrink-0">
                 <button class="focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-lg transition-transform hover:scale-105 active:scale-95">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="sm:size-6 md:size-10 lg:size-14">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-14">
                     <path d="M2.25 2.25a.75.75 0 0 0 0 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 0 0-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 0 0 0-1.5H5.378A2.25 2.25 0 0 1 7.5 15h11.218a.75.75 0 0 0 .674-.421 60.358 60.358 0 0 0 2.96-7.228.75.75 0 0 0-.525-.965A60.864 60.864 0 0 0 5.68 4.509l-.232-.867A1.875 1.875 0 0 0 3.636 2.25H2.25ZM3.75 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM16.5 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" />
                   </svg>
                 </button>
@@ -46,7 +46,7 @@
             </div>
           </div>
         </header>
-
+      
         <!-- Navigation Menu -->
       <!-- <div class="w-full mt-[34px]">
           <div class="w-full max-w-[1600px] mx-auto">
@@ -184,7 +184,7 @@
   -->
     
         <div class="w-full max-w-[1214px] mx-auto px-4 sm:px-6 md:px-8 lg:px-0">
-    <h2 class="text-3xl font-semibold mb-8 text-center">Explore Our Collection</h2>
+    <h2 class="text-3xl font-semibold my-8 text-center">Catalog</h2>
     <div v-if="loading" class="text-center py-10 text-gray-500">
       Loading items...
     </div>
