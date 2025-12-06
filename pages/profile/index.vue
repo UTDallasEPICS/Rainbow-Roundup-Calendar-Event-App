@@ -55,7 +55,7 @@
           :readonly="!editMode"
           :class="inputClass"
           ref="firstNameRef"
-          @keydown.enter.prevent="focusNext(lastNameRef)""
+          @keydown.enter.prevent="focusNext(lastNameRef)"
         />
       </div>
     </div>
@@ -210,10 +210,9 @@ const { data: session } = await authClient.getSession();
 const userData = ref(null);
 const fetchUser = async () => { // This ensures that the api is called and the form filled only when the session is fully loaded
   try {
-    const { data: response, error } = await useFetch(`/api/user/${session?.session.userId}`, {
-      credentials: 'include'
-    })
-    userData.value = response.value?.user || null
+
+    const { user: response, error } = await $fetch(`/api/user/${session?.session.userId}`, {method: "GET"})
+    userData.value = response;
     firstName.value = userData.value?.firstname;
     lastName.value = userData.value?.lastname;
     phoneNum.value = userData.value?.phoneNum;
