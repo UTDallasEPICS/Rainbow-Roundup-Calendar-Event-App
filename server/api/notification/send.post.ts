@@ -1,5 +1,5 @@
 import webpush, { WebPushError, type PushSubscription } from "web-push";
-import { getServerSession } from "#auth";
+import { auth } from "~/server/auth"
 import { User } from "~/types/session";
 
 export default defineEventHandler(async (event) => {
@@ -10,7 +10,9 @@ export default defineEventHandler(async (event) => {
   const publicKey = runtimeConfig.public.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY; // Get keys from env file 
   const privateKey = runtimeConfig.NUXT_PUSH_VAPID_PRIVATE_KEY;
   const prisma = event.context.prisma;
-  const session = await getServerSession(event);
+  const session = await auth.api.getSession({
+      headers:  event.headers
+  })
   const user = session?.user as User | undefined;
   if (!(user?.role === "SUPER" || user?.role ==="ADMIN")) { // since this sends to all users, only admins can do it
     throw createError({

@@ -1,12 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 import { defineEventHandler } from "h3";
-import { getServerSession } from "#auth";
+//import { getServerSession } from "#auth";
+import { auth } from "~/server/auth"
 import type { User } from "../../../types/session";
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
   const id = getRouterParam(event, "id");
-  const session = await getServerSession(event);
+  const session = await auth.api.getSession({
+      headers:  event.headers
+  })
 
   const user = session?.user as User | undefined;
 
@@ -43,13 +46,16 @@ export default defineEventHandler(async (event) => {
 
 
     // TODO: Set up deletion in the Google Events Calendar as well as deleting from the Prisma Database
-    await prisma.event.delete({
+    await prisma.event.update({
       where: { id },
+      data: {
+        isArchived: true
+      }
     });
     setResponseStatus(event, 200);
     return {
       success: true,
-      message: "Event deleted successfully",
+      message: "Event archived successfully",
       event: existingEvent,
     };
   } catch (error) {

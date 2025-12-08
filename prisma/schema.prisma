@@ -10,23 +10,32 @@ generator client {
 model User {
   id            String    @id @default(uuid())
   email         String    @unique
-  firstname     String
+  firstname     String    @map("name") // better auth wants a name field, figured we can map that to first name
   lastname      String
   role          Role      @default(USER)
   phoneNum      String?   @unique // client requested phone numbers are unique
-  profilePic    String    @default("/default-profile.png")
+  profilePic    String    @default("/default-profile.png") @map("image") // better wants an image field
   emailNotif    Boolean   @default(false)       // Notification setting for emails
   nativeNotif   Boolean   @default(false)
-  emailVerified DateTime?
+  emailVerified Boolean   @default(false)
+
+  isArchived Boolean    @default(false)
+  isBanned    Boolean   @default(false)
 
   SignUps           SignUp[]
   Notification      Notification[]
   CreatedEvents     Event[]
-  
+
   // Report relations
   Reports           Report[] @relation("ReporterUser")       // Reports this user has made
   PotentialOffenses Report[] @relation("ReportedUser")       // Reports this user has received
   Orders            Order[]
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @default(now()) @updatedAt
+  sessions          Session[]
+  accounts          Account[]
+
+  @@map("user")
 }
 
 model Notification {
@@ -50,12 +59,16 @@ model Event {
   endTime         DateTime
   capacity        Int?
   currentCapacity Int?
+  isArchived    Boolean   @default(false)
 
   //Foreign Keys
   User User @relation(fields: [userId], references: [id])
 
   // Relation to SignUps
   SignUps          SignUp[]
+
+  // holds all the array to be picked up at a particular event
+  orders    Order[]  // back relation
 }
 
 model SignUp {
@@ -65,6 +78,7 @@ model SignUp {
   Notifications Boolean
   plusOneKids       Int     @default(0)
   plusOneAdults       Int     @default(0)
+
 
   // Foreign keys to User and Event
   User  User  @relation(fields: [userId], references: [id])
@@ -83,27 +97,30 @@ model Report {
   description    String?
   reportTime     DateTime @default(now())
 
+  isArchived    Boolean   @default(false)
+
   // Foreign Keys
   ReportedUser User @relation("ReportedUser", fields: [reportedUserId], references: [id])
   ReporterUser User @relation("ReporterUser", fields: [reporterUserId], references: [id])
-
-  // A single report by a user on another user
-  @@unique([reportedUserId, reporterUserId])
 }
 
 model ItemVariant {
   id                String     @id @default(uuid())
   size              Size
-  price             Float
   itemId            String      
-  item              AbstractItem        @relation(fields: [itemId], references: [id])  
-  
+  item              AbstractItem        @relation(fields: [itemId], references: [id])
+  availability       Boolean    @default(false) //For admin to enable
+
   OrderItems OrderItem[]
 }
 
 model AbstractItem {
   id                String      @id @default(uuid())
   name              String   
+  price             Float
+  description       String
+  
+  isArchived    Boolean   @default(false)  
 
   ItemVariants     ItemVariant[]
   ItemPhotos         ItemPhoto[]
@@ -121,11 +138,16 @@ model Order {
   id              String        @id @default(uuid())
   userId          String
   status          OrderStatus   
-  paymentInfo     String?
+  orderType       OrderType
+  shippingAddress String? // If the order is "shipping" type, have an address, should be null otherwise
+  pickupEventID   String? // If the user is picking it up an event, this the event's ID.
+  trackingNumber  String?
+//  paymentInfo     String?
   placedAt        DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
   User            User          @relation(fields: [userId], references: [id])
+  event           Event?        @relation(fields: [pickupEventID], references: [id])
   OrderItems      OrderItem[]
 }
 
@@ -133,7 +155,7 @@ model OrderItem {
   id             String         @id @default(uuid())
   orderId        String
   itemVariantId  String  
-  
+  quantity       Int            @default(1)
   Order          Order       @relation(fields: [orderId], references: [id])
   ItemVariants ItemVariant @relation(fields:[itemVariantId], references: [id])
 }
@@ -152,7 +174,7 @@ model PendingUser {
   firstname  String
   lastname   String
   phoneNum   String?  @unique // client requested phone numbers are unique
-  profilePic String   @default("/default-profile.png") 
+  profilePic String   @default("/default-profile.png")
   token      String   @unique
   expires    DateTime @default(now())
 }
@@ -165,9 +187,14 @@ enum Role {
 
 enum OrderStatus {
   UNCONFIRMED
-  CONFIRMED 
-  PAID 
+  CONFIRMED
+  PAID
   DELIVERED
+}
+
+enum OrderType {
+  PICKUP
+  SHIPPING
 }
 
 enum Fit {
@@ -185,4 +212,50 @@ enum Size {
   XL
   XXL
   XXXL
+}
+
+// Session, Account, and Verification are all required by better auth, the schema for these is also generated by better auth
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@map("verification")
 }

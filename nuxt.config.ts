@@ -23,6 +23,8 @@ export default defineNuxtConfig({
     smtpPass: process.env.SMTP_PASS,
     smtpFrom: process.env.SMTP_FROM,
     url: process.env.URL,
+    BETTER_AUTH_URL: process.env.URL,
+    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
 
     NUXT_PUSH_VAPID_PRIVATE_KEY: process.env.NUXT_PUSH_VAPID_PRIVATE_KEY
   },
@@ -69,10 +71,11 @@ export default defineNuxtConfig({
     "@vite-pwa/nuxt",
     "@nuxt/ui",
     "@nuxt/eslint",
-    "@sidebase/nuxt-auth",
+    //"@sidebase/nuxt-auth",
     "nuxt-scheduler",
+    '@pinia/nuxt'
   ],
-  auth: {
+  /*auth: {
     isEnabled: true,
     baseURL: process.env.URL + "/api/auth",
     provider: {
@@ -81,7 +84,7 @@ export default defineNuxtConfig({
       defaultProvider: "email",
       addDefaultCallbackUrl: true,
     },
-  },
+  },*/
   compatibilityDate: "2024-10-24",
 
   plugins: ["~/plugins/fullcalendar.client"],

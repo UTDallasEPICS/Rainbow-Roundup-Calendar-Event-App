@@ -19,7 +19,7 @@
     <div class="absolute top-4 right-4 flex space-x-2 z-10">
         <!-- Edit/Save/Cancel Controls -->
         <div
-            v-if="['ADMIN', 'SUPER'].includes(user?.user?.role)"
+            v-if="['ADMIN', 'SUPER'].includes(user?.role)  && !isArchived"
         >
             <button
             v-if="!isEditing"
@@ -69,8 +69,10 @@
               class="w-full text-2xl font-semibold text-gray-800 border border-gray-300 rounded p-1 focus:outline-none focus:ring-2 focus:ring-indigo-300"
             />
           </div>
+          
           <p v-if="!isLoading && !isEditing" class="text-sm text-gray-500">
-            {{ formatDateTime(event.start) }} – {{ formatDateTime(event.end) }}
+            {{ formatDateTime(event.start) }} •
+            {{ formatDateTime(event.end) }}
             <span
               class="ml-2 uppercase bg-gray-100 px-2 py-0.5 rounded-full text-xs font-medium"
             >
@@ -147,9 +149,9 @@
         </div>
 
         <!-- Map -->
-        <!-- <div v-if="!isLoading && isEditing">
-            <Map @update:location="updateLocation" />
-        </div> -->
+        <div v-if="!isLoading">
+             <Map :address="editedEvent.location" />
+        </div>
 
         <div v-if="!isLoading && !isEditing">
             <!-- Divider -->
@@ -180,7 +182,8 @@
                     <li v-if="!((signup.plusOneKids + signup.plusOneAdults) === 0)" class="text-gray-400 ">
                       Plus one signups: {{signup.plusOneKids + signup.plusOneAdults }}
                     </li>
-                    <li v-if="(((signup.plusOneKids + signup.plusOneAdults) > 0))" class="text-gray-400 ">
+                    <li v-if="(signup.plusOneKids + signup.plusOneAdults) > 0 &&
+                          (session.user?.role === 'ADMIN' || session.user?.role === 'SUPER')" class="text-gray-400 ">
                       Adults: {{signup.plusOneAdults }}, Kids: {{signup.plusOneKids }}
                     </li> 
                     </p>
@@ -283,7 +286,9 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from "vue";
-import { useAuth } from "#imports"; // todo: figure out why useAuth is called here or if we don't need to touch it. 
+//import { useAuth } from "#imports"; // todo: figure out why useAuth is called here or if we don't need to touch it. 
+import { authClient } from "~/server/auth"
+const { data: session } = await authClient.getSession();
 import { fetchCombinedEventById } from "../server/utils/fetchCombinedEvents";
 import { useRoute, useRouter } from "vue-router";
 import { Size } from "@prisma/client";
@@ -299,6 +304,7 @@ const rsvpChoice = ref('');
 const numPlusOneAdults = ref(0);
 const numPlusOneKids = ref(0);
 const isEditing = ref(false);
+const isArchived = ref(true)
 const editedEvent = reactive({
   id: props.eventId,
   title: "",
@@ -315,8 +321,8 @@ const isResponding = ref(false);
 const rsvpResponse = ref(null);
 
 // Auth & routing
-const { data: user } = useAuth();
 
+const user = session.user;
 const route = useRoute();
 const router = useRouter();
 const eventId = props.eventId;
@@ -331,6 +337,7 @@ function toLocalISOString(date) {
   const tzOffset = date.getTimezoneOffset() * 60000; // offset in milliseconds
   const localISOTime = new Date(date - tzOffset).toISOString().slice(0, 16);
   return localISOTime.slice(0, 16);
+
 }
 
 // Load and initialize
@@ -340,6 +347,7 @@ async function loadEvent() {
     event.value = eventdata;
     const startTime = new Date(eventdata.start);
     const endTime = new Date(eventdata.end);
+    console.log(eventdata)
 
     Object.assign(editedEvent, {
       title: eventdata.title,
@@ -362,6 +370,9 @@ async function loadEvent() {
       });
       userMap.value = Object.fromEntries(users.map((u) => [u.id, u]));
     }
+
+    isArchived.value = eventdata.isArchived
+
   } catch (e) {
     console.error("Load failed", e);
   } finally {
@@ -503,7 +514,7 @@ function formatDateTime(iso) {
 }
 
 const userRSVP = computed(() => {
-  const userId = user.value?.user?.id;
+  const userId = user?.id;
   if (!userId || !event.value?.signUps) return null;
 
   return event.value.signUps.some((s) => s.userId === userId) ? "yes" : "no";
@@ -522,14 +533,14 @@ const respondToEvent = async (response) => {
   if (isResponding.value) return; // Prevent spamming by blocking clicks
   isResponding.value = true;
 
-  if (!user.value || !user.value.user?.id) {
-    router.push("/login"); // Or use router.push("/") if using Vue Router directly
+  if (!user.value || !user?.id) {
+    //router.push("/login"); // Or use router.push("/") if using Vue Router directly
   }
 
   rsvpResponse.value = response;
   console.log(`User responded: ${response}`);
 
-  const userId = user.value?.user.id;
+  const userId = user.id;
   const eventId = event.value?.id;
 
   if (!userId || !eventId) {
@@ -574,23 +585,5 @@ const respondToEvent = async (response) => {
     }, 1500);
   }
 };
-
-// function updateLocation(location) {
-//   editedEvent.eventLat = location.lat;
-//   editedEvent.eventLong = location.lng;
-
-//   // If we have a name/address from Autocomplete, use them.
-//   if (location.name || location.address) {
-//     editedEvent.location = location.name || location.address || "";
-//     editedEvent.address = location.address || "";
-//   } else {
-//     // If no name/address, default to coordinates
-//     const coordsString = `Lat: ${location.lat.toFixed(
-//       6
-//     )}, Lng: ${location.lng.toFixed(6)}`;
-//     editedEvent.location = coordsString;
-//     editedEvent.address = coordsString;
-//   }
-// }
 </script>
 

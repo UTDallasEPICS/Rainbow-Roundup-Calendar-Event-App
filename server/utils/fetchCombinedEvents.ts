@@ -13,6 +13,7 @@ export interface LocalEventData {
   currentCapacity: number;
   tags: string[];
   SignUps?: LocalSignUp[];
+  isArchived: boolean;
 }
 
 export interface LocalSignUp {
@@ -37,6 +38,7 @@ export interface CombinedEvent extends GoogleEvent {
   currentCapacity?: number;
   tags?: string[];
   signUps?: LocalSignUp[];
+  isArchived?: boolean;
 }
 
 /// Fetch all from Google Calendar API
@@ -54,8 +56,10 @@ async function fetchGoogleCalendarEvents(): Promise<GoogleEvent[]> {
 async function fetchLocalDatabaseExtras(): Promise<LocalEventData[]> {
   try {
     const extras = await $fetch<LocalEventData[]>("/api/event");
+    console.log("extra section", extras)
     return extras ?? [];
-  } catch (error) {
+  } 
+  catch (error) {
     console.error("Error fetching local event extras:", error);
     return [];
   }
@@ -97,6 +101,7 @@ export async function fetchCombinedEventById(
       currentCapacity: localExtra?.Event.currentCapacity,
       tags: localExtra?.Event.tags,
       signUps: localExtra?.Event.SignUps ?? [],
+      isArchived: localExtra?.Event.isArchived
     };
   } catch (error) {
     console.error(`Error fetching combined event for id ${id}:`, error);

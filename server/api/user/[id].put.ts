@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { getServerSession } from "#auth";
+import { auth } from "~/server/auth"
 import type { User } from "../../../types/session";
 
 export default defineEventHandler(async (event) => {
@@ -18,13 +18,15 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
   try {
-    const session = await getServerSession(event);
+    const session = await auth.api.getSession({
+          headers:  event.headers
+    })
     const user = session?.user as User | undefined;
 
-    if (!user || user.id !== id) {
+    if (!user || (!["SUPER", "ADMIN"].includes(user.role) && user.id !== id)) {
       throw createError({
         statusCode: 403,
-        statusMessage: "Forbidden: You can only update your own account.",
+        statusMessage: "Unauthenticated",
       });
     }
 
@@ -56,6 +58,8 @@ export default defineEventHandler(async (event) => {
       updateData.emailNotif = body.emailNotif
       if(body.nativeNotif != null) // This is a boolean, so a plain if statement won't work
       updateData.nativeNotif = body.nativeNotif
+    if (body.role) updateData.role = body.role;
+    if (body.isBanned != null) {updateData.isBanned = body.isBanned}
     // Perform the update
     const updatedUser = await prisma.user.update({
       where: { id },

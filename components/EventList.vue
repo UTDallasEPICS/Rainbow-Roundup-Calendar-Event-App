@@ -1,6 +1,7 @@
 <template>
   <div class="space-y-6">
-    <ViewEvent @close-view-event-window="showEventWindow = false" @event-deleted="(id) => deleteEvent(id)" @event-edited="(e) => editEvent(e)" v-if="showEventWindow" :eventId="selectedEventId" />
+    <ViewEvent @close-view-event-window="showEventWindow = false" @event-deleted="(id) => deleteEvent(id)" @event-edited="(e) => editEvent(e)" 
+      v-if="showEventWindow" :eventId="selectedEventId" />
     <div
       v-for="event in props.events"
       :key="event.id"
