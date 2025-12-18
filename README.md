@@ -229,4 +229,4 @@ There are currently **no legacy systems** or required data imports from a previo
 
 ---
 
-To get secrets, please contact your mentor.
+To get env secrets, please contact your mentor.
