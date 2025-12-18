@@ -75,7 +75,7 @@
 
 <script setup lang="ts">
 
-import { fetchCombinedEvents } from "../server/utils/fetchCombinedEvents";
+//import { fetchCombinedEvents } from "../server/utils/fetchCombinedEvents";
 import { ref, computed } from "vue"
 
 const events = ref([])
