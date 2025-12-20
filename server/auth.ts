@@ -1,12 +1,11 @@
 import { APIError, betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { emailOTP } from "better-auth/plugins"
-import { PrismaClient } from '@prisma/client';
+import { prisma } from './utils/prisma';
 import { createAuthClient } from "better-auth/vue"
 import { emailOTPClient } from "better-auth/client/plugins"
 import { showError } from "nuxt/app";
 
-const prisma = new PrismaClient();
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "sqlite",
