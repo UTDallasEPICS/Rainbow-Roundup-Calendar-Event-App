@@ -114,7 +114,6 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { authClient } from "~/server/auth"
-import { Size } from "@prisma/client"
 
 const { data: session } = await authClient.getSession();
 const isLoading = ref(true);
