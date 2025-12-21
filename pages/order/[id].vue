@@ -248,16 +248,17 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, reactive } from 'vue'
 import { useRoute } from 'vue-router'
-import { OrderType, OrderStatus } from '@prisma/client'
+import type { OrderType, OrderStatus } from '@prisma/client'
+import { authClient } from "~/server/auth"
 
 // Access the route and router
 const route = useRoute()
 
 // Get user session using better Auth composable
-import { authClient } from "~/server/auth"
+
 const { data: session } = await authClient.getSession();
 // Reactive user data and loading state
 const order = ref(null)

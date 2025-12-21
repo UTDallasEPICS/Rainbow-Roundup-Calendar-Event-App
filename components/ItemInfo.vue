@@ -1,66 +1,3 @@
-<script setup lang="ts">
-import { ref, computed } from "vue";
-import type { AbstractItem } from "~/types/prismaTypes";
-
-const props = defineProps<{
-  item: AbstractItem;
-}>();
-
-// Emit the variant ID when adding to cart (CHANGED)
-const emit = defineEmits<{
-  (e: "add-to-cart", variantId: string, qty: number): void;
-}>(); 
-
-
-// Image Gallery
-const currentIndex = ref(0);
-const selectedVariantId = ref<string | null>(null);
-const selectImage = (index: number) => {
-  currentIndex.value = index;
-};
-
-
-// Size Selection
-const selectedSize = ref<string | null>(null);
-const quantity = ref<number>(1);
-
-const nextImage = () => {
-  if (!props.item.ItemPhotos?.length) return;
-  currentIndex.value =
-    (currentIndex.value + 1) % props.item.ItemPhotos.length;
-};
-
-const prevImage = () => {
-  if (!props.item.ItemPhotos?.length) return;
-  currentIndex.value =
-    (currentIndex.value - 1 + props.item.ItemPhotos.length) %
-    props.item.ItemPhotos.length;
-};
-
-// helper to determine availability 
-function variantIsAvailable(v: any): boolean {
-  if (typeof v.availability === 'boolean') return v.availability;
-  return true;
-}
-
-// Add to cart logic
-const handleAddToCart = () => {
-  if (!selectedVariantId.value) return;
-  const qty = quantity.value
-  if (quantity.value < 1){
-    const qty = 1;
-  }
-  emit("add-to-cart", selectedVariantId.value, qty);
-};
-
-// Router navigation when clicking the main image
-const router = useRouter();
-const goToItemPage = () => {
-  router.push(`/merchandise/item/${props.item.id}`);
-};
-
-</script>
-
 <template>
   <div class="flex gap-10 p-6 border rounded-xl shadow-md w-full">
 
@@ -163,3 +100,67 @@ const goToItemPage = () => {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref, computed } from "vue";
+import type { AbstractItem } from "~/types/prismaTypes";
+
+const props = defineProps<{
+  item: AbstractItem;
+}>();
+
+// Emit the variant ID when adding to cart (CHANGED)
+const emit = defineEmits<{
+  (e: "add-to-cart", variantId: string, qty: number): void;
+}>(); 
+
+
+// Image Gallery
+const currentIndex = ref(0);
+const selectedVariantId = ref<string | null>(null);
+const selectImage = (index: number) => {
+  currentIndex.value = index;
+};
+
+
+// Size Selection
+const selectedSize = ref<string | null>(null);
+const quantity = ref<number>(1);
+
+const nextImage = () => {
+  if (!props.item.ItemPhotos?.length) return;
+  currentIndex.value =
+    (currentIndex.value + 1) % props.item.ItemPhotos.length;
+};
+
+const prevImage = () => {
+  if (!props.item.ItemPhotos?.length) return;
+  currentIndex.value =
+    (currentIndex.value - 1 + props.item.ItemPhotos.length) %
+    props.item.ItemPhotos.length;
+};
+
+// helper to determine availability 
+function variantIsAvailable(v: any): boolean {
+  if (typeof v.availability === 'boolean') return v.availability;
+  return true;
+}
+
+// Add to cart logic
+const handleAddToCart = () => {
+  if (!selectedVariantId.value) return;
+  const qty = quantity.value
+  if (quantity.value < 1){
+    const qty = 1;
+  }
+  emit("add-to-cart", selectedVariantId.value, qty);
+};
+
+// Router navigation when clicking the main image
+const router = useRouter();
+const goToItemPage = () => {
+  router.push(`/merchandise/item/${props.item.id}`);
+};
+
+</script>
+

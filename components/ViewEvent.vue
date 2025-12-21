@@ -288,10 +288,11 @@
 import { ref, reactive, computed, onMounted } from "vue";
 //import { useAuth } from "#imports"; // todo: figure out why useAuth is called here or if we don't need to touch it. 
 import { authClient } from "~/server/auth"
-const { data: session } = await authClient.getSession();
 import { fetchCombinedEventById } from "../server/utils/fetchCombinedEvents";
 import { useRoute, useRouter } from "vue-router";
-import { Size } from "@prisma/client";
+
+
+const { data: session } = await authClient.getSession();
 
 const props = defineProps(['eventId']);
 const emit = defineEmits(["closeViewEventWindow", "eventDeleted", "eventEdited"]);

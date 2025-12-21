@@ -148,7 +148,6 @@ const emit = defineEmits<{
 // Date calculations
 
 const dateDay = computed(() => {
-  //console.log("PROPS") <--- see it printing in the console
   const date = new Date (props.event.startTime).getDate()
   return date
 });
@@ -186,4 +185,4 @@ const dateDay = computed(() => {
 //   isSaved.value = !isSaved.value;
 //   emit("update:saved", isSaved.value);
 // }
-// </script>
+</script>

@@ -39,34 +39,27 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import { OrderStatus } from "@prisma/client"
 
 const orders = ref([]);
 const archivedOrders = ref([]);
 const attrs = useAttrs();
 const isLoading = ref(true);
 
-onMounted(async () => {
-    try {
-        // fetch orders
-        const response = await $fetch(`/api/order`, {
-            method: "GET"
-        }) 
-        orders.value = response.data
-    }
-    catch (err) {
-        console.error("Error fetching orders:", err);
-    }
-    finally {
-        // sort orders & archived orders
-        for (let i = 0; i < orders.value.length; i++) {
-            if (orders.value[i].status == OrderStatus.DELIVERED || orders.value[i].status == "DELIVERED") {
-                archivedOrders.value.push(orders.value.splice(i, 1)[0])
-            }
-        }
-        isLoading.value = false;
-    }
-});
+try {
+    // fetch orders
+    const { data: ordersData } = await useFetch(`/api/order`, {  // TODO: Do sorting on serverside
+      // useFetch for page load
+      // $fetch for user action
+        method: "GET"
+    }) 
+    orders.value = ordersData.value
+}
+catch (err) {
+    console.error("Error fetching orders:", err);
+}
+finally {
+    isLoading.value = false;
+}
 </script>

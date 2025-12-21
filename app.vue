@@ -72,9 +72,9 @@
           </NuxtLink>
           <a class="text-gray-700 hover:text-black" href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE" @click="navigate('Donate')">Donate
           </a>
-          <NuxtLink v-if="session" to="/profile" @click="navigate('Profile')" class="text-gray-700 hover:text-black">Profile
+          <NuxtLink v-if="session?.data?.user?.id" to="/profile" @click="navigate('Profile')" class="text-gray-700 hover:text-black">Profile
           </NuxtLink>
-          <NuxtLink v-if="(!session)" to="/signup" @click="navigate('Sign Up')" class="text-gray-700 hover:text-black">
+          <NuxtLink v-if="!(session?.data?.user?.id)" to="/signup" @click="navigate('Sign Up')" class="text-gray-700 hover:text-black">
             Sign Up/Log In</NuxtLink>
           <button v-else @click="logout" class="text-gray-700 hover:text-black">
             Logout
