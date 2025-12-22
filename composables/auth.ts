@@ -9,10 +9,3 @@ export const authClient = createAuthClient({
     basePath: "/api/auth",
     baseURL: process.env.URL,
 });
-
-export const useAuthUser = async () => {
-	const session = authClient
-	return {
-		user: (await authClient.useSession(useFetch)).data.value?.user,
-	}
-}
