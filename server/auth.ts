@@ -121,11 +121,4 @@ export const auth = betterAuth({
         })
     ]
 });
-export const authClient = createAuthClient({
-    //you can pass client configuration here
-    plugins: [
-        emailOTPClient()
-    ],
-    basePath: "/api/auth",
-    baseURL: process.env.URL,
-});
+

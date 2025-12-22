@@ -72,9 +72,9 @@
           </NuxtLink>
           <a class="text-gray-700 hover:text-black" href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE" @click="navigate('Donate')">Donate
           </a>
-          <NuxtLink v-if="session?.data?.user?.id" to="/profile" @click="navigate('Profile')" class="text-gray-700 hover:text-black">Profile
+          <NuxtLink v-if="session?.user?.id" to="/profile" @click="navigate('Profile')" class="text-gray-700 hover:text-black">Profile
           </NuxtLink>
-          <NuxtLink v-if="!(session?.data?.user?.id)" to="/signup" @click="navigate('Sign Up')" class="text-gray-700 hover:text-black">
+          <NuxtLink v-if="!(session?.user?.id)" to="/signup" @click="navigate('Sign Up')" class="text-gray-700 hover:text-black">
             Sign Up/Log In</NuxtLink>
           <button v-else @click="logout" class="text-gray-700 hover:text-black">
             Logout
@@ -117,9 +117,9 @@
           <a href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
             class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             @click="handleMobileNavClick">Donate</a>
-          <NuxtLink v-if="session" to="/profile" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+          <NuxtLink v-if="session.user" to="/profile" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
           @click.native="handleMobileNavClick">Profile</NuxtLink>
-          <NuxtLink v-if="(!session)" to="/signup" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+          <NuxtLink v-if="(!session.user)" to="/signup" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             @click.native="handleMobileNavClick">
             Sign Up/Log In</NuxtLink>
           <button v-else @click="logout(); handleMobileNavClick()"
@@ -160,11 +160,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
 // Use the built-in auth composable instead of custom useUser
-import { authClient } from "~/server/auth"
-const session = authClient.useSession()
-
-
-
+//const session = await useAuthUser()
+import { authClient} from "~/composables/auth"
+const {getSession, signOut} = authClient();
+const {data: session} = await getSession();
+console.log(session?.user)
 const dropdownOpen = ref(false);
 const mobileMenuOpen = ref(false);
 const isSubscribed = ref(false);
@@ -255,7 +255,7 @@ notificationError.value = computed(() => {
   }
   else {
     try {
-      const user = session.value.user;
+      const user = session.user;
       return null;
     }
     catch {
@@ -305,7 +305,7 @@ const requestNotificationPermission = () => {
 };
 
 const logout = async () => {
-  await authClient.signOut();
+  await signOut();
   window.location.reload(true);
   //console.log("Implement logout")
 };

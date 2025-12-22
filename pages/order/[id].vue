@@ -252,14 +252,13 @@
 import { ref, computed, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import type { OrderType, OrderStatus } from '@prisma/client'
-import { authClient } from "~/server/auth"
 
 // Access the route and router
 const route = useRoute()
 
 // Get user session using better Auth composable
 
-const { data: session } = await authClient.getSession();
+const session = await useAuthUser();
 // Reactive user data and loading state
 const order = ref(null)
 const isLoading = ref(true)

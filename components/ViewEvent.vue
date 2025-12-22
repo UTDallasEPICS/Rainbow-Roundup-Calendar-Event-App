@@ -287,12 +287,11 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from "vue";
 //import { useAuth } from "#imports"; // todo: figure out why useAuth is called here or if we don't need to touch it. 
-import { authClient } from "~/server/auth"
 import { fetchCombinedEventById } from "../server/utils/fetchCombinedEvents";
 import { useRoute, useRouter } from "vue-router";
 
 
-const { data: session } = await authClient.getSession();
+const session = await useAuthUser();
 
 const props = defineProps(['eventId']);
 const emit = defineEmits(["closeViewEventWindow", "eventDeleted", "eventEdited"]);

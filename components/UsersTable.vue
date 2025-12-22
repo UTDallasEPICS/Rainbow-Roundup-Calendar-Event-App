@@ -165,8 +165,7 @@ import { ref, computed, onMounted } from "vue";
 
 const props = defineProps(['users', 'title']);
 //const users = ref([]);
-import { authClient } from "~/server/auth"
-const { data: session } = await authClient.getSession();
+const session = await useAuthUser();
 const sessionUser = session.user;
 const searchTerm = ref("");
 const sortKey = ref(null);

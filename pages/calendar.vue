@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 
-import { authClient } from "~/server/auth"
-const { data: session } = await authClient.getSession();
+import { authClient } from "~/composables/auth"
+const session = await useAuthUser();
+const {signOut} = authClient();
 const logout = async () => {
-  await authClient.signOut();
+  await signOut();
   window.location.href = '/';
   //console.log("Implement logout")
 };

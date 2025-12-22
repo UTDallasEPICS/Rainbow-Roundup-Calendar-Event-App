@@ -113,9 +113,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { authClient } from "~/server/auth"
 
-const { data: session } = await authClient.getSession();
+const session = await useAuthUser();
 const isLoading = ref(true);
 
 const searchTerm = ref("");

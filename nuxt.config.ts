@@ -32,7 +32,7 @@ export default defineNuxtConfig({
     resolve: {
       alias: {
         // Redirect the invalid import to an empty stub
-        '.prisma/client/index-browser': '/dev/null'
+        //'.prisma/client/index-browser': '/dev/null'
       }
     }
   },

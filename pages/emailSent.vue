@@ -132,8 +132,8 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import { authClient } from '~/server/auth' // Adjust if you expose it via a client‑side plugin
-
+import { authClient } from '~/composables/auth' // Adjust if you expose it via a client‑side plugin
+const {emailOtp} = authClient();
 const form = reactive({
   email: '',
   otp: '',
@@ -154,7 +154,7 @@ async function onSubmit() {
   errorMessage.value = ''
 
   try {
-    const { data, error } = await authClient.emailOtp.verifyEmail({
+    const { data, error } = await emailOtp.verifyEmail({
       email: form.email,
       otp: form.otp,
     })
@@ -186,7 +186,7 @@ async function onResend() {
   resendSuccessMessage.value = ''
 
   try {
-    const { data, error } = await authClient.emailOtp.sendVerificationOtp({
+    const { data, error } = await emailOtp.sendVerificationOtp({
       email: form.email,
       type: 'email-verification',
     })

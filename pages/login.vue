@@ -3,9 +3,12 @@ import { ref } from "vue";
 
 
 
-import { authClient } from "~/server/auth"
-const { data: session } = await authClient.getSession();
-if(session){
+import { authClient } from "~/composables/auth"
+const {emailOtp} = authClient();
+const {signIn} = authClient();
+const session = await useAuthUser();
+if(session.user){
+  console.log(session)
   navigateTo("/");
 }
 const responseMessage = ref('');
@@ -17,7 +20,7 @@ const submitEmail = async () => {
   if (!email.value) return;
   formMode.value = "loading";
   const lowerEmail = email.value.toLowerCase();
-  const { data, error } = await authClient.emailOtp.sendVerificationOtp({
+  const { data, error } = await emailOtp.sendVerificationOtp({
     email: lowerEmail, // required
     type: "sign-in", // required
     
@@ -43,7 +46,7 @@ const submitOTP = async () => {
   // Note: if the user has not verified their email, but successfully logs in, it autoverifies the email since you just used it to login
   if (!email.value) return; 
   const lowerEmail = email.value.toLowerCase();
-  const { data, error } = await authClient.signIn.emailOtp({
+  const { data, error } = await signIn.emailOtp({
     email: lowerEmail, // required
     otp: otp.value, // required
   });

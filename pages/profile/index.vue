@@ -185,7 +185,8 @@
 
 <script  setup>
 import { ref, computed } from "vue";
-import { authClient } from "~/server/auth";
+import { authClient } from "~/composables/auth";
+const {signOut} = authClient();
 const editMode = ref(false);
 definePageMeta({
   ssr: false   // page will be rendered purely on the client. I put this here since it keeps trying to render server side, breaking the auth
@@ -206,7 +207,7 @@ const route = useRoute();
 const id = route.params.id;
 
 
-const { data: session } = await authClient.getSession();
+const session = await useAuthUser();
 const userData = ref(null);
 const fetchUser = async () => { // This ensures that the api is called and the form filled only when the session is fully loaded
   try {
@@ -299,14 +300,14 @@ const deleteAccount = async () => {
     await $fetch(`/api/user/${session.session.userId}`, {
       method: "DELETE",
     });
-    await authClient.signOut();
+    await signOut();
     window.location.href = '/'
   } catch (e) {
     return e;
   }
 };
 const logout = async () => {
-  await authClient.signOut();
+  await signOut();
   window.location.href = '/login'
 };
 
