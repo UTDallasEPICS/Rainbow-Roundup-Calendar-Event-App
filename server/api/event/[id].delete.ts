@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
 import { defineEventHandler } from "h3";
 //import { getServerSession } from "#auth";
 import { auth } from "~/server/auth"

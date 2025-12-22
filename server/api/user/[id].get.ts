@@ -3,7 +3,6 @@ There is an issue in how user: singleUser is being returned and what [id].vue is
 Cannot log in properly, profile page is not working, and data is not being populated for user.
 SEEMS TO BE FIXED: 6/28
 */
-import { PrismaClient } from "@prisma/client";
 import { auth } from "~/server/auth"
 import type { User } from "../../../types/session";
 

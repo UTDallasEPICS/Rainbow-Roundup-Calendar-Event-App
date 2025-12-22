@@ -1,7 +1,5 @@
 // used for users to delete their own account. to ban, use PUT and change isBanned flag to true
 
-import { EventImpl } from "@fullcalendar/core/internal.js";
-import { PrismaClient } from "@prisma/client";
 import { auth } from "~/server/auth"
 import type { User } from "../../../types/session";
 

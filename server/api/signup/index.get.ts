@@ -1,4 +1,3 @@
-import { PrismaClient, User } from "@prisma/client";
 //import SignUp from "~/pages/signUp.vue";
 import { auth } from "~/server/auth";
 

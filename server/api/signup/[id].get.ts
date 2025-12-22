@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
 import { defineEventHandler } from "h3";
-import SignUp from "~/pages/signUp.vue";
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;

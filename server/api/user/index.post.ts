@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
 import { nanoid } from 'nanoid';
-import { auth, authClient } from '~/server/auth';
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
