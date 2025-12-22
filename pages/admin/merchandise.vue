@@ -113,7 +113,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { authClient } from "~/server/auth"
+import { authClient } from "~/composables/auth"
 
 const { data: session } = await authClient.getSession();
 const isLoading = ref(true);

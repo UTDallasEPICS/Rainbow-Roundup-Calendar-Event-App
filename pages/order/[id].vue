@@ -252,7 +252,7 @@
 import { ref, computed, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import type { OrderType, OrderStatus } from '@prisma/client'
-import { authClient } from "~/server/auth"
+import { authClient } from "~/composables/auth"
 
 // Access the route and router
 const route = useRoute()

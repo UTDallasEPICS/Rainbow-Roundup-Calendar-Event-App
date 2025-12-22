@@ -185,7 +185,7 @@
 
 <script  setup>
 import { ref, computed } from "vue";
-import { authClient } from "~/server/auth";
+import { authClient } from "~/composables/auth";
 const editMode = ref(false);
 definePageMeta({
   ssr: false   // page will be rendered purely on the client. I put this here since it keeps trying to render server side, breaking the auth

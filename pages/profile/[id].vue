@@ -146,7 +146,7 @@ const route = useRoute()
 const router = useRouter()
 
 // Get user session using better Auth composable
-import { authClient } from "~/server/auth"
+import { authClient } from "~/composables/auth"
 const { data: session } = await authClient.getSession();
 // Reactive user data and loading state
 const userData = ref(null)
