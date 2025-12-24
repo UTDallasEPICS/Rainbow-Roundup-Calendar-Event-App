@@ -9,93 +9,96 @@
         class="w-full p-2 border border-gray-300 rounded col-span-1"
     />
     </div>
-    <div
+    <div v-if="sortedUsers && sortedUsers.length > 0"
     class="bg-white rounded-lg shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] overflow-hidden"
     >
-    <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-green-300">
-            <tr>
-            <th
-                @click="sortBy('firstname')"
-                class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
-            >
-                First Name
-                <span v-if="sortKey === 'firstname'">{{
-                sortAsc ? "▲" : "▼"
-                }}</span>
-            </th>
-            <th
-                @click="sortBy('lastname')"
-                class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
-            >
-                Last Name
-                <span v-if="sortKey === 'lastname'">{{
-                sortAsc ? "▲" : "▼"
-                }}</span>
-            </th>
-            <th
-                @click="sortBy('email')"
-                class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
-            >
-                Email
-                <span v-if="sortKey === 'email'">{{
-                sortAsc ? "▲" : "▼"
-                }}</span>
-            </th>
-            <th
-                @click="sortBy('phoneNum')"
-                class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
-            >
-                Phone
-                <span v-if="sortKey === 'phoneNum'">{{
-                sortAsc ? "▲" : "▼"
-                }}</span>
-            </th>
-            <th
-                @click="sortBy('role')"
-                class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
-            >
-                Role
-                <span v-if="sortKey === 'role'">{{
-                sortAsc ? "▲" : "▼"
-                }}</span>
-            </th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200">
-            <tr
-            v-for="user in sortedUsers"
-            :key="user.email"
-            @click="clickUser(user)"
-            class="hover:bg-gray-100 cursor-pointer"
-            >
-            <td class="px-4 py-3 text-sm text-gray-800 border">
-                {{ user.firstname }}
-            </td>
-            <td class="px-4 py-3 text-sm text-gray-800 border">
-                {{ user.lastname }}
-            </td>
-            <td class="px-4 py-3 text-sm text-gray-800 border">
-                {{ user.email }}
-            </td>
-            <td class="px-4 py-3 text-sm text-gray-800 border">
-                {{ user.phoneNum }}
-            </td>
-            <td
-                class="px-4 py-3 text-sm text-gray-800 border"
-                :class="
-                user.role === 'Admin'
-                    ? 'text-red-500 font-bold'
-                    : 'text-green-600'
-                "
-            >
-                {{ user.role }}
-            </td>
-            </tr>
-        </tbody>
-        </table>
+      <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-green-300">
+              <tr>
+              <th
+                  @click="sortBy('firstname')"
+                  class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
+              >
+                  First Name
+                  <span v-if="sortKey === 'firstname'">{{
+                  sortAsc ? "▲" : "▼"
+                  }}</span>
+              </th>
+              <th
+                  @click="sortBy('lastname')"
+                  class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
+              >
+                  Last Name
+                  <span v-if="sortKey === 'lastname'">{{
+                  sortAsc ? "▲" : "▼"
+                  }}</span>
+              </th>
+              <th
+                  @click="sortBy('email')"
+                  class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
+              >
+                  Email
+                  <span v-if="sortKey === 'email'">{{
+                  sortAsc ? "▲" : "▼"
+                  }}</span>
+              </th>
+              <th
+                  @click="sortBy('phoneNum')"
+                  class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
+              >
+                  Phone
+                  <span v-if="sortKey === 'phoneNum'">{{
+                  sortAsc ? "▲" : "▼"
+                  }}</span>
+              </th>
+              <th
+                  @click="sortBy('role')"
+                  class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
+              >
+                  Role
+                  <span v-if="sortKey === 'role'">{{
+                  sortAsc ? "▲" : "▼"
+                  }}</span>
+              </th>
+              </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+              <tr
+              v-for="user in sortedUsers"
+              :key="user.email"
+              @click="clickUser(user)"
+              class="hover:bg-gray-100 cursor-pointer"
+              >
+              <td class="px-4 py-3 text-sm text-gray-800 border">
+                  {{ user.firstname }}
+              </td>
+              <td class="px-4 py-3 text-sm text-gray-800 border">
+                  {{ user.lastname }}
+              </td>
+              <td class="px-4 py-3 text-sm text-gray-800 border">
+                  {{ user.email }}
+              </td>
+              <td class="px-4 py-3 text-sm text-gray-800 border">
+                  {{ user.phoneNum }}
+              </td>
+              <td
+                  class="px-4 py-3 text-sm text-gray-800 border"
+                  :class="
+                  user.role === 'Admin'
+                      ? 'text-red-500 font-bold'
+                      : 'text-green-600'
+                  "
+              >
+                  {{ user.role }}
+              </td>
+              </tr>
+          </tbody>
+          </table>
+      </div>
     </div>
+    <div v-else class="px-4 py-3 text-gray-400">
+        No users.
     </div>
 
   <Teleport to="body">
