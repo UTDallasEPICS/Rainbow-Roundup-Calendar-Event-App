@@ -117,9 +117,9 @@
           <a href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
             class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             @click="handleMobileNavClick">Donate</a>
-          <NuxtLink v-if="session" to="/profile" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+          <NuxtLink v-if="session?.data?.user?.id" to="/profile" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
           @click.native="handleMobileNavClick">Profile</NuxtLink>
-          <NuxtLink v-if="(!session)" to="/signup" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+          <NuxtLink v-if="(!session?.data?.user?.id)" to="/signup" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             @click.native="handleMobileNavClick">
             Sign Up/Log In</NuxtLink>
           <button v-else @click="logout(); handleMobileNavClick()"
@@ -229,20 +229,9 @@ const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value;
 };
 
-const promptInstall = () => {
-  if (deferredPrompt.value) {
-    deferredPrompt.value.prompt();
-    deferredPrompt.value.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === "accepted") {
-        console.log("User accepted the install prompt");
-      } else {
-        console.log("User dismissed the install prompt");
-      }
-      deferredPrompt.value = null;
-    });
-  } else {
-    console.log("Install prompt not available");
-  }
+const promptInstall = async () => {
+  const result = await $pwa.install() // Our PWA library can do PWA installation prompt
+  console.log("Outcome of installation prompt: ",result.outcome)
 };
 
 const updateSubscriptionStatus = () => {
