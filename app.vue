@@ -160,7 +160,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 // Use the built-in auth composable instead of custom useUser
-import { authClient } from "~/server/auth"
+import { authClient } from "~/composables/auth"
 const session = authClient.useSession()
 
 
