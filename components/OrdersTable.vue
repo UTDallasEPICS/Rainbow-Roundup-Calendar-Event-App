@@ -83,10 +83,14 @@
     </div>
 </template>
 
-<script setup>
-import { ref, computed, onMounted } from "vue";
+<script setup lang="ts">
+import { ref, computed } from "vue";
 
-const props = defineProps(['orders', 'title']);
+//const props = defineProps(['orders', 'title']);
+const props = defineProps({
+  orders: { type: Array, required: true },
+  title: String
+})
 const searchTerm = ref("");
 const sortKey = ref("")
 const sortAsc = ref(true);
@@ -119,7 +123,7 @@ const sortedOrders = computed(() => {
 });
 
 // Formatting helper
-function formatDateTime(iso) {
+function formatDateTime(iso: Date) {
   return new Date(iso).toLocaleString("en-US", {
     year: "numeric",
     month: "short",

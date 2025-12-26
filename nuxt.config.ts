@@ -96,6 +96,9 @@ export default defineNuxtConfig({
     srcDir: "./service-worker",
     filename: "sw.ts",
     registerType: "autoUpdate",
+    client: {
+      installPrompt: true,
+    },
     manifest: {
       name: "Rainbow Roundup",
       short_name: "RR",

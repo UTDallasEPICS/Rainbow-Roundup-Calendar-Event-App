@@ -50,11 +50,9 @@ const isLoading = ref(true);
 try {
     // fetch orders
     const { data: ordersData } = await useFetch(`/api/order`, {  // TODO: Do sorting on serverside
-      // useFetch for page load
-      // $fetch for user action
-        method: "GET"
+        query: { method: "GET" }
     }) 
-    orders.value = ordersData.value
+    orders.value = ordersData.value.data
 }
 catch (err) {
     console.error("Error fetching orders:", err);

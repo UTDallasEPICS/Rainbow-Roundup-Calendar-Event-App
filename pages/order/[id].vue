@@ -108,7 +108,7 @@
                                 <p>{{ order.orderType }}</p>
                             </div>
                             <!-- pickup -->
-                            <div v-if="order.orderType == 'PICKUP' || order.orderType == OrderType.PICKUP" class="flex flex-col gap-2">
+                            <div v-if="order.orderType == 'PICKUP'" class="flex flex-col gap-2">
                                 <div>
                                     <h2 class="text-lg font-bold">Pickup At</h2>
                                     <EventCard :event="order.event" />
@@ -207,7 +207,7 @@
                                 </div>
                             </div>
                             <!-- pickup -->
-                            <div v-if="editedOrder.orderType == 'PICKUP' || editedOrder.orderType == OrderType.PICKUP" class="flex flex-col gap-2">
+                            <div v-if="editedOrder.orderType == 'PICKUP'" class="flex flex-col gap-2">
                                 <div>
                                     <h2 class="text-lg font-bold">Pickup Event ID</h2>
                                     <input v-model="editedOrder.pickupEventID" class="w-full border border-gray-400 p-1 rounded"></input>
@@ -252,7 +252,7 @@
 import { ref, computed, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import type { OrderType, OrderStatus } from '@prisma/client'
-import { authClient } from "~/server/auth"
+import { authClient } from "~/composables/auth"
 
 // Access the route and router
 const route = useRoute()
@@ -266,9 +266,11 @@ const isLoading = ref(true)
 const totalOrderPrice = ref(0)
 const isEditing = ref(false);
 
+//const test: OrderStatus = OrderStatus.UNCONFIRMED
+
 const editedOrder = reactive({
-    status: OrderStatus.UNCONFIRMED,
-    orderType: OrderType.PICKUP,
+    status: "UNCONFIRMED",
+    orderType: "PICKUP",
     shippingAddress: null,
     pickupEventID: null,
     trackingNumber: 0,
@@ -304,7 +306,7 @@ const isAdmin = computed(() => {
   return false
 })
 
-function formatDateTime(iso) {
+function formatDateTime(iso: Date) {
   return new Date(iso).toLocaleString("en-US", {
     year: "numeric",
     month: "short",
@@ -339,7 +341,7 @@ async function saveChanges() {
     var event
 
     // if pickup order
-    if (editedOrder.orderType == 'PICKUP' || editedOrder.orderType == OrderType.PICKUP) {
+    if (editedOrder.orderType == 'PICKUP') {
         if (!editedOrder.pickupEventID || editedOrder.pickupEventID == '' || editedOrder.pickupEventID == null)
         {
             alert("Pickup Event ID is required.")

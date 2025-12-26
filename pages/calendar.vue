@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 
-import { authClient } from "~/server/auth"
+import { authClient } from "~/composables/auth"
 const { data: session } = await authClient.getSession();
 const logout = async () => {
   await authClient.signOut();

@@ -287,7 +287,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from "vue";
 //import { useAuth } from "#imports"; // todo: figure out why useAuth is called here or if we don't need to touch it. 
-import { authClient } from "~/server/auth"
+import { authClient } from "~/composables/auth"
 import { fetchCombinedEventById } from "../server/utils/fetchCombinedEvents";
 import { useRoute, useRouter } from "vue-router";
 

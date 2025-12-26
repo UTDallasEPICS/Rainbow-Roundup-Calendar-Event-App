@@ -132,7 +132,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import { authClient } from '~/server/auth' // Adjust if you expose it via a client‑side plugin
+import { authClient } from '~/composables/auth' // Adjust if you expose it via a client‑side plugin
 
 const form = reactive({
   email: '',
