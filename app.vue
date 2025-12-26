@@ -82,6 +82,26 @@
           <button @click="promptInstall" class="text-gray-700 hover:text-black">
             Install App
           </button>
+          <!-- This is hidden if your browser does not support it, so I dont have to figure out a pretty way to write the error message-->
+          <button @click="requestNotificationPermission();console.log('subscription: ',notifSubscription)" v-if="($pwa.getSWRegistration()?.pushManager)" 
+            class="flex items-center  text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+            aria-label="Toggle notifications">
+            <span class="mr-2">Device notifications</span>
+            <span v-if="isSubscribedToPush ">
+              <!-- Bell icon -->
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+              </svg>
+            </span>
+            <span v-else>
+              <!-- Bell with slash -->
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M9.143 17.082a24.248 24.248 0 0 0 3.844.148m-3.844-.148a23.856 23.856 0 0 1-5.455-1.31 8.964 8.964 0 0 0 2.3-5.542m3.155 6.852a3 3 0 0 0 5.667 1.97m1.965-2.277L21 21m-4.225-4.225a23.81 23.81 0 0 0 3.536-1.003A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6.53 6.53m10.245 10.245L6.53 6.53M3 3l3.53 3.53" />
+              </svg>
+            </span>
+          </button>
         </nav>
 
         <!-- Hamburger Button - md: sizing -->
@@ -117,9 +137,9 @@
           <a href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
             class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             @click="handleMobileNavClick">Donate</a>
-          <NuxtLink v-if="session" to="/profile" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+          <NuxtLink v-if="session?.data?.user?.id" to="/profile" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
           @click.native="handleMobileNavClick">Profile</NuxtLink>
-          <NuxtLink v-if="(!session)" to="/signup" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+          <NuxtLink v-if="(!session?.data?.user?.id)" to="/signup" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             @click.native="handleMobileNavClick">
             Sign Up/Log In</NuxtLink>
           <button v-else @click="logout(); handleMobileNavClick()"
@@ -131,8 +151,8 @@
           <button @click="requestNotificationPermission(); handleMobileNavClick()"
             class="flex items-center py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             aria-label="Toggle notifications">
-            <span class="mr-2">Notifications</span>
-            <span v-if="isSubscribed">
+            <span class="mr-2">Device notifications</span>
+            <span v-if="isSubscribedToPush">
               <!-- Bell icon -->
               <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -158,7 +178,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted} from "vue";
 // Use the built-in auth composable instead of custom useUser
 import { authClient } from "~/server/auth"
 const session = authClient.useSession()
@@ -167,11 +187,14 @@ const session = authClient.useSession()
 
 const dropdownOpen = ref(false);
 const mobileMenuOpen = ref(false);
-const isSubscribed = ref(false);
+const notificationPermission = ref(false);
 const deferredPrompt = ref(null);
 const runtimeConfig = useRuntimeConfig();
-const notificationError = ref("");
+const notificationError = ref(null);
+const isSubscribedToPush = ref(false);
+
 const { $pwa } = useNuxtApp();
+const notifSubscription = ref(null)
 // Toggles resized mobile menu view
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value;
@@ -213,7 +236,8 @@ const handleKeyPress = (event) => {
 
 onMounted(() => {
   updateSubscriptionStatus();
-
+  checkPushSubscription() // check push subscription on load
+  window.addEventListener('focus', checkPushSubscription) // everytime the tab comes back in focus, reload it
   // Safari disclaimer logic
   if (
     typeof window !== "undefined" &&
@@ -224,6 +248,11 @@ onMounted(() => {
     window.addEventListener("keydown", handleKeyPress); 
   }
 });
+// This is apparently needed to clean up the listener to prevent duplicates and other issues
+onBeforeUnmount(() => {
+  window.removeEventListener('focus', checkPushSubscription)
+})
+
 
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value;
@@ -246,11 +275,41 @@ const promptInstall = () => {
 };
 
 const updateSubscriptionStatus = () => {
-  isSubscribed.value = Notification.permission === "granted";
+  notificationPermission.value = Notification.permission === "granted";
 };
 
+
+// This only checks is the client thinks it has subscribed to push
+// If the subscription is deleted from our server, this value will not reflect that
+// docs: https://developer.mozilla.org/en-US/docs/Web/API/PushManager/getSubscription
+// Note: I did this with a function that updates on page load instead of computed because a lot of the calls made are not reactive and will not auto-update
+async function checkPushSubscription() {
+  if (!process.client) return
+  if (!('serviceWorker' in navigator)) { // ensure browser support service workers
+    notifSubscription.value = null
+    isSubscribedToPush.value = false
+    return
+  }
+  try {
+    const sw = await navigator.serviceWorker.ready // wait for our service worker to be ready to prevent race conditions
+    if (!sw?.pushManager) { // ensure browser support push manager
+      notifSubscription.value = null
+      isSubscribedToPush.value = false
+      return
+    }
+    const subscription = await sw.pushManager.getSubscription()
+    notifSubscription.value = subscription
+    isSubscribedToPush.value = !!subscription && Notification.permission === 'granted'
+  } catch (e) {
+    // in any failure case, treat as not subscribed
+    notifSubscription.value = null
+    isSubscribedToPush.value = false
+  }
+}
+
+
 notificationError.value = computed(() => {
-  if (!($pwa?.getSWRegistration())) {
+  if (!($pwa?.getSWRegistration()?.pushManager)) {
     return "Not supported in your browser";
   }
   else {
@@ -270,7 +329,7 @@ const requestNotificationPermission = () => {
         console.log("Permission:", permission);
         console.log("Does service worker exist: ", 'serviceWorker' in navigator);
         if (permission === "granted" && 'serviceWorker' in navigator) {
-          isSubscribed.value = true;
+          notificationPermission.value = true;
           console.log("Both service worker and permission are good!");
           const applicationServerKey = runtimeConfig.public.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY;
           navigator.serviceWorker.ready.then(async (serviceWorkerRegistration) => {
@@ -294,10 +353,10 @@ const requestNotificationPermission = () => {
           });
 
         } else {
-          isSubscribed.value = false;
-          console.log("Could not subscribe to notifications, either permission was not granted or your browser doesn't support service workers");
+          notificationPermission.value = false;
+          window("Could not subscribe to notifications, either permission was not granted or your browser doesn't support service workers");
         }
-        isSubscribed.value = Notification.permission === "granted";
+        notificationPermission.value = Notification.permission === "granted";
       })
   } else {
     console.warn("Notification API or Service Worker not supported.");
