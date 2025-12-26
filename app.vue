@@ -345,6 +345,7 @@ const requestNotificationPermission = () => {
                   method: "POST",
                   body: pushSubscription,
                 });
+                checkPushSubscription();
               },
               (error) => {
                 console.error(error);
