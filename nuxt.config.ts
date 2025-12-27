@@ -65,7 +65,14 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
-
+  nitro: {
+    storage: {
+      uploads: {
+        driver: "fs",        
+        base: "./public/uploads",      
+       },    
+     },  
+  },
   modules: [
     "tailwindcss",
     "@vite-pwa/nuxt",

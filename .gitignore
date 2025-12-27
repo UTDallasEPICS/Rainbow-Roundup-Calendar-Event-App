@@ -30,3 +30,6 @@ dev.db
 
 # Yarn
 yarn.lock
+
+# Public uploads directory
+/public/uploads
