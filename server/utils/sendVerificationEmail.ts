@@ -5,9 +5,7 @@ export const sendVerificationEmail = async (email: string, token: string, login:
   const siteUrl = config.url || "http://localhost:3000";
 
   const transporter = createTransport({
-    host: config.smtpHost,
-    port: parseInt(config.smtpPort || "587"),
-    secure: false,
+    service: "gmail",
     auth: {
       user: config.smtpUser,
       pass: config.smtpPass,
