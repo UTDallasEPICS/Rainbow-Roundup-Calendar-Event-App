@@ -30,7 +30,9 @@
             Remove Photo
           </button>
         </div>
-
+        <div v-if="profilePictureError" class="text-red-600 mt-4 text-center">
+          {{ profilePictureError }}
+        </div>
 
         <!-- First Name -->
         <div>
@@ -99,6 +101,7 @@ const file = ref<File | null>(null);
 const imageUrl = ref<string | null>(null);
 const errors = ref({});
 const successMessage = ref("");
+const profilePictureError = ref("")
 const signupModel = ref({
   email: "",
   firstname: "",
@@ -111,10 +114,21 @@ const signupModel = ref({
 
 function handleFileChange(e: Event) {
   const input = e.target as HTMLInputElement;
-  if (input.files?.[0]) {
-    file.value = input.files[0];
-    previewImage(file.value);
+  const allowedTypes = ["image/jpeg", "image/png"];
+  if (!input.files?.[0]) {
+    return
   }
+  if(input.files?.[0].size > 256 * 1024){
+    profilePictureError.value = "Profile pictures should be under 256KB in size"
+    return
+  }
+  if(!allowedTypes.includes(input.files?.[0].type)){
+    profilePictureError.value = "Profile picture type unsupported, please use either jpeg or png"
+    return
+  }
+  profilePictureError.value = ""
+  file.value = input.files[0];
+  previewImage(file.value);
 }
 
 function previewImage(file: File) {
@@ -139,7 +153,7 @@ async function uploadToS3(file: File) {
   });
 
   if (res?.error) {
-    successMessage.value = res.error;
+    profilePictureError.value = res.error;
     throw new Error(res.error);
   }
   else{
