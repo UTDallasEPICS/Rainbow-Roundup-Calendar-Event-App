@@ -77,7 +77,7 @@
         Register
       </button>
       <!-- Success message -->
-      <div v-if="successMessage" class="text-green-600 mt-4 text-center">
+      <div v-if="successMessage" class="text-red-600 mt-4 text-center">
         {{ successMessage }}
       </div>
 
@@ -99,7 +99,6 @@ const file = ref<File | null>(null);
 const imageUrl = ref<string | null>(null);
 const errors = ref({});
 const successMessage = ref("");
-
 const signupModel = ref({
   email: "",
   firstname: "",
@@ -127,15 +126,25 @@ function previewImage(file: File) {
 }
 
 async function uploadToS3(file: File) {
+  if(!file?.name){
+    return null
+  }
   const formData = new FormData();
-  formData.append("file", file); // name must match what server reads
+  formData.append("file", file);
+
   const res = await $fetch("/api/user/profile_picture", {
     method: "POST",
     body: formData,
+    ignoreResponseError: true, // <- prevents $fetch from throwing
   });
-  if (res?.error) throw new Error(res.error);
-  return res.fileUrl;
 
+  if (res?.error) {
+    successMessage.value = res.error;
+    throw new Error(res.error);
+  }
+  else{
+    return res.fileUrl;
+  }
 }
 
 const submitSignupForm = async () => {
@@ -145,13 +154,16 @@ const submitSignupForm = async () => {
   try {
     try {
       const uploadedUrl = await uploadToS3(file.value);
-      signupModel.value.profilePic = uploadedUrl;
+      userDataToSubmit.profilePic = uploadedUrl;
+      console.log("url: ", uploadedUrl)
+      console.log("userSubmit: ", userDataToSubmit)
     } catch (uploadError) {
       console.error("Profile picture upload failed:", uploadError);
       return
     }
 
-    console.log(userDataToSubmit)
+    console.log("User data: ",userDataToSubmit)
+    
     const { data, error } = await useFetch("/api/user", { // todo: change to $fetch
       method: "POST",
       body: userDataToSubmit,
