@@ -1,12 +1,11 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
 
 const config = useRuntimeConfig();
 
 
 
 export default defineEventHandler(async (event) => {
-
+  console.log("TODO: Refactor the profile picture url to be something nginx can handle") // TODO: Refactor the profile picture url to be something nginx can handle
   const allowedTypes = ["image/jpeg", "image/png"];
   const storage = useStorage("uploads");
   const MAX_FILE_SIZE = 256 * 1024; // 256kb
