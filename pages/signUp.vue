@@ -65,9 +65,9 @@
       <div class="text-md mt-6 text-center text-gray-600">
         <strong>
           Already have an account?
-          <a href="./login" class="text-[#D97ED5] hover:underline transition">
+          <NuxtLink to="/login" class="text-[#D97ED5] hover:underline transition">
             Sign In
-          </a>
+          </NuxtLink>
         </strong>
       </div>
 
