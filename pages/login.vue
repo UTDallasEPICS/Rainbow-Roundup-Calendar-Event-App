@@ -100,7 +100,7 @@ const submitOTP = async () => {
       <div class="text-lg mt-6 text-center text-gray-600">
         <strong>
           Don't have an account?
-          <a href="./signUp" class="text-[#D97ED5] hover:underline transition">Sign Up</a>
+          <NuxtLink to="/signup" class="text-[#D97ED5] hover:underline transition">Sign Up</NuxtLink>
         </strong>
       </div>
     </form>
