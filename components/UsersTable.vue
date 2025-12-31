@@ -66,7 +66,7 @@
           <tbody class="divide-y divide-gray-200">
               <tr
               v-for="user in sortedUsers"
-              :key="user.email"
+              :key="user"
               @click="clickUser(user)"
               class="hover:bg-gray-100 cursor-pointer"
               >
@@ -163,22 +163,27 @@
   </Teleport>
 </template>
 
-<script setup>
-import { ref, computed, onMounted } from "vue";
+<!-- <script setup lang="ts"> -->
+  <script setup>
+import { ref, computed } from "vue";
 
 const props = defineProps(['users', 'title']);
+// const props = defineProps({
+//   users: { type: Array, required: true },
+//   title: String
+// })
 //const users = ref([]);
 import { authClient } from "~/server/auth"
 const { data: session } = await authClient.getSession();
 const sessionUser = session.user;
 const searchTerm = ref("");
-const sortKey = ref(null);
+const sortKey = ref("");
 const sortAsc = ref(true);
 const selectedUser = ref(null);
 const isModalOpen = ref(false);
 
-
 function sortBy(key) {
+//function sortBy(key: string) {
   if (sortKey.value === key) {
     sortAsc.value = !sortAsc.value;
   } else {
