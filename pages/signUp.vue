@@ -30,7 +30,9 @@
             Remove Photo
           </button>
         </div>
-
+        <div v-if="profilePictureError" class="text-red-600 mt-4 text-center">
+          {{ profilePictureError }}
+        </div>
 
         <!-- First Name -->
         <div>
@@ -77,7 +79,7 @@
         Register
       </button>
       <!-- Success message -->
-      <div v-if="successMessage" class="text-green-600 mt-4 text-center">
+      <div v-if="successMessage" class="text-red-600 mt-4 text-center">
         {{ successMessage }}
       </div>
 
@@ -86,7 +88,6 @@
 </template>
 
 <script setup lang="ts">
-import type { RefSymbol } from '@vue/reactivity';
 
 const router = useRouter();
 
@@ -100,7 +101,7 @@ const file = ref<File | null>(null);
 const imageUrl = ref<string | null>(null);
 const errors = ref({});
 const successMessage = ref("");
-
+const profilePictureError = ref("")
 const signupModel = ref({
   email: "",
   firstname: "",
@@ -113,10 +114,21 @@ const signupModel = ref({
 
 function handleFileChange(e: Event) {
   const input = e.target as HTMLInputElement;
-  if (input.files?.[0]) {
-    file.value = input.files[0];
-    previewImage(file.value);
+  const allowedTypes = ["image/jpeg", "image/png"];
+  if (!input.files?.[0]) {
+    return
   }
+  if(input.files?.[0].size > 256 * 1024){
+    profilePictureError.value = "Profile pictures should be under 256KB in size"
+    return
+  }
+  if(!allowedTypes.includes(input.files?.[0].type)){
+    profilePictureError.value = "Profile picture type unsupported, please use either jpeg or png"
+    return
+  }
+  profilePictureError.value = ""
+  file.value = input.files[0];
+  previewImage(file.value);
 }
 
 function previewImage(file: File) {
@@ -128,28 +140,25 @@ function previewImage(file: File) {
 }
 
 async function uploadToS3(file: File) {
-  const { uploadUrl, fileUrl } = await $fetch("/api/user/profile_picture", {
-    method: "POST",
-    body: {
-      fileName: `${Date.now()}-${file.name}`,
-      fileType: file.type,
-    },
-  });
-
-  const res = await fetch(uploadUrl, {
-    method: "PUT",
-    headers: {
-      "Content-Type": file.type,
-    },
-    body: file,
-  });
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Upload failed: ${res.status} - ${errorText}`);
+  if(!file?.name){
+    return null
   }
+  const formData = new FormData();
+  formData.append("file", file);
 
-  return fileUrl;
+  const res = await $fetch("/api/user/profile_picture", {
+    method: "POST",
+    body: formData,
+    ignoreResponseError: true, // <- prevents $fetch from throwing
+  });
+
+  if (res?.error) {
+    profilePictureError.value = res.error;
+    throw new Error(res.error);
+  }
+  else{
+    return res.fileUrl;
+  }
 }
 
 const submitSignupForm = async () => {
@@ -157,24 +166,25 @@ const submitSignupForm = async () => {
   signupModel.value.email = signupModel.value.email.toLowerCase();
   const userDataToSubmit = { ...signupModel.value };
   try {
+    try {
+      const uploadedUrl = await uploadToS3(file.value);
+      userDataToSubmit.profilePic = uploadedUrl;
+      console.log("url: ", uploadedUrl)
+      console.log("userSubmit: ", userDataToSubmit)
+    } catch (uploadError) {
+      console.error("Profile picture upload failed:", uploadError);
+      return
+    }
 
+    console.log("User data: ",userDataToSubmit)
+    
     const { data, error } = await useFetch("/api/user", { // todo: change to $fetch
       method: "POST",
       body: userDataToSubmit,
       watch: false,
     });
     if (data?.value?.success && !error.value) {
-      if (file.value) {
-        try {
-          const uploadedUrl = await uploadToS3(file.value);
-          signupModel.value.profilePic = uploadedUrl;
 
-        } catch (uploadError) {
-          console.error("Profile picture upload failed:", uploadError);
-          
-
-        }
-      }
 
       router.push("login");
       successMessage.value = "A verification email has been sent to your address. Please check your inbox to complete registration.";
@@ -183,7 +193,7 @@ const submitSignupForm = async () => {
       successMessage.value = 'Signup failed, check that you do not already have an account';
       console.error("Error submitting signup form");
       errors.value = { error: "Signup failed." };
-      if(error.value?.statusCode === 400){
+      if (error.value?.statusCode === 400) {
         navigateTo("/login");
         console.log("redirecting to login...");
         // if not already, their email will be autoverified on login, so might as well send them there

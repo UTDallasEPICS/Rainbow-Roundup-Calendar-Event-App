@@ -1,51 +1,49 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
 
 const config = useRuntimeConfig();
 
-const s3 = new S3Client({
-  region: config.AWS_REGION,
-  credentials: {
-    accessKeyId: config.NUXT_AWS_ACCESS_KEY_ID!,
-    secretAccessKey: config.NUXT_AWS_SECRET_ACCESS_KEY!,
-  },
-});
+
 
 export default defineEventHandler(async (event) => {
-  try {
-    const body = await readBody<{ fileName: string; fileType: string }>(event);
+  console.log("TODO: Refactor the profile picture url to be something nginx can handle") // TODO: Refactor the profile picture url to be something nginx can handle
+  const allowedTypes = ["image/jpeg", "image/png"];
+  const storage = useStorage("uploads");
+  const MAX_FILE_SIZE = 256 * 1024; // 256kb
 
-    if (!body.fileName || !body.fileType) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: "Missing fileName or fileType in request body",
-      });
-    }
+  const form = await readMultipartFormData(event);
 
-    const bucketName = config.NUXT_AWS_S3_BUCKET_NAME!;
-    const region = config.AWS_REGION!;
-    const objectKey = `profile-pictures/${body.fileName}`;
+  const file = form?.find((x) => x.name === "file");
 
-    const command = new PutObjectCommand({
-      Bucket: bucketName,
-      Key: objectKey,
-      ContentType: body.fileType,
-    });
-
-    const signedUrl = await getSignedUrl(s3, command, { expiresIn: 60 });
-    const fileUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${objectKey}`;
-
-    return {
-      uploadUrl: signedUrl,
-      fileUrl,
-    };
-  } catch (err: any) {
-    console.error("S3 signing error:", err);
-
-    throw createError({
-      statusCode: err?.$metadata?.httpStatusCode || 500,
-      statusMessage: err?.message || "Unexpected error generating signed URL",
-      data: err,
-    });
+  if (!file) {
+    setResponseStatus(event, 400);
+    return { error: "No file" };
   }
+
+  
+  console.log("Filename:", file.filename);
+  console.log("Filesize:", file.data?.length);
+  console.log("Type:", file.type);
+
+  if (!file.data || file.data.length === 0) {
+    setResponseStatus(event, 400);
+    return { error: "Empty upload" };
+  }
+
+  if (file.data.length > MAX_FILE_SIZE) {
+    setResponseStatus(event, 400);
+    return { error: "File too big" };
+  }
+
+  if (!file.type || !allowedTypes.includes(file.type)) {
+    setResponseStatus(event, 400);
+    return {
+      error: `File type ${file.type || "unknown"} not allowed. Allowed types: ${allowedTypes.join(", ")}`
+    };
+  }
+  const safeOriginalName = (file.filename || "upload").replace(/[^\w.\-]/g, "_");
+  const fileName = `${Date.now()}-${safeOriginalName}`;
+  await storage.setItemRaw(fileName, file.data);
+  const fileUrl = `/uploads/${fileName}`;
+  return { fileUrl };
+
 });

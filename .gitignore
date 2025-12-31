@@ -30,3 +30,6 @@ dev.db
 
 # Yarn
 yarn.lock
+
+# Upload directory for images hosted through nginx
+/uploads
