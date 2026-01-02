@@ -23,6 +23,7 @@
     <h1 class="text-3xl font-bold text-[#022150] mt-6">
       <b>Account Settings</b>
     </h1>
+    <!-- profile picture -->
     <div class="flex flex-col items-center mt-4 mb-6">
       <img
         class="w-40 h-40 rounded-full object-cover"
