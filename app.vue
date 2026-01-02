@@ -177,8 +177,6 @@
         </NuxtLink>
       </span>
     </div>
-
-    <!-- Nuxt Page Component to display content -->
     <NuxtPage class="min-h-screen" />
   </div>
 </template>
