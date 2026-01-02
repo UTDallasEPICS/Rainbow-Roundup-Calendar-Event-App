@@ -2,8 +2,6 @@
 
 const config = useRuntimeConfig();
 
-
-
 export default defineEventHandler(async (event) => {
   console.log("TODO: Refactor the profile picture url to be something nginx can handle") // TODO: Refactor the profile picture url to be something nginx can handle
   const allowedTypes = ["image/jpeg", "image/png"];
