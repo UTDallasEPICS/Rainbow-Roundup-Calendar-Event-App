@@ -50,6 +50,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      title: 'Rainbow Roundup',
       script: [
         {
           src: "https://unpkg.com/@heroicons/vue/outline",
@@ -69,7 +70,7 @@ export default defineNuxtConfig({
     storage: {
       uploads: {
         driver: "fs",        
-        base: "./uploads",      
+        base: process.env.IMG_STORAGE_PATH || "./public/uploads",      
        },    
      },  
   },

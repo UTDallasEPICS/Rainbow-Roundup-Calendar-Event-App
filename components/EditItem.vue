@@ -214,19 +214,20 @@ function handleFileChange(event) {
 async function addPhoto(file) {
     const form = new FormData()
     form.append("image", file)
+    form.append("itemId", props.item.id)
 
-    const { data: image } = await $fetch(`/api/itemPhoto/${props.item.id}`, {
+    const { data: image } = await $fetch(`/api/itemPhoto`, {
         method: "POST",
         body: form
     });
 
     // add new image to item obj
-    props.item.ItemPhotos.push(image);
+    props.item.ItemPhotos.push(image.data);
 }
 
 async function deletePhoto(id) {
     await $fetch(`/api/itemPhoto/${id}`, {
-        method: "DELETE",
+        method: "DELETE"
     });
 
     for (let i = 0; i < editedItem.ItemPhotos.length; i++)

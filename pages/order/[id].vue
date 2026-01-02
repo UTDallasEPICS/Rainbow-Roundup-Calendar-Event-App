@@ -251,7 +251,6 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue'
 import { useRoute } from 'vue-router'
-import type { OrderType, OrderStatus } from '@prisma/client'
 import { authClient } from "~/composables/auth"
 
 // Access the route and router
