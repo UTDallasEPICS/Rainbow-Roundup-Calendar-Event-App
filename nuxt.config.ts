@@ -78,20 +78,9 @@ export default defineNuxtConfig({
     "@vite-pwa/nuxt",
     "@nuxt/ui",
     "@nuxt/eslint",
-    //"@sidebase/nuxt-auth",
     "nuxt-scheduler",
     '@pinia/nuxt'
   ],
-  /*auth: {
-    isEnabled: true,
-    baseURL: process.env.URL + "/api/auth",
-    provider: {
-      type: "authjs",
-      trustHost: false,
-      defaultProvider: "email",
-      addDefaultCallbackUrl: true,
-    },
-  },*/
   compatibilityDate: "2024-10-24",
 
   plugins: ["~/plugins/fullcalendar.client"],
