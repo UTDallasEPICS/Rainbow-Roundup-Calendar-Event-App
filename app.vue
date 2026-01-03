@@ -83,7 +83,7 @@
             Install App
           </button>
           <!-- This is hidden if your browser does not support it, so I dont have to figure out a pretty way to write the error message-->
-          <button @click="requestNotificationPermission();console.log('subscription: ',notifSubscription); showNotifError = true" v-if="($pwa.getSWRegistration()?.pushManager)" 
+          <button @click="requestNotificationPermission();console.log('subscription: ',notifSubscription); showNotifError = true" v-if="($pwa?.getSWRegistration()?.pushManager)" 
             class="flex items-center  text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             aria-label="Toggle notifications">
             <span class="mr-2">Device notifications</span>
