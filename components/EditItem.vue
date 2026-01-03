@@ -135,7 +135,7 @@ const editedItem = reactive({
     description: props.item.description,
     isArchived: props.item.isArchived,
     ItemVariants: props.item.ItemVariants.map(a => {return {...a}}),
-    ItemPhotos: props.item.ItemPhotos,
+    ItemPhotos: props.item.ItemPhotos || [],
 });
 function closeWindow() {
     emit("closeWindow");
@@ -195,7 +195,7 @@ async function cancelEdit() {
     editedItem.isArchived = props.item.isArchived
     archived.value = (props.item.isArchived ? "true" : "false")
     editedItem.ItemVariants = props.item.ItemVariants.map(a => {return {...a}}),
-    editedItem.ItemPhotos = props.item.ItemPhotos
+    editedItem.ItemPhotos = props.item.ItemPhotos || []
 }
 
 function changeSizeAvailability(variant) {
@@ -222,7 +222,6 @@ async function addPhoto(file) {
 
   const photo = res
 
-  // update the array your template uses
   editedItem.ItemPhotos.push(photo)
 }
 
