@@ -58,7 +58,6 @@ export default defineEventHandler(async (event) => {
         startTime: startTime,
         endTime: endTime,
         capacity: body.capacity,
-        currentCapacity: 0,
       },
     });
     // Send email notification about the new event

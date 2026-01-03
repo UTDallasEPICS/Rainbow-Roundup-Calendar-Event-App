@@ -3,6 +3,13 @@
 import { PrismaClient, User } from "@prisma/client";
 import { auth } from "~/server/auth";
 
+function computeCC_SignUp(signUps: { plusOneKids: number; plusOneAdults: number }[]) {
+  const b = signUps.length; // base attendees
+  const pk = signUps.reduce((t, x) => t + (x.plusOneKids ?? 0), 0); // plus-one kids
+  const pa = signUps.reduce((t, x) => t + (x.plusOneAdults ?? 0), 0); // plus-one adults
+  return b + pk + pa;
+}
+
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
   const session = await auth.api.getSession({
@@ -32,15 +39,26 @@ export default defineEventHandler(async (event) => {
     console.log('Events found:', events.length); // Debug log
     if(!(user?.role === "SUPER" || user?.role === "ADMIN")){
       events.forEach(iEvent => {
-      iEvent.SignUps.every( signup => {
-        signup.plusOneAdults = signup.plusOneAdults + signup.plusOneKids
+      iEvent.SignUps.forEach( signup => {
+        signup.plusOneAdults = (signup.plusOneAdults ?? 0) + (signup.plusOneKids ?? 0);
         signup.plusOneKids = 0
       })
     })
     }
-    
-    
-    return events;
+
+      const out = events.map((e) => {
+      const cc = computeCC_SignUp(e.SignUps);
+      const rc = e.capacity == null ? null : Math.max(0, e.capacity - cc);
+
+      return {
+        ...e,
+        currentCapacity: cc,     // computed (Issue #211)
+        remainingCapacity: rc,   // optional but useful
+      };
+    });
+
+    return out;  
+    //return events; is now return out bc events is from prisma and out has computed capacity
   } catch (error) {
     console.error('Prisma error:', error); // Debug log
     setResponseStatus(event, 500);
