@@ -178,6 +178,7 @@ async function saveChanges() {
             props.item.description = editedItem.description
             props.item.isArchived = editedItem.isArchived
             props.item.ItemVariants = editedItem.ItemVariants
+            props.item.ItemPhotos = editedItem.ItemPhotos
             emit("closeWindow");
         }
     }

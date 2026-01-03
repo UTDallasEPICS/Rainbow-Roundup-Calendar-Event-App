@@ -3,6 +3,8 @@
 -->
 
 <template>
+<!-- added a parent wrapper to make some warnings go away-->
+<div>
   <!-- Background -->
     <div
         class="fixed top-0 right-0 z-30 h-full w-full bg-black/70 backdrop-blur-sm"
@@ -281,6 +283,7 @@
         </div>
       </div>
     </div>
+</div>
 </div>
 </template>
 
