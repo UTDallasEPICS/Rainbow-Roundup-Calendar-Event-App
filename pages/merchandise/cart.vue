@@ -109,6 +109,6 @@ function checkout() {
     return
   }
   // Make a checkout page soon (might also change path)
-  router.push('/merchandise /checkout')
+  router.push('/merchandise/checkout')
 }
 </script>

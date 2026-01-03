@@ -12,31 +12,6 @@
                   class="w-[120px] h-[55px] sm:w-[140px] sm:h-[65px] md:w-[160px] md:h-[75px] lg:w-[174px] lg:h-[80px]"
                 />
               </div>
-
-              <!-- Search Bar -->
-              <!-- 
-              <div class="w-full lg:w-[64%] max-w-2xl">
-                <form @submit.prevent="handleSearch" class="relative w-full">
-                  <div class="relative flex items-center">
-                    <div class="absolute left-3 sm:left-4 z-10 flex items-center justify-center">
-                      <img
-                        src="/public/img_search.svg"
-                        alt="Search"
-                        class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-8 lg:h-8"
-                      />
-                    </div>
-                  
-                    <input
-                      type="text"
-                      v-model="searchQuery"
-                      placeholder="Search"
-                      class="w-full bg-searchview-1 text-searchview-1 placeholder-searchview-1 border border-solid border-black rounded-[22px] sm:rounded-[32px] md:rounded-[44px] px-3 sm:px-4 md:px-6 lg:px-[98px] py-2 sm:py-2.5 md:py-3 lg:py-[12px] text-sm sm:text-base md:text-lg lg:text-[40px] font-medium leading-tight sm:leading-normal md:leading-relaxed lg:leading-[49px] text-center focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-all duration-200 pl-10 sm:pl-12 md:pl-14 lg:pl-[98px] hover:bg-gray-50"
-                    />
-                   </div>
-                </form>
-              </div>
-            -->
-              <!-- Cart and Login -->
               <div class="flex items-center gap-4 sm:gap-6 lg:gap-8 flex-shrink-0">
                 <NuxtLink to="/merchandise/cart" class="focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-lg transition-transform hover:scale-105 active:scale-95">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-14">
@@ -47,40 +22,6 @@
             </div>
           </div>
         </header>
-      
-        <!-- Navigation Menu -->
-      <!-- <div class="w-full mt-[34px]">
-          <div class="w-full max-w-[1600px] mx-auto">
-            <div class="flex flex-col sm:flex-row w-full">
-              <button
-                @click="handleShopByStyle"
-                class="w-full border-t border-solid border-black px-4 sm:px-6 md:px-8 lg:px-[34px] py-4 sm:py-5 md:py-6 lg:py-[22px] text-sm sm:text-base md:text-lg lg:text-[28px] font-normal leading-tight sm:leading-normal md:leading-relaxed lg:leading-[33px] text-center text-button-1 bg-button-1 rounded-none hover:bg-gray-50 focus:ring-gray-300"
-              >
-                Shop by Style
-              </button>
-              <button
-                @click="handleShopByFit"
-                class="w-full border-t border-solid border-black px-4 sm:px-6 md:px-8 lg:px-[34px] py-4 sm:py-5 md:py-6 lg:py-[22px] text-sm sm:text-base md:text-lg lg:text-[28px] font-normal leading-tight sm:leading-normal md:leading-relaxed lg:leading-[33px] text-center text-button-1 bg-button-1 rounded-none hover:bg-gray-50 focus:ring-gray-300"
-              >
-                Shop by Fit
-              </button>
-              <button
-                @click="handleDonate"
-                class="w-full border-t border-solid border-black px-4 sm:px-6 md:px-8 lg:px-[34px] py-3 sm:py-4 md:py-5 lg:py-[20px] text-sm sm:text-base md:text-lg lg:text-[28px] font-normal leading-tight sm:leading-normal md:leading-relaxed lg:leading-[33px] text-center text-button-1 bg-button-1 rounded-none hover:bg-gray-50 focus:ring-gray-300"
-              >
-                Donate
-              </button>
-              <button
-                @click="handleMainPage"
-                class="w-full border-t border-solid border-black px-4 sm:px-6 md:px-8 lg:px-[34px] py-3 sm:py-4 md:py-5 lg:py-[20px] text-sm sm:text-base md:text-lg lg:text-[28px] font-normal leading-tight sm:leading-normal md:leading-relaxed lg:leading-[33px] text-center text-button-1 bg-button-1 rounded-none hover:bg-gray-50 focus:ring-gray-300"
-              >
-                Main Page
-              </button>
-            </div>
-          </div>
-        </div>-->
-
-
     <!-- Hero Slider -->
     <div class="w-full mt-[82px]">
       <div class="w-full max-w-[1600px] mx-auto">
@@ -108,7 +49,7 @@
                   v-if="heroSlides.length > 1"
                   @click="prevSlide"
                   class="absolute left-4 sm:left-6 md:left-8 lg:left-0 top-1/2 transform -translate-y-1/2 w-[60px] h-[60px] sm:w-[70px] sm:h-[70px] md:w-[80px] md:h-[80px] lg:w-[84px] lg:h-[88px] bg-cover bg-center focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 transition-transform hover:scale-105 active:scale-95 z-30"
-                  style="background-image: url('/public/img_ellipse_1512.svg')"
+                  style="background-image: url('/img_ellipse_1512.svg')"
                   aria-label="Previous slide"
                   >
                   <span class="text-slider-2 text-lg sm:text-xl md:text-2xl lg:text-[30px] font-medium leading-[37px]">
@@ -120,7 +61,7 @@
                   v-if="heroSlides.length > 1"
                   @click="nextSlide"
                   class="absolute right-4 sm:right-6 md:right-8 lg:right-0 top-1/2 transform -translate-y-1/2 w-[60px] h-[60px] sm:w-[70px] sm:h-[70px] md:w-[80px] md:h-[80px] lg:w-[84px] lg:h-[88px] bg-cover bg-center focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 transition-transform hover:scale-105 active:scale-95 z-30"
-                  style="background-image: url('/public/img_ellipse_1512.svg')"
+                  style="background-image: url('/img_ellipse_1512.svg')"
                   aria-label="Next slide"
                 >
                   <span class="text-slider-2 text-lg sm:text-xl md:text-2xl lg:text-[30px] font-medium leading-[37px]">
@@ -160,30 +101,6 @@
       </div>
     </div>
     
-    <!-- Pagination Indicator -->
-   <!-- <div class="w-full mt-4 sm:mt-6 md:mt-8 lg:mt-[16px] mb-4 sm:mb-6 md:mb-8 lg:mb-[16px]">
-      <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8">
-        <div class="flex justify-center">
-          <div class="w-full sm:w-3/4 md:w-1/2 lg:w-[8%]">
-            <div class="flex items-center justify-center gap-1.5 sm:gap-2 md:gap-3">
-              <button
-                v-for="(_, index) in 5"
-                :key="index"
-                @click="handlePageChange(index)"
-                class="w-3 h-3 sm:w-4 sm:h-4 rounded-full transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
-                :class="{
-                  'bg-pagerindicator-1 scale-110 shadow-sm': currentPage === index, 
-                  'bg-gray-300 hover:bg-gray-400 active:scale-95': currentPage !== index
-                }"
-                :aria-label="`Go to page ${index + 1}`"
-                :aria-current="currentPage === index ? 'page' : undefined"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  -->
     
         <div class="w-full max-w-[1214px] mx-auto px-4 sm:px-6 md:px-8 lg:px-0">
     <h2 class="text-3xl font-semibold my-8 text-center">Catalog</h2>
@@ -248,37 +165,7 @@
         loading.value = false;
       }
     });
-    /*
-    // Children's shirt image gallery
-    const childrenShirtImages = ref([
-      {
-        main: '/public/img_secondshirt.png',
-        thumbnail: '/public/img_1.1.png'
-      },
-      {
-        main: '/public/img_secondshirt_blue.png',
-        thumbnail: '/public/img_1.2.png'
-      },
-      {
-        main: '/public/img_secondshirt_red.png',
-        thumbnail: '/public/img_1.3.png'
-      },
-      {
-        main: '/public/img_secondshirt_green.png',
-        thumbnail: '/public/img_1.4.png'
-      },
-      {
-        main: '/public/img_secondshirt_yellow.png',
-        thumbnail: '/public/img_1.5.png'
-      }
-    ])
-
-    const currentChildrenShirtIndex = ref(0)
-    const currentChildrenShirtImage = ref(childrenShirtImages.value[0].main)
-    const isImageChanging = ref(false)
-    */
-
-    // Hero slider data
+ 
     const heroSlides = ref([
       {
         id: 1,

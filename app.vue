@@ -56,7 +56,7 @@
       <div class="flex justify-between items-center px-4 py-2">
         <div class="flex items-center space-x-2">
           <a href="https://rrup.org/">
-            <img src="/public/images/rrup_logo.png" alt="Rainbow Roundup Logo" class="h-12 w-auto"
+            <img src="/images/rrup_logo.png" alt="Rainbow Roundup Logo" class="h-12 w-auto"
               href="https://rrup.org/" />
           </a>
         </div>
