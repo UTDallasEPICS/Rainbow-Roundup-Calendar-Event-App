@@ -15,7 +15,6 @@ export default defineNuxtConfig({
     AWS_REGION: process.env.AWS_REGION,
     NUXT_AWS_ACCESS_KEY_ID: process.env.NUXT_AWS_ACCESS_KEY_ID,
     NUXT_AWS_SECRET_ACCESS_KEY: process.env.NUXT_AWS_SECRET_ACCESS_KEY,
-    NUXT_AWS_S3_BUCKET_NAME: process.env.NUXT_AWS_S3_BUCKET_NAME,
 
     smtpHost: process.env.SMTP_HOST,
     smtpPort: process.env.SMTP_PORT,
