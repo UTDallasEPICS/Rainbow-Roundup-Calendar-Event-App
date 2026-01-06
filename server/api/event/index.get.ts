@@ -2,12 +2,23 @@
 
 import { PrismaClient, User } from "@prisma/client";
 import { auth } from "~/server/auth";
-
-function computeCC_SignUp(signUps: { plusOneKids: number; plusOneAdults: number }[]) {
-  const b = signUps.length; // base attendees
-  const pk = signUps.reduce((t, x) => t + (x.plusOneKids ?? 0), 0); // plus-one kids
-  const pa = signUps.reduce((t, x) => t + (x.plusOneAdults ?? 0), 0); // plus-one adults
-  return b + pk + pa;
+//
+type SignUpCounts = {
+  plusOneKids: number;
+  plusOneAdults: number;
+};
+//
+function computeCC_SignUp(signUps: SignUpCounts[]): number {
+  const baseAttendees = signUps.length;
+  const totalPlusOneKids = signUps.reduce(
+    (total, signup) => total + (signup.plusOneKids ?? 0),
+    0
+  );
+  const totalPlusOneAdults = signUps.reduce(
+    (total, signup) => total + (signup.plusOneAdults ?? 0),
+    0
+  );
+  return baseAttendees + totalPlusOneKids + totalPlusOneAdults;
 }
 
 export default defineEventHandler(async (event) => {
