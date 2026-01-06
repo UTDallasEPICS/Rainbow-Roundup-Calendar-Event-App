@@ -69,9 +69,9 @@ if (targetEvent.capacity != null) {
       setResponseStatus(event, 400);
       return {
         success: false,
-        error: "event is full",
-        capacity: "this is the current capacity " + used,
-        maxCap: "this is the max capacity " + targetEvent.capacity,
+        error: "Sorry you have exceeded the capacity.  ", 
+        capacity: "This is the current capacity. " + used,
+        maxCap: "This is the max capacity. " + targetEvent.capacity,
       };
     }
   }
