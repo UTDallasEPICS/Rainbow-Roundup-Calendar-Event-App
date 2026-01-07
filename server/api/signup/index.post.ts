@@ -89,29 +89,6 @@ if (targetEvent.capacity != null) {
       },
     });
 
-
-
-
-
-
-    // // increment current capacity
-    // if (
-    //   targetEvent &&
-    //   (targetEvent as Event).capacity != null &&
-    //   (targetEvent as Event).currentCapacity != null
-    // ) {
-    //   await prisma.event.update({
-    //     where: { id: body.eventId },
-    //     data: {
-    //       currentCapacity: {
-    //         increment: 1 + body.numPlusOneKidsVal + body.numPlusOneAdultsVal,
-    //       },
-    //     },
-    //   });
-    // }
-
-
-
     return {
       success: true,
       signup: newSignUp,

@@ -63,8 +63,8 @@ export default defineEventHandler(async (event) => {
       }
       //cc = compute capacity
        const cc = computeCC_SignUp(singleEvent.SignUps);
-      // Optional Code: remaining capacity
-      // const rc = singleEvent.capacity == null ? null : Math.max(0, singleEvent.capacity - cc);
+      //rr = remaining capacity
+       const rc = singleEvent.capacity == null ? null : Math.max(0, singleEvent.capacity - cc);
 
       setResponseStatus(event, 200);
       return {
@@ -73,7 +73,7 @@ export default defineEventHandler(async (event) => {
           ...singleEvent,
           // computed field
           currentCapacity: cc,
-          //remainingCapacity: rc // optional but useful
+          remainingCapacity: rc // optional but useful
         },
       };
     } else {
