@@ -37,7 +37,9 @@
         class="mt-2"
       />
     </div>
-
+    <div v-if="profilePictureError" class="text-red-600 mt-4 text-center">
+          {{ profilePictureError }}
+        </div>
     <button
       class="mb-6 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition"
       @click="toggleEditMode"
@@ -245,46 +247,50 @@ const firstNameRef = ref(null);
 const lastNameRef = ref(null);
 const phoneNumberRef = ref(null);
 const emailRef = ref(null);
-
+const profilePictureError = ref("")
 function focusNext(refEl){
   refEl?.focus();
 }
 
 function handleFileChange(e) {
-  const input = e.target;
-  if (input.files?.[0]) {
-    file.value = input.files[0];
-    const reader = new FileReader();
-    reader.onload = () => {
-      imageUrl.value = reader.result;
-    };
-    reader.readAsDataURL(file.value);
+  const input = e.target ;
+  const allowedTypes = ["image/jpeg", "image/png"];
+  if (!input.files?.[0]) {
+    return
   }
+  if(input.files?.[0].size > 256 * 1024){
+    profilePictureError.value = "Profile pictures should be under 256KB in size"
+    return
+  }
+  if(!allowedTypes.includes(input.files?.[0].type)){
+    profilePictureError.value = "Profile picture type unsupported, please use either jpeg or png"
+    return
+  }
+  profilePictureError.value = ""
+  file.value = input.files[0];
+  previewImage(file.value);
 }
 
 async function uploadToS3(file) {
-  const { uploadUrl, fileUrl } = await $fetch("/api/user/profile_picture", {
-    method: "POST",
-    body: {
-      fileName: `${Date.now()}-${file.name}`,
-      fileType: file.type,
-    },
-  });
-
-  const res = await fetch(uploadUrl, {
-    method: "PUT",
-    headers: {
-      "Content-Type": file.type,
-    },
-    body: file,
-  });
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Upload failed: ${res.status} - ${errorText}`);
+  if(!file?.name){
+    return null
   }
+  const formData = new FormData();
+  formData.append("file", file);
 
-  return fileUrl;
+  const res = await $fetch("/api/user/profile_picture", {
+    method: "POST",
+    body: formData,
+    ignoreResponseError: true, // <- prevents $fetch from throwing
+  });
+
+  if (res?.error) {
+    profilePictureError.value = res.error;
+    throw new Error(res.error);
+  }
+  else{
+    return res.fileUrl;
+  }
 }
 
 const toggleEditMode = async () => {
