@@ -73,39 +73,42 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
 import EventList from "~/components/EventList.vue";
 import { fetchCombinedEvents } from "../server/utils/fetchCombinedEvents";
 
-export default {
-  name: "EventsPage",
-  components: { EventList },
-  data() {
-    return {
-      events: [],
-      loading: true,
-      error: null,
-      searchQuery: "",
-    };
-  },
-  async mounted() {
-    try {
-      const data = await fetchCombinedEvents();
-      this.events = data;
-    } catch (err) {
-      console.error("Error fetching events:", err);
-      this.error = err.message;
-    } finally {
-      this.loading = false;
-    }
-  },
-  computed: {
-    filteredEvents() {
-      if (!this.searchQuery.trim()) return this.events;
-      return this.events.filter((event) =>
-        event.title?.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
-    },
-  },
-};
+//Details fo event in schema
+interface Event {
+  id: string;
+  title?: string;
+  start?: string;
+  location?: string;
+}
+//Consts for events converted from things
+const events = ref<Event[]>([]);
+const loading = ref(true);
+const error = ref<string | null>(null);
+const searchQuery = ref("");
+
+//Tries to find things utils
+onMounted(async () => {
+  try {
+    const data = await fetchCombinedEvents(); //find the combined events 
+    events.value = data;
+  } catch (err: any) {
+    console.error("Error fetching events:", err); //error if fetching
+    error.value = err?.message ?? "Failed to load events";
+  } finally {
+    loading.value = false; //no longer shows load
+  }
+});
+
+const filteredEvents = computed(() => {
+  if (!searchQuery.value.trim()) return events.value; //if no query, returns all events 
+
+  return events.value.filter((event) =>
+    event.title?.toLowerCase().includes(searchQuery.value.toLowerCase()) //Then filter if there was a query
+  );
+});
 </script>

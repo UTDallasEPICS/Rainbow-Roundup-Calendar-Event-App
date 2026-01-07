@@ -52,55 +52,60 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "App",
-  data() {
-    return {
-      people: [
-        {
-          name: "Kimberly Kantor",
-          title: "Executive Director",
-          bio: "Kimberly Kantor is an Adapted Physical Education Consultant for school districts across North Texas (Region X). Focusing on students with special needs in physical education and recreation, she dedicates time to helping students celebrate their accomplishments and showcase their athletic abilities.",
-          image: "/images/kimberly.png",
-          showBio: false,
-        },
-        {
-          name: "Melody Smith",
-          title: "President",
-          bio: "Melody Smith has been an active leader in promoting LGBTQ+ inclusion and awareness in communities across the state.",
-          image: "/images/melody.png",
-          showBio: false,
-        },
-        {
-          name: "Ashley",
-          title: "Vice President",
-          bio: "Hello All! My name is Ashley, I am married to the love of my life, Elsa and we have 3 beautiful kids. I am a Bachelor prepared RN of 16 years and am currently a Nurse Manager at Parkland Hospital in critical care services. My family and I love the mission and values of Rainbow Roundup and love all the memories we have made. ",
-          image: "/images/ashley.png",
-          showBio: false,
-        },
-        {
-          name: "Ragan McCoy",
-          title: "Treasurer",
-          bio: "Ragan is a trusted tax advisor and leads Rainbow Roundup in all financial matters. She has a long history of providing guidance to businesses and individuals in making important decisions related to limiting tax exposure and maximizing cash flow.",
-          image: "/images/ragan.png",
-          showBio: false,
-        },
-        {
-          name: "Laura Hogan",
-          title: "Secretary",
-          bio: "Laura is a trusted leader in the LGBT community and was named a Future Pioneer by the Dallas Voice. Since 2004, she has owned and operated Benchmark Legal Media, which provides creative and practical solutions for litigation technology. Laura has worked with many high profile clients, including Disney, Oprah Winfrey, GM, Viacom and MTV.",
-          image: "/images/laura.png",
-          showBio: false,
-        },
-      ],
-    };
+<script setup lang="ts">
+import { ref } from "vue";
+
+//interface for a person
+interface Person {
+  name: string;
+  title: string;
+  bio: string;
+  image: string;
+  showBio: boolean;
+}
+
+//hard-coded in the infrormation
+const people = ref<Person[]>([
+  {
+    name: "Kimberly Kantor",
+    title: "Executive Director",
+    bio: "Kimberly Kantor is an Adapted Physical Education Consultant for school districts across North Texas (Region X). Focusing on students with special needs in physical education and recreation, she dedicates time to helping students celebrate their accomplishments and showcase their athletic abilities.",
+    image: "/images/kimberly.png",
+    showBio: false,
   },
-  methods: {
-    toggleBio(person) {
-      person.showBio = !person.showBio;
-    },
+  {
+    name: "Melody Smith",
+    title: "President",
+    bio: "Melody Smith has been an active leader in promoting LGBTQ+ inclusion and awareness in communities across the state.",
+    image: "/images/melody.png",
+    showBio: false,
   },
+  {
+    name: "Ashley",
+    title: "Vice President",
+    bio: "Hello All! My name is Ashley, I am married to the love of my life, Elsa and we have 3 beautiful kids. I am a Bachelor prepared RN of 16 years and am currently a Nurse Manager at Parkland Hospital in critical care services. My family and I love the mission and values of Rainbow Roundup and love all the memories we have made.",
+    image: "/images/ashley.png",
+    showBio: false,
+  },
+  {
+    name: "Ragan McCoy",
+    title: "Treasurer",
+    bio: "Ragan is a trusted tax advisor and leads Rainbow Roundup in all financial matters. She has a long history of providing guidance to businesses and individuals in making important decisions related to limiting tax exposure and maximizing cash flow.",
+    image: "/images/ragan.png",
+    showBio: false,
+  },
+  {
+    name: "Laura Hogan",
+    title: "Secretary",
+    bio: "Laura is a trusted leader in the LGBT community and was named a Future Pioneer by the Dallas Voice. Since 2004, she has owned and operated Benchmark Legal Media, which provides creative and practical solutions for litigation technology. Laura has worked with many high profile clients, including Disney, Oprah Winfrey, GM, Viacom and MTV.",
+    image: "/images/laura.png",
+    showBio: false,
+  },
+]);
+
+//showBio toggles between the arrow state, it simply inverts it
+const toggleBio = (person: Person) => {
+  person.showBio = !person.showBio;
 };
 </script>
 
