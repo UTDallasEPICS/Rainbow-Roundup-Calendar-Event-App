@@ -28,7 +28,6 @@
         </NuxtLink>
 
         <!-- Page Title -->
-
         <!-- Search & Filter -->
         <div class="flex space-x-4">
           <!-- Search Icon -->
@@ -73,7 +72,38 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from "vue"
+
+const events = ref([]);
+const loading = ref(true)
+const error = ref(null)
+const searchQuery = ref("")
+
+// fetch events
+try {
+  // fetch non archived event data
+  const eventData = await useFetch('/api/event/', { method: "GET"})
+  events.value = eventData.data.value
+  console.log(events.value)
+}
+catch (error) {
+  console.error("Could not fetch events: ", error)
+}
+finally
+{
+  loading.value = false;
+}
+
+const filteredEvents = computed(() => {
+    if (!searchQuery.value.trim()) return events.value;
+      return events.value.filter((event) =>
+        event.title?.toLowerCase().includes(searchQuery.value.toLowerCase())
+      );
+})
+
+
+  /*
 import EventList from "~/components/EventList.vue";
 import { fetchCombinedEvents } from "../server/utils/fetchCombinedEvents";
 
@@ -108,4 +138,5 @@ export default {
     },
   },
 };
+*/
 </script>
