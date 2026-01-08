@@ -132,7 +132,7 @@ try {
 
     const { data: archivedItems } = await useFetch("/api/archive/item", { query: { method: "GET" }})
 
-    merchandise.value = items.value.data.concat(archivedItems.value.data);
+     merchandise.value = items.value?.data.concat(archivedItems.value?.data);
 
 }
 catch (error) {

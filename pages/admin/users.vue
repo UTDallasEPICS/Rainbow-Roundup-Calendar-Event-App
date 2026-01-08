@@ -30,9 +30,9 @@
       
       <div v-if="!isLoading" class="space-y-4">
         <ReportsTable :reports="reports" @user-banned="(id) => banUser(id)"/>
-        <!-- <UsersTable :users="users" :title="'Users'" />
+        <UsersTable :users="users" :title="'Users'" />
         <UsersTable :users="bannedUsers" :title="'Banned Users'" />
-        <UsersTable :users="archivedUsers" :title="'Archived Users'" /> -->
+        <UsersTable :users="archivedUsers" :title="'Archived Users'" />
       </div>
       <div v-else class="text-gray-400">
         Loading...
@@ -57,37 +57,38 @@ try {
         query: { method: "GET" }
     })
 
-  console.log(userData)
-  //users.value = userData.value.Users;
+  //console.log(userData)
+  users.value = userData.value.Users;
+  console.log(users)
   
 } catch (err) {
   console.error("Error fetching users:", err);
 }
 
 // get banned and archived users
-// try {
-//   const { data: userData } = await useFetch("/api/archive/user", {
-//     query: { method: "GET" }
-//   });
+try {
+  const { data: userData } = await useFetch("/api/archive/user", {
+    query: { method: "GET" }
+  });
 
-//   if (userData.value.success && userData.value.Users.length > 0) {
+  if (userData.value.success && userData.value.Users.length > 0) {
 
-//     // sort into banned and archived users
-//     for (let i = 0; i < userData.value.Users.length; i++)
-//     {
-//       if (userData.value.Users[i].isBanned)
-//       {
-//         bannedUsers.value.push(userData.value.Users[i]);
-//       }
-//       else // user is archived
-//       {
-//         archivedUsers.value.push(userData.value.Users[i]);
-//       }
-//     }
-//   }
-// } catch (err) {
-//   console.error("Error fetching users:", err);
-// }
+    // sort into banned and archived users
+    for (let i = 0; i < userData.value.Users.length; i++)
+    {
+      if (userData.value.Users[i].isBanned)
+      {
+        bannedUsers.value.push(userData.value.Users[i]);
+      }
+      else // user is archived
+      {
+        archivedUsers.value.push(userData.value.Users[i]);
+      }
+    }
+  }
+} catch (err) {
+  console.error("Error fetching users:", err);
+}
 
 try {
   const response = await useFetch("/api/report", { query: { method: "GET" } });
