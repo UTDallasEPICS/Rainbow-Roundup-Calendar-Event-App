@@ -197,7 +197,7 @@ There are currently **no legacy systems** or required data imports from a previo
 2. **Install Dependencies**
 
    ```bash
-   npm install
+   pnpm install
    ```
 
 3. **Set Up Environment Variables**

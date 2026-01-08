@@ -1,6 +1,8 @@
 import { auth } from "~/server/auth"
 
 export default defineEventHandler(async (event) => {
+
+  const config = useRuntimeConfig()
   const session = await auth.api.getSession({ headers: event.headers })
 
   const allowedTypes = ["image/jpeg", "image/png"]
@@ -23,5 +25,5 @@ export default defineEventHandler(async (event) => {
 
   await storage.setItemRaw(key, file.data)
 
-  return { fileUrl: `/uploads/${key}` }
+  return { fileUrl: `${config.UPLOAD_DIR}/${key}` }
 })
