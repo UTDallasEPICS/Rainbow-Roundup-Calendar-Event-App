@@ -111,6 +111,7 @@
     </div>
 </template>
 
+
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { authClient } from "~/composables/auth"
@@ -124,26 +125,25 @@ const isItemModalOpen = ref(false);
 const selectedItem = ref(null);
 const merchandise = ref([]);
 
-onMounted(async () => {
-    try {
-        //testAdd()
-        const { data: items, success } = await $fetch("/api/item/", {
-            method: "GET"
-        })
+// fetch merch items
+try {
+    const { data: items } = await useFetch("/api/item/", {
+        query: { method: "GET" }
+    })
 
-        const { data: archivedItems } = await $fetch("/api/archive/item", { method: "GET" })
+    const { data: archivedItems } = await useFetch("/api/archive/item", { query: { method: "GET" }})
 
-        merchandise.value = items.concat(archivedItems);
+     merchandise.value = items.value?.data.concat(archivedItems.value?.data);
 
-    }
-    catch (error) {
-        console.error("Could not fetch items: ", error)
-    }
-    finally
-    {
-        isLoading.value = false;
-    }
-})
+}
+catch (error) {
+    console.error("Could not fetch items: ", error)
+}
+finally
+{
+    isLoading.value = false;
+}
+
 
 const sortedMerch = computed(() => {
   let list = merchandise.value;
