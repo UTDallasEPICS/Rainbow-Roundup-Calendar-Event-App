@@ -1,4 +1,5 @@
 <template>
+<div>
     <EditItem v-if="isItemModalOpen" :item="selectedItem" @close-window="closeItemModal()" @item-created="(i) => {addItem(i)}"/>
     <div class="min-h-screen bg-gray-100 flex items-start justify-center p-8">
         <div class="max-w-4xl px-6 py-4 w-full">
@@ -109,6 +110,7 @@
             </div>
         </div>
     </div>
+</div>
 </template>
 
 <script setup>

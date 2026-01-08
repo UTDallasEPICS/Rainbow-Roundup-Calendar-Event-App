@@ -1,16 +1,6 @@
 import { defineEventHandler, setResponseStatus, getRouterParam, createError } from "h3";
-import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import type { User } from "../../../types/session";
 import { auth } from "~/server/auth"
-
-const config = useRuntimeConfig();
-const s3 = new S3Client({
-    region: config.AWS_REGION,
-    credentials: {
-            accessKeyId: config.NUXT_AWS_ACCESS_KEY_ID!,
-            secretAccessKey: config.NUXT_AWS_SECRET_ACCESS_KEY!,
-    },
-});
 
 export default defineEventHandler(async (event) => {
     const id = getRouterParam(event, "id");
@@ -54,48 +44,6 @@ export default defineEventHandler(async (event) => {
             data: { isArchived: true }
             
         })
-
-        // // delete photos from s3 bucket
-        // const itemPhotos : any = prisma.itemPhoto.findMany({
-        //     where: {itemId: id},
-        //     select: {url: true,},
-        // });
-        // if (itemPhotos.length === 0) {
-        //     setResponseStatus(event, 500);
-        //     return {
-        //         success: false,
-        //         error: "Failed to query itemPhotos",
-        //     };
-        // }
-        // for (const itemPhoto of itemPhotos) {
-        //     const search = itemPhoto.url.match(/itemPhotos\/\d+-[^\/?]+/);     // extract key from url
-        //     if (!search) {
-        //         setResponseStatus(event, 500);
-        //         return {
-        //             success: false,
-        //             error: `Object key was not able to be extracted from s3 url if itemPhoto: ${itemPhoto.id}`,
-        //         }
-        //     }
-        //     const key = search[0];
-        //     s3.send(
-        //         new DeleteObjectCommand({
-        //             Bucket: config.NUXT_AWS_S3_BUCKET_NAME,
-        //             Key: key,
-        //         }),
-        //     );
-        // }
-
-        // await prisma.itemVariant.deleteMany({
-        //     where: { itemId: id },
-        // });
-
-        // await prisma.itemPhoto.deleteMany({
-        //     where: { itemId: id },
-        // });
-
-        // await prisma.abstractItem.delete({
-        //     where: { id },
-        // });
 
         setResponseStatus(event, 200);
         return {

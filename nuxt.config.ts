@@ -15,7 +15,6 @@ export default defineNuxtConfig({
     AWS_REGION: process.env.AWS_REGION,
     NUXT_AWS_ACCESS_KEY_ID: process.env.NUXT_AWS_ACCESS_KEY_ID,
     NUXT_AWS_SECRET_ACCESS_KEY: process.env.NUXT_AWS_SECRET_ACCESS_KEY,
-    NUXT_AWS_S3_BUCKET_NAME: process.env.NUXT_AWS_S3_BUCKET_NAME,
 
     smtpHost: process.env.SMTP_HOST,
     smtpPort: process.env.SMTP_PORT,
@@ -50,6 +49,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      title: 'Rainbow Roundup',
       script: [
         {
           src: "https://unpkg.com/@heroicons/vue/outline",
@@ -69,7 +69,7 @@ export default defineNuxtConfig({
     storage: {
       uploads: {
         driver: "fs",        
-        base: "./uploads",      
+        base: process.env.IMG_STORAGE_PATH || "./public/uploads",      
        },    
      },  
   },
@@ -78,20 +78,9 @@ export default defineNuxtConfig({
     "@vite-pwa/nuxt",
     "@nuxt/ui",
     "@nuxt/eslint",
-    //"@sidebase/nuxt-auth",
     "nuxt-scheduler",
     '@pinia/nuxt'
   ],
-  /*auth: {
-    isEnabled: true,
-    baseURL: process.env.URL + "/api/auth",
-    provider: {
-      type: "authjs",
-      trustHost: false,
-      defaultProvider: "email",
-      addDefaultCallbackUrl: true,
-    },
-  },*/
   compatibilityDate: "2024-10-24",
 
   plugins: ["~/plugins/fullcalendar.client"],

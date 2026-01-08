@@ -34,7 +34,7 @@
 
       <div class="flex flex-col items-center mt-4 mb-6">
         <!-- Fixed image path: public/ maps to root / -->
-        <img class="w-40 h-40 rounded-full object-cover" :src="userData?.profilePic || '/public/default-profile.png'" alt="Profile Page">
+        <img class="w-40 h-40 rounded-full object-cover" :src="userData?.profilePic || '/default-profile.png'" alt="Profile Page">
       </div>
 
       <!-- First name -->
@@ -81,7 +81,7 @@
       <div v-if="showReportModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-40 backdrop-blur-sm">
         <div class="bg-white rounded-xl p-6 w-[90%] max-w-md">
           <div class="flex flex-col items-center mb-4">
-            <img :src="userData?.profilePic || '/public/default-profile.png'" alt="User profile" class="w-24 h-24 rounded-full object-cover" />
+            <img :src="userData?.profilePic || '/default-profile.png'" alt="User profile" class="w-24 h-24 rounded-full object-cover" />
             <p class="mt-2 text-lg font-semibold text-gray-800">{{ userData?.username }}</p>
           </div>
 

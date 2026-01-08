@@ -142,9 +142,6 @@ Rainbow Roundup is a calendar event management platform built to unify and uplif
 
 - Enable donations or merchandise payments in future versions
 
-### **AWS S3**
-
-- Stores user profile pictures securely
 
 ### **Better Auth Integration (Email OTP)**
 
@@ -163,7 +160,7 @@ Rainbow Roundup is a calendar event management platform built to unify and uplif
 - **Database**: SQLite3
 - **ORM**: Prisma
 - **Authentication**: Better Auth Email OTP (via the Better auth module, and its Email OTP plugin)
-- **Storage**: AWS S3 (for profile images)
+- **Storage**: Served by NGINX
 - **Testing**: Vitest
 - **UI**: Tailwind CSS + Headless UI
 - **API Testing**: Postman
@@ -174,7 +171,6 @@ Rainbow Roundup is a calendar event management platform built to unify and uplif
 
 The application will be hosted hosted on **AWS** infrastructure, using:
 
-- **AWS S3** for media storage
 - **Docker** To build the project into a container
 - **Github workflows** Builds and pushed the container image to Amazon ECR registry
 - **AWS EC2** To host the built docker container

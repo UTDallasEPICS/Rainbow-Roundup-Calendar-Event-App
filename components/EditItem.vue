@@ -15,8 +15,9 @@
         >
             <div class="absolute top-4 right-4 flex space-x-2 z-10">
                     <button @click="closeWindow()">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" stroke-width="1.5"
-                        stroke="currentColor" class="w-4 h-4"><path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"/> </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                            <path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"/>
+                        </svg>
                     </button>
             </div>
 
@@ -47,8 +48,7 @@
                 <!-- description -->
                 <div>
                     <h2 class="w-full text-lg font-semibold text-gray-800">Description</h2>
-                    <textarea v-model="editedItem.description" placeholder="Item Description" rows="3" class="w-full border border-gray-300 p-1 rounded">
-                    </textarea>
+                    <textarea v-model="editedItem.description" placeholder="Item Description" rows="3" class="w-full border border-gray-300 p-1 rounded"/>
                 </div>
 
                 <!-- sizes -->
@@ -72,17 +72,16 @@
                         <span class="text-gray-400 text-sm font-normal">Changes to images cannot be reverted.</span>
                     </h2>
                     <div class="flex gap-3 flex-wrap">
-                        <div v-for="image in editedItem.ItemPhotos">
-                            <button @click="deletePhoto(image.id)" class="w-full flex justify-end z-50">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" stroke-width="1.5"
-                                stroke="currentColor" class="size-4 absolute"><path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"/> </svg>
+                        <div v-for="image in editedItem.ItemPhotos" :key="image.id">
+                            <button class="w-full flex justify-end z-50" @click="deletePhoto(image.id)">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" stroke-width="1.5" stroke="currentColor" class="size-4 absolute"><path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"/> </svg>
                             </button>
                             <img :src="image.url" class="size-24 md:size-48">
                         </div>
                         <label for="photo-upload" class="flex align-center justify-center text-center border-4 border-dashed border-gray-300 text-gray-500 rounded-xl size-24 md:size-48 cursor-pointer" >
                             + Add Photo
                         </label>
-                        <input type="file" accept="image/*" id="photo-upload" @change="handleFileChange" class="hidden">
+                        <input id="photo-upload" type="file" accept="image/*" class="hidden" @change="handleFileChange">
                     </div>
                 </div>
 
@@ -90,10 +89,10 @@
                 <div>
                     <h2 class="w-full text-lg font-semibold text-gray-800">Visibiity</h2>
                     <div class="flex gap-2">
-                        <input type="radio" name="archived" v-model="archived" value="false">
+                        <input v-model="archived" type="radio" name="archived" value="false">
                             <label for="false">Available</label>
                         </input>
-                        <input type="radio" name="archived" v-model="archived" value="true">
+                        <input v-model="archived" type="radio" name="archived" value="true">
                             <label for="true">Hidden</label>
                         </input>
                     </div>
@@ -135,7 +134,7 @@ const editedItem = reactive({
     description: props.item.description,
     isArchived: props.item.isArchived,
     ItemVariants: props.item.ItemVariants.map(a => {return {...a}}),
-    ItemPhotos: props.item.ItemPhotos,
+    ItemPhotos: props.item.ItemPhotos || [],
 });
 function closeWindow() {
     emit("closeWindow");
@@ -178,6 +177,7 @@ async function saveChanges() {
             props.item.description = editedItem.description
             props.item.isArchived = editedItem.isArchived
             props.item.ItemVariants = editedItem.ItemVariants
+            props.item.ItemPhotos = editedItem.ItemPhotos
             emit("closeWindow");
         }
     }
@@ -195,7 +195,7 @@ async function cancelEdit() {
     editedItem.isArchived = props.item.isArchived
     archived.value = (props.item.isArchived ? "true" : "false")
     editedItem.ItemVariants = props.item.ItemVariants.map(a => {return {...a}}),
-    editedItem.ItemPhotos = props.item.ItemPhotos
+    editedItem.ItemPhotos = props.item.ItemPhotos || []
 }
 
 function changeSizeAvailability(variant) {
@@ -210,23 +210,24 @@ function handleFileChange(event) {
   }
 }
 
-
 async function addPhoto(file) {
-    const form = new FormData()
-    form.append("image", file)
+  const form = new FormData()
+  form.append("image", file)
+  form.append("itemId", props.item.id)
 
-    const { data: image } = await $fetch(`/api/itemPhoto/${props.item.id}`, {
-        method: "POST",
-        body: form
-    });
+  const {data: res } = await $fetch(`/api/itemPhoto`, {
+    method: "POST",
+    body: form
+  })
 
-    // add new image to item obj
-    props.item.ItemPhotos.push(image);
+  const photo = res
+
+  editedItem.ItemPhotos.push(photo)
 }
 
 async function deletePhoto(id) {
     await $fetch(`/api/itemPhoto/${id}`, {
-        method: "DELETE",
+        method: "DELETE"
     });
 
     for (let i = 0; i < editedItem.ItemPhotos.length; i++)

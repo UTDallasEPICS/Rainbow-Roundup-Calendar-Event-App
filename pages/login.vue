@@ -114,7 +114,7 @@ const submitOTP = async () => {
         <!-- Send Magic Link Button -->
         <button type="submit"
           class="mt-8 w-full sm:w-[280px] py-4 px-6 text-xl text-white font-semibold bg-[#D97ED5] hover:bg-purple-500 transition rounded-2xl">
-          Check otp
+          Verify
         </button>
        
       </div>

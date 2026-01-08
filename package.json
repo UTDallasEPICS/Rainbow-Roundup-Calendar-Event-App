@@ -13,8 +13,6 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.802.0",
-    "@aws-sdk/s3-request-presigner": "^3.802.0",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
     "@fullcalendar/interaction": "^6.1.15",

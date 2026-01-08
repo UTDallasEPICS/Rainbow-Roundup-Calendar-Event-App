@@ -1,20 +1,7 @@
-import { defineEventHandler, setResponseStatus } from "h3";
-import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
-
 import type { User } from "../../../types/session";
 import { auth } from "~/server/auth"
 
-const config = useRuntimeConfig();
-const s3 = new S3Client({
-    region: config.AWS_REGION,
-    credentials: {
-            accessKeyId: config.NUXT_AWS_ACCESS_KEY_ID!,
-            secretAccessKey: config.NUXT_AWS_SECRET_ACCESS_KEY!,
-    },
-});
-
-export default defineEventHandler(async (event) => {
-    const id = getRouterParam(event, 'id');
+export default defineEventHandler(async (event: any) => {
     const prisma = event.context.prisma;
     const session = await auth.api.getSession({
       headers:  event.headers
@@ -27,6 +14,8 @@ export default defineEventHandler(async (event) => {
             statusCode: 403,
         });
     }
+
+    const id = getRouterParam(event, "id");
 
     if (!id) {
         setResponseStatus(event, 400);
@@ -43,22 +32,12 @@ export default defineEventHandler(async (event) => {
             }
         });
 
-        // delete photo from s3 bucket
-        const search = itemPhoto.url.match(/itemPhotos\/\d+-[^\/?]+/);     // extract key from url
-        if (!search) {
-            setResponseStatus(event, 500);
-            return {
-                success: false,
-                error: "Object key was not able to be extracted from s3 url",
-            }
+        const storage = useStorage("uploads");
+        const fileName = itemPhoto.url.split("/").pop();
+
+        if (fileName) {
+            await storage.removeItem(fileName);
         }
-        const key = search[0];
-        s3.send(
-            new DeleteObjectCommand({
-                Bucket: config.NUXT_AWS_S3_BUCKET_NAME,
-                Key: key,
-            }),
-        );
 
         setResponseStatus(event, 200);
         return {
@@ -70,7 +49,7 @@ export default defineEventHandler(async (event) => {
         setResponseStatus(event, 500);
         return {
             success: false,
-            error: `Error creating event: ${errorMessage}`,
+            error: `Error deleting item photo: ${errorMessage}`,
         };
     }
 });
