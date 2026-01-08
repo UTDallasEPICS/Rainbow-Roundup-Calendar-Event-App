@@ -72,7 +72,7 @@ export default defineEventHandler(async (event: any) => {
         const safeOriginalName = (file.filename || "upload").replace(/[^\w.\-]/g, "_");
         const fileName = `${Date.now()}-${safeOriginalName}`;
         await storage.setItemRaw(fileName, file.data);
-        const fileUrl = `/uploads/${fileName}`;
+        const fileUrl = `${config.UPLOAD_DIR}/${fileName}`;
 
         const itemPhoto = await prisma.itemPhoto.create({
             data: {

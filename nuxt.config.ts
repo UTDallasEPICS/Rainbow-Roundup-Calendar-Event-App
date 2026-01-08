@@ -25,7 +25,9 @@ export default defineNuxtConfig({
     BETTER_AUTH_URL: process.env.URL,
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
 
-    NUXT_PUSH_VAPID_PRIVATE_KEY: process.env.NUXT_PUSH_VAPID_PRIVATE_KEY
+    NUXT_PUSH_VAPID_PRIVATE_KEY: process.env.NUXT_PUSH_VAPID_PRIVATE_KEY,
+
+    UPLOAD_DIR: process.env.IMG_STORAGE_PATH
   },
   vite: {
     resolve: {
