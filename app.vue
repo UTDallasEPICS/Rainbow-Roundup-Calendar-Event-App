@@ -56,7 +56,7 @@
       <div class="flex justify-between items-center px-4 py-2">
         <div class="flex items-center space-x-2">
           <a href="https://rrup.org/">
-            <img src="/public/images/rrup_logo.png" alt="Rainbow Roundup Logo" class="h-12 w-auto"
+            <img src="/images/rrup_logo.png" alt="Rainbow Roundup Logo" class="h-12 w-auto"
               href="https://rrup.org/" />
           </a>
         </div>
@@ -83,7 +83,7 @@
             Install App
           </button>
           <!-- This is hidden if your browser does not support it, so I dont have to figure out a pretty way to write the error message-->
-          <button @click="requestNotificationPermission();console.log('subscription: ',notifSubscription); showNotifError = true" v-if="($pwa.getSWRegistration()?.pushManager)" 
+          <button @click="requestNotificationPermission();console.log('subscription: ',notifSubscription); showNotifError = true" v-if="($pwa?.getSWRegistration()?.pushManager)" 
             class="flex items-center  text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             aria-label="Toggle notifications">
             <span class="mr-2">Device notifications</span>
@@ -177,8 +177,6 @@
         </NuxtLink>
       </span>
     </div>
-
-    <!-- Nuxt Page Component to display content -->
     <NuxtPage class="min-h-screen" />
   </div>
 </template>

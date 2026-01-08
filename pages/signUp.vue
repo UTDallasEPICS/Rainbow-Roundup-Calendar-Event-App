@@ -139,7 +139,7 @@ function previewImage(file: File) {
   reader.readAsDataURL(file);
 }
 
-async function uploadToS3(file: File) {
+async function uploadProfilePic(file: File) {
   if(!file?.name){
     return null
   }
@@ -167,7 +167,7 @@ const submitSignupForm = async () => {
   const userDataToSubmit = { ...signupModel.value };
   try {
     try {
-      const uploadedUrl = await uploadToS3(file.value);
+      const uploadedUrl = await uploadProfilePic(file.value);
       userDataToSubmit.profilePic = uploadedUrl;
       console.log("url: ", uploadedUrl)
       console.log("userSubmit: ", userDataToSubmit)

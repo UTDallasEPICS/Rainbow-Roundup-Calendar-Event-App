@@ -1,19 +1,9 @@
-import { defineEventHandler, setResponseStatus, readMultipartFormData } from "h3";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import type { User } from "../../../types/session";
 import { auth } from "~/server/auth"
 
 const config = useRuntimeConfig();
-const s3 = new S3Client({
-    region: config.AWS_REGION,
-    credentials: {
-            accessKeyId: config.NUXT_AWS_ACCESS_KEY_ID!,
-            secretAccessKey: config.NUXT_AWS_SECRET_ACCESS_KEY!,
-    },
-});
 
-export default defineEventHandler(async (event) => {
-    const id = getRouterParam(event, 'id');
+export default defineEventHandler(async (event: any) => {
     const prisma = event.context.prisma;
     const session = await auth.api.getSession({
       headers:  event.headers
@@ -28,7 +18,9 @@ export default defineEventHandler(async (event) => {
         });
     }
 
-    if (!id) {
+    const itemId = form?.find((key: any) => key.name === "itemId")?.data.toString();
+
+    if (!itemId) {
         setResponseStatus(event, 400);
         return {
             success: false,
@@ -39,7 +31,7 @@ export default defineEventHandler(async (event) => {
     try {
         const item = await prisma.abstractItem.findUnique({
             where: {
-                id: id,
+                id: itemId,
             }
         });
 
@@ -51,8 +43,12 @@ export default defineEventHandler(async (event) => {
             };
         }
 
+        const allowedTypes = ["image/jpeg", "image/png"];
+        const storage = useStorage("uploads");
+        const MAX_FILE_SIZE = 256 * 1024; // 256kb
+
         // get file from form data
-        const file = form?.find((key) => key.name === "image");
+        const file = form?.find((key: any) => key.name === "image");
 
         if (!file || !file.data || !file.filename) {
             setResponseStatus(event, 400);
@@ -61,25 +57,27 @@ export default defineEventHandler(async (event) => {
                 error: "No file uploaded",
             }
         }
+        
+        if (file.data.length > MAX_FILE_SIZE) {
+            setResponseStatus(event, 400);
+            return { error: "File too big" };
+        }
 
-        // upload file to s3 bucket
-        const objectKey = `itemPhotos/${Date.now()}-${file.filename}`;
-        const bucketName = config.NUXT_AWS_S3_BUCKET_NAME!;
-        const region = config.AWS_REGION!;
-        const command = new PutObjectCommand({
-            Bucket: bucketName,
-            Key: objectKey,
-            Body: file.data,
-            ContentType: file.type,
-        });
-        s3.send(command);
+        if (!file.type || !allowedTypes.includes(file.type)) {
+            setResponseStatus(event, 400);
+            return {
+                error: `File type ${file.type || "unknown"} not allowed. Allowed types: ${allowedTypes.join(", ")}`
+            };
+        }
+        const safeOriginalName = (file.filename || "upload").replace(/[^\w.\-]/g, "_");
+        const fileName = `${Date.now()}-${safeOriginalName}`;
+        await storage.setItemRaw(fileName, file.data);
+        const fileUrl = `/uploads/${fileName}`;
 
-        // create record in table
-        const s3url = `https://${bucketName}.s3.${region}.amazonaws.com/${objectKey}`;
         const itemPhoto = await prisma.itemPhoto.create({
             data: {
-                url: s3url,
-                itemId: id,
+                url: fileUrl,
+                itemId: itemId,
             }
         });
 

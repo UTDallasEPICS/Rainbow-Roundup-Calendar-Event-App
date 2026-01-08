@@ -18,16 +18,27 @@
         {{ totalCount }}
       </span>
     </button>
-
-    <!-- original page content below -->
     <div v-if="item" class="max-w-[900px] mx-auto p-6 font-sans">
       <h1 class="text-2xl mb-4 font-bold">{{ item.name }}</h1>
 
-      <div class="flex gap-8 items-start">
-        <!--Image needs to be fixed-->
-        <img :src="item?.ItemPhotos?.[0]?.url || '/images/tshirt.png'" alt="Item image" class="w-[300px] h-auto rounded-lg object-cover shadow-md">
+      <div class="flex gap-6 items-start">
+        <div>
+          <img :src="selectedImage" alt="Item image" class="w-[300px] h-auto rounded-lg object-cover shadow-md">
+          <!-- Thumbnail images -->
+          <div v-if="item && item.ItemPhotos && item.ItemPhotos.length > 1" class="flex mt-4 space-x-2">
+            <img
+              v-for="photo in item.ItemPhotos"
+              :key="photo.id"
+              :src="photo.url"
+              alt="Item thumbnail"
+              class="w-16 h-16 rounded-md object-cover cursor-pointer border-2"
+              :class="{'border-blue-500': selectedImage === photo.url}"
+              @click="changeImage(photo.url)"
+            >
+          </div>
+        </div>
         <div class="flex-1">
-          <p class="text-lg mb-6 leading-snug">{{ item.ItemVariants?.[0]?.description ||
+          <p class="text-lg mb-6 leading-snug">{{ itemDescription ||
               "No description available for this product."}}</p>
 
           <div class="space-y-4 font-semibold">
@@ -61,14 +72,6 @@
           >
             Add to Cart
           </button>
-
-          <!--
-            Example of using itemInfo component (if you want to render it here)
-            and listen to its emit. Uncomment and adjust if you render the component
-            inside this page.
-
-            <ItemInfo :item="item" @add-to-cart="handleAddToCartFromItemInfo" />
-          -->
         </div>
       </div>
     </div>
@@ -83,7 +86,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import type { AbstractItem, ItemVariant } from "~/types/prismaTypes";
-import { useCartStore } from '~/stores/cart' // 
+import { useCartStore } from '~/stores/cart'; 
 
 //pinia integration with cart
 const cart = useCartStore();
@@ -91,17 +94,23 @@ const route = useRoute();
 const router = useRouter();
 
 const item = ref<AbstractItem | null>(null);
+const itemDescription = ref(); // band aid fix, need to fix how data fetching is performed
 const availableSizes = ref<string[]>([]);
+const selectedImage = ref();
 const selectedSize = ref<string>("");
 const quantity = ref(1);
 
-// total count of items in cart (sum of quantities)
-const totalCount = computed(() => cart.items.reduce((s, i) => s + i.quantity, 0));
+// computed with (sum of quantities)
+const totalCount = computed(() =>
+  (cart.items ?? []).reduce((s, i) => s + (i?.quantity ?? 0), 0)
+);
 
 // navigation to cart page
 function goToCart() {
   router.push('/merchandise/cart');
 }
+
+
 
 function variantIsAvailable(v: any): boolean {
   if (!v) return false;
@@ -109,15 +118,16 @@ function variantIsAvailable(v: any): boolean {
   if (typeof v.availbility === 'boolean') return v.availbility;
   return true;
 }
-
-onMounted(async () => {
+onMounted(async () => { // TODO: Properly format this to use useFetch
   try {
     const res = await fetch(`/api/item/${route.params.id}`);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-    const data = await res.json();
-    if (!data.success) throw new Error(data.error || 'Failed to fetch item');
+    const itemData = await res.json();
+    if (!itemData.success) throw new Error(itemData.error || 'Failed to fetch item');
 
-    item.value = data.data;
+    item.value = itemData.data
+    selectedImage.value = item.value?.ItemPhotos?.at(0)?.url
+    itemDescription.value = item.value?.description
 
     availableSizes.value = (item.value?.ItemVariants ?? [])
       .filter((v: ItemVariant | any) => variantIsAvailable(v))
@@ -131,6 +141,9 @@ onMounted(async () => {
     router.push('/merchandise');
   }
 });
+function changeImage(url: string) {
+  selectedImage.value = url;
+}
 
 const formattedPrice = computed(() => {
   if (!item.value) return '0.00';
@@ -174,7 +187,7 @@ const addToCart = () => {
       (selectedVariant as any).description ??
       item.value!.ItemVariants?.[0]?.description ??
       '',
-    image: item.value!.ItemPhotos?.[0]?.url ?? '/images/tshirt.png',
+    image: selectedImage.value,
     price: ((selectedVariant as any).price ?? item.value!.price ?? 0) as number,
     quantity: quantity.value
   };
