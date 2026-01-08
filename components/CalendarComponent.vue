@@ -5,7 +5,7 @@
         hide-details></v-select>
     </v-sheet>
     <v-sheet>
-      <v-calendar ref="calendar" v-model="value" :events="events" :view-mode="type"
+      <v-calendar ref="calendar" v-model="value" :events="events" :view-mode="type" 
         :weekdays="weekday"></v-calendar>
     </v-sheet>
   </div>

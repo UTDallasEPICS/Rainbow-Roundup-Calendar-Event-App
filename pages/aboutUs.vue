@@ -35,7 +35,7 @@
               <p class="text-lg text-gray-600">{{ person.title }}</p>
             </div>
           </div>
-          <button class="text-3xl text-[#D97ED5] focus:outline-none">
+          <button class="text-3xl text-[#C028B9] focus:outline-none">
             {{ person.showBio ? "▲" : "▼" }}
           </button>
         </div>

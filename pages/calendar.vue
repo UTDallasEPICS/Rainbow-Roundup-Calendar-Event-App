@@ -24,12 +24,6 @@ const logout = async () => {
         <div class="border-t border-gray-200 pt-4">
           <Calendar :user="session.user" />
         </div>
-        <button
-          @click="logout()"
-          class="mt-6 inline-block bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition"
-        >
-          Sign Out
-        </button>
       </template>
       <template v-else>
         <h1 class="text-xl font-semibold text-gray-700 mb-4">
