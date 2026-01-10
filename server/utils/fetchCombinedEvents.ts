@@ -9,8 +9,8 @@ export interface GoogleEvent {
 
 export interface LocalEventData {
   id: string;
-  capacity: number;
-  currentCapacity: number;
+  capacity?: number;
+  currentCapacity?: number;
   tags: string[];
   SignUps?: LocalSignUp[];
   isArchived: boolean;

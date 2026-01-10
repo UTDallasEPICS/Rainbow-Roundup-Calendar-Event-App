@@ -2,6 +2,23 @@
 
 import { PrismaClient, User } from "@prisma/client";
 import { auth } from "~/server/auth";
+//created the type for labeling variables for computing the Capacity signup function. If you dont like this lmk.
+type SignUpCounts = {
+  plusOneKids: number;
+  plusOneAdults: number;
+};
+function computeCC_SignUp(signUps: SignUpCounts[]): number {
+  const baseAttendees = signUps.length;
+  const totalPlusOneKids = signUps.reduce(
+    (total, signup) => total + (signup.plusOneKids ?? 0),
+    0
+  );
+  const totalPlusOneAdults = signUps.reduce(
+    (total, signup) => total + (signup.plusOneAdults ?? 0),
+    0
+  );
+  return baseAttendees + totalPlusOneKids + totalPlusOneAdults;
+}
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
@@ -32,15 +49,26 @@ export default defineEventHandler(async (event) => {
     console.log('Events found:', events.length); // Debug log
     if(!(user?.role === "SUPER" || user?.role === "ADMIN")){
       events.forEach(iEvent => {
-      iEvent.SignUps.every( signup => {
-        signup.plusOneAdults = signup.plusOneAdults + signup.plusOneKids
+      iEvent.SignUps.forEach( signup => {
+        signup.plusOneAdults = (signup.plusOneAdults ?? 0) + (signup.plusOneKids ?? 0);
         signup.plusOneKids = 0
       })
     })
     }
-    
-    
-    return events;
+
+      const out = events.map((e) => {
+      const cc = computeCC_SignUp(e.SignUps);
+      const rc = e.capacity == null ? null : Math.max(0, e.capacity - cc);
+
+      return {
+        ...e,
+        currentCapacity: cc,     
+        remainingCapacity: rc,   
+      };
+    });
+
+    return out;  
+    //return events; is now return out bc events is from prisma and out has computed capacity
   } catch (error) {
     console.error('Prisma error:', error); // Debug log
     setResponseStatus(event, 500);

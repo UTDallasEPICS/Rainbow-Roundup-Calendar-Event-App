@@ -42,31 +42,10 @@ export default defineEventHandler(async (event) => {
       };
     }
 
-    // Get the associated event
-    const associatedEvent = await prisma.event.findUnique({
-      where: { id: existingSignUp.eventId },
-    });
-
-    // Delete the signup
+    // // Delete the signup
     await prisma.signUp.delete({
       where: { id },
     });
-
-    // Update event capacity if needed
-    if (
-      associatedEvent &&
-      associatedEvent.capacity !== null &&
-      associatedEvent.currentCapacity !== null
-    ) {
-      await prisma.event.update({
-        where: { id: existingSignUp.eventId },
-        data: {
-          currentCapacity: {
-            decrement: 1 + existingSignUp.plusOneAdults + existingSignUp.plusOneKids,
-          },
-        },
-      });
-    }
 
     return {
       success: true,

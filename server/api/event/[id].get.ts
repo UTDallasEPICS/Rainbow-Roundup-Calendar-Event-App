@@ -4,6 +4,18 @@ import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import { auth } from "~/server/auth"
 import type { User } from "../../../types/session";
 
+//cc = 
+function computeCC_SignUp(signUps:{plusOneKids:number; plusOneAdults: number}[])
+{
+  const baseAttendees = signUps.length;
+  //plus one kid constant
+  const plusOneKids = signUps.reduce ((t,x) => t + (x.plusOneKids?? 0),0);
+  //plus one Adult constant
+  const plusOneParent = signUps.reduce ((t,x)=> t + (x.plusOneAdults ?? 0 ), 0);
+  //compute the plus one together
+  return baseAttendees + plusOneKids + plusOneParent;
+}
+
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
   const id = getRouterParam(event, "id");
@@ -49,10 +61,20 @@ export default defineEventHandler(async (event) => {
           signup.plusOneKids = 0
         })
       }
+      //cc = compute capacity
+       const cc = computeCC_SignUp(singleEvent.SignUps);
+      //rr = remaining capacity
+       const rc = singleEvent.capacity == null ? null : Math.max(0, singleEvent.capacity - cc);
+
       setResponseStatus(event, 200);
       return {
         success: true,
-        Event: singleEvent,
+        Event: {
+          ...singleEvent,
+          // computed field
+          currentCapacity: cc,
+          remainingCapacity: rc // optional but useful
+        },
       };
     } else {
       setResponseStatus(event, 400);

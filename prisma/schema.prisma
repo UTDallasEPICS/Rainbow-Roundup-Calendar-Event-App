@@ -58,7 +58,6 @@ model Event {
   startTime       DateTime // Datetime, includes date and time
   endTime         DateTime
   capacity        Int?
-  currentCapacity Int?
   isArchived    Boolean   @default(false)
 
   //Foreign Keys
