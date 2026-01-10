@@ -112,6 +112,14 @@ const signupModel = ref({
   emailNotif: false,
 });
 
+function previewImage(file: File) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    imageUrl.value = reader.result as string;
+  };
+  reader.readAsDataURL(file);
+}
+
 function handleFileChange(e: Event) {
   const input = e.target as HTMLInputElement;
   const allowedTypes = ["image/jpeg", "image/png"];
@@ -129,14 +137,6 @@ function handleFileChange(e: Event) {
   profilePictureError.value = ""
   file.value = input.files[0];
   previewImage(file.value);
-}
-
-function previewImage(file: File) {
-  const reader = new FileReader();
-  reader.onload = () => {
-    imageUrl.value = reader.result as string;
-  };
-  reader.readAsDataURL(file);
 }
 
 async function uploadProfilePic(file: File) {
