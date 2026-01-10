@@ -15,8 +15,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+      # - name: Set up Docker Buildx
+      #  uses: docker/setup-buildx-action@v1
 
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -34,6 +34,6 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry}}
           REPOSITORY: rainbow-roundup
           IMAGE_TAG: ${{ github.sha}}-stage
-        # run: |
-        #  docker buildx build --output type=image,push=true --platform linux/arm64 -t $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG .
-        #  docker buildx build --output type=image,push=true --platform linux/arm64 -t $ECR_REGISTRY/$REPOSITORY:stage .
+        run: |
+          docker build --output type=image,push=true --platform linux/arm64 -t $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker build --output type=image,push=true --platform linux/arm64 -t $ECR_REGISTRY/$REPOSITORY:stage .
