@@ -236,9 +236,6 @@ watchEffect(async () => {
   }
 })
 
-//const userData = response.value?.user || null
-
-
 const file = ref(null);
 const imageUrl = ref(null);
 
@@ -249,6 +246,14 @@ const emailRef = ref(null);
 const profilePictureError = ref("")
 function focusNext(refEl){
   refEl?.focus();
+}
+
+function previewImage(file) { // as File
+  const reader = new FileReader();
+  reader.onload = () => {
+    imageUrl.value = reader.result; // as string
+  };
+  reader.readAsDataURL(file);
 }
 
 function handleFileChange(e) {
