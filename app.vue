@@ -187,7 +187,9 @@ import { ref, onMounted} from "vue";
 import { authClient } from "~/composables/auth"
 const session = authClient.useSession()
 
+const config = useRuntimeConfig()
 
+console.log(`Upload Directory: ${config?.UPLOAD_DIR}`)
 
 const dropdownOpen = ref(false);
 const mobileMenuOpen = ref(false);
