@@ -1,4 +1,6 @@
 import { auth } from "~/server/auth"
+import fs from "fs"
+import path from "node:path"
 
 export default defineEventHandler(async (event) => {
 
@@ -6,12 +8,15 @@ export default defineEventHandler(async (event) => {
   const session = await auth.api.getSession({ headers: event.headers })
 
   const allowedTypes = ["image/jpeg", "image/png"]
-  const storage = useStorage("uploads")
+
   const MAX_FILE_SIZE = 256 * 1024
 
   const form = await readMultipartFormData(event)
   const file = form?.find((x) => x.name === "file")
-
+  const filePath = path.join(
+    process.env.UPLOAD_DIR || "public/uploads", 
+    file?.filename || "upload"
+  )
   if (!file) return (setResponseStatus(event, 400), { error: "No file" })
   if (!file.data?.length) return (setResponseStatus(event, 400), { error: "Empty upload" })
   if (file.data.length > MAX_FILE_SIZE) return (setResponseStatus(event, 400), { error: "File too big" })
@@ -20,10 +25,18 @@ export default defineEventHandler(async (event) => {
     return { error: `File type ${file.type || "unknown"} not allowed` }
   }
 
-  const safeOriginalName = (file.filename || "upload").replace(/[^\w.\-]/g, "_") // TODO: understand why this is safer
+  const safeOriginalName = (file.filename || "upload").replace(/[^\w.\-]/g, "_") 
+
+  // this removes characters that can exec/escape stuff or stuff that doesn't belong in filenames
   const key = `/${Date.now()}-${safeOriginalName}`
 
-  await storage.setItemRaw(key, file.data)
+  const fileStream = fs.createReadStream(filePath)
+  fs.writeFileSync(filePath, file.data)
 
-  return { fileUrl: `${config.UPLOAD_DIR}${key}` }
+  const fileUrl = path.join( // public should not be shown during dev, but this is going to be the same in prod!
+    process.env.UPLOAD_DIR || "uploads", 
+    file?.filename || "upload"
+  )
+
+  return { fileUrl: fileUrl }
 })
