@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
   const form = await readMultipartFormData(event)
   const file = form?.find((x) => x.name === "file")
   const filePath = path.join(
-    config.NUXT_UPLOAD_DIR || "public/uploads", 
+    config.UPLOAD_DIR || "public/uploads", 
     file?.filename || "upload"
   )
   if (!file) return (setResponseStatus(event, 400), { error: "No file" })
@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
   fs.writeFileSync(filePath, file.data)
 
   const fileUrl = path.join( // public should not be shown during dev, but this is going to be the same in prod!
-    config.NUXT_UPLOAD_DIR || "uploads", 
+    config.UPLOAD_DIR || "uploads", 
     file?.filename || "upload"
   )
 
