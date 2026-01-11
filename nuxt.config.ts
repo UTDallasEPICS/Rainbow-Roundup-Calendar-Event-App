@@ -27,7 +27,8 @@ export default defineNuxtConfig({
 
     NUXT_PUSH_VAPID_PRIVATE_KEY: process.env.NUXT_PUSH_VAPID_PRIVATE_KEY,
 
-    UPLOAD_DIR: ""
+    UPLOAD_DIR: (process.env.NUXT_NODE_ENV == "prod") ? "" : "public/uploads"
+     // if we are in prod, we have a variable set up. If we are not in prod, we use the public directory
   },
   vite: {
     resolve: {
@@ -71,7 +72,7 @@ export default defineNuxtConfig({
     storage: {
       uploads: {
         driver: "fs",        
-        base: process.env.NUXT_UPLOAD_DIR || "./public/uploads",      // LOOK AT THE RUNTIME CONFIG
+        base: process.env.NUXT_UPLOAD_DIR || "uploads",      // LOOK AT THE RUNTIME CONFIG
        },    
      },  
   },
