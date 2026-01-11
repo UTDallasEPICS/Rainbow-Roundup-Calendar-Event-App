@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-blue-600 min-h-screen text-white flex flex-col">
+  <div class="bg-[#3A8DDE] min-h-screen text-white flex flex-col">
     <!-- Centered Carousel -->
     <div class="w-full bg-white flex flex-col items-center">
       <div class="w-full max-w-screen-2xl pt-2">
@@ -50,7 +50,7 @@
       @click="goToSlide(i - 1)"
       class="w-3 h-3 rounded-full transition border border-transparent"
       :class="{
-        'bg-blue-600': currentSlide === (i - 1),
+        'bg-[#3A8DDE]': currentSlide === (i - 1),
         'bg-black/30': currentSlide !== (i - 1)
       }"
     ></button>
@@ -67,10 +67,14 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
           <!-- Calendar -->
           <div>
+
             <div class="flex items-center justify-between mb-4">
-              <button @click="prevMonth" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Prev</button>
-              <div class="text-xl font-semibold text-gray-800">{{ currentMonthName }} {{ currentYear }}</div>
-              <button @click="nextMonth" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Next</button>
+              <button @click="prevMonth" class="px-3 py-2 bg-[#3A8DDE] hover:bg-[#2A6BAA] text-white rounded">Prev</button>
+              <div class="text-xl font-semibold text-gray-800 flex-1 text-center">{{ currentMonthName }} {{ currentYear }}</div>
+              <div class="flex items-center gap-2">
+                <button @click="goToToday" class="px-3 py-2 bg-[#93D500] hover:bg-[#6B9F00] text-black rounded ">Today</button>
+                <button @click="nextMonth" class="px-3 py-2 bg-[#3A8DDE] hover:bg-[#2A6BAA] text-white rounded">Next</button>
+              </div>
             </div>
 
             <div class="grid grid-cols-7 gap-2 text-center text-gray-500 text-sm mb-2">
@@ -107,10 +111,6 @@
                 </div>
               </div>
             </div>
-
-            <div class="mt-4 flex justify-center">
-              <button @click="goToToday" class="px-4 py-2 bg-lime-500 hover:bg-lime-600 text-black rounded border border-black/10">Today</button>
-            </div>
           </div>
 
           <!-- Selected Day Details -->
@@ -135,48 +135,56 @@
         </div>
       </div>
     </div>
-
-    <!-- Support Cards Section -->
-    <div class="bg-white grid grid-cols-1 gap-6 px-6 py-4">
-      <!-- Support Families -->
-      <div class="relative h-28 rounded-[20px] shadow-lg bg-lime-300 p-4">
-        <div class="text-slate-900 text-lg font-medium">Support our Families!</div>
-        <div class="text-slate-600 text-xs mt-2">Your kindness makes a difference.</div>
-        <a
-          href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="absolute left-4 bottom-2 w-16 h-8 bg-lime-600 text-white text-xs font-medium uppercase rounded-[5px] flex items-center justify-center"
-        >Donate</a>
+            
+      <!-- Support Cards Section -->
+      <div class="bg-white grid grid-cols-1 sm:grid-cols-3 gap-6 px-6 py-4">
+        <!-- Support Families -->
+        <SupportCard
+          title="Support our Families!"
+          description="Your kindness makes a difference."
+          button-text="Donate"
+          bg-color="bg-[#93D500]"
+          title-color="text-white"
+          description-color="text-white"
+          button-color="bg-[#6B9F00]"
+          external-link="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
+          class="h-48"
+        />
+        
+        <!-- Our Mission -->
+        <SupportCard
+          title="Our Mission"
+          description="Learn how we're changing lives."
+          button-text="Read"
+          bg-color="bg-[#3A8DDE]"
+          title-color="text-white"
+          description-color="text-white"
+          button-color="bg-[#2A6BAA]"
+          internal-link="/aboutUs"
+          class="h-48"
+        />
+        
+        <!-- Merchandise -->
+        <SupportCard
+          title="Buy our Merchandise!"
+          description="Wear your support with pride."
+          button-text="Buy"
+          bg-color="bg-[#C028B9]"
+          title-color="text-white"
+          description-color="text-white"
+          button-color="bg-[#8F1E8A]"
+          internal-link="/merchandise"
+          class="h-48"
+        />
       </div>
 
-      <!-- Our Mission -->
-      <div class="relative h-28 rounded-[20px] shadow-lg bg-blue-300 p-4">
-        <div class="text-slate-900 text-lg font-medium">Our Mission</div>
-        <div class="text-slate-600 text-xs mt-2">Learn how we're changing lives.</div>
-        <NuxtLink to="/aboutUs">
-          <button class="absolute left-4 bottom-2 w-16 h-8 bg-slate-500 text-white text-xs font-medium uppercase rounded-[5px] flex items-center justify-center">
-            Read
-          </button>
-        </NuxtLink>
-      </div>
-
-      <!-- Merchandise -->
-      <div class="relative h-28 rounded-[20px] shadow-lg bg-fuchsia-400 p-4 col-span-full sm:col-span-1">
-        <div class="text-white text-lg font-medium">Buy our Merchandise!</div>
-        <div class="text-white text-xs mt-2">Wear your support with pride.</div>
-        <button class="absolute left-4 bottom-2 w-16 h-8 bg-fuchsia-800 text-white text-xs font-medium uppercase rounded-[5px] flex items-center justify-center">
-          Buy
-        </button>
-      </div>
-    </div>
 
     <!-- Facebook Button -->
     <div class="bg-white text-center py-20 w-full">
       <a
         href="https://www.facebook.com/rainbowroundup/"
         target="_blank"
-        class="inline-block bg-blue-400 text-black border-2 border-black hover:bg-blue-500 hover:text-white px-6 py-3 rounded transition duration-200 text-lg"
+        class="inline-block bg-[#3A8DDE] text-white hover:bg-[#2A6BAA] hover:text-white px-6 py-3 rounded transition duration-200 text-lg"
       >Follow Us on Facebook for Latest News/Events</a>
     </div>
 

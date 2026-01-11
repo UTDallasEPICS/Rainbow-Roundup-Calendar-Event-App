@@ -67,7 +67,7 @@
       <div class="text-md mt-6 text-center text-gray-600">
         <strong>
           Already have an account?
-          <NuxtLink to="/login" class="text-[#D97ED5] hover:underline transition">
+          <NuxtLink to="/login" class="text-[#C028B9] hover:underline transition">
             Sign In
           </NuxtLink>
         </strong>
@@ -75,7 +75,7 @@
 
       <!-- Register Button -->
       <button type="submit"
-        class="mt-8 w-full sm:w-[300px] py-4 px-6 text-xl text-white font-semibold bg-[#D97ED5] hover:bg-purple-500 transition rounded-2xl">
+        class="mt-8 w-full sm:w-[300px] py-4 px-6 text-xl text-white font-semibold bg-[#C028B9] hover:bg-[#9a1985] transition rounded-2xl">
         Register
       </button>
       <!-- Success message -->

@@ -85,7 +85,7 @@ const submitOTP = async () => {
 
       <!-- Send Magic Link Button -->
       <button type="submit"
-        class="mt-8 w-full sm:w-[280px] py-4 px-6 text-xl text-white font-semibold bg-[#D97ED5] hover:bg-purple-500 transition rounded-2xl">
+        class="mt-8 w-full sm:w-[280px] py-4 px-6 text-xl text-white font-semibold bg-[#C028B9] hover:bg-[#9a1985] transition rounded-2xl">
         Send Login Code
       </button>
 
@@ -100,7 +100,7 @@ const submitOTP = async () => {
       <div class="text-lg mt-6 text-center text-gray-600">
         <strong>
           Don't have an account?
-          <NuxtLink to="/signup" class="text-[#D97ED5] hover:underline transition">Sign Up</NuxtLink>
+          <NuxtLink to="/signup" class="text-[#C028B9] hover:underline transition">Sign Up</NuxtLink>
         </strong>
       </div>
     </form>
@@ -113,7 +113,7 @@ const submitOTP = async () => {
           class="w-full px-4 py-3 text-lg rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#89BBEB] transition" />
         <!-- Send Magic Link Button -->
         <button type="submit"
-          class="mt-8 w-full sm:w-[280px] py-4 px-6 text-xl text-white font-semibold bg-[#D97ED5] hover:bg-purple-500 transition rounded-2xl">
+          class="mt-8 w-full sm:w-[280px] py-4 px-6 text-xl text-white font-semibold bg-[#C028B9] hover:bg-[#9a1985] transition rounded-2xl">
           Verify
         </button>
        
@@ -125,12 +125,12 @@ const submitOTP = async () => {
         {{ responseMessage }}
         <div>
         <button onclick="window.location.href = '/';"
-          class="mt-8 w-full sm:w-[280px] py-4 px-6 text-xl text-white font-semibold bg-[#D97ED5] hover:bg-purple-500 transition rounded-2xl"
+          class="mt-8 w-full sm:w-[280px] py-4 px-6 text-xl text-white font-semibold bg-[#C028B9] hover:bg-[#9a1985] transition rounded-2xl"
           v-if="responseMessage==='Successfully logged in!'">
           <text >Go to home page</text>
         </button>
         <button  onclick="window.location.href = '/login';" 
-          class="mt-8 w-full sm:w-[280px] py-4 px-6 text-xl text-white font-semibold bg-[#D97ED5] hover:bg-purple-500 transition rounded-2xl"
+          class="mt-8 w-full sm:w-[280px] py-4 px-6 text-xl text-white font-semibold bg-[#C028B9] hover:bg-[#9a1985] transition rounded-2xl"
           v-if="responseMessage==='Verification failed'">
           
           <text >Try Again</text>
