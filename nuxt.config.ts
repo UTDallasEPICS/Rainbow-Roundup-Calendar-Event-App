@@ -71,7 +71,7 @@ export default defineNuxtConfig({
     storage: {
       uploads: {
         driver: "fs",        
-        base: process.env.NUXT_IMG_STORAGE_PATH ?? "./public/uploads",      
+        base: process.env.NUXT_UPLOAD_DIR || "./public/uploads",      // LOOK AT THE RUNTIME CONFIG
        },    
      },  
   },
