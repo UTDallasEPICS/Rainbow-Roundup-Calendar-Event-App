@@ -20,10 +20,10 @@ export default defineEventHandler(async (event) => {
     return { error: `File type ${file.type || "unknown"} not allowed` }
   }
 
-  const safeOriginalName = (file.filename || "upload").replace(/[^\w.\-]/g, "_")
+  const safeOriginalName = (file.filename || "upload").replace(/[^\w.\-]/g, "_") // TODO: understand why this is safer
   const key = `/${Date.now()}-${safeOriginalName}`
 
   await storage.setItemRaw(key, file.data)
 
-  return { fileUrl: `${config.UPLOAD_DIR}/${key}` }
+  return { fileUrl: `${config.UPLOAD_DIR}${key}` }
 })

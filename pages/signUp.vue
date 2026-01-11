@@ -169,14 +169,10 @@ const submitSignupForm = async () => {
     try {
       const uploadedUrl = await uploadProfilePic(file.value);
       userDataToSubmit.profilePic = uploadedUrl;
-      console.log("url: ", uploadedUrl)
-      console.log("userSubmit: ", userDataToSubmit)
     } catch (uploadError) {
       console.error("Profile picture upload failed:", uploadError);
       return
     }
-
-    console.log("User data: ",userDataToSubmit)
     
     const { data, error } = await useFetch("/api/user", { // todo: change to $fetch
       method: "POST",
@@ -184,21 +180,12 @@ const submitSignupForm = async () => {
       watch: false,
     });
     if (data?.value?.success && !error.value) {
-
-
       router.push("login");
       successMessage.value = "A verification email has been sent to your address. Please check your inbox to complete registration.";
-      // Optionally clear form fields here
     } else {
       successMessage.value = 'Signup failed, check that you do not already have an account';
       console.error("Error submitting signup form");
       errors.value = { error: "Signup failed." };
-      if (error.value?.statusCode === 400) {
-        navigateTo("/login");
-        console.log("redirecting to login...");
-        // if not already, their email will be autoverified on login, so might as well send them there
-      }
-
     }
   } catch (err) {
     console.error("Error submitting signup form", err);

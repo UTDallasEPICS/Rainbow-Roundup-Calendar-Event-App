@@ -27,7 +27,7 @@ export default defineNuxtConfig({
 
     NUXT_PUSH_VAPID_PRIVATE_KEY: process.env.NUXT_PUSH_VAPID_PRIVATE_KEY,
 
-    UPLOAD_DIR: process.env.IMG_STORAGE_PATH
+    UPLOAD_DIR: process.env.IMG_STORAGE_PATH ?? "./uploads"
   },
   vite: {
     resolve: {
@@ -71,7 +71,7 @@ export default defineNuxtConfig({
     storage: {
       uploads: {
         driver: "fs",        
-        base: process.env.IMG_STORAGE_PATH || "./public/uploads",      
+        base: process.env.IMG_STORAGE_PATH ?? "./public/uploads",      
        },    
      },  
   },
