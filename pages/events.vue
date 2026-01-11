@@ -28,7 +28,6 @@
         </NuxtLink>
 
         <!-- Page Title -->
-
         <!-- Search & Filter -->
         <div class="flex space-x-4">
           <!-- Search Icon -->
@@ -36,7 +35,7 @@
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Search events..."
+            placeholder="Search all events..."
             class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
           />
 
@@ -67,45 +66,62 @@
     </div>
 
     <!-- Scrollable events list -->
-    <div class="w-full max-w-4xl flex-1 overflow-y-auto px-6 pb-6">
+    <div v-if="searchQuery == '' || searchQuery == null" class="w-full max-w-4xl flex-1 overflow-y-auto px-6 py-6">
+      <div class="text-lg font-bold pb-2">Upcoming</div>
+      <EventList :events="upcomingEvents" />
+      <div class="text-lg font-bold py-2">Past</div>
+      <EventList :events="pastEvents" />
+    </div>
+    <div v-else class="w-full max-w-4xl flex-1 overflow-y-auto px-6 py-6">
       <EventList :events="filteredEvents" />
     </div>
+
   </div>
 </template>
 
-<script>
-import EventList from "~/components/EventList.vue";
-import { fetchCombinedEvents } from "../server/utils/fetchCombinedEvents";
+<script setup lang="ts">
+import { ref, computed } from "vue"
 
-export default {
-  name: "EventsPage",
-  components: { EventList },
-  data() {
-    return {
-      events: [],
-      loading: true,
-      error: null,
-      searchQuery: "",
-    };
-  },
-  async mounted() {
-    try {
-      const data = await fetchCombinedEvents();
-      this.events = data;
-    } catch (err) {
-      console.error("Error fetching events:", err);
-      this.error = err.message;
-    } finally {
-      this.loading = false;
+const events = ref([]);
+const upcomingEvents = ref([])
+const pastEvents = ref([]);
+const loading = ref(true)
+const error = ref(null)
+const searchQuery = ref("")
+
+// fetch events
+try {
+  // fetch non archived event data
+  const eventData = await useFetch('/api/event/', { method: "GET"})
+  events.value = eventData.data.value
+
+  // sort past events & upcoming events
+  const now = Date.now();
+  for (let i = 0; i < events.value.length; i++) {
+    const currEventTime = new Date(events.value[i].endTime)
+
+    // if event end time is before current time, then it is a past event
+    if (now > currEventTime) {
+      pastEvents.value.push(events.value.slice(i, i+1)[0])
     }
-  },
-  computed: {
-    filteredEvents() {
-      if (!this.searchQuery.trim()) return this.events;
-      return this.events.filter((event) =>
-        event.title?.toLowerCase().includes(this.searchQuery.toLowerCase())
+    else {
+      upcomingEvents.value.push(events.value.slice(i, i+1)[0])
+    }
+    
+  }
+}
+catch (error) {
+  console.error("Could not fetch events: ", error)
+}
+finally
+{
+  loading.value = false;
+}
+
+const filteredEvents = computed(() => {
+    if (!searchQuery.value.trim()) return events.value;
+      return events.value.filter((event) =>
+        event.title?.toLowerCase().includes(searchQuery.value.toLowerCase())
       );
-    },
-  },
-};
+})
 </script>

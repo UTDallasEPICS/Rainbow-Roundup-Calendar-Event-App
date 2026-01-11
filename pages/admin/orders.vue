@@ -58,6 +58,13 @@ catch (err) {
     console.error("Error fetching orders:", err);
 }
 finally {
-    isLoading.value = false;
+  // sort orders & archived orders
+  for (let i = 0; i < orders.value.length; i++) {
+      if (orders.value[i].status == "DELIVERED") {
+          archivedOrders.value.push(orders.value.splice(i, 1)[0])
+      }
+  }
+  
+  isLoading.value = false;
 }
 </script>

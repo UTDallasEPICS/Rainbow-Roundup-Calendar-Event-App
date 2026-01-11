@@ -21,7 +21,7 @@
     <div class="absolute top-4 right-4 flex space-x-2 z-10">
         <!-- Edit/Save/Cancel Controls -->
         <div
-            v-if="['ADMIN', 'SUPER'].includes(user?.role)  && !isArchived"
+            v-if="isAdmin && !isArchived"
         >
             <button
             v-if="!isEditing"
@@ -155,7 +155,7 @@
              <Map :address="editedEvent.location" />
         </div>
 
-        <div v-if="!isLoading && !isEditing">
+        <div v-if="!isLoading && !isEditing && (!isPastEvent || isAdmin)">
             <!-- Divider -->
             <div class="border-t border-gray-200"></div>
 
@@ -185,7 +185,7 @@
                       Plus one signups: {{signup.plusOneKids + signup.plusOneAdults }}
                     </li>
                     <li v-if="(signup.plusOneKids + signup.plusOneAdults) > 0 &&
-                          (session.user?.role === 'ADMIN' || session.user?.role === 'SUPER')" class="text-gray-400 ">
+                         isAdmin" class="text-gray-400 ">
                       Adults: {{signup.plusOneAdults }}, Kids: {{signup.plusOneKids }}
                     </li> 
                     </p>
@@ -197,7 +197,7 @@
             </ul>
             </div>
 
-            <div class="mt-4 space-y-2">
+            <div v-if="!isPastEvent" class="mt-4 space-y-2">
             <p class="text-sm font-medium text-gray-800">Will you attend?</p>
             <div class="flex gap-3">
                 <button
@@ -309,6 +309,10 @@ const numPlusOneAdults = ref(0);
 const numPlusOneKids = ref(0);
 const isEditing = ref(false);
 const isArchived = ref(true)
+const isPastEvent = ref(true);
+const isAdmin = computed(() => {
+  return (session.user?.role === 'ADMIN' || session.user?.role === 'SUPER' ? true : false)
+})
 const editedEvent = reactive({
   id: props.eventId,
   title: "",
@@ -376,6 +380,13 @@ async function loadEvent() {
     }
 
     isArchived.value = eventdata.isArchived
+
+    const now = Date.now()
+    isPastEvent.value = (now > endTime ? true : false);
+
+    console.log(isPastEvent.value)
+
+    //isAdmin.value =  (session.user?.role === 'ADMIN' || session.user?.role === 'SUPER' ? true : false)
 
   } catch (e) {
     console.error("Load failed", e);
