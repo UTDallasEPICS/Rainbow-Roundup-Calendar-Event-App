@@ -180,7 +180,7 @@ const addToCart = () => {
   }
 
   const cartItem = {
-    variantId: (selectedVariant as any).id,
+    itemVariantId: (selectedVariant as any).id,
     productId: item.value!.id,
     name: item.value!.name,
     description:

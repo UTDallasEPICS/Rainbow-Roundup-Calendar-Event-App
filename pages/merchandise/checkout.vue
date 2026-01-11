@@ -92,7 +92,7 @@
         <h2 class="text-lg font-semibold mb-4">Order summary</h2>
 
         <ul class="space-y-4 mb-4">
-          <li v-for="it in cartItems" :key="it.variantId" class="flex items-start justify-between gap-4">
+          <li v-for="it in cartItems" :key="it.itemVariantId" class="flex items-start justify-between gap-4">
             <div class="flex items-start gap-3">
               <img :src="it.image || '/images/tshirt.png'" alt="" class="w-14 h-14 object-cover rounded" />
               <div>
@@ -135,7 +135,7 @@ const subtotal = computed(() => cart.subtotal)
 const saveInfo = ref(false)
 const placing = ref(false)
 const error = ref<string | null>(null)
-
+const orderId = ref(null)
 const form = ref({
   name: '',
   email: '',
@@ -154,7 +154,49 @@ const formIsValid = computed(() => {
 function goBack() {
   router.push('/merchandise')
 }
-
+const sendOrder = async() => {
+  console.log("Order sending...")
+  const orderItems=  [{itemVariantId: "rijvwfr",quantity: 1}, {itemVariantId: "b7794d73-68ba-4448-8f5e-f0b5b36a6b7c", quantity: 3}] // Create an item with /api/item post and get an itemVariantId from db, this probably won't work for you
+  console.log("Cart items: ",cart.items)
+  console.log("Order items: ", orderItems)
+  const { error, data, success } = await $fetch("/api/order", {
+    method: "POST",
+    body: {
+      orderItems:  cart.items,
+      orderType: "SHIPPING",
+      shippingAddress: "ttp343f6j586nehib9448hq1u0", // set this to an event id that exists in db
+    },
+  });
+  console.log("Error: ", error)
+  console.log('Data', data)
+  console.log('Success', success)
+  orderId.value = data?.id
+}
+async function getStripeSession() {
+  if(!orderId.value){
+    return {
+      error: "No order ID"
+    }
+  }
+  const {error, url} = await $fetch("/api/stripe",{
+    method: "POST",
+    body: {
+      orderId: orderId.value
+    },
+  });
+  if(error){
+    return {
+      error: error
+    }
+  }
+  if(!url){
+    return {
+      error: "No stripe url"
+    }
+  }
+  window.location.assign(url);
+  //router.push(url)
+}
 async function onPlaceOrder() {
   if (!formIsValid.value) {
     error.value = 'Please complete the required fields.'
@@ -183,10 +225,14 @@ async function onPlaceOrder() {
     // -----------------------------
 
     // Simulate short delay and success
-    await new Promise(resolve => setTimeout(resolve, 900))
+    //await new Promise(resolve => setTimeout(resolve, 900))
 
+    await sendOrder()
+    console.log("Sent order to our server")
+    console.log("Orderid: ",orderId.value)
+    await getStripeSession()
     // For demo: go to success page and clear cart
-    router.push('/merchandise/CheckoutSuccess')
+    //router.push('/merchandise/CheckoutSuccess')
   } catch (err: any) {
     console.error(err)
     error.value = err?.message || 'Failed to place order'

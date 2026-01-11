@@ -10,7 +10,7 @@
     <div v-if="cartItems.length > 0" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Items list -->
       <div class="lg:col-span-2 space-y-6">
-        <div v-for="item in cartItems" :key="item.variantId" class="flex justify-between items-start border-b pb-6">
+        <div v-for="item in cartItems" :key="item.itemVariantId" class="flex justify-between items-start border-b pb-6">
           <div class="flex gap-4">
             <img :src="item.image || '/images/tshirt.png'" :alt="item.name" class="w-24 h-24 object-cover rounded">
             <div>
@@ -18,10 +18,10 @@
               <p class="text-gray-600 text-sm">{{ item.description }}</p>
 
               <div class="flex items-center mt-2">
-                <button @click="decrement(item.variantId)" class="px-2 border rounded-l">-</button>
+                <button @click="decrement(item.itemVariantId)" class="px-2 border rounded-l">-</button>
                 <span class="px-4 border-t border-b">{{ item.quantity }}</span>
-                <button @click="increment(item.variantId)" class="px-2 border rounded-r">+</button>
-                <button @click="remove(item.variantId)" class="text-red-500 text-sm ml-4">Remove</button>
+                <button @click="increment(item.itemVariantId)" class="px-2 border rounded-r">+</button>
+                <button @click="remove(item.itemVariantId)" class="text-red-500 text-sm ml-4">Remove</button>
               </div>
             </div>
           </div>
@@ -83,16 +83,16 @@ const cartItems = computed(() => cart.items)
 const subtotal = computed(() => cart.subtotal)
 
 // action helpers
-function increment(variantId: string) {
-  cart.changeQuantityBy(variantId, 1)
+function increment(itemVariantId: string) {
+  cart.changeQuantityBy(itemVariantId, 1)
 }
 //Minus quantity
-function decrement(variantId: string) {
-  cart.changeQuantityBy(variantId, -1)
+function decrement(itemVariantId: string) {
+  cart.changeQuantityBy(itemVariantId, -1)
 }
 //Take out the one item
-function remove(variantId: string) {
-  cart.removeItem(variantId)
+function remove(itemVariantId: string) {
+  cart.removeItem(itemVariantId)
 }
 //calls function in cart
 function clearCart() {

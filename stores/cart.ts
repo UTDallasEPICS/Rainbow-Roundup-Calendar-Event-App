@@ -4,7 +4,7 @@ import { ref, computed } from 'vue'
 
 export type itemInCart = {
   // variant can refer to size and different descriptions
-  variantId: string
+  itemVariantId: string
   productId: string
   name: string
   description?: string
@@ -22,7 +22,7 @@ export const useCartStore = defineStore('cart', () => {
 
   function addItem(newItem: itemInCart) {
     // If we already have item variant, increment instead
-    const existing = items.value.find(i => i.variantId === newItem.variantId)
+    const existing = items.value.find(i => i.itemVariantId === newItem.itemVariantId)
     if (existing) {
       existing.quantity += newItem.quantity
     } else {
@@ -30,8 +30,8 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
-  function updateQuantity(variantId: string, newQuantity: number) {
-    const idx = items.value.findIndex(i => i.variantId === variantId)
+  function updateQuantity(itemVariantId: string, newQuantity: number) {
+    const idx = items.value.findIndex(i => i.itemVariantId === itemVariantId)
     if (idx === -1) return //probably an error, get out
     if (newQuantity > 0) {
       items.value[idx].quantity = newQuantity //puts in new quantity
@@ -41,16 +41,16 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
-  function changeQuantityBy(variantId: string, delta: number) {
-    const item = items.value.find(i => i.variantId === variantId)
+  function changeQuantityBy(itemVariantId: string, delta: number) {
+    const item = items.value.find(i => i.itemVariantId === itemVariantId)
     if (!item) return
     const q = item.quantity + delta
     if (q > 0) item.quantity = q
-    else removeItem(variantId)
+    else removeItem(itemVariantId)
   }
 
-  function removeItem(variantId: string) {
-    const idx = items.value.findIndex(i => i.variantId === variantId)
+  function removeItem(itemVariantId: string) {
+    const idx = items.value.findIndex(i => i.itemVariantId === itemVariantId)
     if (idx !== -1) items.value.splice(idx, 1)
   }
 

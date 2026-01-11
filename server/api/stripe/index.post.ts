@@ -23,7 +23,11 @@ export default defineEventHandler(async (event) => {
         include: {
           ItemVariants: {
             include: {
-              item: true
+              item: {
+                include: {
+                  ItemPhotos: true
+                }
+              }
             }
           },
         },
@@ -48,24 +52,36 @@ export default defineEventHandler(async (event) => {
       error: "Order is already delivered"
     }
   }
-  
+
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
-    success_url: `${process.env.URL}/success?session_id={CHECKOUT_SESSION_ID}`, // TODO: Build the success and cancel pages
-    cancel_url: `${process.env.URL}/cancel`,
+    success_url: `${process.env.URL}/merchandise/checkoutsuccess?session_id={CHECKOUT_SESSION_ID}`, // TODO: Build the success and cancel pages
+    cancel_url: `${process.env.URL}/cancel`, // The url if the user cancels the payment
+    // Collect billing address
+    billing_address_collection: 'required', 
+    
+    // Collect shipping address (optional)
+    shipping_address_collection: {
+      allowed_countries: ['US'], // List countries we ship, using 2 digit country codes, 
+    },
     line_items: order.OrderItems.map(item => ({
       quantity: item.quantity,
       price_data: {
         currency: 'usd',
-        unit_amount: item.ItemVariants.item.price,
+        unit_amount: item.ItemVariants.item.price * 100,
         product_data: {
           name: item.ItemVariants.item.name,
           description: item.ItemVariants.item.description,
+          images: item.ItemVariants.item.ItemPhotos ? item.ItemVariants.item.ItemPhotos.map(photo => `${process.env.URL}${photo.url}`) : [],
           // Optional: Add description, images, etc.
         }
       }
-    }))
+    })),
+    metadata: {
+      orderId: body.orderId
+    }
   });
+  //console.log(session)
   return {url: session.url}
   
 });
