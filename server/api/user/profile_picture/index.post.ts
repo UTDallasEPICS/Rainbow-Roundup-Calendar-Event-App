@@ -27,14 +27,14 @@ export default defineEventHandler(async (event) => {
 
   const safeOriginalName = (file.filename || "upload").replace(/[^\w.\-]/g, "_") 
 
-  // this removes characters that can exec/escape stuff or stuff that doesn't belong in filenames
+  // UNUSED | this removes characters that can exec/escape stuff or stuff that doesn't belong in filenames
   const key = `/${Date.now()}-${safeOriginalName}`
 
   const fileStream = fs.createReadStream(filePath)
   fs.writeFileSync(filePath, file.data)
 
   const fileUrl = path.join( // public should not be shown during dev, but this is going to be the same in prod!
-    config.UPLOAD_DIR || "uploads", 
+    (process.env.NUXT_NODE_ENV == "dev") ? "uploads" : config.UPLOAD_DIR, 
     file?.filename || "upload"
   )
 
