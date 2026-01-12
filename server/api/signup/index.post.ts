@@ -39,27 +39,44 @@ export default defineEventHandler(async (event) => {
   const targetEvent = await prisma.event.findUnique({
     where: { id: body.eventId },
   });
-  //check existence of event
-  if (targetEvent) {
-    if (targetEvent.capacity != null && targetEvent.currentCapacity != null) {
-      if (targetEvent.currentCapacity + body.numPlusOneAdultsVal + body.numPlusOneKidsVal >= targetEvent.capacity) {
-        setResponseStatus(event, 400);
-        return {
-          success: false,
-          error: "event is full",
-          capacity:
-            "this is the current capacity" + targetEvent.currentCapacity,
-          maxCap: "this is the max capacity" + targetEvent.capacity,
-        };
-      }
-    }
-  } else if (!targetEvent) {
+
+  if (!targetEvent) {
     setResponseStatus(event, 404);
     return {
       success: false,
       error: "Event doesn't exist",
     };
   }
+  // capacity check (Issue#211: currentCapacity is computed ad-hoc)
+  //check existence of event
+if (targetEvent.capacity != null) {
+    const agg = await prisma.signUp.aggregate({
+      where: { eventId: body.eventId },
+      _count: { _all: true },
+      _sum: { plusOneKids: true, plusOneAdults: true },
+    });
+
+    const used =
+      (agg._count._all ?? 0) +
+      (agg._sum.plusOneKids ?? 0) +
+      (agg._sum.plusOneAdults ?? 0);
+
+    const adding =
+      1 + (body.numPlusOneAdultsVal ?? 0) + (body.numPlusOneKidsVal ?? 0);
+
+    // if this signup would exceed capacity, block it
+    if (used + adding > targetEvent.capacity) {
+      setResponseStatus(event, 400);
+      return {
+        success: false,
+        error: "Sorry you have exceeded the capacity.  ", 
+        capacity: "This is the current capacity. " + used,
+        maxCap: "This is the max capacity. " + targetEvent.capacity,
+      };
+    }
+  }
+
+  
   // sign up does not already exist, event exists and has capacity to spare
   try {
     const newSignUp = await event.context.prisma.signUp.create({
@@ -71,21 +88,7 @@ export default defineEventHandler(async (event) => {
         plusOneKids: body.numPlusOneKidsVal || 0,
       },
     });
-    // increment current capacity
-    if (
-      targetEvent &&
-      (targetEvent as Event).capacity != null &&
-      (targetEvent as Event).currentCapacity != null
-    ) {
-      await prisma.event.update({
-        where: { id: body.eventId },
-        data: {
-          currentCapacity: {
-            increment: 1 + body.numPlusOneKidsVal + body.numPlusOneAdultsVal,
-          },
-        },
-      });
-    }
+
     return {
       success: true,
       signup: newSignUp,
