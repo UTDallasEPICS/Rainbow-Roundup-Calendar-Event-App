@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
     where: {
       id: body.orderId
     },
-    include: {
+    include: { // We need all the connected tables to give stripe as much info as possible when creating their Checkout page
       OrderItems: {
         include: {
           ItemVariants: {
@@ -56,11 +56,8 @@ export default defineEventHandler(async (event) => {
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
     success_url: `${process.env.URL}/merchandise/checkoutsuccess?session_id={CHECKOUT_SESSION_ID}`, // TODO: Build the success and cancel pages
-    cancel_url: `${process.env.URL}/cancel`, // The url if the user cancels the payment
-    // Collect billing address
+    cancel_url: `${process.env.URL}/merchandise`, // The url if the user cancels the payment
     billing_address_collection: 'required', 
-    
-    // Collect shipping address (optional)
     shipping_address_collection: {
       allowed_countries: ['US'], // List countries we ship, using 2 digit country codes, 
     },
@@ -68,20 +65,20 @@ export default defineEventHandler(async (event) => {
       quantity: item.quantity,
       price_data: {
         currency: 'usd',
-        unit_amount: item.ItemVariants.item.price * 100,
+        unit_amount: item.ItemVariants.item.price * 100, // adjust to integer value, stripe will adjust it on their checkput page
         product_data: {
           name: item.ItemVariants.item.name,
           description: item.ItemVariants.item.description,
-          images: item.ItemVariants.item.ItemPhotos ? item.ItemVariants.item.ItemPhotos.map(photo => `${process.env.URL}${photo.url}`) : [],
-          // Optional: Add description, images, etc.
+          images: item.ItemVariants.item.ItemPhotos ? item.ItemVariants.item.ItemPhotos.map(photo => `${process.env.URL}/${photo.url}`) : [],
+          // The above line is to extract the array of photo url's we have and send it to stripe, if stripe can retrieve the image url's, it will show it on checkout page
+          // ${process.env.URL}${photo.url} is essentially combining our domain and relative path from our domain, it relies on our .env to not have a trailing slash
         }
       }
     })),
     metadata: {
-      orderId: body.orderId
+      orderId: body.orderId // additionally put our internal order ID into the metadata of the stripe order session, we can retrieve this later to verify orders
     }
   });
-  //console.log(session)
   return {url: session.url}
   
 });

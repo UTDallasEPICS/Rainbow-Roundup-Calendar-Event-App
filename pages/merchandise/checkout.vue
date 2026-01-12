@@ -156,15 +156,13 @@ function goBack() {
 }
 const sendOrder = async() => {
   console.log("Order sending...")
-  const orderItems=  [{itemVariantId: "rijvwfr",quantity: 1}, {itemVariantId: "b7794d73-68ba-4448-8f5e-f0b5b36a6b7c", quantity: 3}] // Create an item with /api/item post and get an itemVariantId from db, this probably won't work for you
   console.log("Cart items: ",cart.items)
-  console.log("Order items: ", orderItems)
   const { error, data, success } = await $fetch("/api/order", {
     method: "POST",
     body: {
       orderItems:  cart.items,
-      orderType: "SHIPPING",
-      shippingAddress: "ttp343f6j586nehib9448hq1u0", // set this to an event id that exists in db
+      orderType: "SHIPPING", // TODO: Add code later to handle pickup orders
+      shippingAddress: "ttp343f6j586nehib9448hq1u0", // This doesn't matter, will get overwritten later
     },
   });
   console.log("Error: ", error)
@@ -194,8 +192,7 @@ async function getStripeSession() {
       error: "No stripe url"
     }
   }
-  window.location.assign(url);
-  //router.push(url)
+  window.location.assign(url); // Go to stripe checkout page, assign *should* tell the browser to remember session history for this.
 }
 async function onPlaceOrder() {
   if (!formIsValid.value) {
@@ -206,27 +203,9 @@ async function onPlaceOrder() {
     error.value = 'Cart is empty.'
     return
   }
-
   placing.value = true
   error.value = null
-
   try {
-    // -----------------------------
-    // PLACEHOLDER: Simulated checkout
-    // Replace this block with a real backend call to create a Stripe session.
-    // Example (server should return { url }):
-    // const res = await fetch('/api/checkout/create-session', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ items: cart.items, shipping: form.value })
-    // });
-    // const data = await res.json();
-    // if (data.url) window.location.href = data.url;
-    // -----------------------------
-
-    // Simulate short delay and success
-    //await new Promise(resolve => setTimeout(resolve, 900))
-
     await sendOrder()
     console.log("Sent order to our server")
     console.log("Orderid: ",orderId.value)
@@ -241,7 +220,6 @@ async function onPlaceOrder() {
   }
 }
 </script>
-
 <style scoped>
 /* small niceties */
 </style>

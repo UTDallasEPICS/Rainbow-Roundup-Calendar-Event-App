@@ -24,7 +24,6 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event);
     if(!body.sessionId){
         setResponseStatus(event, 400);
-        console.log("No session id provided")
         return {
             error: "No session id provided"
         }
@@ -34,7 +33,6 @@ export default defineEventHandler(async (event) => {
     console.log("order id: ",orderId)
     if(!orderId){
         setResponseStatus(event, 400);
-        console.log("No orderId can be connected to the order")
         return {
             error: "No orderId can be connected to the order"
         }
@@ -54,8 +52,6 @@ export default defineEventHandler(async (event) => {
             data: updateData
             
         })
-        console.log(res)
-        console.log(updateData)
         return {session };
     } else {
         setResponseStatus(event, 400);
