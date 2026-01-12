@@ -40,7 +40,7 @@ Rainbow Roundup is a calendar event management platform built to unify and uplif
    - capacity
    - delete the event
 
-### `/eventspage`
+### `/events`
 
 - Display all events, including descriptions
 - Clicking on an event will bring up the same event card as in /calendar

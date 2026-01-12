@@ -74,8 +74,6 @@
 </template>
 
 <script setup lang="ts">
-
-//import { fetchCombinedEvents } from "../server/utils/fetchCombinedEvents";
 import { ref, computed } from "vue"
 
 const events = ref([])
@@ -90,15 +88,18 @@ const filteredEvents = computed(() => {
       );
 })
 
-onMounted(async () => {
-  try {
-    const data = await fetchCombinedEvents();
-    events.value = data;
-    const response = await $fetch("/api/archive/event/", {
-            method: "GET"
-    })
-    console.log(response)
-    archivedEvents.value = response
+try {
+    // fetch non archived event data
+    const eventData = await useFetch('/api/event/', { method: "GET"})
+    events.value = eventData.data.value
+
+    // fetch archived event data
+    const response = await useFetch(`/api/archive/event/`, 
+        { method: "GET" }
+    )
+
+    archivedEvents.value = response.data.value
+
 
     
 
@@ -112,69 +113,4 @@ onMounted(async () => {
     }
 
 
-//     try {
-//       const data = await fetchCombinedEvents();
-//       events.value = data;
-
-//       const response = await $fetch("/api/archive/event");
-//     console.log(response)
-
-//     } catch (err) {
-//       console.error("Error fetching events:", err);
-//     } finally {
-//       loading.value = false;
-//     }
-
-// try {
-//     const response = await $fetch("/api/archive/event");
-//     console.log(response)
-//     if (response?.events) {
-
-//       sort into archived events
-//       for (let i = 0; i < response.events.length; i++)
-//       {
-//         if (response.events[i])
-//         {
-//           archivedUsers.value.push(response.Users[i]);
-//         }
-//       }
-//     }
-//   } catch (err) {
-//     console.error("Error fetching users:", err);
-//   }
-
-    
-})
-
-// export default {
-//   name: "EventsPage",
-//   components: { EventList },
-//   data() {
-//     return {
-//       events: [],
-//       loading: true,
-//       error: null,
-//       searchQuery: "",
-//     };
-//   },
-//   async mounted() {
-//     try {
-//       const data = await fetchCombinedEvents();
-//       this.events = data;
-//     } catch (err) {
-//       console.error("Error fetching events:", err);
-//       this.error = err.message;
-//     } finally {
-//       this.loading = false;
-//     }
-//   },
-//   computed: {
-//     filteredEvents() {
-//       if (!this.searchQuery.trim()) return this.events;
-//       return this.events.filter((event) =>
-//         event.title?.toLowerCase().includes(this.searchQuery.toLowerCase())
-//       );
-//     },
-//   },
-// };
 </script>

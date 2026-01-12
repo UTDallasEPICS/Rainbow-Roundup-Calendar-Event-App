@@ -51,48 +51,54 @@ const reports = ref([]);
 const attrs = useAttrs();
 const isLoading = ref(true);
 
-onMounted(async () => {
-  // get regular users
-  try {
-    const response = await $fetch("/api/user");
-    if (response?.success) {
-      users.value = response.Users;
-    }
-  } catch (err) {
-    console.error("Error fetching users:", err);
-  }
+// get regular users
+try {
+  const { data: userData } = await useFetch("/api/user/", {
+        query: { method: "GET" }
+    })
 
-  // get banned and archived users
-  try {
-    const response = await $fetch("/api/archive/user");
-    if (response?.success) {
+  //console.log(userData)
+  users.value = userData.value.Users;
+  console.log(users)
+  
+} catch (err) {
+  console.error("Error fetching users:", err);
+}
 
-      // sort into banned and archived users
-      for (let i = 0; i < response.Users.length; i++)
+// get banned and archived users
+try {
+  const { data: userData } = await useFetch("/api/archive/user", {
+    query: { method: "GET" }
+  });
+
+  if (userData.value.success && userData.value.Users.length > 0) {
+
+    // sort into banned and archived users
+    for (let i = 0; i < userData.value.Users.length; i++)
+    {
+      if (userData.value.Users[i].isBanned)
       {
-        if (response.Users[i].isBanned)
-        {
-          bannedUsers.value.push(response.Users[i]);
-        }
-        else // user is archived
-        {
-          archivedUsers.value.push(response.Users[i]);
-        }
+        bannedUsers.value.push(userData.value.Users[i]);
+      }
+      else // user is archived
+      {
+        archivedUsers.value.push(userData.value.Users[i]);
       }
     }
-  } catch (err) {
-    console.error("Error fetching users:", err);
   }
+} catch (err) {
+  console.error("Error fetching users:", err);
+}
 
-  try {
-    const response = await useFetch("/api/report", { method: "GET" });
-    reports.value = response.data.value;
-  } catch (err) {
-    console.error("Error fetching reports:", err);
-  }
+try {
+  const response = await useFetch("/api/report", { query: { method: "GET" } });
+  reports.value = response.data.value;
+} catch (err) {
+  console.error("Error fetching reports:", err);
+}
 
-  isLoading.value = false;
-});
+isLoading.value = false;
+
 
 // move an unbanned user to the banned user table
 function banUser(banId) {
