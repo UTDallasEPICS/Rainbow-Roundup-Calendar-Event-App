@@ -299,7 +299,7 @@ async function checkPushSubscription() {
     isSubscribedToPush.value = false
   }
 }
-
+// dummy comment
 
 notificationError.value = computed(() => {
   if (!($pwa?.getSWRegistration()?.pushManager)) {
