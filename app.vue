@@ -188,7 +188,6 @@ import { authClient } from "~/composables/auth"
 const session = authClient.useSession()
 
 
-
 const dropdownOpen = ref(false);
 const mobileMenuOpen = ref(false);
 const notificationPermission = ref(false);
@@ -323,7 +322,8 @@ const requestNotificationPermission = () => {
         if (permission === "granted" && 'serviceWorker' in navigator) {
           notificationPermission.value = true;
           console.log("Both service worker and permission are good!");
-          const applicationServerKey = runtimeConfig.public.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY;
+          const applicationServerKey = runtimeConfig.public.PUBLIC_PUSH_VAPID_PUBLIC_KEY;
+          console.log(`Public Key: ${applicationServerKey}`)
           navigator.serviceWorker.ready.then(async (serviceWorkerRegistration) => {
             const options = {
               userVisibleOnly: true,
