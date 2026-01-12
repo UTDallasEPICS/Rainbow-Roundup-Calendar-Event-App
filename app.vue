@@ -187,6 +187,7 @@ import { ref, onMounted} from "vue";
 import { authClient } from "~/composables/auth"
 const session = authClient.useSession()
 
+const config = useRuntimeConfig()
 
 const dropdownOpen = ref(false);
 const mobileMenuOpen = ref(false);
