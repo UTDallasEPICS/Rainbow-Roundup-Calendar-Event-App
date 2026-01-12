@@ -326,6 +326,7 @@ const requestNotificationPermission = () => {
           notificationPermission.value = true;
           console.log("Both service worker and permission are good!");
           const applicationServerKey = runtimeConfig.public.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY;
+          console.log(`Public Key: ${applicationServerKey}`)
           navigator.serviceWorker.ready.then(async (serviceWorkerRegistration) => {
             const options = {
               userVisibleOnly: true,
