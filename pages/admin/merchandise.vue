@@ -126,9 +126,10 @@ const isItemModalOpen = ref(false);
 const selectedItem = ref(null);
 const merchandise = ref([]);
 
+
+// todo: fix fetching, needs to be a useFetch
 onMounted(async () => {
     try {
-        //testAdd()
         const { data: items, success } = await $fetch("/api/item/", {
             method: "GET"
         })
