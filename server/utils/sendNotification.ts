@@ -6,7 +6,7 @@ const config = useRuntimeConfig();
 const icon = "images/icons/pwa_logo_96.png";
 const badge = "images/icons/pwa_logo_64.png";
 const email = "mailto:noreply@example.com";
-const publicKey = config.public.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY; // Get keys from env file 
+const publicKey = config.public.PUBLIC_PUSH_VAPID_PUBLIC_KEY; // Get keys from env file 
 const privateKey = config.NUXT_PUSH_VAPID_PRIVATE_KEY;
 
 export async function sendNativeNotification(title: string, message: string, userID: string, url: string) {
