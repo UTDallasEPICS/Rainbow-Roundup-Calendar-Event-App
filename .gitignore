@@ -28,5 +28,5 @@ logs
 dev.db-journal
 dev.db
 
-# Upload directory for images hosted through nginx
+# Upload directory for images in dev
 */uploads
