@@ -6,9 +6,9 @@ const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY!);
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
-  
+  let shippingCost = 1000
   // Get cart items from request
-  if(!body.orderId){
+  if (!body.orderId) {
     setResponseStatus(event, 400);
     return {
       error: "Please provide an order id"
@@ -34,19 +34,22 @@ export default defineEventHandler(async (event) => {
       }
     },
   })
-  if(!order){
+  if (!order) {
     setResponseStatus(event, 400);
     return {
       error: "Order not found"
     }
   }
-  if(order.status === "PAID"){
+  if(order.orderType === "PICKUP"){
+    shippingCost = 0
+  }
+  if (order.status === "PAID") {
     setResponseStatus(event, 400);
     return {
       error: "Payment for order is already completed"
     }
   }
-  if(order.status === "DELIVERED"){
+  if (order.status === "DELIVERED") {
     setResponseStatus(event, 400);
     return {
       error: "Order is already delivered"
@@ -57,10 +60,24 @@ export default defineEventHandler(async (event) => {
     mode: 'payment',
     success_url: `${process.env.URL}/merchandise/checkoutsuccess?session_id={CHECKOUT_SESSION_ID}`, // TODO: Build the success and cancel pages
     cancel_url: `${process.env.URL}/merchandise`, // The url if the user cancels the payment
-    billing_address_collection: 'required', 
+    billing_address_collection: 'required',
     shipping_address_collection: {
       allowed_countries: ['US'], // List countries we ship, using 2 digit country codes, 
     },
+    shipping_options: [
+      {
+        shipping_rate_data: {
+          display_name: 'USPS Shipping Cost',
+          fixed_amount: {
+            amount: shippingCost,
+            currency: 'USD',
+          },
+          type: 'fixed_amount',
+        },
+      },
+    ],
+
+
     line_items: order.OrderItems.map(item => ({
       quantity: item.quantity,
       price_data: {
@@ -79,6 +96,6 @@ export default defineEventHandler(async (event) => {
       orderId: body.orderId // additionally put our internal order ID into the metadata of the stripe order session, we can retrieve this later to verify orders
     }
   });
-  return {url: session.url}
-  
+  return { url: session.url }
+
 });

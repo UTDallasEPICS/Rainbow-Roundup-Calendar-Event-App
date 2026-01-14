@@ -10,81 +10,16 @@
     <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- LEFT: Form -->
       <section class="lg:col-span-2 bg-white p-6 rounded shadow">
-        <h2 class="text-lg font-semibold mb-4">Contact & Shipping</h2>
-
-        <form @submit.prevent="onPlaceOrder" novalidate>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <label class="block">
-              <span class="text-sm font-medium">Full name</span>
-              <input v-model="form.name" required type="text" class="mt-1 block w-full rounded border px-3 py-2" />
-            </label>
-
-            <label class="block">
-              <span class="text-sm font-medium">Email</span>
-              <input v-model="form.email" required type="email" class="mt-1 block w-full rounded border px-3 py-2" />
-            </label>
-
-            <label class="block sm:col-span-2">
-              <span class="text-sm font-medium">Address</span>
-              <input v-model="form.address" required type="text" class="mt-1 block w-full rounded border px-3 py-2" />
-            </label>
-
-            <label class="block">
-              <span class="text-sm font-medium">City</span>
-              <input v-model="form.city" required type="text" class="mt-1 block w-full rounded border px-3 py-2" />
-            </label>
-
-            <label class="block">
-              <span class="text-sm font-medium">Postal / ZIP</span>
-              <input v-model="form.postal" required type="text" class="mt-1 block w-full rounded border px-3 py-2" />
-            </label>
-
-            <label class="block">
-              <span class="text-sm font-medium">Country</span>
-              <input v-model="form.country" required type="text" class="mt-1 block w-full rounded border px-3 py-2" />
-            </label>
-
-            <label class="block sm:col-span-2">
-              <span class="text-sm font-medium">Phone (optional)</span>
-              <input v-model="form.phone" type="tel" class="mt-1 block w-full rounded border px-3 py-2" />
-            </label>
-          </div>
-
-          <label class="flex items-center gap-2 mt-4">
-            <input type="checkbox" v-model="saveInfo" class="h-4 w-4" />
-            <span class="text-sm">Save my info for next time</span>
+        <h2 class="text-lg font-semibold mb-4">Please select order fulfillment options</h2>
+        <div class="toggle">
+          <input type="checkbox" id="toggle" v-model="isPickup" class="toggle-checkbox" />
+          <label :for="isPickup ? 'pickup' : 'shipping'" @click="toggle" class="toggle-label"
+            :style="{ backgroundColor: isPickup ? 'green' : 'blue' }">
+            <span class="toggle-indicator" :class="{ 'pickup': isPickup, 'shipping': !isPickup }"></span>
           </label>
+          <span class="toggle-text" style="margin-left: 10px">{{ isPickup ? 'Pickup' : 'Shipping' }}</span>
+        </div>
 
-          <div class="mt-6 flex gap-3 items-center">
-            <button
-              :disabled="placing || !formIsValid"
-              type="submit"
-              class="px-4 py-2 bg-green-500 text-white rounded disabled:opacity-60"
-            >
-              {{ placing ? 'Placing order…' : 'Place order' }}
-            </button>
-
-            <button type="button" @click="goBack" class="px-4 py-2 bg-gray-100 rounded">Edit cart</button>
-
-            <div v-if="error" class="text-red-600 ml-4">{{ error }}</div>
-          </div>
-
-          <p class="text-xs text-gray-500 mt-4">
-            This is a demo checkout page. Stripe integration placeholder shown below.
-          </p>
-
-          <!-- Placeholder: where you'd call your backend to create a Stripe Checkout session -->
-          <!--
-            Example:
-            const res = await fetch('/api/checkout/create-session', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ items: cart.items, shipping: form })
-            });
-            const data = await res.json();
-            if (data.url) window.location.href = data.url;
-          -->
-        </form>
       </section>
 
       <!-- RIGHT: Order summary -->
@@ -117,6 +52,15 @@
           </div>
         </div>
       </aside>
+      <div class="mt-6 flex gap-3 items-center">
+        <button @click="onPlaceOrder" class="px-4 py-2 bg-green-500 text-white rounded disabled:opacity-60">
+          {{ placing ? 'Placing order…' : 'Place order' }}
+        </button>
+
+        <button type="button" @click="goBack" class="px-4 py-2 bg-gray-100 rounded">Edit cart</button>
+
+        <div v-if="error" class="text-red-600 ml-4">{{ error }}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -126,11 +70,19 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '~/stores/cart'
 
+// TODO: Implement the Event selection UI
+
 const router = useRouter()
 const cart = useCartStore()
 
 const cartItems = computed(() => cart.items)
 const subtotal = computed(() => cart.subtotal)
+
+const isPickup = ref(true);
+const toggleColor = ref("green")
+function toggle() {
+  isPickup.value = !isPickup.value;
+}
 
 const saveInfo = ref(false)
 const placing = ref(false)
@@ -154,15 +106,17 @@ const formIsValid = computed(() => {
 function goBack() {
   router.push('/merchandise')
 }
-const sendOrder = async() => {
+const sendOrder = async () => {
   console.log("Order sending...")
-  console.log("Cart items: ",cart.items)
+  console.log("Cart items: ", cart.items)
+  const shippingType = isPickup.value ? "PICKUP" : "SHIPPING"
   const { error, data, success } = await $fetch("/api/order", {
     method: "POST",
     body: {
-      orderItems:  cart.items,
-      orderType: "SHIPPING", // TODO: Add code later to handle pickup orders
-      shippingAddress: "ttp343f6j586nehib9448hq1u0", // This doesn't matter, will get overwritten later
+      orderItems: cart.items,
+      orderType: shippingType, // TODO: Add code later to handle pickup orders
+      shippingAddress: "not collected yet", // This doesn't matter, will get overwritten later
+      
     },
   });
   console.log("Error: ", error)
@@ -171,23 +125,24 @@ const sendOrder = async() => {
   orderId.value = data?.id
 }
 async function getStripeSession() {
-  if(!orderId.value){
+  if (!orderId.value) {
     return {
       error: "No order ID"
     }
   }
-  const {error, url} = await $fetch("/api/stripe",{
+  const { error, url } = await $fetch("/api/stripe", {
     method: "POST",
     body: {
-      orderId: orderId.value
+      orderId: orderId.value,
+      isPickup: isPickup.value
     },
   });
-  if(error){
+  if (error) {
     return {
       error: error
     }
   }
-  if(!url){
+  if (!url) {
     return {
       error: "No stripe url"
     }
@@ -195,10 +150,6 @@ async function getStripeSession() {
   window.location.assign(url); // Go to stripe checkout page, assign *should* tell the browser to remember session history for this.
 }
 async function onPlaceOrder() {
-  if (!formIsValid.value) {
-    error.value = 'Please complete the required fields.'
-    return
-  }
   if (cartItems.value.length === 0) {
     error.value = 'Cart is empty.'
     return
@@ -208,10 +159,8 @@ async function onPlaceOrder() {
   try {
     await sendOrder()
     console.log("Sent order to our server")
-    console.log("Orderid: ",orderId.value)
+    console.log("Orderid: ", orderId.value)
     await getStripeSession()
-    // For demo: go to success page and clear cart
-    //router.push('/merchandise/CheckoutSuccess')
   } catch (err: any) {
     console.error(err)
     error.value = err?.message || 'Failed to place order'
@@ -221,5 +170,42 @@ async function onPlaceOrder() {
 }
 </script>
 <style scoped>
-/* small niceties */
+.toggle {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.toggle-checkbox {
+  display: none;
+  /* Hide the native checkbox */
+}
+
+.toggle-label {
+  width: 60px;
+  height: 30px;
+  border-radius: 15px;
+  position: relative;
+  transition: background-color 0.3s;
+}
+
+.toggle-indicator {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: white;
+  transition: transform 0.3s;
+}
+
+.pickup {
+  transform: translateX(30px);
+  /* Move the indicator */
+}
+
+.shipping {
+  transform: translateX(0);
+}
 </style>
