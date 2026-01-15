@@ -189,7 +189,7 @@ const session = authClient.useSession()
 
 const config = useRuntimeConfig()
 
-console.log(`Google Maps Key: ${config.public.NUXT_PUBLIC_GOOGLE_PLACES}`)
+console.log(`Google Maps Key: ${config.public.GOOGLE_PLACES}`)
 
 const dropdownOpen = ref(false);
 const mobileMenuOpen = ref(false);

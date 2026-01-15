@@ -3,7 +3,7 @@ import { computed } from "vue";
 
 const props = defineProps(["address"])
 const config = useRuntimeConfig();
-const apiKey = config.public.NUXT_PUBLIC_GOOGLE_PLACES;
+const apiKey = config.public.GOOGLE_PLACES;
 
 const embedFrame = computed(() => {
   if (!props.address) {
