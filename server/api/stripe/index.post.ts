@@ -61,6 +61,13 @@ export default defineEventHandler(async (event) => {
     success_url: `${process.env.URL}/merchandise/checkoutsuccess?session_id={CHECKOUT_SESSION_ID}`, // TODO: Build the success and cancel pages
     cancel_url: `${process.env.URL}/merchandise`, // The url if the user cancels the payment
     billing_address_collection: 'required',
+    invoice_creation: {
+      enabled: true, // This generates an email with invoice of order after payment is complete
+      invoice_data: {
+        description:  `Your order id is: ${order.id}`
+      }
+    },
+    
     shipping_address_collection: {
       allowed_countries: ['US'], // List countries we ship, using 2 digit country codes, 
     },
@@ -84,7 +91,7 @@ export default defineEventHandler(async (event) => {
         currency: 'usd',
         unit_amount: item.ItemVariants.item.price * 100, // adjust to integer value, stripe will adjust it on their checkput page
         product_data: {
-          name: item.ItemVariants.item.name,
+          name: item.ItemVariants.item.name, // NOTE: This can be modified to include the size of the itemVariant if we want that to show up in stripe
           description: item.ItemVariants.item.description,
           images: item.ItemVariants.item.ItemPhotos ? item.ItemVariants.item.ItemPhotos.map(photo => `${process.env.URL}/${photo.url}`) : [],
           // The above line is to extract the array of photo url's we have and send it to stripe, if stripe can retrieve the image url's, it will show it on checkout page
