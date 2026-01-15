@@ -189,6 +189,8 @@ const session = authClient.useSession()
 
 const config = useRuntimeConfig()
 
+console.log(`Google Maps Key: ${config.public.NUXT_GOOGLE_PLACES}`)
+
 const dropdownOpen = ref(false);
 const mobileMenuOpen = ref(false);
 const notificationPermission = ref(false);
@@ -315,7 +317,17 @@ notificationError.value = computed(() => {
   }
 })
 const requestNotificationPermission = () => {
-  if ("serviceWorker" in navigator && "Notification" in window && session?.value?.data?.user?.id) {
+  if(isSubscribedToPush.value){
+    $pwa.getSWRegistration().pushManager.getSubscription().then( async (subscription) =>{
+      await subscription.unsubscribe() 
+      // This only unsubscribes locally, but deleting it on the server is not important since it will autodelete once the server tries to send it and realizes its deleted client side
+      // It will throw an error in console, but that is normal and expected (since the subscription is gone).
+      await checkPushSubscription()
+      console.log("Unsubscribed from notifications")
+    })
+    return
+  }
+  else if ("serviceWorker" in navigator && "Notification" in window && session?.value?.data?.user?.id) {
     Notification.requestPermission()
       .then(async (permission) => {
         console.log("Permission:", permission);
