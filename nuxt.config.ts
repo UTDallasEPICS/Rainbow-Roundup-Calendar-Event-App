@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
-      NUXT_GOOGLE_PLACES: "",
+      NUXT_PUBLIC_GOOGLE_PLACES: process.env.NUXT_PUBLIC_GOOGLE_PLACES,
       PUBLIC_PUSH_VAPID_PUBLIC_KEY: process.env.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY  // basically sometimes the process.env stuff breaks, so in your .env, nuxt would be expecting a NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY
     },
     
