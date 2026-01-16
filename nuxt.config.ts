@@ -25,7 +25,7 @@ export default defineNuxtConfig({
     BETTER_AUTH_URL: process.env.URL,
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
 
-    NUXT_PUSH_VAPID_PRIVATE_KEY: process.env.NUXT_PUSH_VAPID_PRIVATE_KEY,
+    PUSH_VAPID_PRIVATE_KEY: process.env.NUXT_PUSH_VAPID_PRIVATE_KEY,
 
     UPLOAD_DIR: (process.env.NUXT_NODE_ENV == "prod" || process.env.NUXT_NODE_ENV == "stage") ? "" : "public/uploads"
      // if we are in prod, we have a variable set up. If we are not in prod, we use the public directory
