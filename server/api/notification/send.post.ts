@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   const runtimeConfig = useRuntimeConfig();
   const email = "mailto:noreply@example.com";
   const publicKey = runtimeConfig.public.PUSH_VAPID_PUBLIC_KEY; // Get keys from env file 
-  const privateKey = runtimeConfig.NUXT_PUSH_VAPID_PRIVATE_KEY;
+  const privateKey = runtimeConfig.PUSH_VAPID_PRIVATE_KEY;
   const prisma = event.context.prisma;
   const session = await auth.api.getSession({
       headers:  event.headers
