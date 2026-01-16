@@ -270,7 +270,7 @@ const promptInstall = async () => {
 };
 
 const updateSubscriptionStatus = () => {
-  notificationPermission.value = Notification.permission === "granted";
+  notificationPermission.value = Notification?.permission === "granted";
 };
 
 
@@ -294,7 +294,7 @@ async function checkPushSubscription() {
     }
     const subscription = await sw.pushManager.getSubscription()
     notifSubscription.value = subscription
-    isSubscribedToPush.value = !!subscription && Notification.permission === 'granted'
+    isSubscribedToPush.value = !!subscription && Notification?.permission === 'granted'
   } catch (e) {
     // in any failure case, treat as not subscribed
     notifSubscription.value = null
@@ -335,7 +335,7 @@ const requestNotificationPermission = () => {
         if (permission === "granted" && 'serviceWorker' in navigator) {
           notificationPermission.value = true;
           console.log("Both service worker and permission are good!");
-          const applicationServerKey = runtimeConfig.public.PUBLIC_PUSH_VAPID_PUBLIC_KEY;
+          const applicationServerKey = config.public.PUSH_VAPID_PUBLIC_KEY;
           console.log(`Public Key: ${applicationServerKey}`)
           navigator.serviceWorker.ready.then(async (serviceWorkerRegistration) => {
             const options = {
@@ -362,7 +362,7 @@ const requestNotificationPermission = () => {
           notificationPermission.value = false;
           window("Could not subscribe to notifications, either permission was not granted or your browser doesn't support service workers");
         }
-        notificationPermission.value = Notification.permission === "granted";
+        notificationPermission.value = Notification?.permission === "granted";
       })
   } else {
     console.warn("Notification API or Service Worker not supported.");
