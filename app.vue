@@ -328,7 +328,7 @@ const requestNotificationPermission = () => {
     return
   }
   else if ("serviceWorker" in navigator && "Notification" in window && session?.value?.data?.user?.id) {
-    Notification.requestPermission()
+    Notification?.requestPermission()
       .then(async (permission) => {
         console.log("Permission:", permission);
         console.log("Does service worker exist: ", 'serviceWorker' in navigator);
