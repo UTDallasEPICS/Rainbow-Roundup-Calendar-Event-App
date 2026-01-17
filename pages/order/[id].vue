@@ -107,6 +107,10 @@
                                 <h2 class="text-lg font-bold">Order Type</h2>
                                 <p>{{ order.orderType }}</p>
                             </div>
+                            <div>
+                                <h2 class="text-lg font-bold">Shipping Address</h2>
+                                <p>{{ order.shippingAddress }}</p>
+                            </div>
                             <!-- pickup -->
                             <div v-if="order.orderType == 'PICKUP'" class="flex flex-col gap-2">
                                 <div>
@@ -116,10 +120,6 @@
                             </div>
                             <!-- shipping -->
                             <div v-else class="flex flex-col gap-2">
-                                <div>
-                                    <h2 class="text-lg font-bold">Shipping Address</h2>
-                                    <p>{{ order.shippingAddress }}</p>
-                                </div>
                                 <div>
                                     <h2 class="text-lg font-bold">USPS Tracking Number</h2>
                                     <p v-if="order.trackingNumber != null && order.trackingNumber != undefined">

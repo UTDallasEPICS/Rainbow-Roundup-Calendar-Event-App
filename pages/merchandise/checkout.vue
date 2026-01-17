@@ -169,7 +169,11 @@ async function onPlaceOrder() {
   }
 }
 </script>
+
 <style scoped>
+  /* This is in raw CSS cause of the animation for the pickup/shipping toggle. I also figured it would get confusing to do half the CSS in tailwind and half in raw CSS
+  so everything is raw.
+  NOTE: This only contains CSS for the toggle and nothing else*/ 
 .toggle {
   display: flex;
   align-items: center;
@@ -178,7 +182,6 @@ async function onPlaceOrder() {
 
 .toggle-checkbox {
   display: none;
-  /* Hide the native checkbox */
 }
 
 .toggle-label {
