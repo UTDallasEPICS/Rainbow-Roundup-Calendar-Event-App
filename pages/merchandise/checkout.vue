@@ -1,4 +1,5 @@
 <template>
+  <SelectEvent v-if="isSelectingEvent" @close-window="isSelectingEvent = false" @select-event="(id) => selectEvent(id)"/>
   <div class="max-w-4xl mx-auto p-6">
     <h1 class="text-2xl font-bold mb-4">Checkout</h1>
 
@@ -18,6 +19,18 @@
             <span class="toggle-indicator" :class="{ 'pickup': isPickup, 'shipping': !isPickup }"></span>
           </label>
           <span class="toggle-text" style="margin-left: 10px">{{ isPickup ? 'Pickup' : 'Shipping' }}</span>
+        </div>
+
+        <div v-if="isPickup" class="my-4">
+          <div v-if="pickupEvent == null" class="flex flex-col items-center">
+            <div class="p-4 text-gray-400">No event selected. Please select an event to pick up your order at.</div>
+            <div class="w-1/3 text-white bg-green-500 px-4 py-2 mx-1 rounded hover:bg-green-600 cursor-pointer transition text-center" @click="isSelectingEvent = true">Select Event</div>
+          </div>
+          <div v-else class="flex flex-col items-center">
+            <div class="text-lg font-bold w-full text-left">Selected Event</div>
+            <EventCard :event="pickupEvent" />
+            <div class="w-1/3 text-white bg-green-500 px-4 py-2 mx-1 rounded hover:bg-green-600 cursor-pointer transition text-center" @click="isSelectingEvent = true">Change Event</div>
+          </div>
         </div>
 
       </section>
@@ -83,6 +96,9 @@ const toggleColor = ref("green")
 function toggle() {
   isPickup.value = !isPickup.value;
 }
+
+const isSelectingEvent = ref(false);
+const pickupEvent = ref(null);
 
 const saveInfo = ref(false)
 const placing = ref(false)
@@ -168,6 +184,23 @@ async function onPlaceOrder() {
     placing.value = false
   }
 }
+
+async function selectEvent(id) {
+  // fetch event
+  try {
+    const response = await $fetch(`/api/event/${id.value}`, {
+      method: "GET"
+    })
+    console.log(response)
+
+    pickupEvent.value = response.Event
+  }
+  catch (error) {
+    console.error("Error selecting event:", error);
+    alert("Error selecting event. Please try again.");
+  }
+}
+
 </script>
 <style scoped>
 .toggle {
