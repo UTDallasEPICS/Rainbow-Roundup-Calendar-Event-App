@@ -29,15 +29,15 @@
                         Loading...
                     </div>
                     <div v-else-if="upcomingEvents.length > 0" class="flex flex-wrap flex-row w-full">
-                        <div v-for="event in upcomingEvents" class="rounded shadow-md p-2 m-2" 
+                        <div v-for="event in upcomingEvents" class="rounded shadow-md p-2 m-2 w-full" 
                         :class="{ 
-                            'border-2': (event.id == selectedEventId), 
-                            'border-[#C028B9]': (event.id == selectedEventId),
                             'bg-[#C028B9]': (event.id == selectedEventId),
                             'text-white': (event.id == selectedEventId)}
                             "
                         @click="selectEvent(event.id)">
-                            {{ event.title }}
+                            <div class="font-bold text-lg">{{ event.title }}</div>
+                            <div>{{ formatDateTime(event.startTime) }}</div>
+                            <div>{{ event.location }}</div>
                         
                         </div>
                     </div>
@@ -135,8 +135,11 @@ function selectEvent(id) {
 }
 
 function formatDateTime(d) {
-    date = new Date(d)
-
-    return ""
+    return new Date(d).toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
 }
 </script>
