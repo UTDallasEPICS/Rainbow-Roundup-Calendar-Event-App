@@ -20,9 +20,10 @@
                         </svg>
                     </button>
             </div>
-
-
+            
             <div class="p-6 space-y-6">
+
+                <!-- upcoming event selection -->
                 <div>
                     <h2 class="w-full text-lg font-semibold text-gray-800">Select an upcoming event</h2>
                     <div v-if="isLoading" class="px-4 py-3 text-gray-400">
@@ -47,8 +48,8 @@
                     </div>
                 </div>
                 
-
-                <div>
+                <!-- manual id entry -->
+                <div v-if="isAdmin">
                     <h2 class="w-full text-lg font-semibold text-gray-800">or enter an event ID</h2>
                      <input v-model="selectedEventId" class="w-full border border-gray-400 p-1 rounded"></input>
                 </div>
@@ -76,6 +77,15 @@ const selectedEventId = ref("")
 const events = ref([])
 const upcomingEvents = ref([])
 const isLoading = ref(true)
+
+const { data: session } = await authClient.getSession();
+const isAdmin = computed(() => {
+  const role = session?.user?.role
+  if (!role) return false
+  if (role === 'SUPER') return true
+  if (role === 'ADMIN') return true
+  return false
+})
 
 // fetching events
 try {
