@@ -65,6 +65,9 @@
                                 <h2 class="text-lg font-bold">Order Status</h2>
                                 <p>{{ order.status }}</p>
                             </div>
+                            <button v-if="!(order.status==='PAID' || order.status==='DELIVERED')" class="bg-blue-300 px-4 py-2 mx-1 rounded hover:bg-blue-400 cursor-pointer transition" @click="verifyPayment()">
+                                {{verifyPaymentText}}
+                            </button>
                             <!-- order list -->
                             <div>
                                 <h2 class="text-lg font-bold">Items</h2>
@@ -197,6 +200,7 @@
 
                         <!-- right side -->
                         <div class="col-span-1 flex flex-col gap-2 p-4">
+                            
                             <div>
                                 <h2 class="text-lg font-bold">Order Type</h2>
                                 <div class="border border-gray-400 p-1 rounded">
@@ -206,6 +210,10 @@
                                     </select>
                                 </div>
                             </div>
+                            <div>
+                                    <h2 class="text-lg font-bold">Shipping Address</h2>
+                                    <textarea v-model="editedOrder.shippingAddress" class="w-full border border-gray-400 p-1 rounded resize-none" rows="3"></textarea>
+                                </div>
                             <!-- pickup -->
                             <div v-if="editedOrder.orderType == 'PICKUP'" class="flex flex-col gap-2">
                                 <div>
@@ -215,10 +223,7 @@
                             </div>
                             <!-- shipping -->
                             <div v-else class="flex flex-col gap-2">
-                                <div>
-                                    <h2 class="text-lg font-bold">Shipping Address</h2>
-                                    <textarea v-model="editedOrder.shippingAddress" class="w-full border border-gray-400 p-1 rounded resize-none" rows="3"></textarea>
-                                </div>
+                                
                                 <div>
                                     <h2 class="text-lg font-bold">USPS Tracking Number</h2>
                                     <input v-model="editedOrder.trackingNumber" class="w-full border border-gray-400 p-1 rounded"></input>
@@ -264,7 +269,7 @@ const order = ref(null)
 const isLoading = ref(true)
 const totalOrderPrice = ref(0)
 const isEditing = ref(false);
-
+const verifyPaymentText = ref("Check if PAID")
 //const test: OrderStatus = OrderStatus.UNCONFIRMED
 
 const editedOrder = reactive({
@@ -333,6 +338,25 @@ function calculateOrderPrice() {
 function makeEdits() {
     setEditedOrderToOrder();
     isEditing.value = true;
+}
+async function verifyPayment() { // 
+    const body = {
+        email: order.value.User.email,
+        orderId: order.value.id
+    }
+    verifyPaymentText.value = "Verifying"
+    try{
+        const result = await $fetch(`/api/order/verify`, {
+            method: "POST",
+            body: body
+        })
+        console.log(result)
+        window.location.reload()
+    }
+    catch(err){
+        console.log(err)
+        verifyPaymentText.value = "Could not verify payment"
+    }
 }
 
 async function saveChanges() {

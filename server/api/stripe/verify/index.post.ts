@@ -4,25 +4,25 @@ import { prisma } from '~/server/utils/prisma';
 const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY!);
 
 function formatAddress(address: Stripe.Address | null | undefined) {
-  if (!address) return 'No address provided';
-  
-  const components = [
-    address.line1,
-    address.line2,
-    address.city,
-    address.state,
-    address.postal_code,
-    address.country
-  ];
-  
-  // Filter out any undefined or empty components
-  return components
-    .filter(component => component && component.trim() !== '')
-    .join(', ');
+    if (!address) return 'No address provided';
+
+    const components = [
+        address.line1,
+        address.line2,
+        address.city,
+        address.state,
+        address.postal_code,
+        address.country
+    ];
+
+    // Filter out any undefined or empty components
+    return components
+        .filter(component => component && component.trim() !== '')
+        .join(', ');
 }
 export default defineEventHandler(async (event) => {
     const body = await readBody(event);
-    if(!body.sessionId){
+    if (!body.sessionId) {
         setResponseStatus(event, 400);
         return {
             error: "No session id provided"
@@ -30,18 +30,25 @@ export default defineEventHandler(async (event) => {
     }
     const session = await stripe.checkout.sessions.retrieve(body.sessionId);
     const orderId = session?.metadata?.orderId
-    console.log("order id: ",orderId)
-    if(!orderId){
+    if (!orderId) {
         setResponseStatus(event, 400);
         return {
             error: "No orderId can be connected to the order"
         }
     }
-    // Check if the session was paid
+    // Check if the session was paid or delivered, no need to overwrite db value
+    const order = await prisma.order.findUnique({
+        where: {
+            id: orderId
+        },
+    })
+    if(order?.status === "PAID" || order?.status === "DELIVERED"){
+        return {session}
+    }
     const updateData: any = {};
     updateData.status = "PAID"
     const shippingAddress = formatAddress(session.customer_details?.address);
-    if(shippingAddress){
+    if (shippingAddress) {
         updateData.shippingAddress = shippingAddress // I remember Kimberly asking for shipping address on all orders (including pickup)
     }
     if (session.payment_status === 'paid') {
@@ -50,11 +57,11 @@ export default defineEventHandler(async (event) => {
                 id: orderId
             },
             data: updateData
-            
+
         })
-        return {session };
+        return { session };
     } else {
         setResponseStatus(event, 400);
-        return {error: 'Payment not completed' };
+        return { error: 'Payment not completed' };
     }
 })
