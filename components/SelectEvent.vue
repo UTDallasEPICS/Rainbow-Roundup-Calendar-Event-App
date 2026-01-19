@@ -28,8 +28,8 @@
                     <div v-if="isLoading" class="px-4 py-3 text-gray-400">
                         Loading...
                     </div>
-                    <div v-else-if="events.length > 0" class="flex flex-wrap flex-row w-full">
-                        <div v-for="event in events" class="rounded shadow-md p-2 m-2" 
+                    <div v-else-if="upcomingEvents.length > 0" class="flex flex-wrap flex-row w-full">
+                        <div v-for="event in upcomingEvents" class="rounded shadow-md p-2 m-2" 
                         :class="{ 
                             'border-2': (event.id == selectedEventId), 
                             'border-[#C028B9]': (event.id == selectedEventId),
@@ -49,6 +49,7 @@
 
                 <div>
                     <h2 class="w-full text-lg font-semibold text-gray-800">or enter an event ID</h2>
+                     <input v-model="selectedEventId" class="w-full border border-gray-400 p-1 rounded"></input>
                 </div>
 
                 <!-- manage buttons -->
@@ -71,8 +72,8 @@ import { ref } from "vue";
 const emit = defineEmits(['selectEvent', 'closeWindow'])
 
 const selectedEventId = ref("")
-const enteredEvent = ref("")
 const events = ref([])
+const upcomingEvents = ref([])
 const isLoading = ref(true)
 
 // fetching events
@@ -80,9 +81,19 @@ try {
     const response = await useFetch(`/api/event`, {
         query: { method: "GET" }
     })
-
-    console.log(response)
     events.value = response.data.value
+
+    // remove any past events
+    const now = Date.now();
+    for (let i = 0; i < events.value.length; i++) {
+        const currEventTime = new Date(events.value[i].endTime)
+
+        // if event end time is before current time, then it is a past event
+        if (now < currEventTime) {
+            upcomingEvents.value.push(events.value.slice(i, i+1)[0])
+        }
+        console.log(events)
+    }
 
 }
 catch (error) {
@@ -92,20 +103,17 @@ finally {
     isLoading.value = false
 }
 
-function confirmSelection() {
-
-    if (enteredEvent.value != null && enteredEvent.value != "")
-    {
-        selectedEventId.value = enteredEvent.value;
-    }
-    
+async function confirmSelection() {
     // check if event exists
+    if (selectedEventId.value == "") {
+        alert("Please select an event.");
+        return
+    }
+
     try {
-        const response = $fetch(`/api/event/${selectedEventId.value}`, {
+        const response = await $fetch(`/api/event/${selectedEventId.value}`, {
             method: "GET"
         })
-
-        console.log(response)
 
         emit('selectEvent', selectedEventId)
         closeWindow()
@@ -129,7 +137,6 @@ function selectEvent(id) {
 function formatDateTime(d) {
     date = new Date(d)
 
-    return 
+    return ""
 }
-
 </script>

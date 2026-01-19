@@ -1,5 +1,5 @@
 <template>
-    <SelectEvent />
+    <SelectEvent v-if="isSelectingEvent" @close-window="isSelectingEvent = false" @select-event="(id) => editedOrder.pickupEventID = id"/>
     <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-start p-6">
         <!-- navigating back arrow -->
         <div class="w-full px-6 py-4 inline-flex hover:text-zinc-900 hover:cursor-pointer" @click="$router.back()">
@@ -210,8 +210,8 @@
                             <!-- pickup -->
                             <div v-if="editedOrder.orderType == 'PICKUP'" class="flex flex-col gap-2">
                                 <div>
-                                    <h2 class="text-lg font-bold">Pickup Event ID</h2>
-                                    <input v-model="editedOrder.pickupEventID" class="w-full border border-gray-400 p-1 rounded"></input>
+                                    <h2 class="text-lg font-bold">Pickup Event</h2>
+                                    <div @click="isSelectingEvent = true">Change Event</div>
                                 </div>
                             </div>
                             <!-- shipping -->
@@ -266,6 +266,7 @@ const order = ref(null)
 const isLoading = ref(true)
 const totalOrderPrice = ref(0)
 const isEditing = ref(false);
+const isSelectingEvent = ref(false);
 
 //const test: OrderStatus = OrderStatus.UNCONFIRMED
 
