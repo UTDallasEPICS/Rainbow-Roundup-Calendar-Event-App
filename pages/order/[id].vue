@@ -1,4 +1,5 @@
 <template>
+    <SelectEvent />
     <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-start p-6">
         <!-- navigating back arrow -->
         <div class="w-full px-6 py-4 inline-flex hover:text-zinc-900 hover:cursor-pointer" @click="$router.back()">
@@ -252,6 +253,7 @@
 import { ref, computed, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import { authClient } from "~/composables/auth"
+import SelectEvent from '../../components/SelectEvent.vue';
 
 // Access the route and router
 const route = useRoute()
