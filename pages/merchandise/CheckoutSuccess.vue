@@ -1,9 +1,8 @@
 <template>
   <div class="max-w-2xl mx-auto p-6 text-center">
     <h1 class="text-2xl font-bold mb-4">{{ thankText }}</h1>
-    <p class="text-gray-700 mb-6">
-      Your order is being processed. This is a demo checkout — connect Stripe or your payment provider to complete
-      payments.
+    <p v-if="paymentSuccess" class="text-gray-700 mb-6">
+      Your order is being processed. Please contact us if you have any questions regarding the delivery or status of your order.
     </p>
 
     <div class="mb-6">
