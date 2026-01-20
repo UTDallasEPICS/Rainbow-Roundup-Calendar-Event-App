@@ -1,5 +1,5 @@
 <template>
-    <SelectEvent v-if="isSelectingEvent" @close-window="isSelectingEvent = false" @select-event="(id) => editedOrder.pickupEventID = id"/>
+    <SelectEvent v-if="isSelectingEvent" @close-window="isSelectingEvent = false" @select-event="(id) => selectEvent(id)"/>
     <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-start p-6">
         <!-- navigating back arrow -->
         <div class="w-full px-6 py-4 inline-flex hover:text-zinc-900 hover:cursor-pointer" @click="$router.back()">
@@ -219,7 +219,11 @@
                             <div v-if="editedOrder.orderType == 'PICKUP'" class="flex flex-col gap-2">
                                 <div>
                                     <h2 class="text-lg font-bold">Pickup Event</h2>
-                                    <div @click="isSelectingEvent = true">Change Event</div>
+                                    <div v-if="editedOrder.event != null">
+                                        <EventCard :event="editedOrder.event" />
+                                    </div>
+                                    <div v-else class="p-4 text-gray-400">No event selected. Please select an event to pick up your order at.</div>
+                                    <div @click="isSelectingEvent = true" class="text-white bg-green-500 px-4 py-2 mx-1 rounded hover:bg-green-600 cursor-pointer transition text-center">Select Event</div>
                                 </div>
                             </div>
                             <!-- shipping -->
@@ -277,6 +281,7 @@ const isSelectingEvent = ref(false);
 //const test: OrderStatus = OrderStatus.UNCONFIRMED
 
 const editedOrder = reactive({
+    event: null,
     status: "UNCONFIRMED",
     orderType: "PICKUP",
     shippingAddress: null,
@@ -367,6 +372,11 @@ async function saveChanges() {
     // verify inputs
     var event
 
+    if (editedOrder.shippingAddress == null || !editedOrder.shippingAddress) {
+            alert("Shipping address is required.")
+            return
+        }
+
     // if pickup order
     if (editedOrder.orderType == 'PICKUP') {
         if (!editedOrder.pickupEventID || editedOrder.pickupEventID == '' || editedOrder.pickupEventID == null)
@@ -393,14 +403,9 @@ async function saveChanges() {
          
         
         // set shipping to null
-        editedOrder.shippingAddress = null;
         editedOrder.trackingNumber = null;
     }
     else {
-        if (editedOrder.shippingAddress == null || !editedOrder.shippingAddress) {
-            alert("Shipping address is required.")
-            return
-        }
 
         // set pickup event stuff to null
         editedOrder.pickupEventID == null;
@@ -431,6 +436,7 @@ function cancelEdit() {
 }
 
 function setEditedOrderToOrder() {
+    editedOrder.event = order.value.event
     editedOrder.status = order.value.status
     editedOrder.orderType = order.value.orderType
     editedOrder.shippingAddress = order.value.shippingAddress
@@ -438,4 +444,19 @@ function setEditedOrderToOrder() {
     editedOrder.trackingNumber = order.value.trackingNumber
 }
 
+async function selectEvent(id) {
+  // fetch event
+  try {
+    const response = await $fetch(`/api/event/${id.value}`, {
+      method: "GET"
+    })
+
+    editedOrder.event = response.Event
+    editedOrder.pickupEventID = id;
+  }
+  catch (error) {
+    console.error("Error selecting event:", error);
+    alert("Error selecting event. Please try again.");
+  }
+}
 </script>
