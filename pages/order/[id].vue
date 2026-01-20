@@ -1,4 +1,5 @@
 <template>
+    <SelectEvent v-if="isSelectingEvent" @close-window="isSelectingEvent = false" @select-event="(id) => selectEvent(id)"/>
     <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-start p-6">
         <!-- navigating back arrow -->
         <div class="w-full px-6 py-4 inline-flex hover:text-zinc-900 hover:cursor-pointer" @click="$router.back()">
@@ -65,6 +66,9 @@
                                 <h2 class="text-lg font-bold">Order Status</h2>
                                 <p>{{ order.status }}</p>
                             </div>
+                            <button v-if="!(order.status==='PAID' || order.status==='DELIVERED')" class="bg-blue-300 px-4 py-2 mx-1 rounded hover:bg-blue-400 cursor-pointer transition" @click="verifyPayment()">
+                                {{verifyPaymentText}}
+                            </button>
                             <!-- order list -->
                             <div>
                                 <h2 class="text-lg font-bold">Items</h2>
@@ -107,6 +111,10 @@
                                 <h2 class="text-lg font-bold">Order Type</h2>
                                 <p>{{ order.orderType }}</p>
                             </div>
+                            <div>
+                                <h2 class="text-lg font-bold">Shipping Address</h2>
+                                <p>{{ order.shippingAddress }}</p>
+                            </div>
                             <!-- pickup -->
                             <div v-if="order.orderType == 'PICKUP'" class="flex flex-col gap-2">
                                 <div>
@@ -116,10 +124,6 @@
                             </div>
                             <!-- shipping -->
                             <div v-else class="flex flex-col gap-2">
-                                <div>
-                                    <h2 class="text-lg font-bold">Shipping Address</h2>
-                                    <p>{{ order.shippingAddress }}</p>
-                                </div>
                                 <div>
                                     <h2 class="text-lg font-bold">USPS Tracking Number</h2>
                                     <p v-if="order.trackingNumber != null && order.trackingNumber != undefined">
@@ -197,6 +201,7 @@
 
                         <!-- right side -->
                         <div class="col-span-1 flex flex-col gap-2 p-4">
+                            
                             <div>
                                 <h2 class="text-lg font-bold">Order Type</h2>
                                 <div class="border border-gray-400 p-1 rounded">
@@ -206,19 +211,24 @@
                                     </select>
                                 </div>
                             </div>
+                            <div>
+                                    <h2 class="text-lg font-bold">Shipping Address</h2>
+                                    <textarea v-model="editedOrder.shippingAddress" class="w-full border border-gray-400 p-1 rounded resize-none" rows="3"></textarea>
+                                </div>
                             <!-- pickup -->
                             <div v-if="editedOrder.orderType == 'PICKUP'" class="flex flex-col gap-2">
                                 <div>
-                                    <h2 class="text-lg font-bold">Pickup Event ID</h2>
-                                    <input v-model="editedOrder.pickupEventID" class="w-full border border-gray-400 p-1 rounded"></input>
+                                    <h2 class="text-lg font-bold">Pickup Event</h2>
+                                    <div v-if="editedOrder.event != null">
+                                        <EventCard :event="editedOrder.event" />
+                                    </div>
+                                    <div v-else class="p-4 text-gray-400">No event selected. Please select an event to pick up your order at.</div>
+                                    <div @click="isSelectingEvent = true" class="text-white bg-green-500 px-4 py-2 mx-1 rounded hover:bg-green-600 cursor-pointer transition text-center">Select Event</div>
                                 </div>
                             </div>
                             <!-- shipping -->
                             <div v-else class="flex flex-col gap-2">
-                                <div>
-                                    <h2 class="text-lg font-bold">Shipping Address</h2>
-                                    <textarea v-model="editedOrder.shippingAddress" class="w-full border border-gray-400 p-1 rounded resize-none" rows="3"></textarea>
-                                </div>
+                                
                                 <div>
                                     <h2 class="text-lg font-bold">USPS Tracking Number</h2>
                                     <input v-model="editedOrder.trackingNumber" class="w-full border border-gray-400 p-1 rounded"></input>
@@ -252,6 +262,7 @@
 import { ref, computed, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import { authClient } from "~/composables/auth"
+import SelectEvent from '../../components/SelectEvent.vue';
 
 // Access the route and router
 const route = useRoute()
@@ -264,10 +275,13 @@ const order = ref(null)
 const isLoading = ref(true)
 const totalOrderPrice = ref(0)
 const isEditing = ref(false);
+const verifyPaymentText = ref("Check if PAID")
+const isSelectingEvent = ref(false);
 
 //const test: OrderStatus = OrderStatus.UNCONFIRMED
 
 const editedOrder = reactive({
+    event: null,
     status: "UNCONFIRMED",
     orderType: "PICKUP",
     shippingAddress: null,
@@ -334,10 +348,34 @@ function makeEdits() {
     setEditedOrderToOrder();
     isEditing.value = true;
 }
+async function verifyPayment() { // 
+    const body = {
+        email: order.value.User.email,
+        orderId: order.value.id
+    }
+    verifyPaymentText.value = "Verifying"
+    try{
+        const result = await $fetch(`/api/order/verify`, {
+            method: "POST",
+            body: body
+        })
+        console.log(result)
+        window.location.reload()
+    }
+    catch(err){
+        console.log(err)
+        verifyPaymentText.value = "Could not verify payment"
+    }
+}
 
 async function saveChanges() {
     // verify inputs
     var event
+
+    if (editedOrder.shippingAddress == null || !editedOrder.shippingAddress) {
+            alert("Shipping address is required.")
+            return
+        }
 
     // if pickup order
     if (editedOrder.orderType == 'PICKUP') {
@@ -365,14 +403,9 @@ async function saveChanges() {
          
         
         // set shipping to null
-        editedOrder.shippingAddress = null;
         editedOrder.trackingNumber = null;
     }
     else {
-        if (editedOrder.shippingAddress == null || !editedOrder.shippingAddress) {
-            alert("Shipping address is required.")
-            return
-        }
 
         // set pickup event stuff to null
         editedOrder.pickupEventID == null;
@@ -403,6 +436,7 @@ function cancelEdit() {
 }
 
 function setEditedOrderToOrder() {
+    editedOrder.event = order.value.event
     editedOrder.status = order.value.status
     editedOrder.orderType = order.value.orderType
     editedOrder.shippingAddress = order.value.shippingAddress
@@ -410,4 +444,19 @@ function setEditedOrderToOrder() {
     editedOrder.trackingNumber = order.value.trackingNumber
 }
 
+async function selectEvent(id) {
+  // fetch event
+  try {
+    const response = await $fetch(`/api/event/${id.value}`, {
+      method: "GET"
+    })
+
+    editedOrder.event = response.Event
+    editedOrder.pickupEventID = id;
+  }
+  catch (error) {
+    console.error("Error selecting event:", error);
+    alert("Error selecting event. Please try again.");
+  }
+}
 </script>

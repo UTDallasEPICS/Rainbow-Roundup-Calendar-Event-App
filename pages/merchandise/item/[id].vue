@@ -180,7 +180,7 @@ const addToCart = () => {
   }
 
   const cartItem = {
-    variantId: (selectedVariant as any).id,
+    itemVariantId: (selectedVariant as any).id,
     productId: item.value!.id,
     name: item.value!.name,
     description:
@@ -193,7 +193,7 @@ const addToCart = () => {
   };
 
   cart.addItem(cartItem);
-  // small UX improvement: keep user on page but show mini confirm
-  alert(`${cartItem.quantity} × "${cartItem.name}" (${selectedSize.value}) added to cart`);
+  // I commented this alert cause it seems more annoying than useful
+  // alert(`${cartItem.quantity} × "${cartItem.name}" (${selectedSize.value}) added to cart`);
 };
 </script>
