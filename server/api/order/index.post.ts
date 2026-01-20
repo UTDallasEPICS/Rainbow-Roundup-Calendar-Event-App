@@ -50,12 +50,12 @@ export default defineEventHandler(async (event) => {
         }
         if(body.orderType === "PICKUP"){
             
-            /*if(!body.pickupEventID){
+            if(!body.pickupEventID){
                 return{
                     success: false,
                     error: "Pickup orders need to have an associated event"
                 }
-            }*/
+            }
            console.log('Remember to uncomment the restriction forcing an event ID for pickup orders')
         }
         if(body.orderType === "DELIVERY"){

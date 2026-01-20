@@ -132,6 +132,7 @@ const sendOrder = async () => {
       orderItems: cart.items,
       orderType: shippingType, // TODO: Add code later to handle pickup orders
       shippingAddress: "not collected yet", // This doesn't matter, will get overwritten later
+      pickupEventID: pickupEvent?.value?.id
       
     },
   });
