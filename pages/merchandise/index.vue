@@ -236,8 +236,8 @@
       console.log('Shop by Style clicked')
     }
 
-    const addToCart = (variantId) => {
-      cart.value.push(variantId);
+    const addToCart = (itemVariantId) => {
+      cart.value.push(itemVariantId);
     };
 
     const handleShopByFit = () => {

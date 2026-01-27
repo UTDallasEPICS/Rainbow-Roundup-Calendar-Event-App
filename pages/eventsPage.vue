@@ -75,7 +75,7 @@
 
 <script>
 import EventList from "~/components/EventList.vue";
-import { fetchCombinedEvents } from "../server/utils/fetchCombinedEvents";
+import { fetchCombinedEvents } from "~/server/utils/fetchCombinedEvents";
 
 export default {
   name: "EventsPage",

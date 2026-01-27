@@ -111,7 +111,7 @@ const props = defineProps<{
 
 // Emit the variant ID when adding to cart (CHANGED)
 const emit = defineEmits<{
-  (e: "add-to-cart", variantId: string, qty: number): void;
+  (e: "add-to-cart", itemVariantId: string, qty: number): void;
 }>(); 
 
 
