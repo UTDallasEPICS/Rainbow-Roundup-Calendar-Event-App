@@ -270,7 +270,10 @@ const promptInstall = async () => {
 };
 
 const updateSubscriptionStatus = () => {
+  if('Notification' in window){
+
   notificationPermission.value = Notification?.permission === "granted";
+  }
 };
 
 
