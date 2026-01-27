@@ -270,6 +270,8 @@ const promptInstall = async () => {
 };
 
 const updateSubscriptionStatus = () => {
+  if (!import.meta.client) { return; } // only read this during client side rendering
+
   notificationPermission.value = Notification?.permission === "granted";
 };
 
