@@ -148,6 +148,7 @@
           description-color="text-white"
           button-color="bg-[#6B9F00]"
           external-link="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
+          image="/images/Donation.png"
           class="h-48"
         />
         
@@ -161,6 +162,7 @@
           description-color="text-white"
           button-color="bg-[#2A6BAA]"
           internal-link="/aboutUs"
+          image="/images/Community.png"
           class="h-48"
         />
         
@@ -174,6 +176,7 @@
           description-color="text-white"
           button-color="bg-[#8F1E8A]"
           internal-link="/merchandise"
+          image="/images/Merchandise.png"
           class="h-48"
         />
       </div>

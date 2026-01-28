@@ -3,7 +3,7 @@
     class="relative h-48 rounded-[20px] shadow-lg p-6 flex flex-col"
     :class="bgColor"
   >
-    <div class="flex-1 flex flex-col justify-center">
+    <div class="flex-1 flex flex-col justify-center pr-1/3">
       <div class="text-2xl font-semibold mb-2" :class="titleColor">
         {{ title }}
       </div>
@@ -11,7 +11,14 @@
         {{ description }}
       </div>
     </div>
-    
+
+    <img
+      v-if="image"
+      :src="image"
+      alt="Card image"
+      class="absolute right-4 top-1/2 transform -translate-y-1/2 w-1/3 h-auto object-contain"
+    />
+
     <a
       v-if="externalLink"
       :href="externalLink"
@@ -22,7 +29,7 @@
     >
       {{ buttonText }}
     </a>
-    
+
     <NuxtLink v-if="internalLink && !externalLink" :to="internalLink">
       <button 
         class="w-24 h-10 text-white text-sm font-semibold uppercase rounded-lg flex items-center justify-center hover:opacity-90 transition-opacity"
@@ -31,7 +38,7 @@
         {{ buttonText }}
       </button>
     </NuxtLink>
-    
+
     <button 
       v-if="!externalLink && !internalLink"
       class="w-24 h-10 text-white text-sm font-semibold uppercase rounded-lg flex items-center justify-center hover:opacity-90 transition-opacity"
@@ -77,6 +84,10 @@ defineProps({
     default: null
   },
   internalLink: {
+    type: String,
+    default: null
+  },
+  image: {
     type: String,
     default: null
   }
