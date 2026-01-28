@@ -27,9 +27,9 @@
       </div>
     </div>
     <!-- PWA Manifest and Route Announcer -->
-    <NuxtPwaManifest />
+    <NuxtPwaManifest /> 
     <NuxtRouteAnnouncer />
-    <div class="z-50 sticky bg-blue-600 text-white text-sm px-4 py-1">
+    <div class="z-50 sticky bg-[#3A8DDE] text-white text-sm px-4 py-1">
       <div class="flex justify-between items-center max-w-7xl mx-auto">
         <!-- Left side: email with icon -->
         <div class="flex items-center gap-2 flex-grow">
@@ -55,9 +55,8 @@
     <div class="sticky top-0 z-50 bg-white shadow-sm">
       <div class="flex justify-between items-center px-4 py-2">
         <div class="flex items-center space-x-2">
-          <a href="https://rrup.org/">
-            <img src="/images/rrup_logo.png" alt="Rainbow Roundup Logo" class="h-12 w-auto"
-              href="https://rrup.org/" />
+          <a href="/">
+            <img src="/images/rrup_logo.png" alt="Rainbow Roundup Logo" class="h-12 w-auto" />
           </a>
         </div>
 
@@ -79,29 +78,29 @@
           <button v-else @click="logout" class="text-gray-700 hover:text-black">
             Logout
           </button>
+          
           <button @click="promptInstall" class="text-gray-700 hover:text-black">
             Install App
           </button>
-          <!-- This is hidden if your browser does not support it, so I dont have to figure out a pretty way to write the error message-->
-          <button @click="requestNotificationPermission();console.log('subscription: ',notifSubscription); showNotifError = true" v-if="($pwa?.getSWRegistration()?.pushManager)" 
-            class="flex items-center  text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+          <!-- Device Notifications Button - Only shows when user is logged in -->
+          <button @click="requestNotificationPermission()" v-if="session?.data?.user?.id && $pwa.getSWRegistration()?.pushManager" 
+            class="flex items-center text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             aria-label="Toggle notifications">
             <span class="mr-2">Device notifications</span>
-            <span v-if="isSubscribedToPush ">
-              <!-- Bell icon -->
+            <span v-if="isSubscribedToPush">
+              <!-- Bell icon (notifications enabled) -->
               <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round"
                   d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
               </svg>
             </span>
             <span v-else>
-              <!-- Bell with slash -->
+              <!-- Bell with slash (notifications disabled) -->
               <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round"
                   d="M9.143 17.082a24.248 24.248 0 0 0 3.844.148m-3.844-.148a23.856 23.856 0 0 1-5.455-1.31 8.964 8.964 0 0 0 2.3-5.542m3.155 6.852a3 3 0 0 0 5.667 1.97m1.965-2.277L21 21m-4.225-4.225a23.81 23.81 0 0 0 3.536-1.003A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6.53 6.53m10.245 10.245L6.53 6.53M3 3l3.53 3.53" />
               </svg>
             </span>
-            
           </button>
         </nav>
         <!-- Hamburger Button - md: sizing -->
@@ -148,34 +147,30 @@
           <button @click="promptInstall(); handleMobileNavClick()"
             class="block py-2 text-left text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2">Install
             App</button>
-          <button @click="requestNotificationPermission(); handleMobileNavClick()"
+          <!-- Device Notifications Button - Only shows when user is logged in -->
+          <button 
+            v-if="session?.data?.user?.id && $pwa.getSWRegistration()?.pushManager" 
+            @click="requestNotificationPermission(); handleMobileNavClick()"
             class="flex items-center py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2 border-0"
             aria-label="Toggle notifications">
             <span class="mr-2">Device notifications</span>
             <span v-if="isSubscribedToPush">
-              <!-- Bell icon -->
+              <!-- Bell icon (notifications enabled) -->
               <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round"
                   d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
               </svg>
             </span>
             <span v-else>
-              <!-- Bell with slash -->
+              <!-- Bell with slash (notifications disabled) -->
               <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round"
                   d="M9.143 17.082a24.248 24.248 0 0 0 3.844.148m-3.844-.148a23.856 23.856 0 0 1-5.455-1.31 8.964 8.964 0 0 0 2.3-5.542m3.155 6.852a3 3 0 0 0 5.667 1.97m1.965-2.277L21 21m-4.225-4.225a23.81 23.81 0 0 0 3.536-1.003A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6.53 6.53m10.245 10.245L6.53 6.53M3 3l3.53 3.53" />
               </svg>
             </span>
-            <span>{{ notificationError }}</span>
           </button>
         </nav>
       </div>
-      <span class="fixed box-border w-60 shadow-lg h-auto top-20 right-0 z-50 text-center items-center justify-center float-right bg-inherit rounded-lg p-1  border-gray-400 active:bg-gray-200 hover:bg-gray-200" v-if="showNotifError && notificationError.value" tabindex="0" aria-modal="true" role="dialog">
-        <NuxtLink to="/login" @click="showNotifError = false">
-          
-        {{ notificationError }}
-        </NuxtLink>
-      </span>
     </div>
     <NuxtPage class="min-h-screen" />
   </div>
@@ -196,9 +191,7 @@ const mobileMenuOpen = ref(false);
 const notificationPermission = ref(false);
 const deferredPrompt = ref(null);
 const runtimeConfig = useRuntimeConfig();
-const notificationError = ref(null);
 const isSubscribedToPush = ref(false);
-const showNotifError = ref(false);
 const { $pwa } = useNuxtApp();
 const notifSubscription = ref(null)
 // Toggles resized mobile menu view
@@ -306,19 +299,6 @@ async function checkPushSubscription() {
 }
 // dummy comment
 
-notificationError.value = computed(() => {
-  if (!($pwa?.getSWRegistration()?.pushManager)) {
-    return "Not supported in your browser";
-  }
-  else {
-    if(session?.value?.data?.user) {
-      return null;
-    }
-    else {
-      return "Login to register notifications";  
-    }
-  }
-})
 const requestNotificationPermission = () => {
   if(isSubscribedToPush.value){
     $pwa.getSWRegistration().pushManager.getSubscription().then( async (subscription) =>{
@@ -363,7 +343,7 @@ const requestNotificationPermission = () => {
 
         } else {
           notificationPermission.value = false;
-          window("Could not subscribe to notifications, either permission was not granted or your browser doesn't support service workers");
+          console.warn("Could not subscribe to notifications, either permission was not granted or your browser doesn't support service workers");
         }
         notificationPermission.value = Notification?.permission === "granted";
       })

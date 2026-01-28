@@ -161,7 +161,7 @@
       } catch (err) {
         error.value = err?.message || "Unknown error fetching items";
         console.error("Failed to fetch items:", err);
-      } finally {
+      } finally { 
         loading.value = false;
       }
     });
