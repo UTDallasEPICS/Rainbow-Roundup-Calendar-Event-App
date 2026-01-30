@@ -1,8 +1,23 @@
 import { PrismaClient } from '@prisma/client';
+import { auth } from "~/server/auth"
+import type { User } from "@prisma/client";
 
 export default defineEventHandler(async (event) => {
     const prisma = event.context.prisma;
     try{
+
+        const session = await auth.api.getSession({
+            headers:  event.headers
+        })
+        const user = session?.user as User | undefined;
+    
+        if (!user || !["SUPER", "ADMIN"].includes(user.role)) {
+            throw createError({
+                statusMessage: "Unauthenticated",
+                statusCode: 403,
+            });
+        }
+
         const events = await prisma.report.findMany({
             where: {
                 isArchived: false
@@ -19,7 +34,7 @@ export default defineEventHandler(async (event) => {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
         return {
           success: false,
-          error: `Error fetching user(s): ${errorMessage}`,
+          error: `Error fetching report(s): ${errorMessage}`,
         };
       }
 });

@@ -1,9 +1,24 @@
 import { EventImpl } from '@fullcalendar/core/internal.js';
 import { PrismaClient } from '@prisma/client';
+import { auth } from "~/server/auth"
+import type { User } from "@prisma/client";
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
   const id = getRouterParam(event, 'id')
+  
+  const session = await auth.api.getSession({
+      headers:  event.headers
+    })
+  const user = session?.user as User | undefined;
+  
+  // check authentication
+  if (!user || !["SUPER", "ADMIN"].includes(user.role)) {
+    return {
+    success: false,
+    error: "Unauthenticated",
+    };
+  }
 
   if (!id) {
     setResponseStatus(event, 400)

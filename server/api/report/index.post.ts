@@ -1,8 +1,7 @@
 import { PrismaClient } from '@prisma/client';
-
-import { User } from "../../../types/session";
-
+import type { User } from "@prisma/client";
 import { auth } from '~/server/auth';
+
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const prisma = event.context.prisma;

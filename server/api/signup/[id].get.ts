@@ -7,12 +7,18 @@ export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, "id");
 
   try {
+
+    // check user level
+    // if user level too low, only include user name (no email etcetc)
+
     if (id) {
       // Fetch a single signup by ID with relations if needed (e.g., Event or User)
       const singleSignup = await prisma.signUp.findUnique({
         where: { id },
         include: { Event: true, User: true }, // Include relations like event and user
       });
+
+      
 
       if (!singleSignup) {
         setResponseStatus(event, 404);
