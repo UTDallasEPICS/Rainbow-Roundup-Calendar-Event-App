@@ -73,7 +73,7 @@
           </a>
           <NuxtLink v-if="session?.data?.user?.id" to="/profile" @click="navigate('Profile')" class="text-gray-700 hover:text-black">Profile
           </NuxtLink>
-          <NuxtLink v-if="!(session?.data?.user?.id)" to="/signup" @click="navigate('Sign Up')" class="text-gray-700 hover:text-black">
+          <NuxtLink v-if="!(session?.data?.user?.id)" to="/login" @click="navigate('Sign Up')" class="text-gray-700 hover:text-black">
             Sign Up/Log In</NuxtLink>
           <button v-else @click="logout" class="text-gray-700 hover:text-black">
             Logout
@@ -138,7 +138,7 @@
             @click="handleMobileNavClick">Donate</a>
           <NuxtLink v-if="session?.data?.user?.id" to="/profile" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
           @click.native="handleMobileNavClick">Profile</NuxtLink>
-          <NuxtLink v-if="(!session?.data?.user?.id)" to="/signup" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+          <NuxtLink v-if="(!session?.data?.user?.id)" to="/login" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             @click.native="handleMobileNavClick">
             Sign Up/Log In</NuxtLink>
           <button v-else @click="logout(); handleMobileNavClick()"
@@ -177,7 +177,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted} from "vue";
+import { ref, onMounted } from "vue";
 // Use the built-in auth composable instead of custom useUser
 import { authClient } from "~/composables/auth"
 const session = authClient.useSession()
@@ -355,7 +355,6 @@ const requestNotificationPermission = () => {
 const logout = async () => {
   await authClient.signOut();
   window.location.reload(true);
-  //console.log("Implement logout")
 };
 const navigate = (section) => {
   // close mobile menu when navigating
