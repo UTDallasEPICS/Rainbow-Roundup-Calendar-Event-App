@@ -1,16 +1,16 @@
 import { createTransport } from "nodemailer";
+import { getTransportOptions } from '../utils/getTransportOptions';
+import { SESv2Client, SendEmailCommand } from '@aws-sdk/client-sesv2'
+import nodemailer from 'nodemailer' // this is for createTransport function call, unsure if we actually need it or not
+
 
 export const sendVerificationEmail = async (email: string, token: string, login: boolean) => {
   const config = useRuntimeConfig();
   const siteUrl = config.url || "http://localhost:3000";
 
-  const transporter = createTransport({
-    service: "gmail",
-    auth: {
-      user: config.smtpUser,
-      pass: config.smtpPass,
-    },
-  });
+  const transporter = createTransport(
+    getTransportOptions()
+  );
 
   const verificationUrl = `${siteUrl}/verify?token=${token}`;
 
