@@ -13,9 +13,10 @@
     "lint:fix": "eslint . --fix"
   },
   "resolutions": {
-  "magicast": "0.5.1"
-},
+    "magicast": "0.5.1"
+  },
   "dependencies": {
+    "@aws-sdk/client-sesv2": "^3.980.0",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
     "@fullcalendar/interaction": "^6.1.15",
