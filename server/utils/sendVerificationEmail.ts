@@ -1,5 +1,5 @@
 import { createTransport } from "nodemailer";
-import { getTransportOptions } from '../utils/getTransportOptions';
+import { getTransport } from '~~/server/utils/getTransport';
 import { SESv2Client, SendEmailCommand } from '@aws-sdk/client-sesv2'
 import nodemailer from 'nodemailer' // this is for createTransport function call, unsure if we actually need it or not
 
@@ -8,9 +8,7 @@ export const sendVerificationEmail = async (email: string, token: string, login:
   const config = useRuntimeConfig();
   const siteUrl = config.url || "http://localhost:3000";
 
-  const transporter = createTransport(
-    getTransportOptions()
-  );
+  const transporter = getTransport(); // the util we have for this contains the actual transport options we need.
 
   const verificationUrl = `${siteUrl}/verify?token=${token}`;
 

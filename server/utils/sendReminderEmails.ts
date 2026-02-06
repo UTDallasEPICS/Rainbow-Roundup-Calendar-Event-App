@@ -1,9 +1,9 @@
 import { createTransport } from "nodemailer";
-import { prisma } from '../utils/prisma';
+import { prisma } from '~~/server/utils/prisma';
 import { createEventReminderEmail } from '../utils/createEventReminderEmail';
 import { resolve } from 'path';
 import moment from 'moment-timezone';
-import { getTransportOptions } from '../utils/getTransportOptions';
+import { getTransport } from '~~/server/utils/getTransport';
 import { SESv2Client, SendEmailCommand } from '@aws-sdk/client-sesv2'
 import nodemailer from 'nodemailer' // this is for createTransport function call, unsure if we actually need it or not
 
@@ -14,9 +14,7 @@ const logoPath = resolve("public/images/318x146Logo.png");
 
 
 export async function sendReminderEmails(days: number) {
-  const transport = createTransport(
-    getTransportOptions()
-  );
+  const transport = getTransport();
   
   // Set date ranges for queries
   const dayStart : Date = moment.tz("America/Chicago").startOf('day').add(days, 'days').toDate();
