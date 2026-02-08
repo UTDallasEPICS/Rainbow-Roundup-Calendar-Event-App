@@ -6,17 +6,24 @@ export default defineEventHandler(async (event) => {
 
   const config = useRuntimeConfig()
   const session = await auth.api.getSession({ headers: event.headers })
-
+  if(!session){
+    setResponseStatus(event, 400);
+    return { error: `Please login` };
+  }
   const allowedTypes = ["image/jpeg", "image/png"]
 
   const MAX_FILE_SIZE = 256 * 1024
 
   const form = await readMultipartFormData(event)
   const file = form?.find((x) => x.name === "file")
-  const filePath = path.join(
+  const fileDir = path.join(
     config.UPLOAD_DIR || "public/uploads", 
-    file?.filename || "upload"
+    session.user.id
   )
+
+  if (!fs.existsSync(fileDir)) { // Create user directory if it does not exist
+    fs.mkdirSync(fileDir);
+  }
   if (!file) return (setResponseStatus(event, 400), { error: "No file" })
   if (!file.data?.length) return (setResponseStatus(event, 400), { error: "Empty upload" })
   if (file.data.length > MAX_FILE_SIZE) return (setResponseStatus(event, 400), { error: "File too big" })
@@ -28,14 +35,17 @@ export default defineEventHandler(async (event) => {
   const safeOriginalName = (file.filename || "upload").replace(/[^\w.\-]/g, "_") 
 
   // UNUSED | this removes characters that can exec/escape stuff or stuff that doesn't belong in filenames
-  const key = `/${Date.now()}-${safeOriginalName}`
-
-  const fileStream = fs.createReadStream(filePath)
+  const key = `/${Date.now()}-${safeOriginalName}` // Will overwrite previous profile picture, probably a good idea to save space
+  const filePath = path.join(
+          fileDir,
+          key
+      )
   fs.writeFileSync(filePath, file.data)
 
   const fileUrl = path.join( // public should not be shown during dev, but this is going to be the same in prod!
-    (process.env.NUXT_NODE_ENV == "dev") ? "uploads" : config.UPLOAD_DIR, 
-    file?.filename || "upload"
+    (process.env.NUXT_NODE_ENV == "dev") ? "uploads" : config.UPLOAD_DIR,
+    session.user.id,
+    key
   )
 
   return { fileUrl: fileUrl }
