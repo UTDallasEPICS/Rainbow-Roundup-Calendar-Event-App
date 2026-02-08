@@ -36,7 +36,8 @@ export default defineEventHandler(async (event: any) => {
 
     const filePath = path.join(
         config.UPLOAD_DIR || "public/uploads",
-        path.dirname(itemPhoto.url).split("/").at(-1) + "", // extract the user id directory name from itemPhoto, since path.basename strips it
+        path.dirname(itemPhoto.url).split("/").at(-1) + "", // extract the user id directory name from itemPhoto, since path.basename strips it. 
+        // The + " " is because of typescipt complaining
         path.basename(itemPhoto.url)
     );
 

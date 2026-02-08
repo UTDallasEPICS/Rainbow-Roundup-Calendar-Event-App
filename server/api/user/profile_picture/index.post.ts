@@ -34,8 +34,8 @@ export default defineEventHandler(async (event) => {
 
   const safeOriginalName = (file.filename || "upload").replace(/[^\w.\-]/g, "_") 
 
-  // UNUSED | this removes characters that can exec/escape stuff or stuff that doesn't belong in filenames
-  const key = `/${Date.now()}-${safeOriginalName}` // Will overwrite previous profile picture, probably a good idea to save space
+
+  const key = "/profile" // I figured doing this we can ensure there is only one profile picture per user. Browsers can render without extension
   const filePath = path.join(
           fileDir,
           key
