@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
       )
   fs.writeFileSync(filePath, file.data)
 
-  const fileUrl = path.join( // public should not be shown during dev, but this is going to be the same in prod!
+  const fileUrl = "/"+path.join( // public should not be shown during dev, but this is going to be the same in prod!
     (process.env.NUXT_NODE_ENV == "dev") ? "uploads" : config.UPLOAD_DIR,
     session.user.id,
     key

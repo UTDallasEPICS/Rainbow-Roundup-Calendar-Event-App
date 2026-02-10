@@ -66,7 +66,7 @@ export default defineEventHandler(async (event: any) => {
 
     fs.writeFileSync(filePath, file.data);
 
-    const fileUrl = path.join(
+    const fileUrl = "/"+path.join(
         (process.env.NUXT_NODE_ENV == "dev") ? "uploads" : config.UPLOAD_DIR,
         user.id,
         key
