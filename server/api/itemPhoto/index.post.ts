@@ -78,5 +78,5 @@ export default defineEventHandler(async (event: any) => {
             itemId: itemId,
         }
     });
-    return { data: fileUrl };
+    return { data: itemPhoto };
 });

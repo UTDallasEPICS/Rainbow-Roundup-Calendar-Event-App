@@ -134,7 +134,7 @@ const editedItem = reactive({
     description: props.item.description,
     isArchived: props.item.isArchived,
     ItemVariants: props.item.ItemVariants.map(a => {return {...a}}),
-    ItemPhotos: props.item.ItemPhotos || [],
+    ItemPhotos: props.item.ItemPhotos.map(a => {return {...a}}) || [],
 });
 function closeWindow() {
     emit("closeWindow");
@@ -220,9 +220,9 @@ async function addPhoto(file) {
     body: form
   })
 
-  const photo = res
+  const image = res
+  editedItem.ItemPhotos.push(image)
 
-  editedItem.ItemPhotos.push(photo)
 }
 
 async function deletePhoto(id) {
