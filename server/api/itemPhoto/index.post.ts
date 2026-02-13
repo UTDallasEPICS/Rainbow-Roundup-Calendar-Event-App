@@ -57,7 +57,7 @@ export default defineEventHandler(async (event: any) => {
     );
     
     if (!fs.existsSync(fileDir)){ // Create user directory if it does not exist
-        fs.mkdirSync(fileDir);
+        fs.mkdirSync(fileDir, {recursive: true}); // added recursive parameter to multiple directories if needed (ie when uploads directory is not yet there)
     }
     const filePath = path.join(
         fileDir,

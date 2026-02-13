@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
   )
 
   if (!fs.existsSync(fileDir)) { // Create user directory if it does not exist
-    fs.mkdirSync(fileDir);
+    fs.mkdirSync(fileDir, {recursive: true}); // added recursive parameter to multiple directories if needed (ie when uploads directory is not yet there)
   }
   if (!file) return (setResponseStatus(event, 400), { error: "No file" })
   if (!file.data?.length) return (setResponseStatus(event, 400), { error: "Empty upload" })

@@ -134,7 +134,7 @@ const editedItem = reactive({
     description: props.item.description,
     isArchived: props.item.isArchived,
     ItemVariants: props.item.ItemVariants.map(a => {return {...a}}),
-    ItemPhotos: props.item.ItemPhotos.map(a => {return {...a}}) || [],
+    ItemPhotos: props.item.ItemPhotos || [],
 });
 function closeWindow() {
     emit("closeWindow");
