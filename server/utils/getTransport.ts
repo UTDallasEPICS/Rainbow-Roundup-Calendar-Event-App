@@ -22,11 +22,11 @@ function getTransportOptions() { // do not async this
           //    If you omit credentials, the SDK uses the default credential chain
           //    (environment variables, shared credentials file, IAM role, etc.)
           // this is from the documentation, leaving the comment here for reference
-        const sesClient = new SESv2Client({ region: "us-east-2" });
+        const sesClient = new SESv2Client({ region: config.AWS_REGION });
         return {
           SES: { sesClient, SendEmailCommand },
             dkim: {
-              domainName: "example.com",
+              domainName: config.sesDomain,
               keySelector: "mail",
               privateKey: fs.readFileSync("../../dkim-private.pem", "utf8"),
             },

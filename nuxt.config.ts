@@ -21,6 +21,9 @@ export default defineNuxtConfig({
     smtpUser: process.env.SMTP_USER,
     smtpPass: process.env.SMTP_PASS,
     smtpFrom: process.env.SMTP_FROM,
+
+    sesDomain: "rrup.org",
+
     url: process.env.URL,
     BETTER_AUTH_URL: process.env.URL,
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
