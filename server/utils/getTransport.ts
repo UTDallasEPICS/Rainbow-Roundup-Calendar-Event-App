@@ -1,5 +1,6 @@
 import { SESv2Client, SendEmailCommand } from '@aws-sdk/client-sesv2'
 import { createTransport } from "nodemailer";
+import fs from "fs";
 import nodemailer from 'nodemailer' // this is for createTransport function call, unsure if we actually need it or not
 
 const config = useRuntimeConfig();
@@ -23,7 +24,12 @@ function getTransportOptions() { // do not async this
           // this is from the documentation, leaving the comment here for reference
         const sesClient = new SESv2Client({ region: "us-east-2" });
         return {
-          SES: { sesClient, SendEmailCommand }
+          SES: { sesClient, SendEmailCommand },
+            dkim: {
+              domainName: "example.com",
+              keySelector: "mail",
+              privateKey: fs.readFileSync("../../dkim-private.pem", "utf8"),
+            },
         }
       }
 }
