@@ -30,3 +30,6 @@ dev.db
 
 # Upload directory for images in dev
 */uploads
+
+
+dkim-private.pem
