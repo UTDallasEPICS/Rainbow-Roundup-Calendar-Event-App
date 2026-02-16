@@ -14,7 +14,7 @@ export const sendVerificationEmail = async (email: string, token: string, login:
 
   const mailOptions = {
     // changed to use config.smtpFrom, if no-reply is sending, there is an issue with the email and not the code
-    from: config.smtpFrom || "no-reply@example.com",
+    from: config.smtpFrom || "noreply@rrup.org",
     to: email,
     subject: "Verify your email address",
     text: `Your otp code is: ${token}`,
@@ -28,7 +28,7 @@ export const sendVerificationEmail = async (email: string, token: string, login:
   if (login) {
     const mailOptions = {
       // changed to use config.smtpFrom, if no-reply is sending, there is an issue with the email and not the code
-      from: config.smtpFrom || "no-reply@example.com",
+      from: config.smtpFrom || "no-reply@rrup.org",
       to: email,
       subject: "Your login code",
       text: `Your otp code is: ${token}`,
@@ -44,7 +44,7 @@ export const sendVerificationEmail = async (email: string, token: string, login:
   else {
     const mailOptions = {
       // changed to use config.smtpFrom, if no-reply is sending, there is an issue with the email and not the code
-      from: config.smtpFrom || "no-reply@example.com",
+      from: config.smtpFrom || "no-reply@rrup.org",
       to: email,
       subject: "Verify your email address",
       text: `Your otp code is: ${token}`,
