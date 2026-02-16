@@ -12,7 +12,7 @@ export default defineNuxtConfig({
       PUSH_VAPID_PUBLIC_KEY: process.env.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY  // basically sometimes the process.env stuff breaks, so in your .env, nuxt would be expecting a NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY
     },
     
-    AWS_REGION: process.env.AWS_REGION,
+    AWS_REGION: process.env.NUXT_AWS_REGION,
     NUXT_AWS_ACCESS_KEY_ID: process.env.NUXT_AWS_ACCESS_KEY_ID,
     NUXT_AWS_SECRET_ACCESS_KEY: process.env.NUXT_AWS_SECRET_ACCESS_KEY,
 
