@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     },
     
     AWS_REGION: process.env.NUXT_AWS_REGION,
+    DKIM_KEY: process.env.NUXT_DKIM_KEY,
     NUXT_AWS_ACCESS_KEY_ID: process.env.NUXT_AWS_ACCESS_KEY_ID,
     NUXT_AWS_SECRET_ACCESS_KEY: process.env.NUXT_AWS_SECRET_ACCESS_KEY,
 

@@ -23,12 +23,13 @@ function getTransportOptions() { // do not async this
           //    (environment variables, shared credentials file, IAM role, etc.)
           // this is from the documentation, leaving the comment here for reference
         const sesClient = new SESv2Client({ region: config.AWS_REGION });
+        const dkimKey = config.DKIM_KEY;
         return {
           SES: { sesClient, SendEmailCommand },
             dkim: {
               domainName: config.sesDomain,
               keySelector: "mail",
-              privateKey: fs.readFileSync("../../dkim-private.pem", "utf8"),
+              privateKey: dkimKey
             },
         }
       }
