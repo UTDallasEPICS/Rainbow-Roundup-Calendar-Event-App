@@ -78,7 +78,7 @@ export async function sendReminderEmails(days: number) {
       const mailOptions = 
       { 
         to: user.User.email,
-        from: config.smtpFrom,
+        from: config.smtpFrom || "noreply@rrup.org", // in prod, smtp is not specified
         subject: subject,
         text: text,
         html: html,
