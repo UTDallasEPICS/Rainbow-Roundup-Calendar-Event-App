@@ -14,7 +14,7 @@ export const sendVerificationEmail = async (email: string, token: string, login:
 
   const mailOptions = {
     // changed to use config.smtpFrom, if no-reply is sending, there is an issue with the email and not the code
-    from: config.smtpFrom || "noreply@rrup.org",
+    from: config.smtpFrom || "noreply@rrup.org", // in production, noreply is supposed to send
     to: email,
     subject: "Verify your email address",
     text: `Your otp code is: ${token}`,
