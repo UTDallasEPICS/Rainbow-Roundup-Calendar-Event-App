@@ -51,15 +51,24 @@ export default defineEventHandler(async (event: any) => {
 
     const safeOriginalName = (file.filename || "upload").replace(/[^\w.\-]/g, "_");
     const key = `/${Date.now()}-${safeOriginalName}`;
-    const filePath = path.join(
+    const fileDir = path.join(
         config.UPLOAD_DIR || "public/uploads",
+        user.id
+    );
+    
+    if (!fs.existsSync(fileDir)){ // Create user directory if it does not exist
+        fs.mkdirSync(fileDir, {recursive: true}); // added recursive parameter to multiple directories if needed (ie when uploads directory is not yet there)
+    }
+    const filePath = path.join(
+        fileDir,
         key
     );
 
     fs.writeFileSync(filePath, file.data);
 
-    const fileUrl = path.join(
+    const fileUrl = "/"+path.join(
         (process.env.NUXT_NODE_ENV == "dev") ? "uploads" : config.UPLOAD_DIR,
+        user.id,
         key
     );
 
@@ -69,5 +78,5 @@ export default defineEventHandler(async (event: any) => {
             itemId: itemId,
         }
     });
-    return { data: fileUrl };
+    return { data: itemPhoto };
 });
