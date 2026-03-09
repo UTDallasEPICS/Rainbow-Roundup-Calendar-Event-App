@@ -30,11 +30,13 @@ export const auth = betterAuth({
             firstname: {
                 type: 'string',
                 required: false,
+                defaultValue: "",
 
             },
             lastname: {
                 type: 'string',
                 required: false,
+                defaultValue: "",
 
             },
             role: {
@@ -91,12 +93,22 @@ export const auth = betterAuth({
     },
     plugins: [
         emailOTP({
-            disableSignUp: true,
             async sendVerificationOTP({ email, otp, type }) {
-                if (type === "sign-in") {
-                    const user = await prisma.user.findUnique({ // we don't want people banned/archived users to login
+                const user = await prisma.user.findUnique({ // we don't want people banned/archived users to login
                         where: { email: email },
                     });
+                if (type === "sign-in") {
+                    if(!user){
+                        await prisma.user.create({
+                            data: {
+                                firstname: "",
+                                lastname: "",
+                                email: email
+                            }
+                        })
+                        // We are creating a user here instead since otherwise Prisma will fail and cause a silent error the user client has no way to see
+                        // BetterAuth does not allow me to pass an error to the client, so I could not think of a better idea apart from just creating a blank user
+                    }
                     if(!(user?.isArchived || user?.isBanned)){
                         await sendVerificationEmail(email, otp, true);
                     }

@@ -16,7 +16,6 @@
     "magicast": "0.5.1"
   },
   "dependencies": {
-    "@aws-sdk/client-sesv2": "^3.980.0",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
     "@fullcalendar/interaction": "^6.1.15",
@@ -34,7 +33,6 @@
     "@prisma/client": "^6.2.1",
     "@stripe/stripe-js": "^5.6.0",
     "@vue-stripe/vue-stripe": "^4.5.0",
-    "aws-sdk": "^2.1692.0",
     "better-auth": "^1.4.17",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",

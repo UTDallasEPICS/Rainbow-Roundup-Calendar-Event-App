@@ -1,11 +1,8 @@
-import { createTransport } from "nodemailer";
 import { prisma } from '~~/server/utils/prisma';
 import { createEventReminderEmail } from '../utils/createEventReminderEmail';
 import { resolve } from 'path';
 import moment from 'moment-timezone';
 import { getTransport } from '~~/server/utils/getTransport';
-import { SESv2Client, SendEmailCommand } from '@aws-sdk/client-sesv2'
-import nodemailer from 'nodemailer' // this is for createTransport function call, unsure if we actually need it or not
 
 const config = useRuntimeConfig();
 const logoPath = resolve("public/images/318x146Logo.png");
@@ -78,7 +75,7 @@ export async function sendReminderEmails(days: number) {
       const mailOptions = 
       { 
         to: user.User.email,
-        from: config.smtpFrom || "noreply@rrup.org", // in prod, smtp is not specified
+        from: config.smtpFrom || "rainbow-roundup@npts.tech", // in prod, smtp is not specified
         subject: subject,
         text: text,
         html: html,
