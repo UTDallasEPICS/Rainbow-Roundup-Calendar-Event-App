@@ -1,13 +1,12 @@
 FROM node:current-alpine AS builder
 COPY . ./
-
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
+
 RUN npm add -g pnpm
 
-RUN pnpm i --frozen-lockfile --prod
+RUN pnpm install --frozen-lockfile
 RUN pnpm prisma generate
-# RUN ls /prisma/client
 RUN pnpm run build
 
 FROM node:current-alpine AS deployment
