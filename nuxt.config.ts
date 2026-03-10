@@ -11,12 +11,6 @@ export default defineNuxtConfig({
       GOOGLE_PLACES: process.env.NUXT_PUBLIC_GOOGLE_PLACES,
       PUSH_VAPID_PUBLIC_KEY: process.env.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY  // basically sometimes the process.env stuff breaks, so in your .env, nuxt would be expecting a NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY
     },
-    
-    AWS_REGION: process.env.NUXT_AWS_REGION,
-    DKIM_KEY: process.env.NUXT_DKIM_KEY,
-    NUXT_AWS_ACCESS_KEY_ID: process.env.NUXT_AWS_ACCESS_KEY_ID,
-    NUXT_AWS_SECRET_ACCESS_KEY: process.env.NUXT_AWS_SECRET_ACCESS_KEY,
-
     smtpHost: process.env.SMTP_HOST,
     smtpPort: process.env.SMTP_PORT,
     smtpUser: process.env.SMTP_USER,

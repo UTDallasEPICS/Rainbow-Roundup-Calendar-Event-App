@@ -2,7 +2,6 @@ onlyBuiltDependencies:
   - '@parcel/watcher'
   - '@prisma/client'
   - '@prisma/engines'
-  - aws-sdk
   - core-js
   - esbuild
   - prisma
