@@ -220,9 +220,9 @@ async function addPhoto(file) {
     body: form
   })
 
-  const photo = res
+  const image = res
+  editedItem.ItemPhotos.push(image)
 
-  editedItem.ItemPhotos.push(photo)
 }
 
 async function deletePhoto(id) {
