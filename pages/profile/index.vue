@@ -104,7 +104,7 @@
           type="email"
           id="email"
           v-model="email"
-          :readonly="!editMode"
+          :readonly="true"
           :class="inputClass"
           ref="emailRef"
           @keydown.enter.prevent="toggleEditMode"
@@ -330,7 +330,6 @@ const saveAccount = async () => {
         firstname: firstName.value,
         lastname: lastName.value,
         phoneNum: phoneNum.value,
-        email: email.value,
         profilePic: profilePic.value,
         emailNotif: emailNotif.value,
         nativeNotif: nativeNotif.value,
