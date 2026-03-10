@@ -1,16 +1,16 @@
-FROM node:22-alpine AS builder
+FROM node:current-alpine AS builder
 COPY . ./
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+RUN npm add -g pnpm
 
-RUN pnpm i --frozen-lockfile
-RUN npx prisma generate
+RUN pnpm i --frozen-lockfile --prod
+RUN pnpm prisma generate
 # RUN ls /prisma/client
 RUN pnpm run build
 
-FROM node:22-alpine AS deployment
+FROM node:current-alpine AS deployment
 
 COPY --from=builder /.output /
 # COPY --from=builder /prisma/client /prisma/client
