@@ -63,6 +63,7 @@
         <!-- Navigation Links - added md sizing -->
         <nav class="hidden md:flex space-x-6 text-sm font-medium">
           <NuxtLink to="/" @click="navigate('Home')" class="text-gray-700 hover:text-black">Home</NuxtLink>
+          <NuxtLink v-if="isAdmin" to="/admin" @click="navigate('Admin')" class="text-gray-700 hover:text-black">Admin</NuxtLink>
           <NuxtLink to="/aboutUs" @click="navigate('About Us')" class="text-gray-700 hover:text-black">About Us
           </NuxtLink>
           <NuxtLink to="/calendar" @click="navigate('Calendar')" class="text-gray-700 hover:text-black">Calendar
@@ -126,6 +127,8 @@
         <nav class="flex flex-col space-y-1 px-4 py-3 text-sm font-medium">
           <NuxtLink to="/" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             @click.native="handleMobileNavClick">Home</NuxtLink>
+          <NuxtLink v-if="isAdmin" to="/admin" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+            @click.native="handleMobileNavClick">Admin</NuxtLink>
           <NuxtLink to="/aboutUs" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             @click.native="handleMobileNavClick">About Us</NuxtLink>
           <NuxtLink to="/calendar" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
@@ -181,6 +184,11 @@ import { ref, onMounted } from "vue";
 // Use the built-in auth composable instead of custom useUser
 import { authClient } from "~/composables/auth"
 const session = authClient.useSession()
+
+
+const isAdmin = computed(() => session?.value?.data?.user?.role ?? false)
+
+
 
 const config = useRuntimeConfig()
 

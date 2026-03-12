@@ -85,7 +85,7 @@
               <td
                   class="px-4 py-3 text-sm text-gray-800 border"
                   :class="
-                  user.role === 'Admin'
+                  user.role == 'ADMIN' || user.role == 'SUPER'
                       ? 'text-red-500 font-bold'
                       : 'text-green-600'
                   "
@@ -167,7 +167,6 @@
 import { ref, computed, onMounted } from "vue";
 
 const props = defineProps(['users', 'title']);
-//const users = ref([]);
 import { authClient } from "~/composables/auth"
 const { data: session } = await authClient.getSession();
 const sessionUser = session.user;
