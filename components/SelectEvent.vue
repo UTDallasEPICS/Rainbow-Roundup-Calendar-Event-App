@@ -90,7 +90,7 @@ const isAdmin = computed(() => {
 // fetching events
 try {
     const response = await useFetch(`/api/event`, {
-        query: { method: "GET" }
+        method: "GET"
     })
     events.value = response.data.value
 
