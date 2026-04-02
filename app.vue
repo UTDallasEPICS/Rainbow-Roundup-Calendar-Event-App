@@ -186,7 +186,7 @@ import { authClient } from "~/composables/auth"
 const session = authClient.useSession()
 
 
-const isAdmin = computed(() => session?.value?.data?.user?.role ?? false)
+const isAdmin = computed(() => (session?.value?.data?.user?.role == "ADMIN" || session?.value?.data?.user?.role == "SUPER") ?? false)
 
 
 
