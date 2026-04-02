@@ -9,11 +9,32 @@ export default defineEventHandler(async (event) =>{
         })
     const user = session?.user as User | undefined;
     try{
+
+        // check user level
+        const session = await auth.api.getSession({
+                headers:  event.headers
+        })
+        const user = session?.user as User | undefined;
+        // if user level too low, only include user name (no email etcetc)
+
+        let includeSettings = {}
+
+        if (!user || (!["SUPER", "ADMIN"].includes(user.role))) {
+            includeSettings = { Event: true, User: {
+                select: {
+                id: true,
+                firstname: true,
+                lastname: true,
+                profilePic: true
+                }
+            } }
+        }
+        else {
+            includeSettings = { Event: true, User: true };
+        }
+
         const SignUps = await prisma.signUp.findMany({
-            include: {
-                User: true,
-                Event: true
-            }
+            include: includeSettings
         })
         setResponseStatus(event, 200)
         SignUps.forEach(signup => {
