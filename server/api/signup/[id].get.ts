@@ -1,4 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
+import { auth } from "~/server/auth";
 import { defineEventHandler } from "h3";
 import SignUp from "~/pages/signUp.vue";
 
@@ -8,15 +9,38 @@ export default defineEventHandler(async (event) => {
 
   try {
 
-    // check user level
-    // if user level too low, only include user name (no email etcetc)
-
     if (id) {
+
+      // check user level
+      const session = await auth.api.getSession({
+            headers:  event.headers
+      })
+      const user = session?.user as User | undefined;
+      // if user level too low, only include user name (no email etcetc)
+
+      let includeSettings = {}
+
+      if (!user || (!["SUPER", "ADMIN"].includes(user.role))) {
+        includeSettings = { Event: true, User: {
+          select: {
+            id: true,
+            firstname: true,
+            lastname: true,
+            profilePic: true
+          }
+        } }
+      }
+      else {
+        includeSettings = { Event: true, User: true };
+          
+      }
+
       // Fetch a single signup by ID with relations if needed (e.g., Event or User)
-      const singleSignup = await prisma.signUp.findUnique({
+        const singleSignup = await prisma.signUp.findUnique({
         where: { id },
-        include: { Event: true, User: true }, // Include relations like event and user
+        include: includeSettings, // Include relations like event and user
       });
+      
 
       
 
