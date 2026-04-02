@@ -32,6 +32,13 @@ export default defineEventHandler(async (event) => {
     // Find the signup
     const existingSignUp = await prisma.signUp.findUnique({
       where: { id },
+      include: { 
+        User: {
+          select: {
+            id: true
+          }
+        }
+      }
     });
 
     if (!existingSignUp) {
@@ -41,8 +48,16 @@ export default defineEventHandler(async (event) => {
         error: "No signup with matching id",
       };
     }
+    
+    if (existingSignUp.User.id != user.id || (!["SUPER", "ADMIN"].includes(user.role))) { // if nonadmin or if not the user that made the signup
+        throw createError({
+        statusMessage: "Unauthenticated",
+        statusCode: 403,
+      });
+    }
 
     // // Delete the signup
+
     await prisma.signUp.delete({
       where: { id },
     });

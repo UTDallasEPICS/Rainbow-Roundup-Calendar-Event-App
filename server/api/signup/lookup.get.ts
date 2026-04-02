@@ -21,14 +21,27 @@ export default defineEventHandler(async (event) => {
       };
     }
 
+    let includeSettings = {}
+    
+    if (!user || (!["SUPER", "ADMIN"].includes(user.role))) {
+        includeSettings = { Event: true, User: {
+            select: {
+            id: true,
+            firstname: true,
+            lastname: true,
+            profilePic: true
+            }
+        } }
+    }
+    else {
+        includeSettings = { Event: true, User: true };
+    }
+
     const signUp = await prisma.signUp.findUnique({
       where: {
         userId_eventId: { userId, eventId }, // compound key from schema
       },
-      include: {
-        User: true,
-        Event: true,
-      },
+      include: includeSettings,
     });
 
     if (!signUp) {
@@ -44,8 +57,6 @@ export default defineEventHandler(async (event) => {
     }
 
     setResponseStatus(event, 200);
-    console.log("HERE");
-    console.log(signUp);
     return {
       success: true,
       signUp,

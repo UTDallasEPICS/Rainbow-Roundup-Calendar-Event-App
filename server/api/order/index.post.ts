@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
     })
     const user = session?.user as User | undefined;
 
-    if (!user?.emailVerified) {
+    if (!user?.emailVerified || !user) {
         throw createError({
             statusMessage: "Unauthenticated",
             statusCode: 403,
