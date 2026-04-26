@@ -15,7 +15,6 @@ body should include:
 import { defineEventHandler, setResponseStatus, getRouterParam, createError, readBody } from "h3";
 import type { User } from "../../../types/session";
 import { auth } from "~/server/auth"
-import { Size } from "@prisma/client"
 
 export default defineEventHandler(async (event) => {
     const id = getRouterParam(event, "id");

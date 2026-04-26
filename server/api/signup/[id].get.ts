@@ -1,4 +1,4 @@
-import { PrismaClient, User } from "@prisma/client";
+
 import { auth } from "~/server/auth";
 import { defineEventHandler } from "h3";
 import SignUp from "~/pages/signUp.vue";
