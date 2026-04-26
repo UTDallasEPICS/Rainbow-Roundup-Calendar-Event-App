@@ -1,4 +1,4 @@
-import { PrismaClient, User } from "@prisma/client";
+import type { PrismaClient, User } from "@prisma/client";
 import { defineEventHandler, getQuery, setResponseStatus } from "h3";
 import { auth } from "~/server/auth";
 
