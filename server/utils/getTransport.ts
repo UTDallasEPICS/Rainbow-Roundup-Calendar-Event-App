@@ -15,6 +15,12 @@ function getTransportOptions() { // do not async this
   }
 }
 
-export function getTransport() { // I am using this function instead of returning the big thing because I think it's cleaner
-  return createTransport(getTransportOptions())
+declare const globalThis: {
+  transportGlobal: ReturnType<typeof createTransport>;
+} & typeof global;
+
+export function getTransport() {
+  const transport = globalThis.transportGlobal ?? createTransport(getTransportOptions())
+  globalThis.transportGlobal = transport;
+  return transport;
 }
