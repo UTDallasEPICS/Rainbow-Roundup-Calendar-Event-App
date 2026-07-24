@@ -5,11 +5,12 @@ export default defineNitroPlugin(() => {
 });
 
 function startScheduler(){
-  console.log("[cron] Native natification scheduler starting...");
+  console.log("[cron] Native notification scheduler starting...");
   const scheduler = useScheduler();
 
   // set task to run every day at 12pm
   scheduler.run(async () => {
+    // the [cron] is not real, Caleb thought it'd look nice to have it
     console.log("[cron] Attempting to send reminder notifications...");
     
     // Sends emails to all users opted into notifications for events occuring 3 and 7 days

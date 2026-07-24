@@ -1,6 +1,5 @@
-import { PrismaClient } from '@prisma/client';
-import { nanoid } from 'nanoid';
-import { auth, authClient } from '~/server/auth';
+import { nanoid } from 'nanoid'; // linter complains here, it should be fine?
+import { auth, authClient } from '~/server/auth'; // leaving this import here just in case
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;

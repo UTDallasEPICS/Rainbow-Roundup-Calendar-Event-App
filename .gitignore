@@ -28,5 +28,8 @@ logs
 dev.db-journal
 dev.db
 
-# Upload directory for images hosted through nginx
-/uploads
+# Upload directory for images in dev
+*/uploads
+
+
+dkim-private.pem

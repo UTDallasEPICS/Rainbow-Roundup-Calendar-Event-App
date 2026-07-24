@@ -3,6 +3,8 @@
 -->
 
 <template>
+<!-- added a parent wrapper to make some warnings go away-->
+<div>
   <!-- Background -->
     <div
         class="fixed top-0 right-0 z-30 h-full w-full bg-black/70 backdrop-blur-sm"
@@ -262,7 +264,10 @@
               
                 <label class="block mt-4 text-sm font-medium text-gray-700">Processing...</label>
             </div>
-            
+            </div>
+            <div v-if="rsvpError" class="mt-2 text-sm text-red-600 font-medium"> {{ rsvpError }}
+            </div>
+            <div v-if="rsvpOk" class="mt-2 text-sm text-green-600 font-medium"> {{ rsvpOk }}
             </div>
         </div>
         <!-- Event ID -->
@@ -282,13 +287,14 @@
       </div>
     </div>
 </div>
+</div>
 </template>
 
 <script setup>
 import { ref, reactive, computed, onMounted } from "vue";
 //import { useAuth } from "#imports"; // todo: figure out why useAuth is called here or if we don't need to touch it. 
 import { authClient } from "~/composables/auth"
-import { fetchCombinedEventById } from "../server/utils/fetchCombinedEvents";
+import { fetchCombinedEventById } from "~/server/utils/fetchCombinedEvents";
 import { useRoute, useRouter } from "vue-router";
 
 
@@ -302,6 +308,8 @@ function closeWindow() {
 
 // State
 const rsvpChoice = ref('');
+const rsvpError = ref('');  
+const rsvpOk = ref('');      
 const numPlusOneAdults = ref(0);
 const numPlusOneKids = ref(0);
 const isEditing = ref(false);
@@ -590,7 +598,14 @@ const respondToEvent = async (response) => {
     rsvpChoice.value = '';
     await loadEvent();
   } catch (err) {
-    console.error("RSVP action failed:", err);
+    const msg =
+    err?.data?.error || //
+    err?.data?.message || //
+    (typeof err?.message === "string" ? err.message : "") ||"RSVP action failed."; // 
+
+  rsvpError.value = msg;
+  rsvpOk.value = "";
+  console.error("RSVP action failed:", err);
   } finally {
     setTimeout(() => {
       isResponding.value = false;

@@ -1,76 +1,54 @@
-import { defineEventHandler, setResponseStatus } from "h3";
-import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
-
 import type { User } from "../../../types/session";
-import { auth } from "~/server/auth"
+import { auth } from "~/server/auth";
+import fs from "fs";
+import path from "node:path";
 
-const config = useRuntimeConfig();
-const s3 = new S3Client({
-    region: config.AWS_REGION,
-    credentials: {
-            accessKeyId: config.NUXT_AWS_ACCESS_KEY_ID!,
-            secretAccessKey: config.NUXT_AWS_SECRET_ACCESS_KEY!,
-    },
-});
-
-export default defineEventHandler(async (event) => {
-    const id = getRouterParam(event, 'id');
+export default defineEventHandler(async (event: any) => {
     const prisma = event.context.prisma;
     const session = await auth.api.getSession({
       headers:  event.headers
-    })
+    });
     const user = session?.user as User | undefined;
+    const config = useRuntimeConfig();
 
-    if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
+    if (!user?.role || (user?.role !== "SUPER" && user?.role !== "ADMIN")) {
         throw createError({
             statusMessage: "Unauthenticated",
             statusCode: 403,
         });
     }
 
+    const id = getRouterParam(event, "id");
+
     if (!id) {
         setResponseStatus(event, 400);
-        return {
-            success: false,
-            error: "ItemPhoto ID is required",
-        };
+        return { error: "ItemPhoto ID is required", };
     }
+
+    const itemPhoto = await prisma.itemPhoto.findUnique({
+        where: { id: id, },
+    });
+
+    if (!itemPhoto) {
+        setResponseStatus(event, 404);
+        return { error: "ItemPhoto not found", };
+    }
+
+    const filePath = path.join(
+        config.UPLOAD_DIR || "public/uploads",
+        path.dirname(itemPhoto.url).split("/").at(-1) as string, // extract the user id directory name from itemPhoto, since path.basename strips it. 
+        path.basename(itemPhoto.url)
+    );
 
     try {
-        const itemPhoto = await prisma.itemPhoto.delete({
-            where: {
-                id: id,
-            }
-        });
-
-        // delete photo from s3 bucket
-        const search = itemPhoto.url.match(/itemPhotos\/\d+-[^\/?]+/);     // extract key from url
-        if (!search) {
-            setResponseStatus(event, 500);
-            return {
-                success: false,
-                error: "Object key was not able to be extracted from s3 url",
-            }
-        }
-        const key = search[0];
-        s3.send(
-            new DeleteObjectCommand({
-                Bucket: config.NUXT_AWS_S3_BUCKET_NAME,
-                Key: key,
-            }),
-        );
-
-        setResponseStatus(event, 200);
-        return {
-            success: true,
-            itemPhoto: itemPhoto,
-        };
+        fs.unlinkSync(filePath);
     } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
-        setResponseStatus(event, 500);
-        return {
-            success: false,
-            error: `Error creating event: ${errorMessage}`,
-        };
+        console.error("Failed to delete file:", error);
     }
+
+    const deletedPhoto = await prisma.itemPhoto.delete({
+        where: { id: id, },
+    });
+
+    return { success: true, itemPhoto: deletedPhoto, };
 });

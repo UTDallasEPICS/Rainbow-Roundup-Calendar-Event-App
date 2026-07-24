@@ -34,7 +34,7 @@
 
       <div class="flex flex-col items-center mt-4 mb-6">
         <!-- Fixed image path: public/ maps to root / -->
-        <img class="w-40 h-40 rounded-full object-cover" :src="userData?.profilePic || '/public/default-profile.png'" alt="Profile Page">
+        <img class="w-40 h-40 rounded-full object-cover" :src="userData?.profilePic || '/default-profile.png'" alt="Profile Page">
       </div>
 
       <!-- First name -->
@@ -81,7 +81,7 @@
       <div v-if="showReportModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-40 backdrop-blur-sm">
         <div class="bg-white rounded-xl p-6 w-[90%] max-w-md">
           <div class="flex flex-col items-center mb-4">
-            <img :src="userData?.profilePic || '/public/default-profile.png'" alt="User profile" class="w-24 h-24 rounded-full object-cover" />
+            <img :src="userData?.profilePic || '/default-profile.png'" alt="User profile" class="w-24 h-24 rounded-full object-cover" />
             <p class="mt-2 text-lg font-semibold text-gray-800">{{ userData?.username }}</p>
           </div>
 
@@ -119,7 +119,7 @@
       </div>
       <!-- Delete section visible only to admin/super -->
       <div v-if="isAdmin" class="mt-6 mb-10 max-w-xl">
-        <div v-if="!userData?.isArchived && !userData?.isBanned" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-xl font-bold">
+        <div v-if="!userData?.isArchived && !isBanned" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-xl font-bold">
           <button
             @click="banAccount"
           >
@@ -128,7 +128,7 @@
         </div>
         
         <!-- unban account -->
-        <div v-else-if="userData?.isBanned" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-xl font-bold">
+        <div v-else-if="isBanned" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-xl font-bold">
           <button @click="revokeBan()">Revoke Ban</button>
         </div>
       </div>
@@ -204,6 +204,8 @@ const lastName = computed(() => userData.value?.lastname ?? '')
 const phoneNumber = computed(() => userData.value?.phoneNum ?? '')
 const email = computed(() => userData.value?.email ?? '')
 
+const isBanned = computed(() => userData.value?.isBanned ?? false)
+
 // Shared input styling class
 const inputClass = 'px-3 py-2 rounded-xl focus:outline-none bg-gray-100 text-gray-600 cursor-not-allowed'
 
@@ -217,7 +219,7 @@ const banAccount = async () => {
         },
       });
 
-    userData.isBanned = true;
+    userData.value.isBanned = true;
   } catch (e) {
     console.error('Failed to ban account:', e)
   }
@@ -292,6 +294,6 @@ async function revokeBan() {
         },
       });
 
-  userData.isBanned = false;
+  userData.value.isBanned = false;
 }
 </script>

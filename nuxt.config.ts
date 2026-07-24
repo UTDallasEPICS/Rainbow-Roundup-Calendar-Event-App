@@ -8,25 +8,27 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
-      NUXT_GOOGLE_PLACES: process.env.NUXT_GOOGLE_PLACES,
-      NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY: process.env.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY
+      GOOGLE_PLACES: process.env.NUXT_PUBLIC_GOOGLE_PLACES,
+      PUSH_VAPID_PUBLIC_KEY: process.env.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY  // basically sometimes the process.env stuff breaks, so in your .env, nuxt would be expecting a NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY
     },
-    
-    AWS_REGION: process.env.AWS_REGION,
-    NUXT_AWS_ACCESS_KEY_ID: process.env.NUXT_AWS_ACCESS_KEY_ID,
-    NUXT_AWS_SECRET_ACCESS_KEY: process.env.NUXT_AWS_SECRET_ACCESS_KEY,
-    NUXT_AWS_S3_BUCKET_NAME: process.env.NUXT_AWS_S3_BUCKET_NAME,
-
     smtpHost: process.env.SMTP_HOST,
     smtpPort: process.env.SMTP_PORT,
     smtpUser: process.env.SMTP_USER,
     smtpPass: process.env.SMTP_PASS,
     smtpFrom: process.env.SMTP_FROM,
+
+    sesDomain: "rrup.org",
+
     url: process.env.URL,
     BETTER_AUTH_URL: process.env.URL,
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
 
-    NUXT_PUSH_VAPID_PRIVATE_KEY: process.env.NUXT_PUSH_VAPID_PRIVATE_KEY
+    PUSH_VAPID_PRIVATE_KEY: process.env.NUXT_PUSH_VAPID_PRIVATE_KEY,
+    
+    NODE_ENV: process.env.NUXT_NODE_ENV,
+
+    UPLOAD_DIR: (process.env.NUXT_NODE_ENV == "prod" || process.env.NUXT_NODE_ENV == "stage") ? "" : "public/uploads"
+     // if we are in prod, we have a variable set up. If we are not in prod, we use the public directory
   },
   vite: {
     resolve: {
@@ -50,6 +52,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      title: 'Rainbow Roundup',
       script: [
         {
           src: "https://unpkg.com/@heroicons/vue/outline",
@@ -69,7 +72,7 @@ export default defineNuxtConfig({
     storage: {
       uploads: {
         driver: "fs",        
-        base: "./uploads",      
+        base: (process.env.NUXT_NODE_ENV == "prod" || process.env.NUXT_NODE_ENV == "stage") ? process.env.NUXT_UPLOAD_DIR : "uploads",      // LOOK AT THE RUNTIME CONFIG
        },    
      },  
   },
@@ -78,20 +81,9 @@ export default defineNuxtConfig({
     "@vite-pwa/nuxt",
     "@nuxt/ui",
     "@nuxt/eslint",
-    //"@sidebase/nuxt-auth",
     "nuxt-scheduler",
     '@pinia/nuxt'
   ],
-  /*auth: {
-    isEnabled: true,
-    baseURL: process.env.URL + "/api/auth",
-    provider: {
-      type: "authjs",
-      trustHost: false,
-      defaultProvider: "email",
-      addDefaultCallbackUrl: true,
-    },
-  },*/
   compatibilityDate: "2024-10-24",
 
   plugins: ["~/plugins/fullcalendar.client"],

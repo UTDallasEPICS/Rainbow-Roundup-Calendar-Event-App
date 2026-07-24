@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+
 import { auth } from "~/server/auth"
 import type { User } from "@prisma/client"
 

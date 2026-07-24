@@ -54,9 +54,9 @@ export async function sendReminderNotifications(days: number) {
                 daysTill: days,
                 attending: true,
             };
-            const { title, message } = createNativeNotification(notifParams);
+            const { title, message } = createNativeNotification(notifParams); 
 
-            sendNativeNotification(title,message,user.User.id,eventUrl);
+            await sendNativeNotification(title,message,user.User.id,eventUrl);
         }
     }
 }

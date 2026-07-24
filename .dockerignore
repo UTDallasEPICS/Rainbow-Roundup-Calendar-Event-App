@@ -1,0 +1,9 @@
+node_modules
+.nuxt
+.git
+.gitignore
+*.md
+dist
+.env
+*.db
+pnpm-workspace.yaml

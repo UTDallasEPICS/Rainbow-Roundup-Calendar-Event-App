@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+
 import { defineEventHandler, readBody, setResponseStatus, setCookie } from "h3";
 
 export default defineEventHandler(async (event) => {

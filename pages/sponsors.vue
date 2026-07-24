@@ -21,7 +21,7 @@
       </div>
     </section>
     
-    <!-- Gold Sponsors Section -->
+    <!-- Gold Sponsors -->
     <section class="sponsors py-16 flex flex-col items-center text-center">
       <h3 class="text-3xl font-bold text-gray-700 mb-10">Gold Sponsors</h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 px-6 max-w-screen-lg mx-auto">
@@ -37,7 +37,7 @@
       </div>
     </section>
 
-    <!-- Silver Sponsors Section -->
+    <!-- Silver Sponsors -->
     <section class="silver-sponsors py-16 flex flex-col items-center text-center bg-gray-50">
       <h3 class="text-3xl font-bold text-gray-700 mb-10">Silver Sponsors</h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 px-6 max-w-screen-lg mx-auto">
@@ -53,7 +53,7 @@
       </div>
     </section>
 
-    <!-- Bronze Sponsors Section -->
+    <!-- Bronze Sponsors -->
     <section class="bronze-sponsors py-16 flex flex-col items-center text-center">
       <h3 class="text-3xl font-bold text-gray-700 mb-10">Bronze Sponsors</h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 px-6 max-w-screen-lg mx-auto">
@@ -69,7 +69,7 @@
       </div>
     </section>
 
-    <!-- Community Partners Section -->
+    <!-- Community Partners -->
     <section class="community-partners py-16 flex flex-col items-center text-center bg-gray-50">
       <h3 class="text-3xl font-bold text-gray-700 mb-10">Community Partners</h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 px-6 max-w-screen-lg mx-auto">
@@ -87,42 +87,67 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "SponsorsPage",
-  data() {
-    return {
-      sponsorLink: 'https://rrup.org/contact-us/', 
-      goldSponsors: [
-        { name: "Gold Sponsor 1", image: "/images/gold1.png", link: "https://www.dugganfamilylaw.com/" },
-        { name: "Gold Sponsor 2", image: "/images/gold2.png", link: "https://burch-law.com/" },
-        { name: "Gold Sponsor 3", image: "/images/gold3.png", link: "https://brookscannon.com/" },
-        { name: "Gold Sponsor 4", image: "/images/gold4.png", link: "https://teddybearparty.org/" },
-      ],
-      silverSponsors: [
-        { name: "Silver Sponsor 1", image: "/images/silver1.png", link: "https://theweteam.preproperties.com/" },
-      ],
-      bronzeSponsors: [
-        { name: "Bronze Sponsor 1", image: "/images/bronze1.png", link: "https://www.kleinfertilitylaw.com/" },
-        { name: "Bronze Sponsor 2", image: "/images/bronze2.png", link: "https://conceivefertilitycenter.com/" },
-        { name: "Bronze Sponsor 3", image: "/images/bronze3.png", link: "https://www.mytruedental.com/" },
-        { name: "Bronze Sponsor 4", image: "/images/bronze4.png", link: "https://www.debnamrust.com/" },
-        { name: "Bronze Sponsor 5", image: "/images/bronze5.png", link: "https://www.joinampmd.com/" },
-        { name: "Bronze Sponsor 6", image: "/images/bronze6.png", link: "https://www.fertilitytexas.com/" },
-        { name: "Bronze Sponsor 7", image: "/images/bronze7.png", link: "https://www.edwardjones.com/us-en/financial-advisor/ashley-bloom" },
-      ],
-      communityPartners: [
-        { name: "Community Partner 1", image: "community1.png", link: "https://www.helpusadopt.org/" },
-      ],
-    };
-  },
-  methods: {
-    goToSponsorLink() {
-      window.open(this.sponsorLink, '_blank');
-    }
-  }
+<script setup lang="ts">
+import { ref } from "vue";
+
+// made an interface
+interface SponsorDetails {
+  name: string;
+  image: string;
+  link: string;
 }
+
+//based off old sponsor link
+const sponsorLink = ref("https://rrup.org/contact-us/");
+
+//hard coded in, we would probably need a schema if we we wanted to add them instead of an interface
+const goldSponsors = ref<SponsorDetails[]>([
+  { 
+    name: "Gold Sponsor 1", 
+    image: "/images/gold1.png", 
+    link: "https://www.dugganfamilylaw.com/" 
+  },
+  { 
+    name: "Gold Sponsor 2", 
+    image: "/images/gold2.png", 
+    link: "https://burch-law.com/" 
+  },
+  { 
+    name: "Gold Sponsor 3", 
+    image: "/images/gold3.png", 
+    link: "https://brookscannon.com/" 
+  },
+  { 
+    name: "Gold Sponsor 4",
+    image: "/images/gold4.png", 
+    link: "https://teddybearparty.org/" 
+  },
+]);
+
+const silverSponsors = ref<SponsorDetails[]>([
+  { name: "Silver Sponsor 1", image: "/images/silver1.png", link: "https://theweteam.preproperties.com/" },
+]);
+
+const bronzeSponsors = ref<SponsorDetails[]>([
+  { name: "Bronze Sponsor 1", image: "/images/bronze1.png", link: "https://www.kleinfertilitylaw.com/" },
+  { name: "Bronze Sponsor 2", image: "/images/bronze2.png", link: "https://conceivefertilitycenter.com/" },
+  { name: "Bronze Sponsor 3", image: "/images/bronze3.png", link: "https://www.mytruedental.com/" },
+  { name: "Bronze Sponsor 4", image: "/images/bronze4.png", link: "https://www.debnamrust.com/" },
+  { name: "Bronze Sponsor 5", image: "/images/bronze5.png", link: "https://www.joinampmd.com/" },
+  { name: "Bronze Sponsor 6", image: "/images/bronze6.png", link: "https://www.fertilitytexas.com/" },
+  { name: "Bronze Sponsor 7", image: "/images/bronze7.png", link: "https://www.edwardjones.com/us-en/financial-advisor/ashley-bloom" },
+]);
+
+const communityPartners = ref<SponsorDetails[]>([
+  { name: "Community Partner", image: "/images/community1.png", link: "https://www.helpusadopt.org/" },
+]);
+
+//Opens up the sponsor's link, and doesn't add anything
+const goToSponsorLink = () => {
+  window.open(sponsorLink.value, "_blank");
+};
 </script>
+
 
 <style scoped>
 .sponsors-page {
@@ -151,14 +176,16 @@ button:hover {
   transform: translateY(-2px);
 }
 
-.sponsor img, .partner img {
+.sponsor img,
+.partner img {
   transition: transform 0.3s ease;
   border: 1px solid #ddd;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.sponsor img:hover, .partner img:hover {
+.sponsor img:hover,
+.partner img:hover {
   transform: scale(1.1);
 }
 </style>

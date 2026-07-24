@@ -23,6 +23,7 @@
     <h1 class="text-3xl font-bold text-[#022150] mt-6">
       <b>Account Settings</b>
     </h1>
+    <!-- profile picture -->
     <div class="flex flex-col items-center mt-4 mb-6">
       <img
         class="w-40 h-40 rounded-full object-cover"
@@ -41,7 +42,7 @@
           {{ profilePictureError }}
         </div>
     <button
-      class="mb-6 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition"
+      class="mb-6 px-4 py-2 bg-[#CE0E2D] text-white rounded-xl hover:bg-red-600 transition"
       @click="toggleEditMode"
     >
       {{ editMode ? "Save" : "Edit" }}
@@ -103,7 +104,7 @@
           type="email"
           id="email"
           v-model="email"
-          :readonly="!editMode"
+          :readonly="true"
           :class="inputClass"
           ref="emailRef"
           @keydown.enter.prevent="toggleEditMode"
@@ -165,7 +166,7 @@
           </p>
         </div>
         <button
-          class="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-xl"
+          class="bg-[#CE0E2D] hover:bg-red-600 text-white font-medium py-2 px-4 rounded-xl"
           @click="deleteAccount"
         >
           Delete
@@ -176,7 +177,7 @@
     <div class="flex flex-col items-center">
       <br />
       <button
-        class="w-[264px] border-none text-white text-lg text-center cursor-pointer mt-3 py-4 rounded-xl bg-red-500 hover:bg-red-600"
+        class="w-[264px] border-none text-white text-lg text-center cursor-pointer mt-3 py-4 rounded-xl bg-[#CE0E2D] hover:bg-red-600"
         @click="() => logout()"
       >
         Log Out
@@ -204,8 +205,6 @@ const email = ref(null);
 const profilePic = ref(null);
 const emailNotif = ref(null);
 const nativeNotif = ref(null);
-const route = useRoute();
-const id = route.params.id;
 
 
 const { data: session } = await authClient.getSession();
@@ -237,9 +236,6 @@ watchEffect(async () => {
   }
 })
 
-//const userData = response.value?.user || null
-
-
 const file = ref(null);
 const imageUrl = ref(null);
 
@@ -250,6 +246,14 @@ const emailRef = ref(null);
 const profilePictureError = ref("")
 function focusNext(refEl){
   refEl?.focus();
+}
+
+function previewImage(file) { // as File
+  const reader = new FileReader();
+  reader.onload = () => {
+    imageUrl.value = reader.result; // as string
+  };
+  reader.readAsDataURL(file);
 }
 
 function handleFileChange(e) {
@@ -271,25 +275,22 @@ function handleFileChange(e) {
   previewImage(file.value);
 }
 
-async function uploadToS3(file) {
+async function uploadProfilePic(file) {
   if(!file?.name){
     return null
   }
   const formData = new FormData();
   formData.append("file", file);
-
-  const res = await $fetch("/api/user/profile_picture", {
-    method: "POST",
-    body: formData,
-    ignoreResponseError: true, // <- prevents $fetch from throwing
-  });
-
-  if (res?.error) {
+  try {
+    const res = await $fetch("/api/user/profile_picture", {
+      method: "POST",
+      body: formData,
+    });
+      return res.fileUrl;
+  } 
+  catch {
     profilePictureError.value = res.error;
-    throw new Error(res.error);
-  }
-  else{
-    return res.fileUrl;
+      throw new Error(res.error);
   }
 }
 
@@ -318,11 +319,9 @@ const logout = async () => {
 
 const saveAccount = async () => {
   try {
-    let newProfilePic = profilePic.value;
 
     if (file.value) {
-      newProfilePic = await uploadToS3(file.value);
-      profilePic.value = newProfilePic;
+      profilePic.value = await uploadProfilePic(file.value);
     }
 
     await $fetch(`/api/user/${session.session.userId}`, {
@@ -331,8 +330,7 @@ const saveAccount = async () => {
         firstname: firstName.value,
         lastname: lastName.value,
         phoneNum: phoneNum.value,
-        email: email.value,
-        profilePic: newProfilePic,
+        profilePic: profilePic.value,
         emailNotif: emailNotif.value,
         nativeNotif: nativeNotif.value,
       },

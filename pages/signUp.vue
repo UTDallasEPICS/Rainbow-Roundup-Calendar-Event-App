@@ -67,7 +67,7 @@
       <div class="text-md mt-6 text-center text-gray-600">
         <strong>
           Already have an account?
-          <NuxtLink to="/login" class="text-[#D97ED5] hover:underline transition">
+          <NuxtLink to="/login" class="text-[#C028B9] hover:underline transition">
             Sign In
           </NuxtLink>
         </strong>
@@ -75,7 +75,7 @@
 
       <!-- Register Button -->
       <button type="submit"
-        class="mt-8 w-full sm:w-[300px] py-4 px-6 text-xl text-white font-semibold bg-[#D97ED5] hover:bg-purple-500 transition rounded-2xl">
+        class="mt-8 w-full sm:w-[300px] py-4 px-6 text-xl text-white font-semibold bg-[#C028B9] hover:bg-[#9a1985] transition rounded-2xl">
         Register
       </button>
       <!-- Success message -->
@@ -112,6 +112,14 @@ const signupModel = ref({
   emailNotif: false,
 });
 
+function previewImage(file: File) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    imageUrl.value = reader.result as string;
+  };
+  reader.readAsDataURL(file);
+}
+
 function handleFileChange(e: Event) {
   const input = e.target as HTMLInputElement;
   const allowedTypes = ["image/jpeg", "image/png"];
@@ -131,15 +139,7 @@ function handleFileChange(e: Event) {
   previewImage(file.value);
 }
 
-function previewImage(file: File) {
-  const reader = new FileReader();
-  reader.onload = () => {
-    imageUrl.value = reader.result as string;
-  };
-  reader.readAsDataURL(file);
-}
-
-async function uploadToS3(file: File) {
+async function uploadProfilePic(file: File) {
   if(!file?.name){
     return null
   }
@@ -167,16 +167,12 @@ const submitSignupForm = async () => {
   const userDataToSubmit = { ...signupModel.value };
   try {
     try {
-      const uploadedUrl = await uploadToS3(file.value);
+      const uploadedUrl = await uploadProfilePic(file.value);
       userDataToSubmit.profilePic = uploadedUrl;
-      console.log("url: ", uploadedUrl)
-      console.log("userSubmit: ", userDataToSubmit)
     } catch (uploadError) {
       console.error("Profile picture upload failed:", uploadError);
       return
     }
-
-    console.log("User data: ",userDataToSubmit)
     
     const { data, error } = await useFetch("/api/user", { // todo: change to $fetch
       method: "POST",
@@ -184,21 +180,12 @@ const submitSignupForm = async () => {
       watch: false,
     });
     if (data?.value?.success && !error.value) {
-
-
       router.push("login");
       successMessage.value = "A verification email has been sent to your address. Please check your inbox to complete registration.";
-      // Optionally clear form fields here
     } else {
       successMessage.value = 'Signup failed, check that you do not already have an account';
       console.error("Error submitting signup form");
       errors.value = { error: "Signup failed." };
-      if (error.value?.statusCode === 400) {
-        navigateTo("/login");
-        console.log("redirecting to login...");
-        // if not already, their email will be autoverified on login, so might as well send them there
-      }
-
     }
   } catch (err) {
     console.error("Error submitting signup form", err);

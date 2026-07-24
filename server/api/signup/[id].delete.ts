@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import { auth } from '~/server/auth';
 import type { User } from "../../../types/session";
@@ -32,6 +32,13 @@ export default defineEventHandler(async (event) => {
     // Find the signup
     const existingSignUp = await prisma.signUp.findUnique({
       where: { id },
+      include: { 
+        User: {
+          select: {
+            id: true
+          }
+        }
+      }
     });
 
     if (!existingSignUp) {
@@ -41,32 +48,19 @@ export default defineEventHandler(async (event) => {
         error: "No signup with matching id",
       };
     }
+    
+    if (existingSignUp.User.id != user.id || (!["SUPER", "ADMIN"].includes(user.role))) { // if nonadmin or if not the user that made the signup
+        throw createError({
+        statusMessage: "Unauthenticated",
+        statusCode: 403,
+      });
+    }
 
-    // Get the associated event
-    const associatedEvent = await prisma.event.findUnique({
-      where: { id: existingSignUp.eventId },
-    });
+    // // Delete the signup
 
-    // Delete the signup
     await prisma.signUp.delete({
       where: { id },
     });
-
-    // Update event capacity if needed
-    if (
-      associatedEvent &&
-      associatedEvent.capacity !== null &&
-      associatedEvent.currentCapacity !== null
-    ) {
-      await prisma.event.update({
-        where: { id: existingSignUp.eventId },
-        data: {
-          currentCapacity: {
-            decrement: 1 + existingSignUp.plusOneAdults + existingSignUp.plusOneKids,
-          },
-        },
-      });
-    }
 
     return {
       success: true,

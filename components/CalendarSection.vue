@@ -7,7 +7,7 @@
         <div class="flex items-center justify-between mb-2">
           <button
             @click="prevMonth"
-            class="w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100"
+            class="w-6 h-6 flex items-center justify-center rounded bg-blue-600 text-white hover:bg-blue-700"
           >
             ‹
           </button>
@@ -16,7 +16,7 @@
           </span>
           <button
             @click="nextMonth"
-            class="w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100"
+            class="w-6 h-6 flex items-center justify-center rounded bg-blue-600 text-white hover:bg-blue-700"
           >
             ›
           </button>

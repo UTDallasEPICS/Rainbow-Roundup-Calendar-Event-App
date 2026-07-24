@@ -1,22 +1,17 @@
-import { createTransport } from "nodemailer";
-import { prisma } from '../utils/prisma';
+import { prisma } from '~~/server/utils/prisma';
 import { createEventReminderEmail } from '../utils/createEventReminderEmail';
 import { resolve } from 'path';
 import moment from 'moment-timezone';
+import { getTransport } from '~~/server/utils/getTransport';
 
 const config = useRuntimeConfig();
 const logoPath = resolve("public/images/318x146Logo.png");
 
+// Creating a function to make an object that tells the transporter what to do, depending on if we are in stage/prod (actual app) or dev (locahost)
+
+
 export async function sendReminderEmails(days: number) {
-  const transport = createTransport({
-    host: config.smtpHost, 
-      port: Number(config.smtpPort),
-      secure: false,
-      auth: {
-        user: config.smtpUser,
-        pass: config.smtpPass,
-      },
-  });
+  const transport = getTransport();
   
   // Set date ranges for queries
   const dayStart : Date = moment.tz("America/Chicago").startOf('day').add(days, 'days').toDate();
@@ -77,9 +72,10 @@ export async function sendReminderEmails(days: number) {
       };
       const { subject, html, text } = createEventReminderEmail(emailParams);
 
-      const mailOptions = {
+      const mailOptions = 
+      { 
         to: user.User.email,
-        from: config.smtpFrom,
+        from: config.smtpFrom || "rainbow-roundup@npts.tech", // in prod, smtp is not specified
         subject: subject,
         text: text,
         html: html,
@@ -90,10 +86,12 @@ export async function sendReminderEmails(days: number) {
             cid: 'logo',
           },
         ],
-      };
+         // It may be required that we need to pass SES-specific stuff here, which that would require some more code being written
+
+      }
 
       transport.sendMail(mailOptions, (err, info) => { if (err) {
-          console.log(`[cron] Error sending email to ${user.email}:`, err);
+          console.log(`[cron] Error sending email to ${user.User.email}:`, err);
         }
       });
     }
@@ -174,9 +172,11 @@ export async function sendReminderEmails(days: number) {
           transport.sendMail(mailOptions, (err, info) => { if (err) {
               console.log(`[cron] Error sending email to ${user.email}`, err);
             }
+          
           });
         }
       }
     }
   }
+  
 }

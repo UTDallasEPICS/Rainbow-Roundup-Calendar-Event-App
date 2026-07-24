@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
     })
     const user = session?.user as User | undefined;
 
-    if (!user?.emailVerified) {
+    if (!user?.emailVerified || !user) {
         throw createError({
             statusMessage: "Unauthenticated",
             statusCode: 403,
@@ -56,6 +56,7 @@ export default defineEventHandler(async (event) => {
                     error: "Pickup orders need to have an associated event"
                 }
             }
+           console.log('Remember to uncomment the restriction forcing an event ID for pickup orders')
         }
         if(body.orderType === "DELIVERY"){
             

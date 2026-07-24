@@ -13,9 +13,24 @@ This should be called when an event is deleted on our end as well.
 
 import { getCalendarClient } from "~/server/utils/googleCalendar";
 import { formatEventForResponse } from "~/server/utils/eventFormatter.ts";
+import { auth } from "~/server/auth"
+import type { User } from "@prisma/client";
 
 export default defineEventHandler(async (event) => { 
+  const session = await auth.api.getSession({
+    headers:  event.headers
+  })
+  const user = session?.user as User | undefined;
+      
     try {
+      // check authentication
+      if (!user || !["SUPER", "ADMIN"].includes(user.role)) {
+        throw createError({
+        statusCode: 403,
+        statusMessage: "Unauthenticated",
+        });
+      }
+
         const eventId = getRouterParam(event, 'id');
             // Validate that an event ID was provided
         if (!eventId) {

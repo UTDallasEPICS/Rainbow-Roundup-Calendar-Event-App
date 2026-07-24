@@ -19,7 +19,6 @@ export interface ItemPhoto {
 export interface ItemVariant {
   id: string;
   size: Size;
-  description: string;
   availbility: boolean;
   itemId: string;
 
@@ -30,6 +29,7 @@ export interface ItemVariant {
 export interface AbstractItem {
   id: string;
   name: string;
+  description: string;
   price: number;
 
   // Relations
