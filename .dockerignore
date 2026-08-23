@@ -6,4 +6,3 @@ node_modules
 dist
 .env
 *.db
-pnpm-workspace.yaml
