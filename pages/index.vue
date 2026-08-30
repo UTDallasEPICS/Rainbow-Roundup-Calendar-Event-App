@@ -20,12 +20,6 @@
     </div>
     <!-- Slides 3 -->
     <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 relative">
-      <img src="/images/carousel_2.png" 
-      alt="Sharing Header Graphic" 
-      class="absolute inset-0 w-full h-full object-cover">
-    </div>
-    <!-- Slides 4 -->
-    <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 relative">
       <img src="/images/carousel_3.png" 
       alt="Sharing Header Graphic" 
       class="absolute inset-0 w-full h-full object-cover">
@@ -251,7 +245,7 @@ const today = new Date();
 today.setHours(0,0,0,0);
 
 const currentSlide = ref(0);
-const totalSlides = 4;
+const totalSlides = 3;
 const interval = ref(null);
 
 const currentMonth = ref(today.getMonth());
