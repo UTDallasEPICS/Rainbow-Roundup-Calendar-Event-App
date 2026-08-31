@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, nextTick } from "vue";
 
 
 
@@ -13,6 +13,9 @@ const email = ref("");
 const otp = ref("");
 const formMode = ref("email");
 const redirectPath = ref("");
+
+const input = ref(null);
+
 const submitEmail = async () => {
   if (!email.value) return;
   formMode.value = "loading";
@@ -34,6 +37,8 @@ const submitEmail = async () => {
   }
   else if(data?.success){
     formMode.value = "otp";
+    await nextTick();
+    input.value?.focus();
   }
   else{
     formMode.value = "done";
@@ -109,7 +114,7 @@ const submitOTP = async () => {
       <!-- OTP Field -->
       <div class="w-full">
         <label class="block text-lg font-semibold text-gray-800 mb-2">OTP Code</label>
-        <input v-model="otp" type="otp" placeholder="123456"
+        <input ref="input" v-model="otp" type="otp" placeholder="123456"
           class="w-full px-4 py-3 text-lg rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#89BBEB] transition" />
         <!-- Send Magic Link Button -->
         <button type="submit"
