@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
       };
     }
     
-    if (existingSignUp.User.id != user.id || (!["SUPER", "ADMIN"].includes(user.role))) { // if nonadmin or if not the user that made the signup
+    if (existingSignUp.User.id != user.id && (!["SUPER", "ADMIN"].includes(user.role))) { // if nonadmin and if not the user that made the signup
         throw createError({
         statusMessage: "Unauthenticated",
         statusCode: 403,
