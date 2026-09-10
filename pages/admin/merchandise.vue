@@ -74,6 +74,11 @@
                             >
                                 Description
                             </th>
+                            <th
+                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none"
+                            >
+                                Stock Remaining
+                            </th>
                         </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
@@ -96,6 +101,9 @@
                             <td class="hidden md:table-cell px-4 py-3 text-sm text-gray-800 border">
                                 <span v-if="merch.description != null && merch.description.length">{{ merch.description }}</span>
                                 <span v-else class="text-gray-400">No description.</span>
+                            </td>
+                            <td>
+                                
                             </td>
                         </tr>
                         </tbody>
