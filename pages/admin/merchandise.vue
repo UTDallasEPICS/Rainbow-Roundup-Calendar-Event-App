@@ -102,8 +102,13 @@
                                 <span v-if="merch.description != null && merch.description.length">{{ merch.description }}</span>
                                 <span v-else class="text-gray-400">No description.</span>
                             </td>
-                            <td>
-                                
+                            <td class="px-4 py-3 text-sm border">
+                                {{
+                                    merch.ItemVariants.reduce(
+                                    (total, variant) => total + variant.stockRemaining,
+                                    0
+                                    )
+                                }}
                             </td>
                         </tr>
                         </tbody>
