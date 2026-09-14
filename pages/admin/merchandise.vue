@@ -49,6 +49,7 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-blue-300">
                         <tr>
+                            <th class="w-10 px-2 py-2"></th>
                             <th
                             
                             class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
@@ -82,12 +83,22 @@
                         </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                        <tr
-                            v-for="merch in sortedMerch"
-                            :key="merch"
-                            @click="openItemModal(merch)"
-                            class="hover:bg-gray-100 cursor-pointer"
-                        >
+                        <template v-for="merch in sortedMerch" :key="merch.id">
+                            <tr
+                                @click="openItemModal(merch)"
+                                class="hover:bg-gray-100 cursor-pointer"
+                            >
+                            <td class="px-2 py-3 text-sm border text-center">
+                                <button
+                                    type="button"
+                                    class="inline-flex items-center justify-center w-6 h-6 rounded hover:bg-gray-200"
+                                    :aria-label="expandedItems.has(merch.id) ? `Hide stock for ${merch.name}` : `Show stock for ${merch.name}`"
+                                    :aria-expanded="expandedItems.has(merch.id)"
+                                    @click.stop="toggleExpanded(merch.id)"
+                                >
+                                    <span class="text-lg leading-none">{{ expandedItems.has(merch.id) ? "⌄" : ">" }}</span>
+                                </button>
+                            </td>
                             <td class="px-4 py-3 text-sm text-gray-800 border">
                                 {{ merch.name }}
                             </td>
@@ -110,7 +121,29 @@
                                     )
                                 }}
                             </td>
-                        </tr>
+                            </tr>
+                            <tr
+                                v-if="expandedItems.has(merch.id)"
+                                class="bg-gray-50"
+                            >
+                                <td colspan="6" class="px-4 py-3 border">
+                                    <table class="w-full max-w-md divide-y divide-gray-200 text-sm">
+                                        <thead>
+                                        <tr class="text-left text-xs font-extrabold uppercase text-zinc-700">
+                                            <th class="px-3 py-2">Size</th>
+                                            <th class="px-3 py-2">Stock Remaining</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-200">
+                                        <tr v-for="variant in merch.ItemVariants" :key="variant.id || variant.size">
+                                            <td class="px-3 py-2">{{ variant.size }}</td>
+                                            <td class="px-3 py-2">{{ variant.stockRemaining }}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </template>
                         </tbody>
                     </table>
                 </div>
@@ -139,6 +172,7 @@ const sortAsc = ref(true);
 const isItemModalOpen = ref(false);
 const selectedItem = ref(null);
 const merchandise = ref([]);
+const expandedItems = ref(new Set());
 
 // fetch merch items
 try {
@@ -184,6 +218,18 @@ function openItemModal(selected) {
 
 function closeItemModal() {
   isItemModalOpen.value = false;
+}
+
+function toggleExpanded(itemId) {
+  const nextExpandedItems = new Set(expandedItems.value);
+
+  if (nextExpandedItems.has(itemId)) {
+    nextExpandedItems.delete(itemId);
+  } else {
+    nextExpandedItems.add(itemId);
+  }
+
+  expandedItems.value = nextExpandedItems;
 }
 
 function openAddItem() {
