@@ -135,10 +135,12 @@
                                         </tr>
                                         </thead>
                                         <tbody class="divide-y divide-gray-200">
-                                        <tr v-for="variant in merch.ItemVariants" :key="variant.id || variant.size">
-                                            <td class="px-3 py-2">{{ variant.size }}</td>
-                                            <td class="px-3 py-2">{{ variant.stockRemaining }}</td>
-                                        </tr>
+                                        <template v-for="variant in merch.ItemVariants" :key="variant.id || variant.size">
+                                            <tr v-if="variant.availability">
+                                                <td class="px-3 py-2">{{ variant.size }}</td>
+                                                <td class="px-3 py-2">{{ variant.stockRemaining }}</td>
+                                            </tr>
+                                        </template>
                                         </tbody>
                                     </table>
                                 </td>
