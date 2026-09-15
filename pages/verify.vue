@@ -11,7 +11,6 @@ import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 interface VerifyResponse {
-  success: boolean;
   error?: string;
   redirect?: string;
 }
@@ -35,7 +34,7 @@ onMounted(async () => {
       body: { token },
     });
 
-    if (res.success) {
+    if (res.redirect) {
       success.value = "Email verified! Redirecting...";
       const redirectPath = res.redirect || "/";
       setTimeout(() => window.location.href = redirectPath, 2000);

@@ -18,11 +18,11 @@ export default defineEventHandler(async (event) => {
 
     if (existingUser) {
       setResponseStatus(event, 400);
-      return { success: false, error: "User already exists." };
+      return {error: "User already exists." };
     }
     if (existingPhone) {
       setResponseStatus(event, 400);
-      return { success: false, error: "An account with that phone number already exists" };
+      return {error: "An account with that phone number already exists" };
     }
     await prisma.user.create({
       data: {
@@ -37,10 +37,10 @@ export default defineEventHandler(async (event) => {
 
     // note: due to better auth migration, sending an email verification email is no longer needed.
 
-    return { success: true, message: "Verification email sent." };
+    return {message: "Verification email sent." };
   } catch (err) {
     console.error("Signup error:", err);
     setResponseStatus(event, 500);
-    return { success: false, error: "Failed to create pending user." };
+    return {error: "Failed to create pending user." };
   }
 });

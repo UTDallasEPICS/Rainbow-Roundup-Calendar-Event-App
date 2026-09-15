@@ -233,7 +233,7 @@ async function saveUserEdits() {
     });
 
     const refreshed = await $fetch("/api/user");
-    if (refreshed?.success) {
+    if (refreshed?.Users) {
       users.value = refreshed.Users;
     }
   } catch (err) {

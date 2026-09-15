@@ -21,7 +21,6 @@ export default defineEventHandler(async (event) => {
     if (!id) {
         setResponseStatus(event, 400);
         return {
-            success: false,
             error: "Order ID is required",
         };
     }
@@ -108,7 +107,6 @@ export default defineEventHandler(async (event) => {
             if (body.orderItems.length === 0) {
                 setResponseStatus(event, 400);
                 return {
-                    success: false,
                     error: "Must include order items for update",
                 };
             }
@@ -140,7 +138,6 @@ export default defineEventHandler(async (event) => {
 
         setResponseStatus(event, 200);
         return {
-            success: true,
             data: fullOrder, 
         };
     } catch (error) {
@@ -148,7 +145,6 @@ export default defineEventHandler(async (event) => {
         console.log(error)
         setResponseStatus(event, 500);
         return {
-            success: false,
             error: errorMessage,
         };
     }
