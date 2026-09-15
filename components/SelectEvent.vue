@@ -68,7 +68,7 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
 import { ref } from "vue";
 
 const emit = defineEmits(['selectEvent', 'closeWindow'])

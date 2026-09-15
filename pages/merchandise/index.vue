@@ -125,7 +125,7 @@
       </div>
     </template>
 
-    <script setup lang="ts">
+    <script setup lang='ts'>
     
 
     const router = useRouter()

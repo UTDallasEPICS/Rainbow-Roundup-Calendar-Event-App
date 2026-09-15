@@ -99,7 +99,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'> 
 import { ref, computed, watch } from "vue";
 
 // define a prop to receive events from parent
