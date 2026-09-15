@@ -179,7 +179,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from "vue";
 // Use the built-in auth composable instead of custom useUser
 import { authClient } from "~/composables/auth"

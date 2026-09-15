@@ -39,7 +39,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
 import { ref, computed, onMounted } from "vue";
 
 const orders = ref([]);

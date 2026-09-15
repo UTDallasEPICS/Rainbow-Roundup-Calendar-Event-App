@@ -164,7 +164,7 @@
 </template>
 
 <!-- <script setup lang="ts"> -->
-  <script setup>
+  <script setup lang="ts">
 import { ref, computed } from "vue";
 
 const props = defineProps(['users', 'title']);
