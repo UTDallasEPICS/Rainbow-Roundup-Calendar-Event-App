@@ -201,7 +201,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import EventCard from '~/components/EventCard.vue';
 const events = ref([])

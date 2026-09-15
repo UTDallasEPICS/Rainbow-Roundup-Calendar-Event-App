@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script lang='ts' setup>
 
 import { authClient } from "~/composables/auth"
 const { data: session } = await authClient.getSession();

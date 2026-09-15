@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 import { ArrowLeftIcon, XMarkIcon } from "@heroicons/vue/24/solid";
 </script>
 

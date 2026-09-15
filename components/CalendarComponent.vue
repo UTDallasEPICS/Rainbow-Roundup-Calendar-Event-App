@@ -11,7 +11,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang='ts'>
 import { ref, defineComponent } from 'vue'
 
 interface CalendarEvent {
