@@ -1,6 +1,13 @@
 <template>
 <div>
     <EditItem v-if="isItemModalOpen" :item="selectedItem" @close-window="closeItemModal()" @item-created="(i) => {addItem(i)}"/>
+    <EditStock
+        v-if="isStockModalOpen"
+        :item-id="selectedVariantItemId"
+        :variant="selectedVariant"
+        @close-window="closeStockModal()"
+        @stock-updated="updateStockRemaining"
+    />
     <div class="min-h-screen bg-gray-100 flex items-start justify-center p-8">
         <div class="max-w-4xl px-6 py-4 w-full">
             <!-- header -->
@@ -136,7 +143,7 @@
                                         </thead>
                                         <tbody class="divide-y divide-gray-200">
                                         <template v-for="variant in merch.ItemVariants" :key="variant.id || variant.size">
-                                            <tr v-if="variant.availability">
+                                            <tr v-if="variant.availability" class="hover:bg-gray-100 cursor-pointer" @click.stop="openStockModal(merch, variant)">
                                                 <td class="px-3 py-2">{{ variant.size }}</td>
                                                 <td class="px-3 py-2">{{ variant.stockRemaining }}</td>
                                             </tr>
@@ -175,6 +182,9 @@ const isItemModalOpen = ref(false);
 const selectedItem = ref(null);
 const merchandise = ref([]);
 const expandedItems = ref(new Set());
+const isStockModalOpen = ref(false);
+const selectedVariant = ref(null);
+const selectedVariantItemId = ref(null);
 
 // fetch merch items
 try {
@@ -232,6 +242,24 @@ function toggleExpanded(itemId) {
   }
 
   expandedItems.value = nextExpandedItems;
+}
+
+function openStockModal(item, variant) {
+  selectedVariant.value = variant;
+  selectedVariantItemId.value = item.id;
+  isStockModalOpen.value = true;
+}
+
+function closeStockModal() {
+  isStockModalOpen.value = false;
+  selectedVariant.value = null;
+  selectedVariantItemId.value = null;
+}
+
+function updateStockRemaining(stockRemaining) {
+  if (selectedVariant.value) {
+    selectedVariant.value.stockRemaining = stockRemaining;
+  }
 }
 
 function openAddItem() {

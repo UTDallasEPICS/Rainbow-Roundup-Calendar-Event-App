@@ -61,6 +61,7 @@ export default defineEventHandler(async (event) => {
             {
                 if (body.ItemVariants[i].size) { updateVariantData.size = body.ItemVariants[i].size; }
                 if (body.ItemVariants[i].availability != null) { updateVariantData.availability = body.ItemVariants[i].availability; }
+                if (body.ItemVariants[i].stockRemaining != null) { updateVariantData.stockRemaining = body.ItemVariants[i].stockRemaining; }
                 
 
                 await prisma.itemVariant.update({
