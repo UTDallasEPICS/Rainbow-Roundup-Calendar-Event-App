@@ -52,7 +52,7 @@
       </div>
 
       <!-- Gradient header -->
-      <div class="h-20 bg-[#FFE166] relative">
+      <div class="h-20 bg-colour_yellow relative">
         <div class="absolute inset-0 opacity-10" />
       </div>
 

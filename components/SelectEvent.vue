@@ -30,11 +30,11 @@
                         Loading...
                     </div>
                     <div v-else-if="upcomingEvents.length > 0" class="flex flex-wrap flex-row w-full">
-                        <div v-for="event in upcomingEvents" class="rounded shadow-md p-2 m-2 w-full border-2 hover:border-[#C028B9]" 
+                        <div v-for="event in upcomingEvents" class="rounded shadow-md p-2 m-2 w-full border-2 hover:border-colour_magenta" 
                         :class="{ 
-                            'bg-[#C028B9]': (event.id == selectedEventId),
+                            'bg-colour_magenta': (event.id == selectedEventId),
                             'text-white': (event.id == selectedEventId),
-                            'border-[#C028B9]': (event.id == selectedEventId)}
+                            'border-colour_magenta': (event.id == selectedEventId)}
                             "
                         @click="selectEvent(event.id)">
                             <div class="font-bold text-lg">{{ event.title }}</div>
