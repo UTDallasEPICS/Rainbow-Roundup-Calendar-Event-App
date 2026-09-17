@@ -71,13 +71,13 @@ const submitOTP = async () => {
 
 <template>
   <div class="w-full min-h-screen flex items-center justify-center bg-white px-6 py-12">
-    <h2 class="text-2xl sm:text-3xl font-extrabold text-center text-[#022150] mb-8"
+    <h2 class="text-2xl sm:text-3xl font-extrabold text-center text-colour_navy mb-8"
     v-if="formMode ==='loading'">
       Loading, please wait...
     </h2>
     <form @submit.prevent="submitEmail" class="w-full max-w-xl rounded-2xl p-8 sm:p-10 flex flex-col items-center"
       v-if="formMode === 'email'">
-      <h2 class="text-2xl sm:text-3xl font-extrabold text-center text-[#022150] mb-8">
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-center text-colour_navy mb-8">
         Welcome Back
       </h2>
 
@@ -85,12 +85,12 @@ const submitOTP = async () => {
       <div class="w-full">
         <label class="block text-lg font-semibold text-gray-800 mb-2">Email</label>
         <input v-model="email" type="email" placeholder="you@example.com"
-          class="w-full px-4 py-3 text-lg rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#89BBEB] transition" />
+          class="w-full px-4 py-3 text-lg rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-colour_sky transition" />
       </div>
 
       <!-- Send Magic Link Button -->
       <button type="submit"
-        class="mt-8 w-full sm:w-[280px] py-4 px-6 text-xl text-white font-semibold bg-[#C028B9] hover:bg-[#9a1985] transition rounded-2xl">
+        class="mt-8 w-full sm:w-[280px] py-4 px-6 text-xl text-white font-semibold bg-colour_magenta hover:bg-colour_magentaDark transition rounded-2xl">
         Send Login Code
       </button>
 
@@ -105,7 +105,7 @@ const submitOTP = async () => {
       <div class="text-lg mt-6 text-center text-gray-600">
         <strong>
           Don't have an account?
-          <NuxtLink to="/signup" class="text-[#C028B9] hover:underline transition">Sign Up</NuxtLink>
+          <NuxtLink to="/signup" class="text-colour_magenta hover:underline transition">Sign Up</NuxtLink>
         </strong>
       </div>
     </form>
@@ -115,10 +115,10 @@ const submitOTP = async () => {
       <div class="w-full">
         <label class="block text-lg font-semibold text-gray-800 mb-2">OTP Code</label>
         <input ref="input" v-model="otp" type="otp" placeholder="123456"
-          class="w-full px-4 py-3 text-lg rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#89BBEB] transition" />
+          class="w-full px-4 py-3 text-lg rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-colour_sky transition" />
         <!-- Send Magic Link Button -->
         <button type="submit"
-          class="mt-8 w-full sm:w-[280px] py-4 px-6 text-xl text-white font-semibold bg-[#C028B9] hover:bg-[#9a1985] transition rounded-2xl">
+          class="mt-8 w-full sm:w-[280px] py-4 px-6 text-xl text-white font-semibold bg-colour_magenta hover:bg-colour_magentaDark transition rounded-2xl">
           Verify
         </button>
        
@@ -126,16 +126,16 @@ const submitOTP = async () => {
        
        
     </form>
-    <h2 class="text-2xl sm:text-3xl font-extrabold text-center text-[#022150] mb-8" v-if="formMode==='done'">
+    <h2 class="text-2xl sm:text-3xl font-extrabold text-center text-colour_navy mb-8" v-if="formMode==='done'">
         {{ responseMessage }}
         <div>
         <button onclick="window.location.href = '/';"
-          class="mt-8 w-full sm:w-[280px] py-4 px-6 text-xl text-white font-semibold bg-[#C028B9] hover:bg-[#9a1985] transition rounded-2xl"
+          class="mt-8 w-full sm:w-[280px] py-4 px-6 text-xl text-white font-semibold bg-colour_magenta hover:bg-colour_magentaDark transition rounded-2xl"
           v-if="responseMessage==='Successfully logged in!'">
           <text >Go to home page</text>
         </button>
         <button  onclick="window.location.href = '/login';" 
-          class="mt-8 w-full sm:w-[280px] py-4 px-6 text-xl text-white font-semibold bg-[#C028B9] hover:bg-[#9a1985] transition rounded-2xl"
+          class="mt-8 w-full sm:w-[280px] py-4 px-6 text-xl text-white font-semibold bg-colour_magenta hover:bg-colour_magentaDark transition rounded-2xl"
           v-if="responseMessage==='Verification failed'">
           
           <text >Try Again</text>

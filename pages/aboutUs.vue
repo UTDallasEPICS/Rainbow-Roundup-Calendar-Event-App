@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-[#f9f9f9] text-gray-800 font-sans p-6 md:p-12">
+  <div class="min-h-screen bg-colour_offWhite text-gray-800 font-sans p-6 md:p-12">
     <header
-      class="bg-[#89BBEB] rounded-3xl shadow-lg text-center px-8 py-14 mb-12 text-black"
+      class="bg-colour_sky rounded-3xl shadow-lg text-center px-8 py-14 mb-12 text-black"
     >
       <h1 class="text-3xl font-extrabold mb-6">Rainbow Roundup</h1>
       <p class="max-w-md mx-auto text-md leading-relaxed font-medium">
@@ -26,7 +26,7 @@
             <img
               :src="person.image"
               alt="Profile picture"
-              class="w-20 h-20 rounded-full object-cover border-4 border-[#89BBEB]"
+              class="w-20 h-20 rounded-full object-cover border-4 border-colour_sky"
             />
             <div>
               <h2 class="text-2xl font-bold text-gray-900">
@@ -35,7 +35,7 @@
               <p class="text-lg text-gray-600">{{ person.title }}</p>
             </div>
           </div>
-          <button class="text-3xl text-[#C028B9] focus:outline-none">
+          <button class="text-3xl text-colour_magenta focus:outline-none">
             {{ person.showBio ? "▲" : "▼" }}
           </button>
         </div>
