@@ -50,5 +50,5 @@ export default defineEventHandler(async (event: any) => {
         where: { id: id, },
     });
 
-    return { success: true, itemPhoto: deletedPhoto, };
+    return { itemPhoto: deletedPhoto };
 });

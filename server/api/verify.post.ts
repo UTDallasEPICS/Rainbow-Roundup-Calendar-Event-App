@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
 
     if (!pending || pending.expires < new Date()) {
       setResponseStatus(event, 400);
-      return { success: false, error: "Invalid or expired token." };
+      return { error: "Invalid or expired token." };
     }
 
     // Move to User table
@@ -40,10 +40,10 @@ export default defineEventHandler(async (event) => {
     });
 
     // redirect to home
-    return { success: true, redirect: "/" };
+    return {redirect: "/" };
   } catch (err) {
     console.error("Verification error:", err);
     setResponseStatus(event, 500);
-    return { success: false, error: "Server error during verification." };
+    return { error: "Server error during verification." };
   }
 });
