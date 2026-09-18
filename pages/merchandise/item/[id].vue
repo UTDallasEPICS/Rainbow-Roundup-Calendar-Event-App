@@ -38,6 +38,8 @@
           </div>
         </div>
         <div class="flex-1">
+          <p class="text-lg mb-6 leading-snug" :style="{ color: 'red' }"> {{ stockRemainingMessage || "Please select a size." }}  </p>
+
           <p class="text-lg mb-6 leading-snug">{{ itemDescription ||
               "No description available for this product."}}</p>
 
@@ -54,16 +56,35 @@
             <label class="block mb-4 font-semibold">
               Quantity:
               <input
+                v-if="selectedSizeHasStockRemaining"
                 type="number"
                 v-model.number="quantity"
+                @input="restrictInputStockRemaining"
                 min="1"
+                :max="selectedVariantStockRemaining"
+                @keydown="blockSpecialChars"
+                class="ml-2 px-2 py-1 text-base rounded border border-gray-300 w-16"
+              />
+
+              <input
+                v-else
+                type="number"
+                v-model.number="quantity"
+                @input="restrictInputNoStockRemaining"
+                min="0"
+                :max="selectedVariantStockRemaining"
+                @keydown="blockSpecialChars"
                 class="ml-2 px-2 py-1 text-base rounded border border-gray-300 w-16"
               />
             </label>
           </div>
 
-          <p class="text-xl my-6">
+          <p v-if="selectedSize !== ''" class="text-xl my-6">
             Total: <strong>${{ formattedPrice }}</strong>
+          </p>
+
+          <p v-else class="text-xl my-6">
+            Total: <strong>-</strong>
           </p>
           <button
             :disabled="!canAddToCart"
@@ -83,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import type { AbstractItem, ItemVariant } from "~/types/prismaTypes";
 import { useCartStore } from '~/stores/cart'; 
@@ -98,7 +119,36 @@ const itemDescription = ref(); // band aid fix, need to fix how data fetching is
 const availableSizes = ref<string[]>([]);
 const selectedImage = ref();
 const selectedSize = ref<string>("");
-const quantity = ref(1);
+const quantity = ref<number | ''>(0);
+
+const selectedVariant = computed(() => item.value?.ItemVariants?.find(
+    (v: ItemVariant | any) => v.size === selectedSize.value
+  ));
+
+const selectedVariantStockRemaining = computed(() => selectedVariant.value?.stockRemaining);
+
+const selectedSizeHasStockRemaining = computed(() => selectedVariantStockRemaining.value !== undefined && selectedVariantStockRemaining.value > 0);
+
+const stockRemainingMessage = computed(() => {
+  if (selectedSizeHasStockRemaining.value) {
+    return `Stock remaining for this size: ${selectedVariantStockRemaining.value}`;
+  }
+
+  if (selectedSize.value === "") {
+    return "Please select a size.";
+  }
+
+  return "Currently out of stock for this size.";
+});
+
+watch(selectedSize, () => {
+  if (selectedVariantStockRemaining.value === 0) {
+    quantity.value = 0;
+  }
+  else {
+    quantity.value = 1;
+  }
+})
 
 // computed with (sum of quantities)
 const totalCount = computed(() =>
@@ -115,7 +165,7 @@ function goToCart() {
 function variantIsAvailable(v: any): boolean {
   if (!v) return false;
   if (typeof v.availability === 'boolean') return v.availability;
-  if (typeof v.availbility === 'boolean') return v.availbility;
+  if (typeof v.availability === 'boolean') return v.availability;
   return true;
 }
 onMounted(async () => { // TODO: Properly format this to use useFetch
@@ -195,5 +245,30 @@ const addToCart = () => {
   cart.addItem(cartItem);
   // I commented this alert cause it seems more annoying than useful
   // alert(`${cartItem.quantity} × "${cartItem.name}" (${selectedSize.value}) added to cart`);
+};
+
+function restrictInputStockRemaining() {
+  if (selectedVariantStockRemaining.value !== undefined) {
+    if (quantity.value === '' || quantity.value === null) {
+      return;
+    }
+
+    if (quantity.value < 1) {
+      quantity.value = 1;
+    } else if (quantity.value > selectedVariantStockRemaining.value) {
+      quantity.value = selectedVariantStockRemaining.value;
+    }
+  }
+}
+
+function restrictInputNoStockRemaining() {
+  quantity.value = 0;
+}
+
+const blockSpecialChars = (event) => {
+  // Block 'e', 'E', '+', and '-'
+  if (['e', 'E', '+', '-', '.', ',',].includes(event.key)) {
+    event.preventDefault();
+  }
 };
 </script>
