@@ -66,6 +66,10 @@
           <NuxtLink v-if="isAdmin" to="/admin" @click="navigate('Admin')" class="text-gray-700 hover:text-black">Admin</NuxtLink>
           <NuxtLink to="/aboutUs" @click="navigate('About Us')" class="text-gray-700 hover:text-black">About Us
           </NuxtLink>
+          <NuxtLink to="/contactUs" @click="navigate('Contact Us')" class="text-gray-700 hover:text-black">Contact Us
+          </NuxtLink>
+          <NuxtLink to="/sponsors" @click="navigate('Sponsors')" class="text-gray-700 hover:text-black">Sponsors
+          </NuxtLink>
           <NuxtLink to="/calendar" @click="navigate('Calendar')" class="text-gray-700 hover:text-black">Calendar
           </NuxtLink>
           <NuxtLink to="/merchandise" @click="navigate('Merchandise')" class="text-gray-700 hover:text-black">Merchandise
@@ -131,6 +135,10 @@
             @click.native="handleMobileNavClick">Admin</NuxtLink>
           <NuxtLink to="/aboutUs" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             @click.native="handleMobileNavClick">About Us</NuxtLink>
+          <NuxtLink to="/contactUs" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+            @click.native="handleMobileNavClick">Contact Us</NuxtLink>
+          <NuxtLink to="/sponsors" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
+            @click.native="handleMobileNavClick">Sponsors</NuxtLink>
           <NuxtLink to="/calendar" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             @click.native="handleMobileNavClick">Calendar</NuxtLink>
             <NuxtLink to="/merchandise" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
