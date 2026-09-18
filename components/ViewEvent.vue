@@ -290,7 +290,7 @@
 </div>
 </template>
 
-<script setup>
+<script setup lang='ts'>
 import { ref, reactive, computed, onMounted } from "vue";
 //import { useAuth } from "#imports"; // todo: figure out why useAuth is called here or if we don't need to touch it. 
 import { authClient } from "~/composables/auth"
