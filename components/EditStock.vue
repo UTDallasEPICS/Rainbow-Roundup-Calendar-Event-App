@@ -92,7 +92,7 @@ async function saveChanges() {
             body: {
                 ItemVariants: [{
                     id: props.variant.id,
-                    stockRemaining,
+                    stockRemaining: stockRemaining
                 }],
             },
         });

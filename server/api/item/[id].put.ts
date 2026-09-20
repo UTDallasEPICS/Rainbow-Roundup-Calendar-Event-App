@@ -8,6 +8,7 @@ body should include:
     ItemVariants (array)
         size
         availability
+        stockRemaining
 
     Only ItemVariants that are to be updated need to be in the array
 */
