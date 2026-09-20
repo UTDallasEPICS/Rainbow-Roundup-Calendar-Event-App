@@ -56,7 +56,6 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-blue-300">
                         <tr>
-                            <th class="w-10 px-2 py-2"></th>
                             <th
                             
                             class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 cursor-pointer select-none"
@@ -70,7 +69,7 @@
                             </th>
                             <th
                             @click="sortAsc = !sortAsc"
-                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none"
+                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none whitespace-nowrap"
                             >
                                 Availability
                                 <span>
@@ -83,9 +82,14 @@
                                 Description
                             </th>
                             <th
-                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none"
+                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none whitespace-nowrap"
                             >
                                 Stock Remaining
+                            </th>
+                            <th
+                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none whitespace-nowrap"
+                            >
+                                Manage Size Inventory
                             </th>
                         </tr>
                         </thead>
@@ -95,22 +99,11 @@
                                 @click="openItemModal(merch)"
                                 class="hover:bg-gray-100 cursor-pointer"
                             >
-                            <td class="px-2 py-3 text-sm border text-center">
-                                <button
-                                    type="button"
-                                    class="inline-flex items-center justify-center w-6 h-6 rounded hover:bg-gray-200"
-                                    :aria-label="expandedItems.has(merch.id) ? `Hide stock for ${merch.name}` : `Show stock for ${merch.name}`"
-                                    :aria-expanded="expandedItems.has(merch.id)"
-                                    @click.stop="toggleExpanded(merch.id)"
-                                >
-                                    <span class="text-lg leading-none">{{ expandedItems.has(merch.id) ? "⌄" : ">" }}</span>
-                                </button>
-                            </td>
                             <td class="px-4 py-3 text-sm text-gray-800 border">
                                 {{ merch.name }}
                             </td>
-                            <td class="px-4 py-3 text-sm text-gray-800 border">
-                                $ {{ merch.price.toFixed(2) }}
+                            <td class="px-4 py-3 text-sm text-gray-800 border whitespace-nowrap">
+                                ${{ merch.price.toFixed(2) }}
                             </td>
                             <td class="px-4 py-3 text-sm border">
                                 <span v-if="!merch.isArchived" class="text-lime-600">Visible</span>
@@ -127,6 +120,17 @@
                                     0
                                     )
                                 }}
+                            </td>
+                            <td class="px-4 py-3 text-sm border">
+                                <button
+                                    type="button"
+                                    class="inline-flex items-center justify-center rounded px-2 py-1 hover:bg-gray-200"
+                                    :aria-label="expandedItems.has(merch.id) ? `Hide stock for ${merch.name}` : `Show stock for ${merch.name}`"
+                                    :aria-expanded="expandedItems.has(merch.id)"
+                                    @click.stop="toggleExpanded(merch.id)"
+                                >
+                                    <span class="whitespace-nowrap">{{ expandedItems.has(merch.id) ? "Hide Size Inventory" : "Manage Size Inventory" }}</span>
+                                </button>
                             </td>
                             </tr>
                             <tr
