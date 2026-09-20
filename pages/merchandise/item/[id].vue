@@ -56,23 +56,12 @@
             <label class="block mb-4 font-semibold">
               Quantity:
               <input
-                v-if="selectedSizeHasStockRemaining"
                 type="number"
                 v-model.number="quantity"
+                :disabled="selectedSize === '' || !selectedSizeHasStockRemaining"
                 @input="restrictInputStockRemaining"
-                min="1"
-                :max="selectedVariantStockRemaining"
-                @keydown="blockSpecialChars"
-                class="ml-2 px-2 py-1 text-base rounded border border-gray-300 w-16"
-              />
-
-              <input
-                v-else
-                type="number"
-                v-model.number="quantity"
-                @input="restrictInputNoStockRemaining"
                 min="0"
-                :max="selectedVariantStockRemaining"
+                :max="allowableMaxQuantityInput"
                 @keydown="blockSpecialChars"
                 class="ml-2 px-2 py-1 text-base rounded border border-gray-300 w-16"
               />
@@ -125,13 +114,22 @@ const selectedVariant = computed(() => item.value?.ItemVariants?.find(
     (v: ItemVariant | any) => v.size === selectedSize.value
   ));
 
+const allowableMaxQuantityInput = computed(() =>
+  selectedVariant.value?.stockRemaining
+    ? selectedVariant.value?.stockRemaining -
+      (cart.items?.find(
+        i => i.itemVariantId === selectedVariant.value?.id
+      )?.quantity ?? 0)
+    : undefined
+);
+
 const selectedVariantStockRemaining = computed(() => selectedVariant.value?.stockRemaining);
 
 const selectedSizeHasStockRemaining = computed(() => selectedVariantStockRemaining.value !== undefined && selectedVariantStockRemaining.value > 0);
 
 const stockRemainingMessage = computed(() => {
-  if (selectedSizeHasStockRemaining.value) {
-    return `Stock remaining for this size: ${selectedVariantStockRemaining.value}`;
+  if (selectedVariantStockRemaining.value) {
+    return `Stock available for this size: ${selectedVariantStockRemaining.value}`;
   }
 
   if (selectedSize.value === "") {
@@ -142,12 +140,11 @@ const stockRemainingMessage = computed(() => {
 });
 
 watch(selectedSize, () => {
-  if (selectedVariantStockRemaining.value === 0) {
-    quantity.value = 0;
-  }
-  else {
-    quantity.value = 1;
-  }
+  quantity.value = 0;
+})
+
+watch(cart, () => {
+  quantity.value = Math.min(quantity.value, allowableMaxQuantityInput.value);
 })
 
 // computed with (sum of quantities)
@@ -250,21 +247,17 @@ const addToCart = () => {
 };
 
 function restrictInputStockRemaining() {
-  if (selectedVariantStockRemaining.value !== undefined) {
+  if (allowableMaxQuantityInput.value !== undefined) {
     if (quantity.value === '' || quantity.value === null) {
       return;
     }
 
-    if (quantity.value < 1) {
-      quantity.value = 1;
-    } else if (quantity.value > selectedVariantStockRemaining.value) {
-      quantity.value = selectedVariantStockRemaining.value;
+    if (quantity.value < 0) {
+      quantity.value = 0;
+    } else if (quantity.value > allowableMaxQuantityInput.value) {
+      quantity.value = allowableMaxQuantityInput.value;
     }
   }
-}
-
-function restrictInputNoStockRemaining() {
-  quantity.value = 0;
 }
 
 const blockSpecialChars = (event) => {
