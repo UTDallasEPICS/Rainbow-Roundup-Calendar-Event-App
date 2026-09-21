@@ -74,7 +74,7 @@
 
                 <div class="bg-global-1 px-4 sm:px-8 md:px-12 lg:px-[60px] py-3 sm:py-4 md:py-5 lg:py-[12px] rounded-lg sm:rounded-xl shadow-[0px_4px_4px_#0000003f] mx-4 sm:mx-6 md:mx-8">
                   <h1 class="text-global-1 text-2xl sm:text-3xl md:text-4xl lg:text-[60px] font-extralight leading-tight sm:leading-normal md:leading-relaxed lg:leading-[73px] text-center">
-                    {{ slide.title || "Explore Our Collection" }}
+                    {{ slide.title }}
                   </h1>
                 </div>
               </div>
@@ -173,17 +173,11 @@
       {
         id: 1,
         backgroundImage: "/img_banner.png",
-        title: "Explore Our Collection",
-        backgroundColor: "#d9d9d9"
-      },
-      {
-        id: 2,
-        backgroundImage: "/img_banner.png",
         title: "Discover Pride Apparel",
         backgroundColor: "#e0e0e0"
       },
       {
-        id: 3,
+        id: 2,
         backgroundImage: "/img_banner.png",
         title: "Express Your True Self",
         backgroundColor: "#f0f0f0"
