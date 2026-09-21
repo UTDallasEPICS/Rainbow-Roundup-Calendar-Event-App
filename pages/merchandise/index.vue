@@ -1,19 +1,24 @@
 <template>
+      <!-- The tiny cart in the top right-->
+    <button
+      @click="goToCart"
+      class="fixed top-[110px] right-4 z-50 flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-md hover:scale-105 transition-transform"
+      aria-label="Open cart"
+    >
+      <!-- cart SVG  Can I put this in other files?-->
+      <svg class="w-8 h-8 text-gray-800" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M3 3h2l.4 2M7 13h10l3-8H6.4M7 13L6 6H3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <circle cx="10" cy="19" r="1.4"></circle>
+        <circle cx="18" cy="19" r="1.4"></circle>
+      </svg>
+
+      <!-- badge -->
+      <span v-if="totalCount > 0" class="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+        {{ totalCount }}
+      </span>
+    </button>
+
       <div class="min-h-screen bg-global-1 flex flex-col justify-start items-center">
-        <!-- Header Section -->
-        <header class="w-full bg-header-1 px-4 sm:px-5 md:px-6 lg:px-[20px] py-4">
-          <div class="w-full max-w-[1600px] mx-auto">
-            <div class="flex flex-col lg:flex-row justify-between items-center gap-4 lg:gap-0">
-              <div class="flex items-center gap-4 sm:gap-6 lg:gap-8 flex-shrink-0">
-                <NuxtLink to="/merchandise/cart" class="focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-lg transition-transform hover:scale-105 active:scale-95">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-14">
-                    <path d="M2.25 2.25a.75.75 0 0 0 0 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 0 0-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 0 0 0-1.5H5.378A2.25 2.25 0 0 1 7.5 15h11.218a.75.75 0 0 0 .674-.421 60.358 60.358 0 0 0 2.96-7.228.75.75 0 0 0-.525-.965A60.864 60.864 0 0 0 5.68 4.509l-.232-.867A1.875 1.875 0 0 0 3.636 2.25H2.25ZM3.75 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM16.5 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" />
-                  </svg>
-                </NuxtLink>
-              </div>
-            </div>
-          </div>
-        </header>
     <!-- Hero Slider -->
     <div class="w-full mt-[82px]">
       <div class="w-full max-w-[1600px] mx-auto">
@@ -118,7 +123,8 @@
     </template>
 
     <script setup>
-    
+
+    import { useCartStore } from "~/stores/cart";
 
     const router = useRouter()
     // State
@@ -129,6 +135,11 @@
     const items =ref([]); //database items
     const loading = ref(true);
     const error = ref(null);
+    const currentCart = useCartStore();
+
+    const totalCount = computed(() =>
+      (currentCart.items ?? []).reduce((s, i) => s + (i?.quantity ?? 0), 0)
+    );
 
 
     //Fetching items from the database
