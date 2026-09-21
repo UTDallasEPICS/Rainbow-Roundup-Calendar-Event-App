@@ -92,7 +92,7 @@ export default defineEventHandler(async (event) => {
         unit_amount: item.ItemVariants.item.price * 100, // adjust to integer value, stripe will adjust it on their checkput page
         product_data: {
           name: item.ItemVariants.item.name, // NOTE: This can be modified to include the size of the itemVariant if we want that to show up in stripe
-          description: item.ItemVariants.item.description,
+          description: item.ItemVariants.item.description || "No description provided",
           images: item.ItemVariants.item.ItemPhotos ? item.ItemVariants.item.ItemPhotos.map(photo => `${process.env.URL}/${photo.url}`) : [],
           // The above line is to extract the array of photo url's we have and send it to stripe, if stripe can retrieve the image url's, it will show it on checkout page
           // ${process.env.URL}${photo.url} is essentially combining our domain and relative path from our domain, it relies on our .env to not have a trailing slash
