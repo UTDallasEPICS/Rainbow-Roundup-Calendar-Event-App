@@ -87,7 +87,7 @@
 
                 <!-- visibility -->
                 <div>
-                    <h2 class="w-full text-lg font-semibold text-gray-800">Visibiity</h2>
+                    <h2 class="w-full text-lg font-semibold text-gray-800">Visibility</h2>
                     <div class="flex gap-2">
                         <input v-model="archived" type="radio" name="archived" value="false">
                             <label for="false">Available</label>
