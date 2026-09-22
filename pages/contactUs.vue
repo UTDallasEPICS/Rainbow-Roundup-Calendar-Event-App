@@ -7,15 +7,20 @@
     const femail = ref("")
 
     const nameValid = computed(() => fname.value.trim() !== '')
-    const emailValid = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(femail.value))
+    const emailValid = computed(() => {
+        if (typeof document === 'undefined') return false;
+        const input = document.createElement('input');
+        input.type = 'email';
+        input.required = true;
+        input.value = femail.value;
+        return input.checkValidity();
+    })
     const messageValid = computed(() => message.value.trim() !== '')
 
     const nameTouched = ref(false)
-    const emailTouched = ref(false)
     const messageTouched = ref(false)
 
     const nameFocused = ref(false)
-    const emailFocused = ref(false)
     const messageFocused = ref(false)
 
     const isSubmitting = ref(false)
@@ -43,7 +48,7 @@
                 }
             });
             submitted.value = true;
-        } catch (error : any) {
+        } catch (error) {
             errorMessage.value = error.statusMessage || "Something went wrong.";
             console.log(errorMessage.value);
             submissionError.value = true
@@ -68,23 +73,25 @@
             </header>
             <div class="flex flex-col gap-1 max-w-6xl mx-auto">
                 <div>
-                    <div class="w-full mx-auto flex items-center gap-4 justify-center">
-                        <input v-model="fname" type="text" placeholder="Name" @focus="nameFocused = true" @blur="nameTouched = true; nameFocused = false" :class="['flex-1 rounded-xl border bg-white px-4 py-3 text-gray-800 shadow-sm outline-none transition focus:border-gray-500 focus:ring-2 focus:ring-gray-200', nameTouched && !nameValid ?  'border-red-500 ring-2 ring-red-200' : 'border-gray-300']" />
-                        <input v-model="femail" type="email" placeholder="Email" @focus="emailFocused = true" @blur="emailTouched = true; emailFocused = false" :class="['flex-1 rounded-xl border bg-white px-4 py-3 text-gray-800 shadow-sm outline-none transition focus:border-gray-500 focus:ring-2 focus:ring-gray-200', emailTouched && !emailValid ? 'border-red-500 ring-2 ring-red-200' : 'border-gray-300']" />
-                    </div>
-                    <div class="w-full mx-auto flex items-center gap-4 justify-center">
-                        <div class="w-full">
+                    <div class="w-full mx-auto flex items-start gap-4 justify-center">
+                        <div class="flex-1 flex flex-col">
+                            <input v-model="fname" type="text" placeholder="Name" @focus="nameFocused = true" @blur="nameTouched = true; nameFocused = false" :class="['w-full rounded-xl border bg-white px-4 py-3 text-gray-800 shadow-sm outline-none transition focus:border-gray-500 focus:ring-2 focus:ring-gray-200', nameTouched && !nameValid ?  'border-red-500 ring-2 ring-red-200' : 'border-gray-300']" />
                             <p class="mt-1 h-5 text-sm text-red-500 px-4">
                                 <span v-if="nameTouched && !nameValid" class="">
                                     Name is required.
                                 </span>
                             </p>
                         </div>
-                        <div class="w-full">
-                            <p class="mt-1 h-5 text-sm text-red-500 px-4">
-                                <span v-if="emailTouched && !emailValid" class="">
-                                    Email invalid.
-                                </span>
+                        <div class="flex-1 flex flex-col">
+                            <input 
+                                v-model="femail" 
+                                type="email" 
+                                required
+                                placeholder="Email" 
+                                class="peer w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-800 shadow-sm outline-none transition focus:border-gray-500 focus:ring-2 focus:ring-gray-200 [&:user-invalid]:border-red-500 [&:user-invalid]:ring-2 [&:user-invalid]:ring-red-200" 
+                            />
+                            <p class="mt-1 h-5 text-sm text-red-500 px-4 invisible peer-[:user-invalid]:visible">
+                                Email invalid.
                             </p>
                         </div>
                     </div>
