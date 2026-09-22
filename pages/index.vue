@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-colour_blue min-h-screen text-white flex flex-col">
+  <div class="bg-rr-blue min-h-screen text-white flex flex-col">
     <!-- Centered Carousel -->
     <div class="w-full bg-white flex flex-col items-center">
       <div class="w-full max-w-screen-2xl pt-2">
@@ -44,7 +44,7 @@
       @click="goToSlide(i - 1)"
       class="w-3 h-3 rounded-full transition border border-transparent"
       :class="{
-        'bg-colour_blue': currentSlide === (i - 1),
+        'bg-rr-blue': currentSlide === (i - 1),
         'bg-black/30': currentSlide !== (i - 1)
       }"
     ></button>
@@ -63,11 +63,11 @@
           <div>
 
             <div class="flex items-center justify-between mb-4">
-              <button @click="prevMonth" class="px-3 py-2 bg-colour_blue hover:bg-colour_blueDark text-white rounded">Prev</button>
+              <button @click="prevMonth" class="px-3 py-2 bg-rr-blue hover:bg-rr-blueDark text-white rounded">Prev</button>
               <div class="text-xl font-semibold text-gray-800 flex-1 text-center">{{ currentMonthName }} {{ currentYear }}</div>
               <div class="flex items-center gap-2">
-                <button @click="goToToday" class="px-3 py-2 bg-colour_green hover:bg-colour_greenDark text-black rounded ">Today</button>
-                <button @click="nextMonth" class="px-3 py-2 bg-colour_blue hover:bg-colour_blueDark text-white rounded">Next</button>
+                <button @click="goToToday" class="px-3 py-2 bg-rr-green hover:bg-rr-greenDark text-black rounded ">Today</button>
+                <button @click="nextMonth" class="px-3 py-2 bg-rr-blue hover:bg-rr-blueDark text-white rounded">Next</button>
               </div>
             </div>
 
@@ -137,10 +137,10 @@
           title="Support our Families!"
           description="Your kindness makes a difference."
           button-text="Donate"
-          bg-color="bg-colour_green"
+          bg-color="bg-rr-green"
           title-color="text-white"
           description-color="text-white"
-          button-color="bg-colour_greenDark"
+          button-color="bg-rr-greenDark"
           external-link="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
           image="/images/Donation.png"
           class="h-48"
@@ -151,10 +151,10 @@
           title="Our Mission"
           description="Learn how we're changing lives."
           button-text="Read"
-          bg-color="bg-colour_blue"
+          bg-color="bg-rr-blue"
           title-color="text-white"
           description-color="text-white"
-          button-color="bg-colour_blueDark"
+          button-color="bg-rr-blueDark"
           internal-link="/aboutUs"
           image="/images/Community.png"
           class="h-48"
@@ -165,10 +165,10 @@
           title="Buy our Merchandise!"
           description="Wear your support with pride."
           button-text="Buy"
-          bg-color="bg-colour_magenta"
+          bg-color="bg-rr-magenta"
           title-color="text-white"
           description-color="text-white"
-          button-color="bg-colour_magentaDeep"
+          button-color="bg-rr-magentaDeep"
           internal-link="/merchandise"
           image="/images/Merchandise.png"
           class="h-48"
@@ -181,7 +181,7 @@
       <a
         href="https://www.facebook.com/rainbowroundup/"
         target="_blank"
-        class="inline-block bg-colour_blue text-white hover:bg-colour_blueDark hover:text-white px-6 py-3 rounded transition duration-200 text-lg"
+        class="inline-block bg-rr-blue text-white hover:bg-rr-blueDark hover:text-white px-6 py-3 rounded transition duration-200 text-lg"
       >Follow Us on Facebook for Latest News/Events</a>
     </div>
 

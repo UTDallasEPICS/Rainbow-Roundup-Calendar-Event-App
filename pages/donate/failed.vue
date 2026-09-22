@@ -17,7 +17,7 @@ import { ArrowLeftIcon, XMarkIcon } from "@heroicons/vue/24/solid";
         <p class="text-sm text-gray-400">
           Looks like something went wrong while processing your request.
         </p>
-        <h1 class="text-l text-colour_charcoal font-bold">
+        <h1 class="text-l text-rr-charcoal font-bold">
           Oh Snap! Donation Failed
         </h1>
         <div class="flex flex-col gap-4">
