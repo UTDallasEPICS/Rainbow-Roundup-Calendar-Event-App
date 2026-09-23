@@ -152,8 +152,8 @@ async function saveChanges() {
             alert("Item must have a name.")
 
         }
-        else if (editedItem.price <= 0) {
-            alert("Price cannot be 0 or less.")
+        else if (Number.isNaN(Number(editedItem.price)) || editedItem.price <= 0) {
+            alert("Price must be a number and cannot be 0 or less.")
         }
         else {
 
