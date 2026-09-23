@@ -53,7 +53,7 @@
                 v-if="sortedMerch && sortedMerch.length" class="bg-white rounded-lg shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] overflow-hidden"
             >
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
+                    <table class="table-fixed w-[24rem] min-w-[24rem] md:table-auto md:w-full divide-y divide-gray-200">
                         <thead class="bg-blue-300">
                         <tr>
                             <th
@@ -69,7 +69,7 @@
                             </th>
                             <th
                             @click="sortAsc = !sortAsc"
-                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none whitespace-nowrap"
+                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none whitespace-normal break-words md:whitespace-nowrap"
                             >
                                 Availability
                                 <span>
@@ -82,12 +82,12 @@
                                 Description
                             </th>
                             <th
-                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none whitespace-nowrap"
+                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none whitespace-normal break-words md:whitespace-nowrap"
                             >
                                 Stock Remaining
                             </th>
                             <th
-                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none whitespace-nowrap"
+                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none whitespace-normal break-words md:whitespace-nowrap"
                             >
                                 Manage Size Inventory
                             </th>
@@ -99,7 +99,7 @@
                                 @click="openItemModal(merch)"
                                 class="hover:bg-gray-100 cursor-pointer"
                             >
-                            <td class="px-4 py-3 text-sm text-gray-800 border">
+                            <td class="px-4 py-3 text-sm text-gray-800 border break-words">
                                 {{ merch.name }}
                             </td>
                             <td class="px-4 py-3 text-sm text-gray-800 border whitespace-nowrap">
@@ -124,12 +124,12 @@
                             <td class="px-4 py-3 text-sm border">
                                 <button
                                     type="button"
-                                    class="inline-flex items-center justify-center rounded px-2 py-1 hover:bg-gray-200"
+                                    class="inline-flex max-w-full items-center justify-center rounded px-2 py-1 hover:bg-gray-200"
                                     :aria-label="expandedItems.has(merch.id) ? `Hide stock for ${merch.name}` : `Show stock for ${merch.name}`"
                                     :aria-expanded="expandedItems.has(merch.id)"
                                     @click.stop="toggleExpanded(merch.id)"
                                 >
-                                    <span class="whitespace-nowrap">{{ expandedItems.has(merch.id) ? "Hide Size Inventory" : "Manage Size Inventory" }}</span>
+                                    <span class="whitespace-normal break-words text-center">{{ expandedItems.has(merch.id) ? "Hide Size Inventory" : "Manage Size Inventory" }}</span>
                                 </button>
                             </td>
                             </tr>
@@ -137,7 +137,7 @@
                                 v-if="expandedItems.has(merch.id)"
                                 class="bg-gray-50"
                             >
-                                <td colspan="6" class="px-4 py-3 border">
+                                <td :colspan="isMobile ? 5 : 6" class="px-4 py-3 border">
                                     <table class="w-full max-w-md divide-y divide-gray-200 text-sm">
                                         <thead>
                                         <tr class="text-left text-xs font-extrabold uppercase text-zinc-700">
@@ -174,7 +174,7 @@
 
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { authClient } from "~/composables/auth"
 
 const { data: session } = await authClient.getSession();
@@ -189,6 +189,22 @@ const expandedItems = ref(new Set());
 const isStockModalOpen = ref(false);
 const selectedVariant = ref(null);
 const selectedVariantItemId = ref(null);
+const isMobile = ref(false);
+let mediaQuery;
+let handleMediaQueryChange;
+
+onMounted(() => {
+    mediaQuery = window.matchMedia("(max-width: 767px)");
+    isMobile.value = mediaQuery.matches;
+    handleMediaQueryChange = ({ matches }) => {
+        isMobile.value = matches;
+    };
+    mediaQuery.addEventListener("change", handleMediaQueryChange);
+});
+
+onUnmounted(() => {
+    mediaQuery?.removeEventListener("change", handleMediaQueryChange);
+});
 
 // fetch merch items
 try {
