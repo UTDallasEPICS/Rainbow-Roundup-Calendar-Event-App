@@ -120,7 +120,7 @@ const formIsValid = computed(() => {
 })
 
 function goBack() {
-  router.push('/merchandise')
+  router.push('/merchandise/cart')
 }
 const sendOrder = async () => {
   console.log("Order sending...")
