@@ -3,11 +3,11 @@
     <!-- The tiny cart in the top right-->
     <button
       @click="goToCart"
-      class="fixed top-4 right-4 z-50 flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-md hover:scale-105 transition-transform"
+      class="fixed top-[110px] right-4 z-50 flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-md hover:scale-105 transition-transform"
       aria-label="Open cart"
     >
       <!-- cart SVG  Can I put this in other files?-->
-      <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <svg class="w-8 h-8 text-gray-800" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M3 3h2l.4 2M7 13h10l3-8H6.4M7 13L6 6H3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
         <circle cx="10" cy="19" r="1.4"></circle>
         <circle cx="18" cy="19" r="1.4"></circle>

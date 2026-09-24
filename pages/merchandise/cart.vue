@@ -2,9 +2,6 @@
   <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-2xl font-bold">Your Cart</h1>
-      <button @click="continueShopping" class="text-black border-2 border-black bg-blue-400 hover:bg-blue-600 px-4 py-2 rounded-md transition-colors duration-200">
-        Continue Shopping
-      </button>
     </div>
 
     <div v-if="cartItems.length > 0" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
