@@ -6,6 +6,7 @@
     const fname = ref("")
     const femail = ref("")
 
+
     const nameValid = computed(() => fname.value.trim() !== '')
     const emailValid = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(femail.value))
     const messageValid = computed(() => message.value.trim() !== '')
@@ -75,14 +76,14 @@
                     <div class="w-full mx-auto flex items-center gap-4 justify-center">
                         <div class="w-full">
                             <p class="mt-1 h-5 text-sm text-red-500 px-4">
-                                <span v-if="nameTouched && !nameValid" class="">
+                                <span v-if="nameTouched && !nameValid">
                                     Name is required.
                                 </span>
                             </p>
                         </div>
                         <div class="w-full">
                             <p class="mt-1 h-5 text-sm text-red-500 px-4">
-                                <span v-if="emailTouched && !emailValid" class="">
+                                <span v-if="emailTouched && !emailValid">
                                     Email invalid.
                                 </span>
                             </p>
@@ -94,7 +95,7 @@
                         <textarea v-model="message" type="text" placeholder="Message" @focus="messageFocused = true" @blur="messageTouched = true; messageFocused = false" :class="['h-32 w-full rounded-xl border bg-white px-4 py-3 text-gray-800 shadow-sm outline-none transition focus:border-gray-500 focus:ring-2 focus:ring-gray-200', messageTouched && !messageValid ? 'border-red-500 ring-2 ring-red-200' : 'border-gray-300']"></textarea>
                     </div>
                     <p class="mt-1 h-5 text-sm text-red-500 px-4 w-full">
-                        <span v-if="messageTouched && !messageValid" class="">
+                        <span v-if="messageTouched && !messageValid">
                             Message is required.
                         </span>
                     </p>
@@ -104,7 +105,7 @@
                         <!-- Submit button. An API request is only sent when valid input is provided. -->
                         <button @click="handleClick" :disabled="isSubmitting" :class="['px-3 py-2 text-white rounded', submissionError || invalidInfo ? 'bg-[#E57373] hover:bg-[#D95C5C]' : submitted ? 'bg-[#4CAF50] hover:bg-[#3E8E41]' : isSubmitting ? 'bg-[#94A3B8] cursor-not-allowed' : 'bg-[#3A8DDE] hover:bg-[#2A6BAA]']">{{ submitted ? 'Submitted' : isSubmitting ? 'Sending...' : 'Submit' }}</button>
                         <p class="mt-1 h-5 text-xs text-red-500 px-1">
-                            <span v-if="submissionError || invalidInfo" class="">
+                            <span v-if="submissionError || invalidInfo">
                                 {{invalidInfo ? 'Invalid input': 'Error'}}
                             </span>
                         </p>

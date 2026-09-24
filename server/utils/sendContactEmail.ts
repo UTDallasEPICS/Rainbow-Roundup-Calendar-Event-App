@@ -12,8 +12,8 @@ export const sendContactEmail = async (name: string, email: string, message: str
         from: config.smtpFrom || "rainbow-roundup@npts.tech",
         to: "nathan.nguyen3663@gmail.com",
         subject: `${name} -- Contact Form Submission`,
-        text: `${email}\n${message}`,
-        html: `<p>${message}</p>`,
+        text: `Contact Email: ${email}\n\n${message}`,
+        html: `<p>Contact Email: ${email}<br><br>${message}</p>`,
     };
 
     await transporter.sendMail(mailOptions);
