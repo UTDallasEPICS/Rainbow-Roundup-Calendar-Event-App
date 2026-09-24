@@ -66,11 +66,12 @@ export default defineEventHandler(async (event: any) => {
 
     fs.writeFileSync(filePath, file.data);
 
-    const fileUrl = "/"+path.join(
+    // Store browser/Stripe URLs with URL separators, regardless of the host OS.
+    const fileUrl = `/${[
         (process.env.NUXT_NODE_ENV == "dev") ? "uploads" : config.UPLOAD_DIR,
         user.id,
-        key
-    );
+        key.replace(/^[/\\]+/, "")
+    ].filter(Boolean).join("/")}`;
 
     const itemPhoto = await prisma.itemPhoto.create({
         data: {

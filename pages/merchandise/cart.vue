@@ -2,9 +2,6 @@
   <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-2xl font-bold">Your Cart</h1>
-      <button @click="continueShopping" class="text-black border-2 border-black bg-blue-400 hover:bg-blue-600 px-4 py-2 rounded-md transition-colors duration-200">
-        Continue Shopping
-      </button>
     </div>
 
     <div v-if="cartItems.length > 0" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -14,13 +11,13 @@
           <div class="flex gap-4">
             <img :src="item.image || '/images/tshirt.png'" :alt="item.name" class="w-24 h-24 object-cover rounded">
             <div>
-              <h3 class="font-medium">{{ item.name }}</h3>
+              <h3 class="font-medium">{{ item.name }}; Size: {{ item.selectedSize }}</h3>
               <p class="text-gray-600 text-sm">{{ item.description }}</p>
 
               <div class="flex items-center mt-2">
                 <button @click="decrement(item.itemVariantId)" class="px-2 border rounded-l">-</button>
                 <span class="px-4 border-t border-b">{{ item.quantity }}</span>
-                <button @click="increment(item.itemVariantId)" class="px-2 border rounded-r">+</button>
+                <button @click="increment(item.itemVariantId, item.stockRemaining)" class="px-2 border rounded-r">+</button>
                 <button @click="remove(item.itemVariantId)" class="text-red-500 text-sm ml-4">Remove</button>
               </div>
             </div>
@@ -83,7 +80,12 @@ const cartItems = computed(() => cart.items)
 const subtotal = computed(() => cart.subtotal)
 
 // action helpers
-function increment(itemVariantId: string) {
+function increment(itemVariantId: string, stockRemaining: number) {
+  if (cart.getItemQuantity(itemVariantId) >= stockRemaining) {
+    alert('Cannot add more items than available in stock.');
+    return;
+  }
+
   cart.changeQuantityBy(itemVariantId, 1)
 }
 //Minus quantity
@@ -108,6 +110,7 @@ function checkout() {
     alert('Your cart is empty!')
     return
   }
+
   // Make a checkout page soon (might also change path)
   router.push('/merchandise/checkout')
 }

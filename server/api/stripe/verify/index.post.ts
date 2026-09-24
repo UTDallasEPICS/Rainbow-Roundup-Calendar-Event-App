@@ -42,6 +42,13 @@ export default defineEventHandler(async (event) => {
             id: orderId
         },
     })
+
+    const orderItems = await prisma.orderItem.findMany({
+        where: {
+            orderId: orderId
+        },
+    })
+
     if(order?.status === "PAID" || order?.status === "DELIVERED"){
         return {session}
     }
@@ -57,8 +64,27 @@ export default defineEventHandler(async (event) => {
                 id: orderId
             },
             data: updateData
-
         })
+
+        for (const orderItem of orderItems) {
+            const itemVariant = await prisma.itemVariant.findUnique({
+                where: {
+                    id: orderItem.itemVariantId
+                }
+            });
+            // Update stock remaining for each item variant
+            if (itemVariant) {
+                await prisma.itemVariant.update({
+                    where: {
+                        id: itemVariant.id
+                    },
+                    data: {
+                        stockRemaining: itemVariant.stockRemaining - orderItem.quantity
+                    }
+                });
+            }
+        }
+
         return { session };
     } else {
         setResponseStatus(event, 400);
