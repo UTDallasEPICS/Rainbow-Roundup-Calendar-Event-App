@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-white text-gray-900 dark:bg-white dark:text-gray-900">
     <form @submit.prevent="submitSignupForm"
       class="w-full max-w-xl mx-auto flex flex-col items-center justify-center bg-white p-6 sm:p-10 rounded-2xl">
-      <h2 class="text-2xl sm:text-3xl font-extrabold text-center text-[#022150] mb-8">
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-center text-rr-navy mb-8">
         Hello and Welcome!
       </h2>
 
@@ -11,28 +11,28 @@
         <div>
           <label class="block text-md font-semibold text-gray-800 mb-2">First Name</label>
           <input type="text" v-model="signupModel.firstname"
-            class="w-full px-4 py-3 text-md rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#89BBEB] transition" />
+            class="w-full px-4 py-3 text-md rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-rr-sky transition" />
         </div>
 
         <!-- Last Name -->
         <div>
           <label class="block text-md font-semibold text-gray-800 mb-2">Last Name</label>
           <input type="text" v-model="signupModel.lastname"
-            class="w-full px-4 py-3 text-md rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#89BBEB] transition" />
+            class="w-full px-4 py-3 text-md rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-rr-sky transition" />
         </div>
 
         <!-- Email -->
         <div>
           <label class="block text-md font-semibold text-gray-800 mb-2">Email</label>
           <input type="email" v-model="signupModel.email"
-            class="w-full px-4 py-3 text-md rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#89BBEB] transition" />
+            class="w-full px-4 py-3 text-md rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-rr-sky transition" />
         </div>
 
         <!-- Phone Number -->
         <div>
           <label class="block text-md font-semibold text-gray-800 mb-2">Phone Number</label>
           <input type="tel" v-model="signupModel.phoneNum"
-            class="w-full px-4 py-3 text-md rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#89BBEB] transition" />
+            class="w-full px-4 py-3 text-md rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-rr-sky transition" />
         </div>
       </div>
 
@@ -40,7 +40,7 @@
       <div class="text-md mt-6 text-center text-gray-600">
         <strong>
           Already have an account?
-          <NuxtLink to="/login" class="text-[#C028B9] hover:underline transition">
+          <NuxtLink to="/login" class="text-rr-magenta hover:underline transition">
             Sign In
           </NuxtLink>
         </strong>
@@ -48,7 +48,7 @@
 
       <!-- Register Button -->
       <button type="submit"
-        class="mt-8 w-full sm:w-[300px] py-4 px-6 text-xl text-white font-semibold bg-[#C028B9] hover:bg-[#9a1985] transition rounded-2xl">
+        class="mt-8 w-full sm:w-[300px] py-4 px-6 text-xl text-white font-semibold bg-rr-magenta hover:bg-rr-magentaDark transition rounded-2xl">
         Register
       </button>
       <!-- Success message -->
