@@ -273,7 +273,7 @@ const toggleDropdown = () => {
 
 const promptInstall = async () => {
   const result = await $pwa.install() // Our PWA library can do PWA installation prompt
-  console.log("Outcome of installation prompt: ",result.outcome)
+  console.log("Outcome of installation prompt: ",result?.outcome)
 };
 
 const updateSubscriptionStatus = () => {
