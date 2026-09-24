@@ -123,7 +123,7 @@ onMounted(async () => { // TODO: Properly format this to use useFetch
     const res = await fetch(`/api/item/${route.params.id}`);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const itemData = await res.json();
-    if (!itemData.success) throw new Error(itemData.error || 'Failed to fetch item');
+    if (itemData.error || !itemData.data) throw new Error(itemData.error || 'Failed to fetch item');
 
     item.value = itemData.data
     selectedImage.value = item.value?.ItemPhotos?.at(0)?.url

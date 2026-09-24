@@ -71,7 +71,7 @@ try {
     query: { method: "GET" }
   });
 
-  if (userData.value.success && userData.value.Users.length > 0) {
+  if (userData.value?.Users?.length > 0) {
 
     // sort into banned and archived users
     for (let i = 0; i < userData.value.Users.length; i++)

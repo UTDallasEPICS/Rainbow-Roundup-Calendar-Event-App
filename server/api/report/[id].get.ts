@@ -15,7 +15,6 @@ export default defineEventHandler(async (event) => {
     // check authentication
     if (!user || !["SUPER", "ADMIN"].includes(user.role)) {
       return {
-      success: false,
       error: "Unauthenticated",
       };
     }
@@ -33,20 +32,17 @@ export default defineEventHandler(async (event) => {
       if (!singleReport) {
         setResponseStatus(event, 404)
         return {
-          success: false,
           error: `No report found with ID: ${id}`,
         };
       }
       setResponseStatus(event, 200)
       return {
-        success: true,
         Report: singleReport,
       };
     }
     else{
       setResponseStatus(event, 400)
       return{
-      success: false,
       error: 'include an ID in your query next time dipshit'
     }
     }
@@ -54,7 +50,6 @@ export default defineEventHandler(async (event) => {
     setResponseStatus(event, 500)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return {
-      success: false,
       error: `Error fetching report: ${errorMessage}`,
     };
   }

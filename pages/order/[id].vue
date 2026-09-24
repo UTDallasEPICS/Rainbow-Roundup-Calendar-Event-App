@@ -391,8 +391,9 @@ async function saveChanges() {
                 method: "GET"
             })
 
-            if (!response.success) {
+            if (!response.Event) {
                 alert("Failed to verify pickup event ID. Please try again.")
+                return;
             }
             event = response.Event
         }
