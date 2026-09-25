@@ -140,8 +140,8 @@
           bg-color="bg-rr-green"
           title-color="text-white"
           description-color="text-white"
-          button-color="bg-rr-greenDark"
-          external-link="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
+          button-color="bg-[#6B9F00]"
+          external-link="https://buy.stripe.com/fZubJ171Y29V5GtfeS28800"
           image="/images/Donation.png"
           class="h-48"
         />
