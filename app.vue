@@ -70,7 +70,7 @@
           </NuxtLink>
           <NuxtLink to="/merchandise" @click="navigate('Merchandise')" class="text-gray-700 hover:text-black">Merchandise
           </NuxtLink>
-          <a class="text-gray-700 hover:text-black" href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE" @click="navigate('Donate')">Donate
+          <a class="text-gray-700 hover:text-black" href="https://buy.stripe.com/fZubJ171Y29V5GtfeS28800" @click="navigate('Donate')">Donate
           </a>
           <NuxtLink v-if="session?.data?.user?.id" to="/profile" @click="navigate('Profile')" class="text-gray-700 hover:text-black">Profile
           </NuxtLink>
@@ -136,7 +136,7 @@
             <NuxtLink to="/merchandise" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             @click.native="handleMobileNavClick">Merchandise</NuxtLink>
             
-          <a href="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
+          <a href="https://buy.stripe.com/fZubJ171Y29V5GtfeS28800"
             class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
             @click="handleMobileNavClick">Donate</a>
           <NuxtLink v-if="session?.data?.user?.id" to="/profile" class="block py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded px-2"
