@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-[#3A8DDE] min-h-screen text-white flex flex-col">
+  <div class="bg-rr-blue min-h-screen text-white flex flex-col">
     <!-- Centered Carousel -->
     <div class="w-full bg-white flex flex-col items-center">
       <div class="w-full max-w-screen-2xl pt-2">
@@ -44,7 +44,7 @@
       @click="goToSlide(i - 1)"
       class="w-3 h-3 rounded-full transition border border-transparent"
       :class="{
-        'bg-[#3A8DDE]': currentSlide === (i - 1),
+        'bg-rr-blue': currentSlide === (i - 1),
         'bg-black/30': currentSlide !== (i - 1)
       }"
     ></button>
@@ -63,11 +63,11 @@
           <div>
 
             <div class="flex items-center justify-between mb-4">
-              <button @click="prevMonth" class="px-3 py-2 bg-[#3A8DDE] hover:bg-[#2A6BAA] text-white rounded">Prev</button>
+              <button @click="prevMonth" class="px-3 py-2 bg-rr-blue hover:bg-rr-blueDark text-white rounded">Prev</button>
               <div class="text-xl font-semibold text-gray-800 flex-1 text-center">{{ currentMonthName }} {{ currentYear }}</div>
               <div class="flex items-center gap-2">
-                <button @click="goToToday" class="px-3 py-2 bg-[#93D500] hover:bg-[#6B9F00] text-black rounded ">Today</button>
-                <button @click="nextMonth" class="px-3 py-2 bg-[#3A8DDE] hover:bg-[#2A6BAA] text-white rounded">Next</button>
+                <button @click="goToToday" class="px-3 py-2 bg-rr-green hover:bg-rr-greenDark text-black rounded ">Today</button>
+                <button @click="nextMonth" class="px-3 py-2 bg-rr-blue hover:bg-rr-blueDark text-white rounded">Next</button>
               </div>
             </div>
 
@@ -137,7 +137,7 @@
           title="Support our Families!"
           description="Your kindness makes a difference."
           button-text="Donate"
-          bg-color="bg-[#93D500]"
+          bg-color="bg-rr-green"
           title-color="text-white"
           description-color="text-white"
           button-color="bg-[#6B9F00]"
@@ -151,10 +151,10 @@
           title="Our Mission"
           description="Learn how we're changing lives."
           button-text="Read"
-          bg-color="bg-[#3A8DDE]"
+          bg-color="bg-rr-blue"
           title-color="text-white"
           description-color="text-white"
-          button-color="bg-[#2A6BAA]"
+          button-color="bg-rr-blueDark"
           internal-link="/aboutUs"
           image="/images/Community.png"
           class="h-48"
@@ -165,10 +165,10 @@
           title="Buy our Merchandise!"
           description="Wear your support with pride."
           button-text="Buy"
-          bg-color="bg-[#C028B9]"
+          bg-color="bg-rr-magenta"
           title-color="text-white"
           description-color="text-white"
-          button-color="bg-[#8F1E8A]"
+          button-color="bg-rr-magentaDeep"
           internal-link="/merchandise"
           image="/images/Merchandise.png"
           class="h-48"
@@ -181,7 +181,7 @@
       <a
         href="https://www.facebook.com/rainbowroundup/"
         target="_blank"
-        class="inline-block bg-[#3A8DDE] text-white hover:bg-[#2A6BAA] hover:text-white px-6 py-3 rounded transition duration-200 text-lg"
+        class="inline-block bg-rr-blue text-white hover:bg-rr-blueDark hover:text-white px-6 py-3 rounded transition duration-200 text-lg"
       >Follow Us on Facebook for Latest News/Events</a>
     </div>
 
