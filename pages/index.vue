@@ -141,7 +141,7 @@
           title-color="text-white"
           description-color="text-white"
           button-color="bg-rr-greenDark"
-          external-link="https://buy.stripe.com/test_14k6op0Et2oF9xKaEE"
+          :external-link="stripeDonationLink"
           image="/images/Donation.png"
           class="h-48"
         />
@@ -198,6 +198,12 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import EventCard from '~/components/EventCard.vue';
+
+const config = useRuntimeConfig();
+
+const stripeDonationLink =
+  `https://buy.stripe.com/${config.public.STRIPE_DONATION_ID}`;
+ 
 const events = ref([])
 // Fetch events
 try {
