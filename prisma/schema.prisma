@@ -109,6 +109,7 @@ model ItemVariant {
   itemId            String      
   item              AbstractItem        @relation(fields: [itemId], references: [id])
   availability       Boolean    @default(false) //For admin to enable
+  stockRemaining      Int        @default(0) //For admin to set
 
   OrderItems OrderItem[]
 }

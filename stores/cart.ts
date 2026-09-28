@@ -30,6 +30,11 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
+  function getItemQuantity(itemVariantId: string) {
+    const item = items.value.find(i => i.itemVariantId === itemVariantId)
+    return item?.quantity;
+  }
+
   function updateQuantity(itemVariantId: string, newQuantity: number) {
     const idx = items.value.findIndex(i => i.itemVariantId === itemVariantId)
     if (idx === -1) return //probably an error, get out
@@ -62,6 +67,7 @@ export const useCartStore = defineStore('cart', () => {
     items,
     subtotal,
     addItem,
+    getItemQuantity,
     updateQuantity,
     changeQuantityBy,
     removeItem,
