@@ -140,7 +140,7 @@
           bg-color="bg-rr-green"
           title-color="text-white"
           description-color="text-white"
-          button-color="bg-[#6B9F00]"
+          button-color="bg-rr-greenDark"
           :external-link="stripeDonationLink"
           image="/images/Donation.png"
           class="h-48"
