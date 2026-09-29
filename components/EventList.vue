@@ -9,15 +9,15 @@
     >
       <div @click="showWindow(event.id)" class="flex items-center w-full">
         <!-- left color block -->
-        <div
+        <!--<div
           class="w-20 h-24 bg-amber-300 rounded-[10px] flex-shrink-0 mr-4"
-        ></div>
+        ></div>-->
 
         <!-- event info -->
         <div class="flex-1 text-left">
           <div class="text-xs text-indigo-500 font-normal">
-            {{ formatDateAndTime(event.start).date }} •
-            {{ formatDateAndTime(event.start).time }}
+            {{ formatDateAndTime(event.startTime).date }} •
+            {{ formatDateAndTime(event.startTime).time }}
           </div>
           <div class="text-base text-slate-900 font-medium">
             {{ event.title }}
@@ -29,11 +29,11 @@
 
         <!-- status badge -->
         <div
-          class="w-7 h-7 bg-orange-100 rounded-md backdrop-blur-[3px] flex items-center justify-center"
+          class="w-7 h-7 bg-white rounded-md backdrop-blur-[3px] flex items-center justify-center"
         >
           <div
             class="w-3 h-3 rounded-full"
-            :class="isPast(event.start) ? 'bg-red-400' : 'bg-gray-400'"
+            :class="isPast(event.startTime) ? 'bg-red-300' : 'bg-green-300'"
           ></div>
         </div>
       </div>

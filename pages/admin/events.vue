@@ -2,8 +2,8 @@
     <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-between p-8 w-full">
         <div class="w-full px-6 py-4 flex flex-col items-center justify-between">
             <!-- header -->
-            <div class="w-full max-w-4xl flex items-center justify-between">
-                <NuxtLink to="/admin" class="self-center flex flex-row">
+            <div class="w-full max-w-4xl flex items-center justify-between py-4">
+                <NuxtLink to="/admin" class="self-center flex flex-row items-center">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="h-5 w-5 mr-2"
@@ -24,7 +24,7 @@
                 <!-- Page Title -->
 
                 <!-- Search & Filter -->
-                <div class="flex space-x-4">
+                <div class="flex flex-row space-x-4 items-center">
                     <!-- Search Icon -->
                     <!-- Search Input -->
                     <input
@@ -61,7 +61,7 @@
             <!-- Scrollable events list -->
             <div v-else class="w-full max-w-4xl flex-1 overflow-y-auto px-6 pb-6">
                 <EventList :events="filteredEvents" />
-              <h2 class="text-2xl font-bold text-zinc-700 col-span-1 mt-7">Archived Events</h2>
+              <h2 class="text-2xl font-bold text-zinc-700 col-span-1 mt-7 py-4">Archived Events</h2>
                 <EventList :events="archivedEvents" />
               
             </div>
