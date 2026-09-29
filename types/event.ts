@@ -28,6 +28,11 @@ export interface SignUp {
         id: string
         firstname: string
         profilePic: string
+        email: string
+        emailNotif: boolean
+        nativeNotif: boolean
+        isArchived: boolean
+        isBanned: boolean
     }
 }
 
