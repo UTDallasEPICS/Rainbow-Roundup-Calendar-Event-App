@@ -1,11 +1,9 @@
-import { nanoid } from 'nanoid'; // linter complains here, it should be fine?
 import { auth, authClient } from '~/server/auth'; // leaving this import here just in case
 
 export default defineEventHandler(async (event) => {
   const prisma = event.context.prisma;
   const body = await readBody(event);
 
-  const token = nanoid(32);
   const expires = new Date(Date.now() + 1000 * 60 * 10); // 10 minutes from now
 
   try {

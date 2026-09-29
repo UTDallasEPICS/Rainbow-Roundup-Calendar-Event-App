@@ -1,6 +1,13 @@
 <template>
 <div>
     <EditItem v-if="isItemModalOpen" :item="selectedItem" @close-window="closeItemModal()" @item-created="(i) => {addItem(i)}"/>
+    <EditStock
+        v-if="isStockModalOpen"
+        :item-id="selectedVariantItemId"
+        :variant="selectedVariant"
+        @close-window="closeStockModal()"
+        @stock-updated="updateStockRemaining"
+    />
     <div class="min-h-screen bg-gray-100 flex items-start justify-center p-8">
         <div class="max-w-4xl px-6 py-4 w-full">
             <!-- header -->
@@ -46,7 +53,7 @@
                 v-if="sortedMerch && sortedMerch.length" class="bg-white rounded-lg shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] overflow-hidden"
             >
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
+                    <table class="table-fixed w-[24rem] min-w-[24rem] md:table-auto md:w-full divide-y divide-gray-200">
                         <thead class="bg-blue-300">
                         <tr>
                             <th
@@ -62,7 +69,7 @@
                             </th>
                             <th
                             @click="sortAsc = !sortAsc"
-                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none"
+                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none whitespace-normal break-words md:whitespace-nowrap"
                             >
                                 Availability
                                 <span>
@@ -74,20 +81,29 @@
                             >
                                 Description
                             </th>
+                            <th
+                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none whitespace-normal break-words md:whitespace-nowrap"
+                            >
+                                Stock Remaining
+                            </th>
+                            <th
+                            class="px-4 py-2 text-left text-xs font-extrabold uppercase text-zinc-700 select-none whitespace-normal break-words md:whitespace-nowrap"
+                            >
+                                Manage Size Inventory
+                            </th>
                         </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                        <tr
-                            v-for="merch in sortedMerch"
-                            :key="merch"
-                            @click="openItemModal(merch)"
-                            class="hover:bg-gray-100 cursor-pointer"
-                        >
-                            <td class="px-4 py-3 text-sm text-gray-800 border">
+                        <template v-for="merch in sortedMerch" :key="merch.id">
+                            <tr
+                                @click="openItemModal(merch)"
+                                class="hover:bg-gray-100 cursor-pointer"
+                            >
+                            <td class="px-4 py-3 text-sm text-gray-800 border break-words">
                                 {{ merch.name }}
                             </td>
-                            <td class="px-4 py-3 text-sm text-gray-800 border">
-                                $ {{ merch.price.toFixed(2) }}
+                            <td class="px-4 py-3 text-sm text-gray-800 border whitespace-nowrap">
+                                ${{ merch.price.toFixed(2) }}
                             </td>
                             <td class="px-4 py-3 text-sm border">
                                 <span v-if="!merch.isArchived" class="text-lime-600">Visible</span>
@@ -97,7 +113,50 @@
                                 <span v-if="merch.description != null && merch.description.length">{{ merch.description }}</span>
                                 <span v-else class="text-gray-400">No description.</span>
                             </td>
-                        </tr>
+                            <td class="px-4 py-3 text-sm border">
+                                {{
+                                    merch.ItemVariants.reduce(
+                                    (total, variant) => total + variant.stockRemaining,
+                                    0
+                                    )
+                                }}
+                            </td>
+                            <td class="px-4 py-3 text-sm border">
+                                <button
+                                    type="button"
+                                    class="inline-flex max-w-full items-center justify-center rounded px-2 py-1 hover:bg-gray-200"
+                                    :aria-label="expandedItems.has(merch.id) ? `Hide stock for ${merch.name}` : `Show stock for ${merch.name}`"
+                                    :aria-expanded="expandedItems.has(merch.id)"
+                                    @click.stop="toggleExpanded(merch.id)"
+                                >
+                                    <span class="whitespace-normal break-words text-center">{{ expandedItems.has(merch.id) ? "Hide Size Inventory" : "Manage Size Inventory" }}</span>
+                                </button>
+                            </td>
+                            </tr>
+                            <tr
+                                v-if="expandedItems.has(merch.id)"
+                                class="bg-gray-50"
+                            >
+                                <td :colspan="isMobile ? 5 : 6" class="px-4 py-3 border">
+                                    <table class="w-full max-w-md divide-y divide-gray-200 text-sm">
+                                        <thead>
+                                        <tr class="text-left text-xs font-extrabold uppercase text-zinc-700">
+                                            <th class="px-3 py-2">Size</th>
+                                            <th class="px-3 py-2">Stock Remaining</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-200">
+                                        <template v-for="variant in merch.ItemVariants" :key="variant.id || variant.size">
+                                            <tr v-if="variant.availability" class="hover:bg-gray-100 cursor-pointer" @click.stop="openStockModal(merch, variant)">
+                                                <td class="px-3 py-2">{{ variant.size }}</td>
+                                                <td class="px-3 py-2">{{ variant.stockRemaining }}</td>
+                                            </tr>
+                                        </template>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </template>
                         </tbody>
                     </table>
                 </div>
@@ -115,7 +174,7 @@
 
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { authClient } from "~/composables/auth"
 
 const { data: session } = await authClient.getSession();
@@ -126,6 +185,26 @@ const sortAsc = ref(true);
 const isItemModalOpen = ref(false);
 const selectedItem = ref(null);
 const merchandise = ref([]);
+const expandedItems = ref(new Set());
+const isStockModalOpen = ref(false);
+const selectedVariant = ref(null);
+const selectedVariantItemId = ref(null);
+const isMobile = ref(false);
+let mediaQuery;
+let handleMediaQueryChange;
+
+onMounted(() => {
+    mediaQuery = window.matchMedia("(max-width: 767px)");
+    isMobile.value = mediaQuery.matches;
+    handleMediaQueryChange = ({ matches }) => {
+        isMobile.value = matches;
+    };
+    mediaQuery.addEventListener("change", handleMediaQueryChange);
+});
+
+onUnmounted(() => {
+    mediaQuery?.removeEventListener("change", handleMediaQueryChange);
+});
 
 // fetch merch items
 try {
@@ -171,6 +250,36 @@ function openItemModal(selected) {
 
 function closeItemModal() {
   isItemModalOpen.value = false;
+}
+
+function toggleExpanded(itemId) {
+  const nextExpandedItems = new Set(expandedItems.value);
+
+  if (nextExpandedItems.has(itemId)) {
+    nextExpandedItems.delete(itemId);
+  } else {
+    nextExpandedItems.add(itemId);
+  }
+
+  expandedItems.value = nextExpandedItems;
+}
+
+function openStockModal(item, variant) {
+  selectedVariant.value = variant;
+  selectedVariantItemId.value = item.id;
+  isStockModalOpen.value = true;
+}
+
+function closeStockModal() {
+  isStockModalOpen.value = false;
+  selectedVariant.value = null;
+  selectedVariantItemId.value = null;
+}
+
+function updateStockRemaining(stockRemaining) {
+  if (selectedVariant.value) {
+    selectedVariant.value.stockRemaining = stockRemaining;
+  }
 }
 
 function openAddItem() {

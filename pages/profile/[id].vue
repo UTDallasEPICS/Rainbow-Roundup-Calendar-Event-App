@@ -25,12 +25,12 @@
 
     <!-- no user found text-->
     <div v-if="userData == null && !loading" class="flex flex-col items-center" >
-      <h1 class="text-3xl font-bold text-[#022150] mt-6"><b>Unable to find user.</b></h1>
+      <h1 class="text-3xl font-bold text-rr-navy mt-6"><b>Unable to find user.</b></h1>
     </div>
 
     <!-- profile -->
     <div v-else class="flex flex-col items-center">
-      <h1 class="text-3xl font-bold text-[#022150] mt-6"><b>User Details</b></h1>
+      <h1 class="text-3xl font-bold text-rr-navy mt-6"><b>User Details</b></h1>
 
       <div class="flex flex-col items-center mt-4 mb-6">
         <!-- Fixed image path: public/ maps to root / -->
