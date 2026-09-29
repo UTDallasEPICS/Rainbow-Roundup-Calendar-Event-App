@@ -12,5 +12,22 @@ export interface Event {
     eventLong: number | null
     isArchived: boolean
     userId: string
+
+    SignUps: SignUp[]
+}
+
+export interface SignUp {
+    id: string
+    userId: string
+    eventId: string
+    Notifications: boolean
+    plusOneAdults: number
+    plusOneKids: number
+
+    User: {
+        id: string
+        firstname: string
+        profilePic: string
+    }
 }
 
