@@ -55,3 +55,61 @@
   background-color: #3A8DDE;
   color: #FFFFFF; 
 }
+
+@media (max-width: 768px) {
+  /* Same compact button spacing as the home calendar's px-3 py-2 controls */
+  .fc-button {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  /* Keep the existing toolbar controls usable on narrow screens */
+  .fc .fc-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .fc .fc-toolbar-chunk {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  /* Similar to the home calendar's grid gap-2 */
+  .fc .fc-daygrid-body {
+    min-width: 0;
+  }
+
+  .fc .fc-daygrid-day-number {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  /* Similar to the home calendar's text-xs event labels */
+  .fc .fc-daygrid-event {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Smaller weekday labels in week/day views */
+  .fc .fc-col-header-cell-cushion {
+    font-size: 0.55rem;
+    line-height: 1.2;
+  }
+
+  .fc .fc-col-header-cell {
+    padding: 0.35rem 0;
+  }
+
+  /* prevents fixed desktop height */
+  .calendar {
+    height: auto !important;
+    min-height: 480px;
+  }
+}
