@@ -15,7 +15,6 @@ export default defineEventHandler(async (event) => {
   if (!id) {
     setResponseStatus(event, 400);
     return {
-      success: false,
       error: "User ID is required to delete the user.",
     };
   }
@@ -35,7 +34,6 @@ export default defineEventHandler(async (event) => {
     if (!existingUser) {
       setResponseStatus(event, 404);
       return {
-        success: false,
         error: "No user with matching id",
       };
     }
@@ -52,7 +50,6 @@ export default defineEventHandler(async (event) => {
     });
     setResponseStatus(event, 200);
     return {
-      success: true,
       message: "User deleted successfully",
       user: existingUser,
     };
@@ -61,7 +58,6 @@ export default defineEventHandler(async (event) => {
       error instanceof Error ? error.message : "Unknown error occurred";
     setResponseStatus(event, 500);
     return {
-      success: false,
       error: `Error deleting user: ${errorMessage}`,
     };
   }

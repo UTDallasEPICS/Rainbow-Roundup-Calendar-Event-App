@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
   if (typeof subscription == undefined) {
     setResponseStatus(event, 500);
     console.log("Invalid notification subscribtion")
-    return { success: false, error: "Please send a valid request" };
+    return { error: "Please send a valid request" };
   }
   if (!(user)) { // since we are tying notification subscriptions to specific users, we need the client to be authenticated
     throw createError({
@@ -50,10 +50,10 @@ export default defineEventHandler(async (event) => {
       const title = "New device subscribed to notifications";
       const message = "A new device was subscribed to notifications";
       sendNativeNotification(title, message,user.id, config.url);
-      return { success: true, message: "Notification subscription created" };
+      return { message: "Notification subscription created" };
     }
     else {
-      return { success: false, message: "Notification subscription could not be created" }; // shouldn't be triggered
+      return { message: "Notification subscription could not be created" }; // shouldn't be triggered
     }
 
   } catch (error) {
@@ -61,7 +61,6 @@ export default defineEventHandler(async (event) => {
     setResponseStatus(event, 500);
     console.log("couldn't store subscription");
     return {
-      success: false,
       error: "Couldn't store subscription, try again and hopefully it works",
     };
   }

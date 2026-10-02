@@ -6,5 +6,5 @@ export default defineEventHandler(async (event) => {
     path: '/',
     maxAge: 0,
   });
-  return { success: true };
+  return {message: "Logged out"};
 });

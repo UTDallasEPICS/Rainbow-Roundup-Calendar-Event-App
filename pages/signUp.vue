@@ -85,7 +85,7 @@ const submitSignupForm = async () => {
       body: userDataToSubmit,
       watch: false,
     });
-    if (data?.value?.success && !error.value) {
+    if (!error.value) {
       router.push("login");
       successMessage.value = "A verification email has been sent to your address. Please check your inbox to complete registration.";
     } else {

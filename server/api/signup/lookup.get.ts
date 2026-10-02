@@ -16,7 +16,6 @@ export default defineEventHandler(async (event) => {
     if (!userId || !eventId) {
       setResponseStatus(event, 400);
       return {
-        success: false,
         error: "Missing userId or eventId in query parameters",
       };
     }
@@ -47,7 +46,6 @@ export default defineEventHandler(async (event) => {
     if (!signUp) {
       setResponseStatus(event, 404);
       return {
-        success: false,
         error: `No signup found for userId=${userId} and eventId=${eventId}`,
       };
     }
@@ -58,14 +56,12 @@ export default defineEventHandler(async (event) => {
 
     setResponseStatus(event, 200);
     return {
-      success: true,
       signUp,
     };
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unknown error occurred";
     return {
-      success: false,
       error: `Failed to fetch signup: ${message}`,
     };
   }

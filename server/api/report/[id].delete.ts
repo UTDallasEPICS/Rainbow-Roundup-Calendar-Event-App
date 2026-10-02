@@ -14,7 +14,6 @@ export default defineEventHandler(async (event) => {
   // check authentication
   if (!user || !["SUPER", "ADMIN"].includes(user.role)) {
     return {
-    success: false,
     error: "Unauthenticated",
     };
   }
@@ -22,7 +21,6 @@ export default defineEventHandler(async (event) => {
   if (!id) {
     setResponseStatus(event, 400)
     return {
-      success: false,
       error: 'Report ID is required to delete the report.',
     };
   }
@@ -34,7 +32,6 @@ export default defineEventHandler(async (event) => {
     if(!existingReport){
       setResponseStatus(event, 404)
       return{
-        success: false,
         error: 'No report with matching id'
       }
     }
@@ -49,7 +46,6 @@ export default defineEventHandler(async (event) => {
 
     setResponseStatus(event, 200)
     return {
-      success: true,
       message: 'Report deleted successfully',
       report: existingReport
     };
@@ -57,7 +53,6 @@ export default defineEventHandler(async (event) => {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     setResponseStatus(event, 500)
     return {
-      success: false,
       error: `Error deleting report: ${errorMessage}`,
     };
   }
