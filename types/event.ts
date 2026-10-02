@@ -1,4 +1,5 @@
 export interface Event {
+    type: "event"
     id: string
     title: string
     description: string
@@ -23,16 +24,17 @@ export interface SignUp {
     Notifications: boolean
     plusOneAdults: number
     plusOneKids: number
+    User: User
+}
 
-    User: {
-        id: string
-        firstname: string
-        profilePic: string
-        email: string
-        emailNotif: boolean
-        nativeNotif: boolean
-        isArchived: boolean
-        isBanned: boolean
-    }
+export interface User {
+    id: string
+    firstname: string
+    profilePic: string
+    email: string
+    emailNotif: boolean
+    nativeNotif: boolean
+    isArchived: boolean
+    isBanned: boolean
 }
 
