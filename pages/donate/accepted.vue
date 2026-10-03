@@ -17,7 +17,7 @@ import { ArrowLeftIcon, CheckIcon } from "@heroicons/vue/24/solid";
         <p class="text-sm text-gray-400">
           Thank you for your kindness! Your generosity will be shared.
         </p>
-        <h1 class="text-l text-[#3D3745] font-bold">
+        <h1 class="text-l text-rr-charcoal font-bold">
           Congrats! Your charity money has been transferred
         </h1>
         <div class="flex flex-col gap-4">
