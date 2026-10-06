@@ -10,7 +10,6 @@ export default defineEventHandler(async (event) => {
   if (!id) {
     setResponseStatus(event, 400)
     return {
-      success: false,
       error: 'User ID is required to update the user.',
     };
   }
@@ -38,7 +37,6 @@ export default defineEventHandler(async (event) => {
     if (!existingUser) {
       setResponseStatus(event, 404)
       return {
-        success: false,
         error: `User with ID ${id} not found.`,
       };
     }
@@ -67,14 +65,12 @@ export default defineEventHandler(async (event) => {
     });
     setResponseStatus(event, 200)
     return {
-      success: true,
       user: updatedUser,
     };
   } catch (error) {
     setResponseStatus(event, 500)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return {
-      success: false,
       error: `Error updating user: ${errorMessage}`,
     };
   }

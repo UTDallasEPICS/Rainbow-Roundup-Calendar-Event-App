@@ -36,7 +36,6 @@ export default defineEventHandler(async (event) => {
         ) {
             setResponseStatus(event, 400);
             return {
-                success: false,
                 error: "Invalid request. Must include orderType and orderItems.",
             };
         }
@@ -44,7 +43,6 @@ export default defineEventHandler(async (event) => {
         if (body.orderItems.length === 0) {
             setResponseStatus(event, 400);
             return {
-                success: false,
                 error: "orderItems[] must contain at least one item.",
             };
         }
@@ -52,7 +50,6 @@ export default defineEventHandler(async (event) => {
             
             if(!body.pickupEventID){
                 return{
-                    success: false,
                     error: "Pickup orders need to have an associated event"
                 }
             }
@@ -62,14 +59,12 @@ export default defineEventHandler(async (event) => {
             
             if(!body.shippingAddress){
                 return{
-                    success: false,
                     error: "Delivery orders need to have an address"
                 }
             }
         }
         if (!validateQuantities(body.orderItems)) { // Note: no need to validate itemVariantId, since prisma will throw an error with invalid id's
             return {
-                success: false,
                 error: 'Each quantity, if provided, must be at least 1'
             }
         }
@@ -104,7 +99,6 @@ export default defineEventHandler(async (event) => {
 
         setResponseStatus(event, 201);
         return {
-            success: true,
             data: order,
         };
     } catch (error) {
@@ -112,7 +106,6 @@ export default defineEventHandler(async (event) => {
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
         setResponseStatus(event, 500);
         return {
-            success: false,
             error: errorMessage,
         };
     }

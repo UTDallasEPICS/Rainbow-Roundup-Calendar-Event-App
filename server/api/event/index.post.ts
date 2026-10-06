@@ -31,7 +31,6 @@ export default defineEventHandler(async (event) => {
   if (startTime >= endTime) {
     setResponseStatus(event, 400);
     return {
-      success: false,
       error: "EndTime must be after StartTime",
     };
   }
@@ -40,7 +39,6 @@ export default defineEventHandler(async (event) => {
   if (startTime < currentTime) {
     setResponseStatus(event, 400);
     return {
-      success: false,
       error: "Event start time cannot be in the past",
     };
   }
@@ -115,7 +113,6 @@ export default defineEventHandler(async (event) => {
       error instanceof Error ? error.message : "Unknown error occurred";
     setResponseStatus(event, 500);
     return {
-      success: false,
       error: `Error creating event: ${errorMessage}`,
     };
   }

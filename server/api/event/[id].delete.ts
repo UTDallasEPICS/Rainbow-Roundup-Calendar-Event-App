@@ -23,7 +23,6 @@ export default defineEventHandler(async (event) => {
   if (!id) {
     setResponseStatus(event, 400);
     return {
-      success: false,
       error: "Event ID is required.",
     };
   }
@@ -37,7 +36,6 @@ export default defineEventHandler(async (event) => {
     if (!existingEvent) {
       setResponseStatus(event, 404);
       return {
-        success: false,
         error: `No event found with ID: ${id}`,
       };
     }
@@ -54,7 +52,6 @@ export default defineEventHandler(async (event) => {
     });
     setResponseStatus(event, 200);
     return {
-      success: true,
       message: "Event archived successfully",
       event: existingEvent,
     };
@@ -63,7 +60,6 @@ export default defineEventHandler(async (event) => {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
     return {
-      success: false,
       error: `Error deleting event: ${errorMessage}`,
     };
   }

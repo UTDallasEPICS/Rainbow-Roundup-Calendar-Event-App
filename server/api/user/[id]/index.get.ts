@@ -25,7 +25,6 @@ export default defineEventHandler(async (event) => {
       if (!currentUser) {
         setResponseStatus(event, 401);
         return {
-          success: false,
           error: "Not authenticated.",
         };
       }
@@ -79,19 +78,16 @@ export default defineEventHandler(async (event) => {
       if (!singleUser) {
         setResponseStatus(event, 404);
         return {
-          success: false,
           error: `No user found with ID: ${id}`,
         };
       }
       setResponseStatus(event, 200);
       return {
-        success: true,
         user: singleUser,
       };
     } else {
       setResponseStatus(event, 400);
       return {
-        success: false,
         error: "Include an ID in your query next time, dipshit.",
       };
     }
@@ -100,7 +96,6 @@ export default defineEventHandler(async (event) => {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
     return {
-      success: false,
       error: `Error fetching user(s): ${errorMessage}`,
     };
   }

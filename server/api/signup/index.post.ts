@@ -31,7 +31,6 @@ export default defineEventHandler(async (event) => {
   if (existingSignUp) {
     setResponseStatus(event, 400);
     return {
-      success: false,
       error: "You have already signed up for this event",
     };
   }
@@ -43,7 +42,6 @@ export default defineEventHandler(async (event) => {
   if (!targetEvent) {
     setResponseStatus(event, 404);
     return {
-      success: false,
       error: "Event doesn't exist",
     };
   }
@@ -68,7 +66,6 @@ if (targetEvent.capacity != null) {
     if (used + adding > targetEvent.capacity) {
       setResponseStatus(event, 400);
       return {
-        success: false,
         error: "Sorry you have exceeded the capacity.  ", 
         capacity: "This is the current capacity. " + used,
         maxCap: "This is the max capacity. " + targetEvent.capacity,
@@ -90,14 +87,12 @@ if (targetEvent.capacity != null) {
     });
 
     return {
-      success: true,
       signup: newSignUp,
     };
   } catch (error) {
     console.error((error as Error).message);
     setResponseStatus(event, 500);
     return {
-      success: false,
       error: "Failed to register for event",
     };
   }
