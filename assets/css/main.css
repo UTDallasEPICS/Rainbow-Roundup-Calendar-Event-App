@@ -57,59 +57,141 @@
 }
 
 @media (max-width: 768px) {
-  /* Same compact button spacing as the home calendar's px-3 py-2 controls */
-  .fc-button {
-    font-size: 0.875rem;
-    padding: 0.5rem 0.75rem;
+  .calendar-container .fc-dayGridMonth-button,
+  .calendar-container .fc-timeGridWeek-button,
+  .calendar-container .fc-timeGridDay-button {
+    display: none;
   }
 
-  /* Keep the existing toolbar controls usable on narrow screens */
+  .fc-button {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.45rem;
+  }
+
+  .fc .fc-prev-button,
+  .fc .fc-next-button {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.4rem;
+  }
+
   .fc .fc-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.25rem;
   }
 
   .fc .fc-toolbar-chunk {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    justify-content: center;
+    display: contents;
   }
 
-  /* Similar to the home calendar's grid gap-2 */
-  .fc .fc-daygrid-body {
-    min-width: 0;
+  .fc .fc-toolbar-chunk:first-child .fc-button-group {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
   }
 
-  .fc .fc-daygrid-day-number {
-    padding: 0.75rem;
-    font-size: 0.875rem;
+
+  .fc .fc-toolbar-chunk:first-child .fc-today-button {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
   }
 
-  /* Similar to the home calendar's text-xs event labels */
-  .fc .fc-daygrid-event {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-    white-space: normal;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .fc .fc-toolbar-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    justify-self: center;
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
   }
 
-  /* Smaller weekday labels in week/day views */
-  .fc .fc-col-header-cell-cushion {
-    font-size: 0.55rem;
-    line-height: 1.2;
+  .fc .fc-dayGridMonth-view .fc-daygrid-day-frame {
+    aspect-ratio: 1 / 1;
+    min-height: 0;
+    border-radius: 0.5rem;
+  }
+
+  .fc .fc-daygrid-body table {
+    border-collapse: separate;
+    border-spacing: 0.16rem;
   }
 
   .fc .fc-col-header-cell {
-    padding: 0.35rem 0;
+    border: 0;
   }
 
-  /* prevents fixed desktop height */
+  .fc .fc-col-header-cell-cushion {
+    padding: 0.35rem 0;
+    color: #6b7280;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  
+   .fc .fc-daygrid-day-number {
+    padding: 0.75rem;
+  }
+
+  .fc .fc-daygrid-day {
+    position: relative;
+    border: 1px solid #e1e6eb;
+    border-radius: 0.75rem;
+    background: #fff;
+    overflow: hidden;
+  }
+
+  .fc .fc-daygrid-event-harness {
+    display: none !important;
+  }
+
+  .fc .mobile-calendar-event-dot {
+    position: absolute;
+    bottom: 0.35rem;
+    left: 50%;
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 50%;
+    background: #3a8dde;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .calendar-container .mobile-day-schedule.mobile-day-schedule {
+    border-color: #dbe5ec;
+    border-top: 3px solid #3a8dde;
+    background: #fbfdfe;
+    box-shadow: 0 3px 12px rgb(31 41 55 / 6%);
+  }
+
+  .calendar-container .mobile-day-schedule-title.mobile-day-schedule-title {
+    color: #1f2937;
+  }
+
+  .calendar-container .mobile-day-schedule-button.mobile-day-schedule-button {
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 160ms ease;
+  }
+
+  .calendar-container .mobile-day-schedule-button.mobile-day-schedule-button:active {
+    background: #edf5fb;
+  }
+
+  .calendar-container .mobile-day-schedule-time.mobile-day-schedule-time {
+    color: #276da8;
+  }
+
+  .calendar-container .mobile-day-schedule-empty.mobile-day-schedule-empty {
+    margin: 0;
+    padding: 0.5rem 0;
+  }
+
+   /* prevents fixed desktop height */
   .calendar {
     height: auto !important;
-    min-height: 480px;
+    min-height: 440px;
   }
 }
