@@ -6,6 +6,9 @@
 
     <section class="mobile-day-schedule" aria-live="polite">
       <h2 class="mobile-day-schedule-title">{{ selectedDateLabel }}</h2>
+      <button v-if="userData?.role === 'ADMIN' || userData?.role === 'SUPER'" @click="showModal = true" class="mobile-day-schedule-add-event-button">
+        Add Event
+      </button>
       <ul v-if="selectedDateEvents.length" class="mobile-day-schedule-list">
         <li v-for="event in selectedDateEvents" :key="event.id" class="mobile-day-schedule-item">
           <button type="button" class="mobile-day-schedule-button" @click="openScheduledEvent(event)">
@@ -155,20 +158,28 @@ const selectedDateLabel = computed(() =>
 );
 
 const selectedDateEvents = computed(() => {
-  const selectedDateKey = toDateKey(selectedDate.value);
+  const dayStart = new Date(selectedDate.value);
+  dayStart.setHours(0, 0, 0, 0);
+  const dayEnd = new Date(dayStart);
+  dayEnd.setDate(dayEnd.getDate() + 1);
 
   return (calendarOptions.value.events || [])
-    .filter((event) => toDateKey(event.start) === selectedDateKey)
+    .filter((event) => {
+      if (!event.start) return false;
+
+      const eventStart = toCalendarDate(event.start);
+      const eventEnd = event.end ? toCalendarDate(event.end) : null;
+      return eventStart < dayEnd && (eventEnd ? eventEnd > dayStart : eventStart >= dayStart);
+    })
     .sort((first, second) => new Date(first.start) - new Date(second.start));
 });
 
-function toDateKey(value) {
+function toCalendarDate(value) {
   if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
-    return value;
+    const [year, month, day] = value.split("-").map(Number);
+    return new Date(year, month - 1, day);
   }
-
-  const date = value instanceof Date ? value : new Date(value);
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  return value instanceof Date ? value : new Date(value);
 }
 
 function formatEventTime(event) {
@@ -529,6 +540,18 @@ function editEvent(newEvent) {
 }
 
 @media (max-width: 768px) {
+  .mobile-day-schedule-add-event-button {
+    font-size: 0.6rem;
+    /* justify-self: center; */
+    display: block;
+    margin: 1rem 0;
+    padding: 0.5rem 1rem;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+  }
   .mobile-day-schedule {
     display: block;
     margin-top: 1rem;
