@@ -1,8 +1,27 @@
 <template>
   <div class="calendar-container">
     <ClientOnly>
-      <FullCalendar :options="calendarOptions" class="calendar z-10" />
+      <FullCalendar ref="calendarRef" :options="calendarOptions" class="calendar z-10" />
     </ClientOnly>
+
+    <section class="mobile-day-schedule" aria-live="polite">
+      <h2 class="mobile-day-schedule-title">{{ selectedDateLabel }}</h2>
+      <button v-if="userData?.role === 'ADMIN' || userData?.role === 'SUPER'" @click="showModal = true" class="mobile-day-schedule-add-event-button">
+        Add Event
+      </button>
+      <ul v-if="selectedDateEvents.length" class="mobile-day-schedule-list">
+        <li v-for="event in selectedDateEvents" :key="event.id" class="mobile-day-schedule-item">
+          <button type="button" class="mobile-day-schedule-button" @click="openScheduledEvent(event)">
+            <time class="mobile-day-schedule-time">{{ formatEventTime(event) }}</time>
+            <span class="mobile-day-schedule-details">
+              <span class="mobile-day-schedule-event-title">{{ event.title }}</span>
+              <span v-if="event.location" class="mobile-day-schedule-location">{{ event.location }}</span>
+            </span>
+          </button>
+        </li>
+      </ul>
+      <p v-else class="mobile-day-schedule-empty">No events scheduled for this day.</p>
+    </section>
 
     <Teleport to="body">
       <div>
@@ -98,7 +117,7 @@
 </template>
 
 <script setup lang='js'> // TODO: Should be lang='ts' but that for later
-import { ref, computed } from "vue";
+import { ref, computed, nextTick } from "vue";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -126,6 +145,106 @@ const selectedEvent = ref(null);
 const rsvpResponse = ref(null);
 
 const showEventWindow = ref(false);
+const calendarRef = ref(null);
+const selectedDate = ref(new Date());
+
+const selectedDateLabel = computed(() =>
+  selectedDate.value.toLocaleDateString(undefined, {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  })
+);
+
+const selectedDateEvents = computed(() => {
+  const dayStart = new Date(selectedDate.value);
+  dayStart.setHours(0, 0, 0, 0);
+  const dayEnd = new Date(dayStart);
+  dayEnd.setDate(dayEnd.getDate() + 1);
+
+  return (calendarOptions.value.events || [])
+    .filter((event) => {
+      if (!event.start) return false;
+
+      const eventStart = toCalendarDate(event.start);
+      const eventEnd = event.end ? toCalendarDate(event.end) : null;
+      return eventStart < dayEnd && (eventEnd ? eventEnd > dayStart : eventStart >= dayStart);
+    })
+    .sort((first, second) => new Date(first.start) - new Date(second.start));
+});
+
+function toCalendarDate(value) {
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const [year, month, day] = value.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  }
+  return value instanceof Date ? value : new Date(value);
+}
+
+function formatEventTime(event) {
+  if (event.allDay || (typeof event.start === "string" && /^\d{4}-\d{2}-\d{2}$/.test(event.start))) {
+    return "All day";
+  }
+
+  return new Date(event.start).toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function enforceMobileMonthView() {
+  const calendarApi = calendarRef.value?.getApi();
+  if (!calendarApi) return;
+
+  renderMobileEventDots(calendarApi.getEvents());
+
+  if (
+    window.matchMedia("(max-width: 768px)").matches &&
+    calendarApi.view.type !== "dayGridMonth"
+  ) {
+    calendarApi.changeView("dayGridMonth");
+  }
+}
+
+function renderMobileEventDots(events) {
+  const calendarElement = calendarRef.value?.getApi().el;
+  if (!calendarElement) return;
+
+  calendarElement.querySelectorAll(".mobile-calendar-event-dot").forEach((dot) => dot.remove());
+  if (!window.matchMedia("(max-width: 768px)").matches) return;
+
+  calendarElement.querySelectorAll(".fc-daygrid-day[data-date]").forEach((dayCell) => {
+    const [year, month, day] = dayCell.dataset.date.split("-").map(Number);
+    const dayStart = new Date(year, month - 1, day);
+    const dayEnd = new Date(year, month - 1, day + 1);
+    const hasEvent = events.some((event) => {
+      if (!event.start) return false;
+      if (!event.end) return event.start >= dayStart && event.start < dayEnd;
+      return event.start < dayEnd && event.end > dayStart;
+    });
+
+    if (hasEvent) {
+      const dot = document.createElement("span");
+      dot.className = "mobile-calendar-event-dot";
+      dot.setAttribute("aria-hidden", "true");
+      dayCell.append(dot);
+    }
+  });
+}
+
+function openScheduledEvent(event) {
+  selectedEvent.value = {
+    id: event.id,
+    title: event.title,
+    description: event.description,
+    start: event.start,
+    end: event.end,
+    timeZone: event.timeZone,
+    location: event.location,
+  };
+  showEventWindow.value = true;
+}
 
 
 
@@ -148,6 +267,17 @@ const calendarOptions = ref({
     left: "prev,next today",
     center: "title",
     right: "dayGridMonth,timeGridWeek,timeGridDay",
+  },
+  dateClick: (info) => {
+    if (window.matchMedia("(max-width: 768px)").matches) {
+      selectedDate.value = info.date;
+    }
+  },
+  datesSet: (info) => {
+    nextTick(() => renderMobileEventDots(info.view.calendar.getEvents()));
+  },
+  eventsSet: (events) => {
+    nextTick(() => renderMobileEventDots(events));
   },
   editable: true,
   selectable:
@@ -194,10 +324,13 @@ const handleEscapeKey = (e) => {
 
 onMounted(() => {
   window.addEventListener("keydown", handleEscapeKey);
+  window.addEventListener("resize", enforceMobileMonthView);
+  nextTick(enforceMobileMonthView);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener("keydown", handleEscapeKey);
+  window.removeEventListener("resize", enforceMobileMonthView);
 });
 
 const submitEvent = async () => {
@@ -400,6 +533,98 @@ function editEvent(newEvent) {
 
 .calendar {
   height: 800px;
+}
+
+.mobile-day-schedule {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-day-schedule-add-event-button {
+    font-size: 0.6rem;
+    /* justify-self: center; */
+    display: block;
+    margin: 1rem 0;
+    padding: 0.5rem 1rem;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+  }
+  .mobile-day-schedule {
+    display: block;
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.75rem;
+    background: #fff;
+    text-align: left;
+  }
+
+  .mobile-day-schedule-title {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1f2937;
+  }
+
+  .mobile-day-schedule-list {
+    display: grid;
+    gap: 0.625rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .mobile-day-schedule-item {
+    padding: 0;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .mobile-day-schedule-button {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    gap: 0.75rem;
+    padding: 0.625rem 0;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .mobile-day-schedule-button:focus-visible {
+    outline: 2px solid #3a8dde;
+    outline-offset: 2px;
+  }
+
+  .mobile-day-schedule-time {
+    padding-top: 0.125rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #4b5563;
+  }
+
+  .mobile-day-schedule-details {
+    display: grid;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  .mobile-day-schedule-event-title {
+    overflow-wrap: anywhere;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .mobile-day-schedule-location,
+  .mobile-day-schedule-empty {
+    font-size: 0.8125rem;
+    color: #6b7280;
+    overflow-wrap: anywhere;
+  }
 }
 
 .modal-backdrop {
