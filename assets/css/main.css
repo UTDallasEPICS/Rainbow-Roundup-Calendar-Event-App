@@ -56,6 +56,10 @@
   color: #FFFFFF; 
 }
 
+.fc .fc-daygrid-day:hover .fc-daygrid-day-frame {
+  background-color: #e8f0fe
+}
+
 @media (max-width: 768px) {
   .calendar-container .fc-dayGridMonth-button,
   .calendar-container .fc-timeGridWeek-button,
