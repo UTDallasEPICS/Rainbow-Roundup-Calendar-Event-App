@@ -31,7 +31,6 @@ export default defineEventHandler(async (event) => {
   if (!id) {
     setResponseStatus(event, 400);
     return {
-      success: false,
       error: "Event ID is required.",
     };
   }
@@ -45,7 +44,6 @@ export default defineEventHandler(async (event) => {
     if (new Date(body.startTime) >= new Date(body.endTime)) {
       setResponseStatus(event, 400);
       return {
-        success: false,
         error: "EndTime must be after StartTime",
       };
     }
@@ -60,7 +58,6 @@ export default defineEventHandler(async (event) => {
     if (!existingEvent) {
       setResponseStatus(event, 404);
       return {
-        success: false,
         error: `No event found with ID: ${id}`,
       };
     }
@@ -88,7 +85,6 @@ export default defineEventHandler(async (event) => {
     });
     setResponseStatus(event, 200);
     return {
-      success: true,
       event: updatedEvent,
     };
   } catch (error) {
@@ -96,7 +92,6 @@ export default defineEventHandler(async (event) => {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
     return {
-      success: false,
       error: `Error updating event: ${errorMessage}`,
     };
   }
