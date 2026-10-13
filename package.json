@@ -59,7 +59,6 @@
   "devDependencies": {
     "@types/date-fns": "^2.6.3",
     "@types/google.maps": "^3.58.1",
-    "@types/node": "^26.6.4",
     "@types/nodemailer": "^6.4.17",
     "@types/web-push": "^3.6.4",
     "@vite-pwa/nuxt": "1.1.0",
