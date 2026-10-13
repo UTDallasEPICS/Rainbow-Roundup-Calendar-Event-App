@@ -73,7 +73,6 @@ export default defineEventHandler(async (event) => {
     console.error('Prisma error:', error); // Debug log
     setResponseStatus(event, 500);
     return {
-      success: false,
       error: error instanceof Error ? error.message : "Unknown error",
     };
   }

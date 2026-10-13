@@ -12,7 +12,6 @@ export default defineEventHandler(async (event) => {
     if (!orderId) {
         setResponseStatus(event, 400);
         return {
-            success: false,
             error: "Order ID is required",
         };
     }
@@ -49,14 +48,12 @@ export default defineEventHandler(async (event) => {
 
         setResponseStatus(event, 200);
         return {
-            success: true,
             data: order, 
         };
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
         setResponseStatus(event, 500);
         return {
-            success: false,
             error: errorMessage,
         };
     }
