@@ -43,7 +43,8 @@ export default defineEventHandler(async (event) => {
         const body = await readBody(event);
         const updateData: any = {};
         if (body.name) { updateData.name = body.name; }
-        if (body.price) { updateData.price = body.price; }
+        if (body.priceDollars !== undefined) { updateData.priceDollars = body.priceDollars; }
+        if (body.priceCents !== undefined) { updateData.priceCents = body.priceCents; }
         if (body.description) { updateData.description = body.description; }
         if (body.isArchived || body.isArchived == false) { updateData.isArchived = body.isArchived; }
 

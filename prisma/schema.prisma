@@ -75,7 +75,7 @@ model SignUp {
   userId        String
   eventId       String
   Notifications Boolean
-  plusOneKids       Int     @default(0)
+  plusOneKids         Int     @default(0)
   plusOneAdults       Int     @default(0)
 
 
@@ -116,7 +116,8 @@ model ItemVariant {
 model AbstractItem {
   id                String      @id @default(uuid())
   name              String   
-  price             Float
+  priceDollars      Int
+  priceCents        Int
   description       String
   
   isArchived    Boolean   @default(false)  
