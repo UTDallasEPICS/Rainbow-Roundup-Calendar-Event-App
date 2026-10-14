@@ -8,6 +8,7 @@ body should include:
     ItemVariants (array)
         size
         availability
+        stockRemaining
 
     Only ItemVariants that are to be updated need to be in the array
 */
@@ -34,7 +35,6 @@ export default defineEventHandler(async (event) => {
     if (!id) {
         setResponseStatus(event, 400);
         return {
-            success: false,
             error: "Item ID is required",
         };
     }
@@ -62,6 +62,7 @@ export default defineEventHandler(async (event) => {
             {
                 if (body.ItemVariants[i].size) { updateVariantData.size = body.ItemVariants[i].size; }
                 if (body.ItemVariants[i].availability != null) { updateVariantData.availability = body.ItemVariants[i].availability; }
+                if (body.ItemVariants[i].stockRemaining != null) { updateVariantData.stockRemaining = body.ItemVariants[i].stockRemaining; }
                 
 
                 await prisma.itemVariant.update({
@@ -81,14 +82,12 @@ export default defineEventHandler(async (event) => {
 
         setResponseStatus(event, 200);
         return {
-            success: true,
             data: updatedItem,
         };
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
         setResponseStatus(event, 500);
         return {
-            success: false,
             error: errorMessage,
         };
     }

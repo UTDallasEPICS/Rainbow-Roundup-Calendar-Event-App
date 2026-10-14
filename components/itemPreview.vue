@@ -40,11 +40,11 @@ const goToItemPage = () => {
     class="flex flex-col items-center w-full max-w-[496px] mx-auto cursor-pointer"
   >
     <!-- MAIN IMAGE -->
-    <div class="relative w-full" @click="goToItemPage">
+    <div class="relative w-full rounded-xl" @click="goToItemPage">
       <img
         :src="props.item.ItemPhotos?.[currentIndex]?.url"
         :alt="props.item.name"
-        class="w-full h-[350px] md:h-[400px] lg:h-[466px] object-cover rounded-xl shadow-md hover:scale-[1.01] transition-transform"
+        class="w-full h-[350px] md:h-[400px] lg:h-[466px] object-contain p-2 rounded-xl shadow-md hover:scale-[1.01] transition-transform"
       />
 
       <!-- Navigation arrows -->

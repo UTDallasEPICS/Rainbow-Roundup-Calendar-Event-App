@@ -34,7 +34,6 @@ export default defineEventHandler(async (event) => {
       if (!singleEvent) {
         setResponseStatus(event, 404);
         return {
-          success: false,
           error: `No event found with ID: ${id}`,
         };
       }
@@ -68,7 +67,6 @@ export default defineEventHandler(async (event) => {
 
       setResponseStatus(event, 200);
       return {
-        success: true,
         Event: {
           ...singleEvent,
           // computed field
@@ -79,7 +77,6 @@ export default defineEventHandler(async (event) => {
     } else {
       setResponseStatus(event, 400);
       return {
-        success: false,
         error: "include an ID in your query next time dipshit", //never gonna see this in actual use case
       };
     }
@@ -89,7 +86,6 @@ export default defineEventHandler(async (event) => {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
     return {
-      success: false,
       error: `Error fetching events: ${errorMessage}`,
     };
   }

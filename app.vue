@@ -201,7 +201,6 @@ const dropdownOpen = ref(false);
 const mobileMenuOpen = ref(false);
 const notificationPermission = ref(false);
 const deferredPrompt = ref(null);
-const runtimeConfig = useRuntimeConfig();
 const isSubscribedToPush = ref(false);
 const { $pwa } = useNuxtApp();
 const notifSubscription = ref(null)

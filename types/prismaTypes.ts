@@ -19,8 +19,9 @@ export interface ItemPhoto {
 export interface ItemVariant {
   id: string;
   size: Size;
-  availbility: boolean;
+  availability: boolean;
   itemId: string;
+  stockRemaining: number;
 
   // Optional back relation to access parent
   item?: AbstractItem;
