@@ -1,4 +1,4 @@
-import { defineEventHandler, readBody } from "h3";
+import { defineEventHandler, getRequestURL, readBody } from "h3";
 import Stripe from "stripe"; // Stripe import for TypeScript
 import { prisma } from '~/server/utils/prisma';
 const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY!);
@@ -6,6 +6,8 @@ const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY!);
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
+  const config = useRuntimeConfig();
+  const baseUrl = (config.url || getRequestURL(event).origin).replace(/\/+$/, "");
   let shippingCost = 1000
   // Get cart items from request
   if (!body.orderId) {
@@ -58,8 +60,8 @@ export default defineEventHandler(async (event) => {
 
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
-    success_url: `${process.env.URL}/merchandise/checkoutsuccess?session_id={CHECKOUT_SESSION_ID}`, // TODO: Build the success and cancel pages
-    cancel_url: `${process.env.URL}/merchandise`, // The url if the user cancels the payment
+    success_url: `${baseUrl}/merchandise/checkoutsuccess?session_id={CHECKOUT_SESSION_ID}`, // TODO: Build the success and cancel pages
+    cancel_url: `${baseUrl}/merchandise`, // The url if the user cancels the payment
     billing_address_collection: 'required',
     invoice_creation: {
       enabled: true, // This generates an email with invoice of order after payment is complete
@@ -92,10 +94,13 @@ export default defineEventHandler(async (event) => {
         unit_amount: item.ItemVariants.item.price * 100, // adjust to integer value, stripe will adjust it on their checkput page
         product_data: {
           name: item.ItemVariants.item.name, // NOTE: This can be modified to include the size of the itemVariant if we want that to show up in stripe
-          description: item.ItemVariants.item.description,
-          images: item.ItemVariants.item.ItemPhotos ? item.ItemVariants.item.ItemPhotos.map(photo => `${process.env.URL}/${photo.url}`) : [],
-          // The above line is to extract the array of photo url's we have and send it to stripe, if stripe can retrieve the image url's, it will show it on checkout page
-          // ${process.env.URL}${photo.url} is essentially combining our domain and relative path from our domain, it relies on our .env to not have a trailing slash
+          description: item.ItemVariants.item.description || "No description provided",
+          images: item.ItemVariants.item.ItemPhotos
+            ? item.ItemVariants.item.ItemPhotos.map(photo =>
+                new URL(photo.url.replace(/\\/g, "/"), `${baseUrl}/`).toString()
+              )
+            : [],
+          // Normalize Windows file separators so Stripe receives a valid absolute URL.
         }
       }
     })),

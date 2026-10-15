@@ -20,7 +20,7 @@
 
   <!-- profile -->
   <div class="flex flex-col items-center">
-    <h1 class="text-3xl font-bold text-[#022150] mt-6">
+    <h1 class="text-3xl font-bold text-rr-navy mt-6">
       <b>Account Settings</b>
     </h1>
     <!-- profile picture -->
@@ -42,7 +42,7 @@
           {{ profilePictureError }}
         </div>
     <button
-      class="mb-6 px-4 py-2 bg-[#CE0E2D] text-white rounded-xl hover:bg-red-600 transition"
+      class="mb-6 px-4 py-2 bg-rr-red text-white rounded-xl hover:bg-red-600 transition"
       @click="toggleEditMode"
     >
       {{ editMode ? "Save" : "Edit" }}
@@ -166,7 +166,7 @@
           </p>
         </div>
         <button
-          class="bg-[#CE0E2D] hover:bg-red-600 text-white font-medium py-2 px-4 rounded-xl"
+          class="bg-rr-red hover:bg-red-600 text-white font-medium py-2 px-4 rounded-xl"
           @click="deleteAccount"
         >
           Delete
@@ -177,7 +177,7 @@
     <div class="flex flex-col items-center">
       <br />
       <button
-        class="w-[264px] border-none text-white text-lg text-center cursor-pointer mt-3 py-4 rounded-xl bg-[#CE0E2D] hover:bg-red-600"
+        class="w-[264px] border-none text-white text-lg text-center cursor-pointer mt-3 py-4 rounded-xl bg-rr-red hover:bg-red-600"
         @click="() => logout()"
       >
         Log Out

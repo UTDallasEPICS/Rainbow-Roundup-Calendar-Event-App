@@ -52,7 +52,7 @@
       </div>
 
       <!-- Gradient header -->
-      <div class="h-20 bg-[#FFE166] relative">
+      <div class="h-20 bg-rr-yellow relative">
         <div class="absolute inset-0 opacity-10" />
       </div>
 
@@ -376,12 +376,12 @@ async function loadEvent() {
 
 
     if (eventdata.signUps?.length) {
-      const ids = [...new Set(eventdata.signUps.map((s) => s.userId))];
-      const users = await $fetch("/api/user/batch", {
-        method: "POST",
-        body: { ids },
-      });
-      userMap.value = Object.fromEntries(users.map((u) => [u.id, u]));
+      const ids = new Set(eventdata.signUps.map((s) => s.userId));
+      const res = await $fetch("/api/user");
+      const users = res?.success ? res.Users : [];
+      userMap.value = Object.fromEntries(
+        users.filter((u) => ids.has(u.id)).map((u) => [u.id, u])
+      );
     }
 
     isArchived.value = eventdata.isArchived

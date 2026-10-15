@@ -154,7 +154,7 @@ const handleSubmit = async () => {
         class="w-full h-[300px] object-cover rounded-xl"
       />
       <div class="flex flex-col gap-1.5">
-        <h1 class="text-2xl text-[#3D3745] font-bold">Rainbow Round Up</h1>
+        <h1 class="text-2xl text-rr-charcoal font-bold">Rainbow Round Up</h1>
         <p class="text-md">
           Join us in our mission to promote diversity and location. We are
           committed to advancing LGBTQ+ rights and fostering a community of
@@ -163,7 +163,7 @@ const handleSubmit = async () => {
         </p>
 
         <div class="flex flex-col gap-2">
-          <label for="donation" class="text-lg font-semibold text-[#3D3745]">
+          <label for="donation" class="text-lg font-semibold text-rr-charcoal">
             Enter Donation Amount
           </label>
           <div class="relative w-full max-w-xs">
@@ -200,7 +200,7 @@ const handleSubmit = async () => {
           <button
             :disabled="!stripeLoaded || !clientSecret"
             type="submit"
-            class="bg-[#D9A2FF] text-white px-4 py-1.5 rounded-xl text-center whitespace-nowrap block w-full lg:min-w-[200px] lg:max-w-[300px] disabled:opacity-50 disabled:cursor-not-allowed"
+            class="bg-rr-lavenderPurple text-white px-4 py-1.5 rounded-xl text-center whitespace-nowrap block w-full lg:min-w-[200px] lg:max-w-[300px] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Submit
           </button>
