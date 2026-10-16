@@ -150,4 +150,7 @@ export default defineNuxtConfig({
       globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
     },
   },
+  routeRules: {
+    '/aboutUs': {swr: 60},
+  },
 });
