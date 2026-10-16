@@ -49,9 +49,27 @@ export default defineEventHandler(async (event) => {
         if(body.orderType === "PICKUP"){
             
             if(!body.pickupEventID){
+                setResponseStatus(event, 400);
                 return{
                     error: "Pickup orders need to have an associated event"
                 }
+            }
+
+            const variantIds = body.orderItems.map(
+                (oi: { itemVariantId: string }) => oi.itemVariantId
+            );
+            const variants = await prisma.itemVariant.findMany({
+                where: { id: { in: variantIds } },
+                include: { item: true },
+            });
+            const notPickupable = variants.filter(
+                (v) => v.item.pickupAvailable === false
+            );
+            if (notPickupable.length > 0) {
+                setResponseStatus(event, 400);
+                return {
+                    error: "One or more items in this order are not available for pickup.",
+                };
             }
            console.log('Remember to uncomment the restriction forcing an event ID for pickup orders')
         }
