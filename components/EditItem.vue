@@ -97,6 +97,19 @@
                         </input>
                     </div>
                 </div>
+
+                <!-- pickup -->
+                <div>
+                    <h2 class="w-full text-lg font-semibold text-gray-800">Pickup</h2>
+                    <div class="flex gap-2">
+                        <input v-model="pickup" type="radio" name="pickup" value="true">
+                            <label for="true">Available for pickup</label>
+                        </input>
+                        <input v-model="pickup" type="radio" name="pickup" value="false">
+                            <label for="false">Shipping only</label>
+                         </input>
+                    </div>
+                </div>
                 
                 <!-- manage buttons -->
                  <div class="w-full flex justify-center gap-4">
@@ -133,6 +146,7 @@ const editedItem = reactive({
     price: parseFloat(props.item.price),
     description: props.item.description,
     isArchived: props.item.isArchived,
+    pickupAvailable: props.item.pickupAvailable,
     ItemVariants: props.item.ItemVariants.map(a => {return {...a}}),
     ItemPhotos: props.item.ItemPhotos || [],
 });
@@ -141,10 +155,12 @@ function closeWindow() {
 }
 
 const archived = ref((props.item.isArchived ? "true" : "false"))
+const pickup = ref((props.item.pickupAvailable ? "true" : "false"))
 
 async function saveChanges() {
     try {
         editedItem.isArchived = (archived.value == "true" ? true : false)
+        editedItem.pickupAvailable = (pickup.value == "true" ? true : false)
         editedItem.price = parseFloat(editedItem.price)
         
         // verify input
@@ -176,6 +192,7 @@ async function saveChanges() {
             props.item.price = editedItem.price
             props.item.description = editedItem.description
             props.item.isArchived = editedItem.isArchived
+            props.item.pickupAvailable = editedItem.pickupAvailable
             props.item.ItemVariants = editedItem.ItemVariants
             props.item.ItemPhotos = editedItem.ItemPhotos
             emit("closeWindow");
@@ -194,6 +211,8 @@ async function cancelEdit() {
     editedItem.description = props.item.description
     editedItem.isArchived = props.item.isArchived
     archived.value = (props.item.isArchived ? "true" : "false")
+    editedItem.pickupAvailable = props.item.pickupAvailable
+    pickup.value = (props.item.pickupAvailable ? "true" : "false")
     editedItem.ItemVariants = props.item.ItemVariants.map(a => {return {...a}}),
     editedItem.ItemPhotos = props.item.ItemPhotos || []
 }
