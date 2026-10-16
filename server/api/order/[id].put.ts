@@ -1,7 +1,7 @@
 import { defineEventHandler, setResponseStatus, getRouterParam, createError, readBody } from "h3";
 import type { User } from "../../../types/session";
 import { auth } from "~/server/auth"
-import { OrderType } from "@prisma/client";
+import { OrderType } from "~/prisma/generated/client";
 
 export default defineEventHandler(async (event) => {
     const id = getRouterParam(event, "id"); 

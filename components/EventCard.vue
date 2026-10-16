@@ -127,7 +127,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
-import type { Event, SignUp, User } from "@prisma/client";
+import type { Event, SignUp, User } from "~/prisma/generated/browser";
 
 // Extended type to include relations
 type EventWithRelations = Event & {
