@@ -1,7 +1,7 @@
 import { defineEventHandler, setResponseStatus, createError, readBody } from "h3";
 import type { User } from "../../../types/session";
 import { auth } from "~/server/auth"
-import { Size } from "@prisma/client";
+import { Size } from "~/prisma/generated/client";
 
 export default defineEventHandler(async (event) => {
     const prisma = event.context.prisma;

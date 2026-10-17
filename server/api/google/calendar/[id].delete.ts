@@ -14,7 +14,7 @@ This should be called when an event is deleted on our end as well.
 import { getCalendarClient } from "~/server/utils/googleCalendar";
 import { formatEventForResponse } from "~/server/utils/eventFormatter.ts";
 import { auth } from "~/server/auth"
-import type { User } from "@prisma/client";
+import type { User } from "~/prisma/generated/client";
 
 export default defineEventHandler(async (event) => { 
   const session = await auth.api.getSession({
