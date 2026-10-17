@@ -47,19 +47,16 @@ export default defineEventHandler(async (event) => {
       if (!singleSignup) {
         setResponseStatus(event, 404);
         return {
-          success: false,
           error: `No signup found with ID: ${id}`,
         };
       }
       setResponseStatus(event, 200);
       return {
-        success: true,
         SignUp: singleSignup,
       };
     } else {
       setResponseStatus(event, 400);
       return {
-        success: false,
         error: "include an ID in your query next time dipshit",
       };
     }
@@ -67,7 +64,6 @@ export default defineEventHandler(async (event) => {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
     return {
-      success: false,
       error: `Error fetching signups: ${errorMessage}`,
     };
   }

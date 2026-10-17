@@ -1,4 +1,4 @@
-import type {  User } from "@prisma/client";
+import type { User } from "~/prisma/generated/client";
 import { auth } from "~/server/auth";
 
 export default defineEventHandler(async (event) => {
@@ -41,7 +41,6 @@ export default defineEventHandler(async (event) => {
     }
     setResponseStatus(event, 200);
     return {
-      success: true,
       Users: users,
     };
   } catch (error) {
@@ -49,7 +48,6 @@ export default defineEventHandler(async (event) => {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
     return {
-      success: false,
       error: `Error fetching users: ${errorMessage}`,
     };
   }
