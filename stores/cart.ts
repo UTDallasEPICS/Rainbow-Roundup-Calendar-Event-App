@@ -11,7 +11,7 @@ export type itemInCart = {
   image?: string
   price: number
   quantity: number
-  pickupAvailable?: boolean
+  pickupAvailable: boolean
 
 }
 
