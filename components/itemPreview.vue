@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 import { ref } from "vue";
 import { useRouter } from 'vue-router'
 import type { AbstractItem } from "~/types/prismaTypes";

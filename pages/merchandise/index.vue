@@ -121,8 +121,7 @@
         <div class="w-full h-[60px] sm:h-[80px] md:h-[100px] lg:h-[120px]"></div>
       </div>
     </template>
-
-    <script setup>
+    <script setup lang='ts'>
 
     import { useCartStore } from "~/stores/cart";
 

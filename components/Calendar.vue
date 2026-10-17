@@ -97,7 +97,7 @@
   </div>
 </template>
 
-<script setup lang='js'> // TODO: Should be lang='ts' but that for later
+<script setup lang='ts'> 
 import { ref, computed } from "vue";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
