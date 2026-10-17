@@ -5,6 +5,7 @@ body should include:
     price
     description
     isArchived
+    pickupAvailable
     ItemVariants (array)
         size
         availability
@@ -46,7 +47,7 @@ export default defineEventHandler(async (event) => {
         if (body.price) { updateData.price = body.price; }
         if (body.description) { updateData.description = body.description; }
         if (body.isArchived || body.isArchived == false) { updateData.isArchived = body.isArchived; }
-
+        if (body.pickupAvailable !== undefined) {updateData.pickupAvailable = body.pickupAvailable; }
 
         await prisma.abstractItem.update({
             where: { id },
