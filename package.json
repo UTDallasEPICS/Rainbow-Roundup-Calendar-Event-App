@@ -10,7 +10,8 @@
     "postinstall": "nuxt prepare",
     "start": "nuxt start",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "prisma:reset": "prisma migrate reset -f && prisma migrate dev  && prisma generate && prisma db seed"
   },
   "resolutions": {
     "magicast": "0.5.1"
@@ -30,7 +31,8 @@
     "@nuxtjs/dotenv": "^1.4.2",
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@pinia/nuxt": "^0.11.3",
-    "@prisma/client": "^6.2.1",
+    "@prisma/adapter-better-sqlite3": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "@stripe/stripe-js": "^5.6.0",
     "@vue-stripe/vue-stripe": "^4.5.0",
     "better-auth": "^1.4.17",
@@ -57,6 +59,7 @@
     "workbox-routing": "^7.3.0"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/date-fns": "^2.6.3",
     "@types/google.maps": "^3.58.1",
     "@types/nodemailer": "^6.4.17",
@@ -65,7 +68,7 @@
     "autoprefixer": "^10.4.20",
     "nuxt-scheduler": "^0.1.9",
     "postcss": "^8.4.41",
-    "prisma": "^6.19.2",
+    "prisma": "^7.8.0",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
     "web-push": "^3.6.7"

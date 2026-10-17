@@ -1,6 +1,10 @@
-import { PrismaClient, Role } from "@prisma/client";
+import { PrismaClient, Role } from "./generated/client";
+import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import "dotenv/config";
 
-const prisma = new PrismaClient(); 
+const connectionString = `${process.env.DATABASE_URL}`;
+const adapter = new PrismaBetterSqlite3({ url: connectionString });
+const prisma = new PrismaClient({ adapter }); 
 
 async function main() {
   console.log('Start seeding...')
