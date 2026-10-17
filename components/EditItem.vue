@@ -51,16 +51,61 @@
                     <textarea v-model="editedItem.description" placeholder="Item Description" rows="3" class="w-full border border-gray-300 p-1 rounded"/>
                 </div>
 
-                <!-- sizes -->
+                <!-- infant sizes -->
                 <div v-if="!isNew">
-                    <h2 class="w-full text-lg font-semibold text-gray-800">Sizes
+                    <h2 class="w-full text-lg font-semibold text-gray-800">Infant Sizes
                         <span class="text-gray-400 text-sm font-normal">Click to enable/disable.</span>
                     </h2> 
                     
                     <div class="flex flex-row flex-wrap gap-3">
-                        <div v-for="variant in editedItem.ItemVariants" class="border border-gray-300 size-14 rounded p-2 cursor-pointer" :class="{ 'bg-gray-200': !variant.availability, 'text-gray-500': !variant.availability }" @click="changeSizeAvailability(variant)">
+                        <div v-for="variant in editedItem.ItemVariants.slice(0, 2)" class="border border-gray-300 h-10 w-20 rounded p-18 cursor-pointer" :class="{ 'bg-gray-200': !variant.availability, 'text-gray-500': !variant.availability }" @click="changeSizeAvailability(variant)">
                             <div class="align-center self-center text-center py-2">
-                            {{ variant.size }}
+                            {{variant.size}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- toddler sizes -->
+                <div v-if="!isNew">
+                    <h2 class="w-full text-lg font-semibold text-gray-800">Toddler Sizes
+                        <span class="text-gray-400 text-sm font-normal">Click to enable/disable.</span>
+                    </h2> 
+                    
+                    <div class="flex flex-row flex-wrap gap-3">
+                        <div v-for="variant in editedItem.ItemVariants.slice(2, 5)" class="border border-gray-300 size-14 rounded p-2 cursor-pointer" :class="{ 'bg-gray-200': !variant.availability, 'text-gray-500': !variant.availability }" @click="changeSizeAvailability(variant)">
+                            <div class="align-center self-center text-center py-2">
+                            {{variant.size}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- youth sizes -->
+                <div v-if="!isNew">
+                    <h2 class="w-full text-lg font-semibold text-gray-800">Youth Sizes
+                        <span class="text-gray-400 text-sm font-normal">Click to enable/disable.</span>
+                    </h2> 
+                    
+                    <div class="flex flex-row flex-wrap gap-3">
+                        <div v-for="variant in editedItem.ItemVariants.slice(5, 9)" class="border border-gray-300 w-20 h-10 rounded p-18 cursor-pointer" :class="{ 'bg-gray-200': !variant.availability, 'text-gray-500': !variant.availability }" @click="changeSizeAvailability(variant)">
+                            <div class="align-center self-center text-center py-2">
+                            {{variant.size}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- regular sizes -->
+                <div v-if="!isNew">
+                    <h2 class="w-full text-lg font-semibold text-gray-800">Regular Sizes
+                        <span class="text-gray-400 text-sm font-normal">Click to enable/disable.</span>
+                    </h2> 
+                    
+                    <div class="flex flex-row flex-wrap gap-3">
+                        <div v-for="variant in editedItem.ItemVariants.slice(9, 17)" class="border border-gray-300 size-14 rounded p-2 cursor-pointer" :class="{ 'bg-gray-200': !variant.availability, 'text-gray-500': !variant.availability }" @click="changeSizeAvailability(variant)">
+                            <div class="align-center self-center text-center py-2">
+                            {{variant.size}}
                             </div>
                         </div>
                     </div>
