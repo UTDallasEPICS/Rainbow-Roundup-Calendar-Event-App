@@ -39,7 +39,8 @@ export default defineEventHandler(async (event) => {
                 priceDollars: body.priceDollars,
                 priceCents: body.priceCents,
                 description: body.description,
-                isArchived: body.isArchived
+                isArchived: body.isArchived,
+                pickupAvailable: body.pickupAvailable
             },
         });
 

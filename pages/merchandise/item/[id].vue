@@ -231,6 +231,7 @@ const addToCart = () => {
     selectedSize: selectedSize.value,
     stockRemaining: selectedVariantStockRemaining.value,
     productId: item.value!.id,
+    pickupAvailable: item.value!.pickupAvailable,
     name: item.value!.name,
     description:
       (selectedVariant as any).description ??
