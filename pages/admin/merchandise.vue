@@ -173,7 +173,7 @@
 </template>
 
 
-<script setup>
+<script setup lang='ts'>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { authClient } from "~/composables/auth"
 

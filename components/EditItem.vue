@@ -161,7 +161,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang='ts'>
 const props = defineProps(['item']);
 const emit = defineEmits(["closeWindow", "itemCreated"]);
 
