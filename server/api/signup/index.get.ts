@@ -1,4 +1,4 @@
-import type { User } from "@prisma/client";
+import type { User } from "~/prisma/generated/client";
 //import SignUp from "~/pages/signUp.vue";
 import { auth } from "~/server/auth";
 

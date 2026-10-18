@@ -28,6 +28,8 @@ logs
 dev.db-journal
 dev.db
 
+/prisma/generated
+
 # Upload directory for images in dev
 */uploads
 
