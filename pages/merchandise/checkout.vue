@@ -20,6 +20,9 @@
           </label>
           <span class="toggle-text" style="margin-left: 10px">{{ isPickup ? 'Pickup' : 'Shipping' }}</span>
         </div>
+        <p v-if="!canPickup" class="text-sm text-amber-700 mt-2">
+          Some items in your cart are shipping only. Pickup is unavailable.
+        </p>
 
         <div v-if="isPickup" class="my-4">
           <div v-if="pickupEvent == null" class="flex flex-col items-center">
@@ -79,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '~/stores/cart'
 
@@ -90,12 +93,22 @@ const cart = useCartStore()
 
 const cartItems = computed(() => cart.items)
 const subtotal = computed(() => cart.subtotal)
-
+const canPickup = computed(() =>
+  cartItems.value.every((i) => i.pickupAvailable !== false)
+)
 const isPickup = ref(true);
 const toggleColor = ref("green")
 function toggle() {
-  isPickup.value = !isPickup.value;
+  if (!canPickup.value) {
+    isPickup.value = false
+    return
+  }
+  isPickup.value = !isPickup.value
 }
+
+watch(canPickup, (ok) => {
+  if (!ok) isPickup.value = false
+}, { immediate: true })
 
 const isSelectingEvent = ref(false);
 const pickupEvent = ref(null);
