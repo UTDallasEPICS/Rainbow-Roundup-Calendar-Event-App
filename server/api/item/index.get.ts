@@ -21,14 +21,12 @@ export default defineEventHandler(async (event) => {
 
         setResponseStatus(event, 200);
         return {
-            success: true,
             data: items,
         };
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
         setResponseStatus(event, 500);
         return {
-            success: false,
             error: errorMessage,
         };
     }

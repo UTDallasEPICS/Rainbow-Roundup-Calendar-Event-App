@@ -5,7 +5,7 @@ import {
   formatEventForResponse,
 } from "~/server/utils/eventFormatter.ts";
 import { auth } from "~/server/auth"
-import type { User } from "@prisma/client";
+import type { User } from "~/prisma/generated/client";
 
 export default defineEventHandler(async (event) => {
 

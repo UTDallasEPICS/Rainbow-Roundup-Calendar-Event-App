@@ -1,7 +1,22 @@
-import { PrismaClient } from '@prisma/client';
+import 'dotenv/config'
+import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
+import { PrismaClient } from '~/prisma/generated/client'
 
-// add this so typescript doesn't yell at me :(
-const globalForPrisma = globalThis as unknown as { prisma? : PrismaClient };
+const connectionString = `${process.env.DATABASE_URL}`
 
-// creates prisma client if it doesn't exist
-export const prisma = globalForPrisma.prisma ?? new PrismaClient();
+const prismaClientSingleton = () => {
+  const adapter = new PrismaBetterSqlite3({
+    url: connectionString,
+  })
+  return new PrismaClient({ adapter })
+}
+
+const globalForPrisma = globalThis as unknown as {
+  prismaGlobal: ReturnType<typeof prismaClientSingleton> | undefined
+}
+
+export const prisma = globalForPrisma.prismaGlobal ?? prismaClientSingleton()
+
+export default prisma
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prismaGlobal = prisma
