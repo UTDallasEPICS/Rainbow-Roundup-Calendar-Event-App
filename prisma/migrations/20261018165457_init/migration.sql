@@ -83,7 +83,8 @@ CREATE TABLE "ItemVariant" (
 CREATE TABLE "AbstractItem" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
-    "price" REAL NOT NULL,
+    "priceDollars" INTEGER NOT NULL,
+    "priceCents" INTEGER NOT NULL,
     "description" TEXT NOT NULL,
     "isArchived" BOOLEAN NOT NULL DEFAULT false
 );
