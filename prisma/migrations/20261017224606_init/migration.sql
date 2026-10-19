@@ -38,7 +38,6 @@ CREATE TABLE "Event" (
     "startTime" DATETIME NOT NULL,
     "endTime" DATETIME NOT NULL,
     "capacity" INTEGER,
-    "currentCapacity" INTEGER,
     "isArchived" BOOLEAN NOT NULL DEFAULT false,
     CONSTRAINT "Event_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -76,6 +75,7 @@ CREATE TABLE "ItemVariant" (
     "size" TEXT NOT NULL,
     "itemId" TEXT NOT NULL,
     "availability" BOOLEAN NOT NULL DEFAULT false,
+    "stockRemaining" INTEGER NOT NULL DEFAULT 0,
     CONSTRAINT "ItemVariant_itemId_fkey" FOREIGN KEY ("itemId") REFERENCES "AbstractItem" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -85,7 +85,8 @@ CREATE TABLE "AbstractItem" (
     "name" TEXT NOT NULL,
     "price" REAL NOT NULL,
     "description" TEXT NOT NULL,
-    "isArchived" BOOLEAN NOT NULL DEFAULT false
+    "isArchived" BOOLEAN NOT NULL DEFAULT false,
+    "pickupAvailable" BOOLEAN NOT NULL DEFAULT false
 );
 
 -- CreateTable

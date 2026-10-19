@@ -1,6 +1,6 @@
 // gets **UNARCHIVED** events
 
-import  type { User } from "@prisma/client";
+import type { User } from "~/prisma/generated/client";
 import { auth } from "~/server/auth";
 //created the type for labeling variables for computing the Capacity signup function. If you dont like this lmk.
 type SignUpCounts = {

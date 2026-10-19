@@ -31,14 +31,6 @@ export default defineNuxtConfig({
     UPLOAD_DIR: (process.env.NUXT_NODE_ENV == "prod" || process.env.NUXT_NODE_ENV == "stage") ? "" : "public/uploads"
      // if we are in prod, we have a variable set up. If we are not in prod, we use the public directory
   },
-  vite: {
-    resolve: {
-      alias: {
-        // Redirect the invalid import to an empty stub
-        '.prisma/client/index-browser': '/dev/null'
-      }
-    }
-  },
   
   devtools: { enabled: true },
   css: [

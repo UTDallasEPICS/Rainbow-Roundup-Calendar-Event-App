@@ -51,16 +51,61 @@
                     <textarea v-model="editedItem.description" placeholder="Item Description" rows="3" class="w-full border border-gray-300 p-1 rounded"/>
                 </div>
 
-                <!-- sizes -->
+                <!-- infant sizes -->
                 <div v-if="!isNew">
-                    <h2 class="w-full text-lg font-semibold text-gray-800">Sizes
+                    <h2 class="w-full text-lg font-semibold text-gray-800">Infant Sizes
                         <span class="text-gray-400 text-sm font-normal">Click to enable/disable.</span>
                     </h2> 
                     
                     <div class="flex flex-row flex-wrap gap-3">
-                        <div v-for="variant in editedItem.ItemVariants" class="border border-gray-300 size-14 rounded p-2 cursor-pointer" :class="{ 'bg-gray-200': !variant.availability, 'text-gray-500': !variant.availability }" @click="changeSizeAvailability(variant)">
+                        <div v-for="variant in editedItem.ItemVariants.slice(0, 2)" class="border border-gray-300 h-10 w-20 rounded p-18 cursor-pointer" :class="{ 'bg-gray-200': !variant.availability, 'text-gray-500': !variant.availability }" @click="changeSizeAvailability(variant)">
                             <div class="align-center self-center text-center py-2">
-                            {{ variant.size }}
+                            {{variant.size}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- toddler sizes -->
+                <div v-if="!isNew">
+                    <h2 class="w-full text-lg font-semibold text-gray-800">Toddler Sizes
+                        <span class="text-gray-400 text-sm font-normal">Click to enable/disable.</span>
+                    </h2> 
+                    
+                    <div class="flex flex-row flex-wrap gap-3">
+                        <div v-for="variant in editedItem.ItemVariants.slice(2, 5)" class="border border-gray-300 size-14 rounded p-2 cursor-pointer" :class="{ 'bg-gray-200': !variant.availability, 'text-gray-500': !variant.availability }" @click="changeSizeAvailability(variant)">
+                            <div class="align-center self-center text-center py-2">
+                            {{variant.size}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- youth sizes -->
+                <div v-if="!isNew">
+                    <h2 class="w-full text-lg font-semibold text-gray-800">Youth Sizes
+                        <span class="text-gray-400 text-sm font-normal">Click to enable/disable.</span>
+                    </h2> 
+                    
+                    <div class="flex flex-row flex-wrap gap-3">
+                        <div v-for="variant in editedItem.ItemVariants.slice(5, 9)" class="border border-gray-300 w-20 h-10 rounded p-18 cursor-pointer" :class="{ 'bg-gray-200': !variant.availability, 'text-gray-500': !variant.availability }" @click="changeSizeAvailability(variant)">
+                            <div class="align-center self-center text-center py-2">
+                            {{variant.size}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- regular sizes -->
+                <div v-if="!isNew">
+                    <h2 class="w-full text-lg font-semibold text-gray-800">Regular Sizes
+                        <span class="text-gray-400 text-sm font-normal">Click to enable/disable.</span>
+                    </h2> 
+                    
+                    <div class="flex flex-row flex-wrap gap-3">
+                        <div v-for="variant in editedItem.ItemVariants.slice(9, 17)" class="border border-gray-300 size-14 rounded p-2 cursor-pointer" :class="{ 'bg-gray-200': !variant.availability, 'text-gray-500': !variant.availability }" @click="changeSizeAvailability(variant)">
+                            <div class="align-center self-center text-center py-2">
+                            {{variant.size}}
                             </div>
                         </div>
                     </div>
@@ -95,6 +140,19 @@
                         <input v-model="archived" type="radio" name="archived" value="true">
                             <label for="true">Hidden</label>
                         </input>
+                    </div>
+                </div>
+
+                <!-- pickup -->
+                <div>
+                    <h2 class="w-full text-lg font-semibold text-gray-800">Pickup</h2>
+                    <div class="flex gap-2">
+                        <input v-model="pickup" type="radio" name="pickup" value="true">
+                            <label for="true">Available for pickup</label>
+                        </input>
+                        <input v-model="pickup" type="radio" name="pickup" value="false">
+                            <label for="false">Shipping only</label>
+                         </input>
                     </div>
                 </div>
                 
@@ -133,6 +191,7 @@ const editedItem = reactive({
     price: parseFloat(props.item.price),
     description: props.item.description,
     isArchived: props.item.isArchived,
+    pickupAvailable: props.item.pickupAvailable,
     ItemVariants: props.item.ItemVariants.map(a => {return {...a}}),
     ItemPhotos: props.item.ItemPhotos || [],
 });
@@ -141,10 +200,12 @@ function closeWindow() {
 }
 
 const archived = ref((props.item.isArchived ? "true" : "false"))
+const pickup = ref((props.item.pickupAvailable ? "true" : "false"))
 
 async function saveChanges() {
     try {
         editedItem.isArchived = (archived.value == "true" ? true : false)
+        editedItem.pickupAvailable = (pickup.value == "true" ? true : false)
         editedItem.price = parseFloat(editedItem.price)
         
         // verify input
@@ -176,6 +237,7 @@ async function saveChanges() {
             props.item.price = editedItem.price
             props.item.description = editedItem.description
             props.item.isArchived = editedItem.isArchived
+            props.item.pickupAvailable = editedItem.pickupAvailable
             props.item.ItemVariants = editedItem.ItemVariants
             props.item.ItemPhotos = editedItem.ItemPhotos
             emit("closeWindow");
@@ -194,6 +256,8 @@ async function cancelEdit() {
     editedItem.description = props.item.description
     editedItem.isArchived = props.item.isArchived
     archived.value = (props.item.isArchived ? "true" : "false")
+    editedItem.pickupAvailable = props.item.pickupAvailable
+    pickup.value = (props.item.pickupAvailable ? "true" : "false")
     editedItem.ItemVariants = props.item.ItemVariants.map(a => {return {...a}}),
     editedItem.ItemPhotos = props.item.ItemPhotos || []
 }
