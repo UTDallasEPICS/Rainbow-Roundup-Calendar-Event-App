@@ -144,5 +144,10 @@ export default defineNuxtConfig({
   },
   routeRules: {
     '/aboutUs': {swr: 60},
+    '/admin': {swr: 60},
+    '/admin/events': {swr: 60},
+    '/admin/users': {swr: 60},
+    '/admin/orders': {swr: 60},
+    '/merchandise': {swr: 60},
   },
 });
