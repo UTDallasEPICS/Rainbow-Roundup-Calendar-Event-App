@@ -23,7 +23,6 @@ export default defineEventHandler(async (event) => {
   if (!id) {
     setResponseStatus(event, 400); //idk the proper hhtp response
     return {
-      success: false,
       error: "Signup ID is required.",
     };
   }
@@ -44,7 +43,6 @@ export default defineEventHandler(async (event) => {
     if (!existingSignUp) {
       setResponseStatus(event, 404);
       return {
-        success: false,
         error: "No signup with matching id",
       };
     }
@@ -63,7 +61,6 @@ export default defineEventHandler(async (event) => {
     });
 
     return {
-      success: true,
       signup: existingSignUp,
     };
   } catch (error) {
@@ -71,7 +68,6 @@ export default defineEventHandler(async (event) => {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
     return {
-      success: false,
       error: `Error deleting signup: ${errorMessage}`,
     };
   }

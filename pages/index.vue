@@ -240,7 +240,6 @@ try {
         lng: event.eventLong?.toString() || "0"
       };
     });
-    console.log('Fetched events:', events.value);
   }
 } catch (err) {
   console.error("Error fetching events: ", err);

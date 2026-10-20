@@ -200,6 +200,9 @@ const isAdmin = computed(() => (session?.value?.data?.user?.role == "ADMIN" || s
 
 const config = useRuntimeConfig()
 
+console.log("STRIPE PUBLIC KEY:", config.public.STRIPE_PUBLIC_KEY)
+console.log("DONATION ID:", config.public.STRIPE_DONATION_ID);
+
 const stripeDonationLink =
   `https://buy.stripe.com/${config.public.STRIPE_DONATION_ID}`;
 
@@ -207,7 +210,6 @@ const dropdownOpen = ref(false);
 const mobileMenuOpen = ref(false);
 const notificationPermission = ref(false);
 const deferredPrompt = ref(null);
-const runtimeConfig = useRuntimeConfig();
 const isSubscribedToPush = ref(false);
 const { $pwa } = useNuxtApp();
 const notifSubscription = ref(null)

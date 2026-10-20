@@ -1,4 +1,4 @@
-import type { User } from "@prisma/client";
+import type { User } from "~/prisma/generated/client";
 //import SignUp from "~/pages/signUp.vue";
 import { auth } from "~/server/auth";
 
@@ -50,7 +50,6 @@ export default defineEventHandler(async (event) =>{
         setResponseStatus(event, 500);
         const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
         return {
-            success: false,
             error: `Error fetching signups: ${errorMessage}`,
         };
     }
