@@ -1,4 +1,4 @@
-import type {  User } from "@prisma/client";
+import type { User } from "~/prisma/generated/client";
 import { auth } from "~/server/auth";
 
 export default defineEventHandler(async (event) => {
