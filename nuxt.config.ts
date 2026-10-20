@@ -8,6 +8,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
+      STRIPE_DONATION_ID: process.env.STRIPE_DONATION_ID,
       GOOGLE_PLACES: process.env.NUXT_PUBLIC_GOOGLE_PLACES,
       PUSH_VAPID_PUBLIC_KEY: process.env.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY  // basically sometimes the process.env stuff breaks, so in your .env, nuxt would be expecting a NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY
     },
@@ -29,14 +30,6 @@ export default defineNuxtConfig({
 
     UPLOAD_DIR: (process.env.NUXT_NODE_ENV == "prod" || process.env.NUXT_NODE_ENV == "stage") ? "" : "public/uploads"
      // if we are in prod, we have a variable set up. If we are not in prod, we use the public directory
-  },
-  vite: {
-    resolve: {
-      alias: {
-        // Redirect the invalid import to an empty stub
-        '.prisma/client/index-browser': '/dev/null'
-      }
-    }
   },
   
   devtools: { enabled: true },

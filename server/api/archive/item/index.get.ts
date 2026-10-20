@@ -1,5 +1,5 @@
 import { defineEventHandler, setResponseStatus, createError } from "h3";
-import type { User } from "@prisma/client";
+import type { User } from "~/prisma/generated/client";
 import { auth } from "~/server/auth"
 
 export default defineEventHandler(async (event) => {
@@ -33,14 +33,12 @@ export default defineEventHandler(async (event) => {
 
         setResponseStatus(event, 200);
         return {
-            success: true,
             data: items,
         };
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
         setResponseStatus(event, 500);
         return {
-            success: false,
             error: errorMessage,
         };
     }

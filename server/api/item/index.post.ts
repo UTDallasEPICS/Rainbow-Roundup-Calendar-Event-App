@@ -1,7 +1,6 @@
 import { defineEventHandler, setResponseStatus, createError, readBody } from "h3";
 import type { User } from "../../../types/session";
 import { auth } from "~/server/auth"
-import { Size } from "@prisma/client";
 
 export default defineEventHandler(async (event) => {
     const prisma = event.context.prisma;
@@ -23,7 +22,6 @@ export default defineEventHandler(async (event) => {
         if (!body.name || !body.price) {
             setResponseStatus(event, 400);
             return {
-                success: false,
                 error: "Request must include name and price fields",
             };
         }
@@ -47,7 +45,6 @@ export default defineEventHandler(async (event) => {
         if (!item) {
             setResponseStatus(event, 500);
             return {
-                success: false,
                 error: "Item creation failed",
             };
         }
@@ -84,7 +81,7 @@ export default defineEventHandler(async (event) => {
         // );
 
         // creating variants XXS, XS, S, M, L, XL, XXL, XXXL
-        const sizes: Size[] = [Size.XXS, Size.XS, Size.S, Size.M, Size.L, Size.XL, Size.XXL, Size.XXXL]
+        const sizes = ["3-6 mo", "6-12 mo", "2T", "3T", "4T", "Youth S", "Youth M", "Youth L", "Youth XL", "XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL"]
      
         for (let i = 0; i < sizes.length; i++)
         {
@@ -106,14 +103,12 @@ export default defineEventHandler(async (event) => {
 
         setResponseStatus(event, 200);
         return {
-            success: true,
             data: updatedItem,
         };
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
         setResponseStatus(event, 500);
         return {
-            success: false,
             error: errorMessage,
         };
     }
