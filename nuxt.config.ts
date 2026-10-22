@@ -142,4 +142,13 @@ export default defineNuxtConfig({
       globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
     },
   },
+  routeRules: {
+    '/': {swr: 60},
+    '/aboutUs': {swr: 60},
+    '/admin': {swr: 60},
+    '/admin/events': {swr: 60},
+    '/admin/users': {swr: 60},
+    '/admin/orders': {swr: 60},
+    '/merchandise': {swr: 60},
+  },
 });
