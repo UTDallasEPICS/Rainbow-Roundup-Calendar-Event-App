@@ -10,7 +10,7 @@ export const auth = betterAuth({
     provider: "sqlite",
   }),
   basePath: "/api/auth",
-  baseURL: process.env.URL ?? process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
+  baseURL: process.env.URL ?? process.env.BETTER_AUTH_URL,
   pages: {
     signIn: "/login", // Custom sign-in page URL
     newUser: "/signup", // Custom sign-up page URL
