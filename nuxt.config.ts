@@ -31,7 +31,7 @@ export default defineNuxtConfig({
     UPLOAD_DIR: (process.env.NUXT_NODE_ENV == "prod" || process.env.NUXT_NODE_ENV == "stage") ? "" : "public/uploads"
      // if we are in prod, we have a variable set up. If we are not in prod, we use the public directory
   },
-  
+
   devtools: { enabled: true },
   css: [
     "~/assets/css/main.css",
