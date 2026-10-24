@@ -92,7 +92,7 @@ export default defineEventHandler(async (event) => {
                     item: {
                         connect: { id: item.id }
                     },
-                    size: sizes[i]!,
+                    size: sizes[i],
                     availability: false,
                 }
             })
