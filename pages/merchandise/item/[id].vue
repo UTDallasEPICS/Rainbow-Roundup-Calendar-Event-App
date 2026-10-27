@@ -21,9 +21,9 @@
     <div v-if="item" class="max-w-[900px] mx-auto p-6 font-sans">
       <h1 class="text-2xl mb-4 font-bold">{{ item.name }}</h1>
 
-      <div class="flex gap-6 items-start">
-        <div>
-          <img :src="selectedImage" alt="Item image" class="w-[300px] h-auto rounded-lg object-cover shadow-md">
+      <div class="flex flex-col md:flex-row gap-6 items-start">
+        <div class="w-full md:w-auto">
+          <img :src="selectedImage" alt="Item image" class="w-full md:w-[300px] lg:w-[400px] aspect-square rounded-lg object-contain shadow-md">
           <!-- Thumbnail images -->
           <div v-if="item && item.ItemPhotos && item.ItemPhotos.length > 1" class="flex mt-4 space-x-2">
             <img
