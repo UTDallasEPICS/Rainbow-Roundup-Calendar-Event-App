@@ -41,30 +41,25 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
+import type { Order } from "~/types/prismaTypes";
 
-const orders = ref([]);
-const archivedOrders = ref([]);
+const orders = ref<Order[]>([]);
+const archivedOrders = ref<Order[]>([]);
 const attrs = useAttrs();
 const isLoading = ref(true);
 
 try {
     // fetch orders
-    const { data: ordersData } = await useFetch(`/api/order`, {  // TODO: Do sorting on serverside
-        query: { method: "GET" }
-    }) 
-    orders.value = ordersData.value.data
+    const { data: ordersData } = await useFetch(`/api/order`)  // todo: do sorting on serverside
+    // The "as any" is here cuz it will not contain data if it fails, but still fails gracefully
+    const allOrders = (ordersData.value as any)?.data || [];
+    orders.value = allOrders.filter((o: Order) => o.status !== "DELIVERED");
+    archivedOrders.value = allOrders.filter((o: Order) => o.status === "DELIVERED");
 }
 catch (err) {
     console.error("Error fetching orders:", err);
 }
 finally {
-  // sort orders & archived orders
-  for (let i = 0; i < orders.value.length; i++) {
-      if (orders.value[i].status == "DELIVERED") {
-          archivedOrders.value.push(orders.value.splice(i, 1)[0])
-      }
-  }
-  
   isLoading.value = false;
 }
 </script>
