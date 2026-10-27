@@ -200,9 +200,6 @@ const isAdmin = computed(() => (session?.value?.data?.user?.role == "ADMIN" || s
 
 const config = useRuntimeConfig()
 
-console.log("STRIPE PUBLIC KEY:", config.public.STRIPE_PUBLIC_KEY)
-console.log("DONATION ID:", config.public.STRIPE_DONATION_ID);
-
 const stripeDonationLink =
   `https://buy.stripe.com/${config.public.STRIPE_DONATION_ID}`;
 
