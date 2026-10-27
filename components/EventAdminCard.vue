@@ -36,6 +36,8 @@
     const props = defineProps(['event', 'focusedEventId', 'action']);
     const emit = defineEmits(['event-focused', 'event-view'])
 
+
+    // TODO: turn formatDateAndTime in all of the places to the same function. 
     function formatDateAndTime(isoString) {
         if (!isoString) return { date: "", time: "" };
 
