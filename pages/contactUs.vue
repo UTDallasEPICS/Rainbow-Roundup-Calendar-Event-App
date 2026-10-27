@@ -12,6 +12,9 @@
     HTML has built-in email validation for type="email" fields but not as clean with how this page is built
     Regex checks generally that the field looks like an email but doesn't verify that it actually is one. Email will still send to support either way, as the email field is for support to contact the user in the future
     Regex breakdown: ^ start of the string [^\s@]+ one or more characters that are not whitespace or @, @ is literally the @ symbol, [^\s@]+ again one or more characters that dont contain whitespace or @, \. is literally . and $ is the end of the string 
+    
+    This should be removed on Nathan's next PR
+    
     */
     const emailValid = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(femail.value))
     const messageValid = computed(() => message.value.trim() !== '')

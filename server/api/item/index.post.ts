@@ -38,7 +38,8 @@ export default defineEventHandler(async (event) => {
                 name: body.name,
                 price: body.price,
                 description: body.description,
-                isArchived: body.isArchived
+                isArchived: body.isArchived,
+                pickupAvailable: body.pickupAvailable
             },
         });
 

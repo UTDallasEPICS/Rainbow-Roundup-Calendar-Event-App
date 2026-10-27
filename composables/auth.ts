@@ -8,5 +8,6 @@ export const authClient = createAuthClient({
         emailOTPClient()
     ],
     basePath: "/api/auth",
-    baseURL: process.env.URL,
+    // In Dev, betterauth doesn't seem to process these. In prod and stage, betterauth processes these with no problems. Not sure what the issue is, but that is why we have the http://localhost:3000 fallback
+    baseURL: process.env.URL ?? process.env.BETTER_AUTH_URL
 });

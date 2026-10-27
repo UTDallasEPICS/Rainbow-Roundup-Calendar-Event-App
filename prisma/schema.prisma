@@ -121,6 +121,7 @@ model AbstractItem {
   description       String
   
   isArchived    Boolean   @default(false)  
+  pickupAvailable Boolean   @default(false)
 
   ItemVariants     ItemVariant[]
   ItemPhotos         ItemPhoto[]

@@ -7,8 +7,8 @@ dotenv.config();
 export default defineNuxtConfig({
   runtimeConfig: {
     public: {
-      STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
-      STRIPE_DONATION_ID: process.env.STRIPE_DONATION_ID,
+      STRIPE_PUBLIC_KEY: process.env.NUXT_STRIPE_PUBLIC_KEY,
+      STRIPE_DONATION_ID: process.env.NUXT_STRIPE_DONATION_ID,
       GOOGLE_PLACES: process.env.NUXT_PUBLIC_GOOGLE_PLACES,
       PUSH_VAPID_PUBLIC_KEY: process.env.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY  // basically sometimes the process.env stuff breaks, so in your .env, nuxt would be expecting a NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY
     },
@@ -31,7 +31,7 @@ export default defineNuxtConfig({
     UPLOAD_DIR: (process.env.NUXT_NODE_ENV == "prod" || process.env.NUXT_NODE_ENV == "stage") ? "" : "public/uploads"
      // if we are in prod, we have a variable set up. If we are not in prod, we use the public directory
   },
-  
+
   devtools: { enabled: true },
   css: [
     "~/assets/css/main.css",
@@ -141,5 +141,14 @@ export default defineNuxtConfig({
     injectManifest: {
       globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
     },
+  },
+  routeRules: {
+    '/': {swr: 60},
+    '/aboutUs': {swr: 60},
+    '/admin': {swr: 60},
+    '/admin/events': {swr: 60},
+    '/admin/users': {swr: 60},
+    '/admin/orders': {swr: 60},
+    '/merchandise': {swr: 60},
   },
 });

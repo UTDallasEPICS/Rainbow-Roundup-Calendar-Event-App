@@ -85,7 +85,8 @@ CREATE TABLE "AbstractItem" (
     "name" TEXT NOT NULL,
     "price" REAL NOT NULL,
     "description" TEXT NOT NULL,
-    "isArchived" BOOLEAN NOT NULL DEFAULT false
+    "isArchived" BOOLEAN NOT NULL DEFAULT false,
+    "pickupAvailable" BOOLEAN NOT NULL DEFAULT false
 );
 
 -- CreateTable
