@@ -2,7 +2,7 @@
     <div
       :class="['rounded-2xl shadow flex items-center cursor-pointer hover:bg-gray-50 transition p-4', props.focusedEventId === props.event.id ? 'ring-2 ring-indigo-500 bg-indigo-50' : 'bg-white']"
     >
-      <div @click="handleClick(props.event.id)" class="flex items-center w-full">
+      <div @click="handleClick(props.event)" class="flex items-center w-full">
 
         <!-- props.event info -->
         <div class="flex-1 text-left">
@@ -57,12 +57,12 @@
         return { date: formattedDate, time: formattedTime };
     }
 
-    function handleClick(id) {
+    function handleClick(event) {
         if (props.action == "focus") {
-          emit("event-focused", id)
+          emit("event-focused", event)
         }
         else {
-          emit("event-view", id)
+          emit("event-view", event.id)
         }
     }
 
