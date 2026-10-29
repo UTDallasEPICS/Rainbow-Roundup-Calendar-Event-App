@@ -32,12 +32,14 @@
             </button>
             <template v-else>
             <button
+                :disabled="isSavingChanges"
                 @click="saveChanges()"
                 class="bg-indigo-600 text-white px-4 py-1 rounded-full hover:bg-indigo-700 transition"
             >
-                Save
+                {{ isSavingChanges ? "Saving…" : "Save" }}
             </button>
             <button
+                :disabled="isSavingChanges"
                 @click="cancelEdit"
                 class="text-gray-600 hover:text-gray-800 px-3 py-1 rounded-full transition"
             >
@@ -149,6 +151,87 @@
             />
           </div>
         </div>
+
+        <!-- Event image carousel -->
+        <section v-if="!isLoading" aria-label="Event photos">
+          <h2 class="text-sm font-medium text-gray-800 mb-2">Event Photos</h2>
+          <div
+            class="relative aspect-video w-full overflow-hidden rounded-xl bg-gray-100"
+          >
+            <img
+              v-if="eventImages.length"
+              :src="eventImages[activeImageIndex].url"
+              :alt="`${event.title} photo ${activeImageIndex + 1}`"
+              class="h-full w-full object-cover"
+            />
+            <div
+              v-else
+              class="flex h-full items-center justify-center text-sm text-gray-500"
+            >
+              Event photos will appear here
+            </div>
+
+            <template v-if="eventImages.length > 1">
+              <button
+                type="button"
+                aria-label="Previous event photo"
+                class="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 text-gray-800 shadow hover:bg-white"
+                @click="showPreviousImage"
+              >
+                <span aria-hidden="true">&lt;</span>
+              </button>
+              <button
+                type="button"
+                aria-label="Next event photo"
+                class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 text-gray-800 shadow hover:bg-white"
+                @click="showNextImage"
+              >
+                <span aria-hidden="true">&gt;</span>
+              </button>
+              <div
+                class="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-2 py-1 text-xs text-white"
+                aria-live="polite"
+              >
+                {{ activeImageIndex + 1 }} / {{ eventImages.length }}
+              </div>
+            </template>
+          </div>
+          <div v-if="isAdmin && isEditing" class="mt-3 flex gap-2">
+            <input
+              ref="imageFileInput"
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              class="hidden"
+              @change="handleImageUpload"
+            />
+            <button
+              type="button"
+              :disabled="isSavingChanges"
+              class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:cursor-wait disabled:opacity-50"
+              @click="openImageFilePicker"
+            >
+              Add images
+            </button>
+            <button
+              type="button"
+              :disabled="!eventImages.length || isSavingChanges"
+              class="rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+              @click="deleteCurrentImage"
+            >
+              Remove current image
+            </button>
+          </div>
+          <p v-if="isAdmin && isEditing" class="mt-2 text-xs text-gray-500">
+            Image changes are saved when you press Save.
+          </p>
+          <p
+            v-if="imageUploadError"
+            role="alert"
+            class="mt-2 text-sm text-red-600"
+          >
+            {{ imageUploadError }}
+          </p>
+        </section>
 
         <!-- Map -->
         <div v-if="!isLoading">
@@ -303,6 +386,8 @@ const { data: session } = await authClient.getSession();
 const props = defineProps(['eventId']);
 const emit = defineEmits(["closeViewEventWindow", "eventDeleted", "eventEdited"]);
 function closeWindow() {
+    if (isSavingChanges.value) return;
+    discardPendingImageChanges();
     emit("closeViewEventWindow");
 }
 
@@ -344,6 +429,144 @@ const eventId = props.eventId;
 const event = ref(null);
 const isLoading = ref(true);
 const userMap = ref({});
+const pendingImageUploads = ref([]);
+const pendingImageDeletes = ref(new Set());
+const eventImages = computed(() => [
+  ...(event.value?.images ?? []).filter(
+    (image) => !pendingImageDeletes.value.has(image.id),
+  ),
+  ...pendingImageUploads.value.map((pendingImage) => ({
+    id: pendingImage.id,
+    url: pendingImage.previewUrl,
+    isPending: true,
+  })),
+]);
+const activeImageIndex = ref(0);
+const imageFileInput = ref(null);
+const isSavingChanges = ref(false);
+const imageUploadError = ref("");
+
+function openImageFilePicker() {
+  imageUploadError.value = "";
+  imageFileInput.value?.click();
+}
+
+async function handleImageUpload(uploadEvent) {
+  const input = uploadEvent.target;
+  const file = input.files?.[0];
+  if (!file) return;
+
+  imageUploadError.value = "";
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+  if (!allowedTypes.includes(file.type)) {
+    imageUploadError.value =
+      "Invalid file type. Only JPEG, PNG, WebP, and GIF are allowed.";
+    input.value = "";
+    return;
+  }
+
+  const maxFileSize = 5 * 1024 * 1024;
+  if (file.size > maxFileSize) {
+    imageUploadError.value = "File too large. Maximum size is 5 MB.";
+    input.value = "";
+    return;
+  }
+
+  pendingImageUploads.value.push({
+    id: `pending-${Date.now()}-${Math.random()}`,
+    file,
+    previewUrl: URL.createObjectURL(file),
+  });
+  activeImageIndex.value = eventImages.value.length - 1;
+  input.value = "";
+}
+
+function deleteCurrentImage() {
+  const image = eventImages.value[activeImageIndex.value];
+  if (!image || isSavingChanges.value) return;
+
+  imageUploadError.value = "";
+  if (image.isPending) {
+    const pendingImage = pendingImageUploads.value.find(
+      (pending) => pending.id === image.id,
+    );
+    if (pendingImage) URL.revokeObjectURL(pendingImage.previewUrl);
+    pendingImageUploads.value = pendingImageUploads.value.filter(
+      (pending) => pending.id !== image.id,
+    );
+  } else {
+    pendingImageDeletes.value = new Set([
+      ...pendingImageDeletes.value,
+      image.id,
+    ]);
+  }
+
+  activeImageIndex.value = Math.max(
+    0,
+    Math.min(activeImageIndex.value, eventImages.value.length - 1),
+  );
+}
+
+async function savePendingImageChanges() {
+  for (const pendingImage of [...pendingImageUploads.value]) {
+    const formData = new FormData();
+    formData.append("file", pendingImage.file);
+
+    const response = await $fetch(`/api/event/${eventId}/images`, {
+      method: "POST",
+      body: formData,
+    });
+
+    event.value.images ??= [];
+    event.value.images.push(response.data);
+    URL.revokeObjectURL(pendingImage.previewUrl);
+    pendingImageUploads.value = pendingImageUploads.value.filter(
+      (pending) => pending.id !== pendingImage.id,
+    );
+  }
+
+  for (const imageId of [...pendingImageDeletes.value]) {
+    await $fetch(
+      `/api/event/${encodeURIComponent(eventId)}/images/${encodeURIComponent(imageId)}`,
+      { method: "DELETE" },
+    );
+
+    event.value.images = event.value.images.filter(
+      (image) => image.id !== imageId,
+    );
+    const remainingDeletes = new Set(pendingImageDeletes.value);
+    remainingDeletes.delete(imageId);
+    pendingImageDeletes.value = remainingDeletes;
+  }
+
+  activeImageIndex.value = Math.max(
+    0,
+    Math.min(activeImageIndex.value, eventImages.value.length - 1),
+  );
+}
+
+function discardPendingImageChanges() {
+  for (const pendingImage of pendingImageUploads.value) {
+    URL.revokeObjectURL(pendingImage.previewUrl);
+  }
+  pendingImageUploads.value = [];
+  pendingImageDeletes.value = new Set();
+  activeImageIndex.value = Math.max(
+    0,
+    Math.min(activeImageIndex.value, eventImages.value.length - 1),
+  );
+}
+
+function showPreviousImage() {
+  activeImageIndex.value =
+    (activeImageIndex.value - 1 + eventImages.value.length) %
+    eventImages.value.length;
+}
+
+function showNextImage() {
+  activeImageIndex.value =
+    (activeImageIndex.value + 1) % eventImages.value.length;
+}
 
 // get local time string for edited events
 function toLocalISOString(date) {
@@ -407,6 +630,8 @@ onMounted(loadEvent);
 const toggleEdit = () => (isEditing.value = true);
 
 async function saveChanges() {
+    if (isSavingChanges.value) return;
+
     // Validation for location
     // if (!editedEvent.location || editedEvent.eventLat === null || editedEvent.eventLong === null) {
     //     alert("Please select a valid location on the map before submitting.");
@@ -432,41 +657,61 @@ async function saveChanges() {
       return;
     }
 
-    // assign new event values
-    event.value.title = editedEvent.title;
-    event.value.description = editedEvent.description;
-    event.value.start = startTime.toISOString();
-    event.value.end = endTime.toISOString();
-    event.value.capacity = editedEvent.capacity;
-    event.value.location = editedEvent.location;
-    event.value.address = editedEvent.address;
-    event.value.lat = editedEvent.eventLat;
-    event.value.lng = editedEvent.eventLong;
+    isSavingChanges.value = true;
+    imageUploadError.value = "";
+    try {
+      // Apply event field changes before applying staged image changes.
+      event.value.title = editedEvent.title;
+      event.value.description = editedEvent.description;
+      event.value.start = startTime.toISOString();
+      event.value.end = endTime.toISOString();
+      event.value.capacity = editedEvent.capacity;
+      event.value.location = editedEvent.location;
+      event.value.address = editedEvent.address;
+      event.value.lat = editedEvent.eventLat;
+      event.value.lng = editedEvent.eventLong;
 
     // puts changes in local database
     const { error : localPutError } = await useFetch(`../api/event/${eventId}`, {
         method: "PUT",
         body: event.value,
-    });
-    if (localPutError.value) {
+      });
+      if (localPutError.value) {
         console.error("Local database PUT error:", localPutError.value);
-    }
-    
+        imageUploadError.value =
+          "Could not save event changes. Image changes were not applied.";
+        return;
+      }
+
     // puts changes in google calendar
     const { error : googlePutError } = await useFetch(`../api/google/calendar/${eventId}`, {
-        method: "PUT",
-        body: event.value,
+          method: "PUT",
+          body: event.value,
     });
-    if (googlePutError.value) {
+      if (googlePutError.value) {
         console.error("Google database PUT error:", googlePutError.value);
-    }
+      }
 
-    isEditing.value = false;
-    emit("eventEdited", event.value);
+      await savePendingImageChanges();
+      isEditing.value = false;
+      emit("eventEdited", event.value);
+    } catch (error) {
+      console.error("Could not save event changes:", error);
+      imageUploadError.value =
+        error.data?.statusMessage ||
+        error.data?.message ||
+        error.message ||
+        "Could not save all event changes. Please try again.";
+    } finally {
+      isSavingChanges.value = false;
+    }
 };
 
 // reverts edits to what they were before
 const cancelEdit = () => {
+  discardPendingImageChanges();
+  imageUploadError.value = "";
+
   // revert edits
   const startTime = new Date(event.value.start);
   const endTime = new Date(event.value.end);
@@ -613,4 +858,3 @@ const respondToEvent = async (response) => {
   }
 };
 </script>
-

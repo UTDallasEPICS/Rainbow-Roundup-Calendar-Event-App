@@ -45,6 +45,23 @@ async function main() {
     })
   }
 
+  const shreyaUser = await prisma.user.findUnique({
+    where: {
+      email: 'spejavar10@gmail.com'
+    }
+  })
+
+  if (!shreyaUser) {
+    await prisma.user.create({
+      data: {
+        email: 'spejavar10@gmail.com',
+        firstname: 'Shreya',
+        lastname: 'Pejavar',
+        role: Role.SUPER,
+      }
+    })
+  }
+
   const adityaUser = await prisma.user.findUnique({
     where: {
       email: 'aditya@npts.tech'
