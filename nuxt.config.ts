@@ -7,11 +7,11 @@ dotenv.config();
 export default defineNuxtConfig({
   runtimeConfig: {
     public: {
-      STRIPE_PUBLIC_KEY: '',
-      STRIPE_DONATION_ID: '',
-      GOOGLE_PLACES: process.env.NUXT_PUBLIC_GOOGLE_PLACES,
-      PUSH_VAPID_PUBLIC_KEY: process.env.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY,  // basically sometimes the process.env stuff breaks, so in your .env, nuxt would be expecting a NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY
-      INQUIRY_EMAIL: ''
+      stripePublicKey: '',
+      stripeDonationId: '',
+      googlePlaces: '',
+      pushVapidPublicKey: '',  // basically sometimes the process.env stuff breaks, so in your .env, nuxt would be expecting a NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY
+      inquiryEmail: '',
     },
     smtpHost: process.env.SMTP_HOST,
     smtpPort: process.env.SMTP_PORT,
