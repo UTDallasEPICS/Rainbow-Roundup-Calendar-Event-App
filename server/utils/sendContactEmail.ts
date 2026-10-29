@@ -10,7 +10,7 @@ export const sendContactEmail = async (name: string, email: string, message: str
     
     const mailOptions = {
         from: config.smtpFrom || "rainbow-roundup@npts.tech",
-        to: "nathan.nguyen3663@gmail.com",
+        to: config.public.INQUIRY_EMAIL as string,
         subject: `${name} -- Contact Form Submission`,
         text: `Contact Email: ${email}\n\n${message}`,
         html: `<p>Contact Email: ${email}<br><br>${message}</p>`,
