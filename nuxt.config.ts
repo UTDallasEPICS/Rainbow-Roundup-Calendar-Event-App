@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     public: {
       STRIPE_PUBLIC_KEY: '',
       STRIPE_DONATION_ID: '',
+      UPLOAD_STORAGE_PATH: process.env.NUXT_PUBLIC_UPLOAD_STORAGE_PATH,
       GOOGLE_PLACES: process.env.NUXT_PUBLIC_GOOGLE_PLACES,
       PUSH_VAPID_PUBLIC_KEY: process.env.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY,  // basically sometimes the process.env stuff breaks, so in your .env, nuxt would be expecting a NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY
       INQUIRY_EMAIL: ''
@@ -30,7 +31,7 @@ export default defineNuxtConfig({
     NODE_ENV: process.env.NUXT_NODE_ENV,
 
     UPLOAD_DIR: (process.env.NUXT_NODE_ENV == "prod" || process.env.NUXT_NODE_ENV == "stage") ? "" : "public/uploads"
-     // if we are in prod, we have a variable set up. If we are not in prod, we use the public directory
+     // if we are in prod, we have a variable set up. If we are not in prod, we use the public directory 
   },
 
   devtools: { enabled: true },

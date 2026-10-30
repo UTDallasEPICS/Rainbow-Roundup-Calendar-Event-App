@@ -43,6 +43,15 @@ CREATE TABLE "Event" (
 );
 
 -- CreateTable
+CREATE TABLE "EventImage" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "url" TEXT NOT NULL,
+    "eventId" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "EventImage_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "Event" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "SignUp" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "userId" TEXT NOT NULL,
