@@ -9,8 +9,6 @@ import {
 import type { User } from "~/types/session";
 import { auth } from "~/server/auth";
 
-const UPLOAD_DIRECTORY = "events";
-
 export default defineEventHandler(async (event) => {
   const session = await auth.api.getSession({ headers: event.headers });
   const user = session?.user as User | undefined;
@@ -45,8 +43,8 @@ export default defineEventHandler(async (event) => {
 
   const config = useRuntimeConfig();
   const uploadDirectory = path.resolve(
-    config.UPLOAD_DIR || "public/uploads",
-    UPLOAD_DIRECTORY,
+    config.public.UPLOAD_STORAGE_PATH || "public/images",
+    "events",
   );
   const filePath = path.join(uploadDirectory, image.id);
 

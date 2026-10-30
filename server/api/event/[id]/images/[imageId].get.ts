@@ -8,8 +8,6 @@ import {
   setHeader,
 } from "h3";
 
-const UPLOAD_DIRECTORY = "events";
-
 export default defineEventHandler(async (event) => {
   // Get event and image IDs from the route.
   const eventId = getRouterParam(event, "id");
@@ -34,11 +32,11 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // Construct the file path from the trusted image ID and configured storage directory.
+  // Construct the file path from the trusted image ID and configured image directory.
   const config = useRuntimeConfig();
   const uploadDirectory = path.resolve(
-    config.UPLOAD_DIR || "public/uploads",
-    UPLOAD_DIRECTORY,
+    config.public.UPLOAD_STORAGE_PATH || "public/images",
+    "events",
   );
   const filePath = path.join(uploadDirectory, image.id);
 
