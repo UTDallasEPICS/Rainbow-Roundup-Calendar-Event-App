@@ -6,15 +6,8 @@
     const femail = ref("")
 
     const nameValid = computed(() => fname.value.trim() !== '')
-    /* The regex used here makes it easier to work with the functions used to display invalid input indicators (the red things)
-    HTML has built-in email validation for type="email" fields but not as clean with how this page is built
-    Regex checks generally that the field looks like an email but doesn't verify that it actually is one. Email will still send to support either way, as the email field is for support to contact the user in the future
-    Regex breakdown: ^ start of the string [^\s@]+ one or more characters that are not whitespace or @, @ is literally the @ symbol, [^\s@]+ again one or more characters that dont contain whitespace or @, \. is literally . and $ is the end of the string 
-    
-    This should be removed on Nathan's next PR
-    
-    */
     const messageValid = computed(() => message.value.trim() !== '')
+    const emailValid = computed(() => femail.value.trim() !== '')
 
     const nameTouched = ref(false)
     const messageTouched = ref(false)
@@ -34,7 +27,7 @@
         invalidInfo.value = false
         submitted.value = false
         submissionError.value = false
-        if (!nameValid.value || !messageValid.value) {
+        if (!nameValid.value || !messageValid.value || !emailValid.value) {
             console.log("returned")
             invalidInfo.value = true
             return
@@ -53,8 +46,8 @@
             });
         }
         catch (error: any) {
-            errorMessage.value = error.statusMessage || "Something went wrong.";
-            console.log(errorMessage.value);
+            errorMessage.value = "Email Error";
+            console.log(error.statusMessage);
             submissionError.value = true
             isSubmitting.value = false
             return
@@ -70,8 +63,8 @@
             });
             submitted.value = true;
         } catch (error : any) {
-            errorMessage.value = error.statusMessage || "Something went wrong.";
-            console.log(errorMessage.value);
+            errorMessage.value = "Email Error";
+            console.log(error.statusMessage);
             submissionError.value = true
             sendErrorEmail(fname.value, femail.value)
             isSubmitting.value = false
@@ -94,7 +87,7 @@
             });
         }
         catch (error: any) {
-            errorMessage.value = error.statusMessage || "Something went wrong.";
+            errorMessage.value ="Email Error";
             console.log(errorMessage.value);
             return
         }
@@ -194,27 +187,29 @@
 
             <div class="flex flex-col items-stretch sm:items-end">
                 <!-- Submit button. An API request is only sent when valid input is provided. -->
-                <button
-                    type="submit"
-                    :disabled="isSubmitting"
-                    :class="[
-                        'w-full sm:w-auto px-6 py-3 min-h-[44px] text-white font-medium rounded-xl shadow-sm transition duration-150 ease-in-out cursor-pointer flex items-center justify-center',
-                        submissionError || invalidInfo
-                            ? 'bg-[#E57373] hover:bg-[#D95C5C]'
-                            : submitted
-                            ? 'bg-[#4CAF50] hover:bg-[#3E8E41]'
-                            : isSubmitting
-                            ? 'bg-[#94A3B8] cursor-not-allowed'
-                            : 'bg-[#3A8DDE] hover:bg-[#2A6BAA]'
-                    ]"
-                >
-                    {{ submitted ? 'Submitted' : isSubmitting ? 'Sending...' : 'Submit' }}
-                </button>
-                <p class="mt-1 min-h-[1.25rem] text-xs sm:text-sm text-red-500 px-1 text-center sm:text-right">
-                    <span v-if="submissionError || invalidInfo">
-                        {{ invalidInfo ? 'Invalid input' : (errorMessage || 'Error') }}
-                    </span>
-                </p>
+                 <div class="flex flex-col items-center">
+                    <button
+                        type="submit"
+                        :disabled="isSubmitting"
+                        :class="[
+                            'w-full sm:w-auto px-6 py-3 min-h-[44px] text-white font-medium rounded-xl shadow-sm transition duration-150 ease-in-out cursor-pointer flex items-center justify-center',
+                            submissionError || invalidInfo
+                                ? 'bg-[#E57373] hover:bg-[#D95C5C]'
+                                : submitted
+                                ? 'bg-[#4CAF50] hover:bg-[#3E8E41]'
+                                : isSubmitting
+                                ? 'bg-[#94A3B8] cursor-not-allowed'
+                                : 'bg-[#3A8DDE] hover:bg-[#2A6BAA]'
+                        ]"
+                    >
+                        {{ submitted ? 'Submitted' : isSubmitting ? 'Sending...' : 'Submit' }}
+                    </button>
+                    <p class="mt-1 min-h-[1.25rem] text-xs sm:text-sm text-red-500 px-1 text-center">
+                        <span v-if="submissionError || invalidInfo">
+                            {{ invalidInfo ? 'Invalid input' : (errorMessage || 'Error') }}
+                        </span>
+                    </p>
+                </div>
             </div>
         </form>
     </div>

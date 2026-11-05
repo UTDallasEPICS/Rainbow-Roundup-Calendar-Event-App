@@ -25,13 +25,20 @@ export default defineEventHandler(async (event) => {
       statusMessage: "Message is required",
     });
     }
-
-    await sendEmail(
-        name,
-        email,
-        message,
-        subject
-    );
+    try {
+        await sendEmail(
+            name,
+            email,
+            message,
+            subject
+        );
+    }
+    catch (error: any){
+        throw createError({
+            statusCode: 500,
+            statusMessage: "Email failed to send, check if your email is right", //primarily used to check if email is valid through sending an intermediary and confirmation email. User should check email to ensure it works. 
+        })
+    }
 
     return {
         success: true,
