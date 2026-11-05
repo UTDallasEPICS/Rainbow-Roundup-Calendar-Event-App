@@ -50,10 +50,10 @@
                 </div>
             </div>
             <div
-                v-if="sortedMerch && sortedMerch.length" class="bg-white rounded-lg shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] overflow-hidden"
+                v-if="sortedMerch && sortedMerch.length" class="bg-white rounded-lg shadow-[0px_4px_4px_0px_rgba(80,85,136,0.25)] w-full overflow-hidden"
             >
-                <div class="overflow-x-auto">
-                    <table class="table-fixed w-[24rem] min-w-[24rem] md:table-auto md:w-full divide-y divide-gray-200">
+                <div class="overflow-x-auto w-full">
+                    <table class="w-full divide-y divide-gray-200">
                         <thead class="bg-blue-300">
                         <tr>
                             <th

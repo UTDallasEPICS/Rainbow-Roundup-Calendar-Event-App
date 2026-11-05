@@ -1,7 +1,7 @@
 <template>
   <div class="sponsors-page">
     <!-- Hero Section -->
-    <section class="hero h-screen flex flex-col items-center justify-center bg-gray-50 text-center">
+    <section class="hero py-16 flex flex-col items-center justify-center bg-gray-50 text-center">
       <div class="content text-center max-w-3xl mx-auto">
         <h2 class="text-5xl font-extrabold text-gray-800">Our Sponsors</h2>
         <p class="text-gray-600 mt-6">
@@ -98,7 +98,7 @@ interface SponsorDetails {
 }
 
 //based off old sponsor link
-const sponsorLink = ref("https://rrup.org/contact-us/");
+const sponsorLink = ref('/contactUs');
 
 //hard coded in, we would probably need a schema if we we wanted to add them instead of an interface
 const goldSponsors = ref<SponsorDetails[]>([

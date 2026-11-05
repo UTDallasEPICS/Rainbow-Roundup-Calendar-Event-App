@@ -44,7 +44,7 @@ const goToItemPage = () => {
       <img
         :src="props.item.ItemPhotos?.[currentIndex]?.url"
         :alt="props.item.name"
-        class="w-full h-[350px] md:h-[400px] lg:h-[466px] object-contain p-2 rounded-xl shadow-md hover:scale-[1.01] transition-transform"
+        class="w-full aspect-square object-contain p-2 rounded-xl shadow-md hover:scale-[1.01] transition-transform"
       />
 
       <!-- Navigation arrows -->

@@ -1,9 +1,9 @@
 <template>
     <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-between p-8 w-full">
-        <div class="w-full px-6 py-4 flex flex-col items-center justify-between">
+        <div class="w-full px-6 py-4 flex flex-col self-center items-center justify-between">
             <!-- header -->
-            <div class="w-full max-w-4xl flex items-center justify-between">
-                <NuxtLink to="/admin" class="self-center flex flex-row">
+            <div class="w-full max-w-4xl flex items-center justify-between py-4">
+                <NuxtLink to="/admin" class="self-center flex flex-row items-center">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="h-5 w-5 mr-2"
@@ -24,7 +24,7 @@
                 <!-- Page Title -->
 
                 <!-- Search & Filter -->
-                <div class="flex space-x-4">
+                <div class="flex flex-row space-x-4 items-center">
                     <!-- Search Icon -->
                     <!-- Search Input -->
                     <input
@@ -55,31 +55,27 @@
             </div>
 
             <!-- Loading State -->
-            <div v-if="loading" class="w-full max-w-4xl flex justify-center py-10">
-                <div class="text-gray-600 text-lg animate-pulse">Loading events...</div>
+                <div v-if="loading" class="w-full max-w-4xl flex justify-center py-10">
+                    <div class="text-gray-600 text-lg animate-pulse">Loading events...</div>
+                </div>
+                <!-- Scrollable events list -->
+                <div v-else class="w-full max-w-4xl flex-1 overflow-y-auto px-6 pb-6">
+                    <EventViewList :events="filteredEvents"/>
+                <h2 class="text-2xl font-bold text-zinc-700 col-span-1 mt-7 py-4">Archived Events</h2>
+                    <EventViewList :events="archivedEvents"/>
             </div>
-            <!-- Scrollable events list -->
-            <div v-else class="w-full max-w-4xl flex-1 overflow-y-auto px-6 pb-6">
-                <EventList :events="filteredEvents" />
-              <h2 class="text-2xl font-bold text-zinc-700 col-span-1 mt-7">Archived Events</h2>
-                <EventList :events="archivedEvents" />
-              
-            </div>
-            <div>
-                
-            </div>
-
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from "vue"
+import type { Event } from '~/types/event'
 
-const events = ref([])
+const events = ref<Event[]>([])
 const loading = ref(true)
 const searchQuery = ref("")
-const archivedEvents = ref([])
+const archivedEvents = ref<Event[]>([])
 
 const filteredEvents = computed(() => {
     if (!searchQuery.value.trim()) return events.value;
@@ -90,15 +86,15 @@ const filteredEvents = computed(() => {
 
 try {
     // fetch non archived event data
-    const eventData = await useFetch('/api/event/', { method: "GET"})
-    events.value = eventData.data.value
+    const eventData = await useFetch<Event[]>('/api/event/', { method: "GET"})
+    events.value = eventData.data.value ?? []
 
     // fetch archived event data
-    const response = await useFetch(`/api/archive/event/`, 
+    const response = await useFetch<Event[]>(`/api/archive/event/`, 
         { method: "GET" }
     )
 
-    archivedEvents.value = response.data.value
+    archivedEvents.value = response.data.value ?? []
 
 
     

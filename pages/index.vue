@@ -22,7 +22,7 @@
     <div class="w-full flex-shrink-0 min-h-64 md:min-h-96 relative">
       <img src="/images/carousel_2.png" 
       alt="Sharing Header Graphic" 
-      class="absolute inset-0 w-full h-full object-cover">
+      class="absolute inset-0 w-full h-full object-cover object-[center_80%]"> 
     </div>
   </div>
 
