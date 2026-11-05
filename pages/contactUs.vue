@@ -14,11 +14,9 @@
     This should be removed on Nathan's next PR
     
     */
-    const emailValid = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(femail.value))
     const messageValid = computed(() => message.value.trim() !== '')
 
     const nameTouched = ref(false)
-    const emailTouched = ref(false)
     const messageTouched = ref(false)
 
     const nameFocused = ref(false)
@@ -32,17 +30,35 @@
 
     const handleClick = async () => {
         nameTouched.value = true
-        emailTouched.value = true
         messageTouched.value = true
         invalidInfo.value = false
         submitted.value = false
         submissionError.value = false
-        if (!nameValid.value || !emailValid.value || !messageValid.value) {
+        if (!nameValid.value || !messageValid.value) {
             console.log("returned")
             invalidInfo.value = true
             return
         }
         isSubmitting.value = true
+
+        try {
+            await $fetch("/api/confirmationemail", {
+                method: "POST",
+                body: {
+                    subject: "Contact",
+                    message: "Your message is sending.",
+                    name: fname.value,
+                    email: femail.value
+                }
+            });
+        }
+        catch (error: any) {
+            errorMessage.value = error.statusMessage || "Something went wrong.";
+            console.log(errorMessage.value);
+            submissionError.value = true
+            isSubmitting.value = false
+            return
+        }
         try {
             await $fetch("/api/inquiryemail", {
                 method: "POST",
@@ -57,9 +73,51 @@
             errorMessage.value = error.statusMessage || "Something went wrong.";
             console.log(errorMessage.value);
             submissionError.value = true
+            sendErrorEmail(fname.value, femail.value)
+            isSubmitting.value = false
+            return
         }
+        sendConfirmation(fname.value, femail.value)
         isSubmitting.value = false
     };
+
+    async function sendErrorEmail(name: string, email: string) {
+        try {
+            await $fetch("/api/confirmationemail", {
+                method: "POST",
+                body: {
+                    subject: "Error",
+                    message: "Your form failed to submit.",
+                    name: name,
+                    email: email
+                }
+            });
+        }
+        catch (error: any) {
+            errorMessage.value = error.statusMessage || "Something went wrong.";
+            console.log(errorMessage.value);
+            return
+        }
+    }
+
+        async function sendConfirmation(name: string, email: string) {
+        try {
+            await $fetch("/api/confirmationemail", {
+                method: "POST",
+                body: {
+                    subject: "Confirmation",
+                    message: "Your form has successfully been submitted.",
+                    name: name,
+                    email: email
+                }
+            });
+        }
+        catch (error: any) {
+            errorMessage.value = error.statusMessage || "Something went wrong.";
+            console.log(errorMessage.value);
+            return
+        }
+    }
 
 </script>
 
@@ -105,17 +163,11 @@
                         type="email"
                         placeholder="Email"
                         @focus="emailFocused = true"
-                        @blur="emailTouched = true; emailFocused = false"
+                        @blur="emailFocused = false"
                         :class="[
-                            'w-full rounded-xl border bg-white px-4 py-3 text-gray-800 shadow-sm outline-none transition focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-sm sm:text-base',
-                            emailTouched && !emailValid ? 'border-red-500 ring-2 ring-red-200' : 'border-gray-300'
+                            'w-full rounded-xl border bg-white px-4 py-3 text-gray-800 shadow-sm outline-none transition focus:border-gray-500 focus:ring-2 focus:ring-gray-200 text-sm sm:text-base'
                         ]"
                     />
-                    <p class="mt-1 min-h-[1.25rem] text-sm text-red-500 px-2">
-                        <span v-if="emailTouched && !emailValid">
-                            Email invalid.
-                        </span>
-                    </p>
                 </div>
             </div>
 
