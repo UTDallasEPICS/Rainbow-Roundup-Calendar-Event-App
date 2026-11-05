@@ -38,9 +38,30 @@
                             </input>
                         </div>
                         <div class="col-span-1">
-                            <h2 class="w-full text-lg font-semibold text-gray-800">Price</h2>
-                            <input v-model="editedItem.price" placeholder="Price" class="w-3/4 border border-gray-300 p-1 rounded">
-                            </input>
+                            <h2 class="w-full text-lg font-semibold text-gray-800">
+  Price
+</h2>
+
+<div class="flex gap-2">
+  <input
+    v-model.number="editedItem.priceDollars"
+    type="number"
+    min="0"
+    step="1"
+    placeholder="Dollars"
+    class="w-1/2"
+  />
+
+  <input
+    v-model.number="editedItem.priceCents"
+    type="number"
+    min="0"
+    max="99"
+    step="1"
+    placeholder="Cents"
+    class="w-1/2"
+  />
+</div>
                         </div>
                     </div>
                 </div>
@@ -188,7 +209,8 @@ const isNew = computed(() => {
 const editedItem = reactive({
     id: props.item.id,
     name: props.item.name,
-    price: parseFloat(props.item.price),
+    priceDollars: Number(props.item.priceDollars ?? 0),
+    priceCents: Number(props.item.priceCents ?? 0),
     description: props.item.description,
     isArchived: props.item.isArchived,
     pickupAvailable: props.item.pickupAvailable,
@@ -205,17 +227,25 @@ const pickup = ref((props.item.pickupAvailable ? "true" : "false"))
 async function saveChanges() {
     try {
         editedItem.isArchived = (archived.value == "true" ? true : false)
+        editedItem.priceDollars = Number(editedItem.priceDollars)
+        editedItem.priceCents = Number(editedItem.priceCents)
         editedItem.pickupAvailable = (pickup.value == "true" ? true : false)
-        editedItem.price = parseFloat(editedItem.price)
         
         // verify input
         if (!editedItem.name || editedItem.name == "") {
             alert("Item must have a name.")
 
         }
-        else if (Number.isNaN(Number(editedItem.price)) || editedItem.price <= 0) {
-            alert("Price must be a number and cannot be 0 or less.")
-        }
+        else if (
+            !Number.isInteger(editedItem.priceDollars) ||
+            !Number.isInteger(editedItem.priceCents) ||
+            editedItem.priceDollars < 0 ||
+            editedItem.priceCents < 0 ||
+            editedItem.priceCents > 99 ||
+            (editedItem.priceDollars === 0 && editedItem.priceCents === 0)
+          ) {
+            alert("Enter a valid price greater than 0.")
+            }
         else {
 
             if (!isNew.value) {
@@ -234,7 +264,8 @@ async function saveChanges() {
             }
 
             props.item.name = editedItem.name
-            props.item.price = editedItem.price
+            props.item.priceDollars = editedItem.priceDollars
+            props.item.priceCents = editedItem.priceCents
             props.item.description = editedItem.description
             props.item.isArchived = editedItem.isArchived
             props.item.pickupAvailable = editedItem.pickupAvailable
@@ -252,7 +283,8 @@ async function saveChanges() {
 async function cancelEdit() {
     editedItem.id = props.item.id
     editedItem.name = props.item.name
-    editedItem.price = props.item.price
+    editedItem.priceDollars = props.item.priceDollars
+    editedItem.priceCents = props.item.priceCents
     editedItem.description = props.item.description
     editedItem.isArchived = props.item.isArchived
     archived.value = (props.item.isArchived ? "true" : "false")
