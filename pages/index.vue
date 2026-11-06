@@ -202,7 +202,9 @@ import EventCard from '~/components/EventCard.vue';
 const config = useRuntimeConfig();
 
 const stripeDonationLink =
-  `https://buy.stripe.com/${config.public.STRIPE_DONATION_ID}`;
+  computed(
+  () => `https://buy.stripe.com/${config.public.stripeDonationId}`
+);
  
 const events = ref([])
 // Fetch events

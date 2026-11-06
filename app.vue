@@ -201,7 +201,9 @@ const isAdmin = computed(() => (session?.value?.data?.user?.role == "ADMIN" || s
 const config = useRuntimeConfig()
 
 const stripeDonationLink =
-  `https://buy.stripe.com/${config.public.STRIPE_DONATION_ID}`;
+  computed(
+  () => `https://buy.stripe.com/${config.public.stripeDonationId}`
+);
 
 const dropdownOpen = ref(false);
 const mobileMenuOpen = ref(false);
@@ -334,7 +336,7 @@ const requestNotificationPermission = () => {
         if (permission === "granted" && 'serviceWorker' in navigator) {
           notificationPermission.value = true;
           console.log("Both service worker and permission are good!");
-          const applicationServerKey = config.public.PUSH_VAPID_PUBLIC_KEY;
+          const applicationServerKey = config.public.pushVapidPublicKey;
           console.log(`Public Key: ${applicationServerKey}`)
           navigator.serviceWorker.ready.then(async (serviceWorkerRegistration) => {
             const options = {
