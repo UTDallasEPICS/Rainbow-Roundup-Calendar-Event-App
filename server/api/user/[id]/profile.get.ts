@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Get file path relative to project root
-  const filePath = path.join(config.UPLOAD_DIR || "uploads", userID, "profile");
+  const filePath = path.join(config.uploadDir || "uploads", userID, "profile");
 
   if (!fs.existsSync(filePath)) {
     throw createError({ statusCode: 404, statusMessage: "File not found" });

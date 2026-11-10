@@ -52,7 +52,7 @@ export default defineEventHandler(async (event: any) => {
     const safeOriginalName = (file.filename || "upload").replace(/[^\w.\-]/g, "_");
     const key = `/${Date.now()}-${safeOriginalName}`;
     const fileDir = path.join(
-        config.UPLOAD_DIR || "public/uploads",
+        config.uploadDir || "public/uploads",
         user.id
     );
     
@@ -68,7 +68,7 @@ export default defineEventHandler(async (event: any) => {
 
     // Store browser/Stripe URLs with URL separators, regardless of the host OS.
     const fileUrl = `/${[
-        (process.env.NUXT_NODE_ENV == "dev") ? "uploads" : config.UPLOAD_DIR,
+        (process.env.NUXT_NODE_ENV == "dev") ? "uploads" : config.uploadDir,
         user.id,
         key.replace(/^[/\\]+/, "")
     ].filter(Boolean).join("/")}`;

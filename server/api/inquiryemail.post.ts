@@ -2,7 +2,6 @@ import { sendContactEmail } from "#imports";
 
 export default defineEventHandler(async (event) => {
     const body = await readBody(event);
-    console.log("1.");
     const message = body.message;
     const name = body.fname;
     const email = body.femail;

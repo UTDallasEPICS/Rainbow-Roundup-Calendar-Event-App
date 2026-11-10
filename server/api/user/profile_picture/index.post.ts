@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
   const form = await readMultipartFormData(event);
   const file = form?.find((x) => x.name === "file");
   const fileDir = path.join(
-    config.UPLOAD_DIR || "public/uploads",
+    config.uploadDir || "public/uploads",
     session.user.id,
   );
 

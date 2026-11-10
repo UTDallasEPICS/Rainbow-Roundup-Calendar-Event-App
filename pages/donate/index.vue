@@ -11,7 +11,7 @@ import { useRuntimeConfig } from "#imports";
 
 // Environment Variables for Stripe
 const config = useRuntimeConfig();
-const stripeKey = config.public.STRIPE_PUBLIC_KEY as string;
+const stripeKey = config.public.stripePublicKey as string;
 
 // Ensure Stripe public key exists
 if (!stripeKey) {

@@ -7,28 +7,28 @@ dotenv.config();
 export default defineNuxtConfig({
   runtimeConfig: {
     public: {
-      STRIPE_PUBLIC_KEY: '',
-      STRIPE_DONATION_ID: '',
-      GOOGLE_PLACES: process.env.NUXT_PUBLIC_GOOGLE_PLACES,
-      PUSH_VAPID_PUBLIC_KEY: process.env.NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY  // basically sometimes the process.env stuff breaks, so in your .env, nuxt would be expecting a NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY
+      stripePublicKey: '',
+      stripeDonationId: '',
+      googlePlaces: '',
+      pushVapidPublicKey: '',  // basically sometimes the process.env stuff breaks, so in your .env, nuxt would be expecting a NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY
+      inquiryEmail: '',
     },
-    smtpHost: process.env.SMTP_HOST,
-    smtpPort: process.env.SMTP_PORT,
-    smtpUser: process.env.SMTP_USER,
-    smtpPass: process.env.SMTP_PASS,
-    smtpFrom: process.env.SMTP_FROM,
+    smtpHost: '',
+    smtpPort: '',
+    smtpUser: '',
+    smtpPass: '',
+    smtpFrom: '',
 
     sesDomain: "rrup.org",
 
-    url: process.env.URL,
-    BETTER_AUTH_URL: process.env.URL,
-    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+    url: '',
+    betterAuthSecret: '',
 
-    PUSH_VAPID_PRIVATE_KEY: process.env.NUXT_PUSH_VAPID_PRIVATE_KEY,
+    pushVapidPrivateKey: '',
     
-    NODE_ENV: process.env.NUXT_NODE_ENV,
+    nodeEnv: '',
 
-    UPLOAD_DIR: (process.env.NUXT_NODE_ENV == "prod" || process.env.NUXT_NODE_ENV == "stage") ? "" : "public/uploads"
+    uploadDir: (process.env.NUXT_NODE_ENV == "prod" || process.env.NUXT_NODE_ENV == "stage") ? '' : "public/uploads"
      // if we are in prod, we have a variable set up. If we are not in prod, we use the public directory
   },
 
