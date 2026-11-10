@@ -35,7 +35,7 @@ export default defineEventHandler(async (event: any) => {
     }
 
     const filePath = path.join(
-        config.UPLOAD_DIR || "public/uploads",
+        config.uploadDir || "public/uploads",
         path.dirname(itemPhoto.url).split("/").at(-1) as string, // extract the user id directory name from itemPhoto, since path.basename strips it. 
         path.basename(itemPhoto.url)
     );

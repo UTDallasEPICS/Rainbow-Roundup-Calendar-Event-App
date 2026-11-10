@@ -43,22 +43,13 @@ const props = defineProps({
 const focusedEventId = ref(null)
 const emit = defineEmits(["event-focused", "select-all-users"]);
 
-const showEventWindow = ref(false);
-const selectedEventId = ref("");
-
 function handleClick(event) {
-  if (props.action == "view") { //show ViewEvent
-    showWindow(event.id)
-  }
-  else if (props.action == "focus") { //display focused version of selected event
     if (event?.type == "event") { //is the passed object actually an event. If not it'll use the other function meant for the All users case
       focusEvent(event)
     }
     else {
       focusUsers(event)
     }
-  }
-  
 }
 
 function focusEvent(event) {
@@ -66,14 +57,10 @@ function focusEvent(event) {
   emit("event-focused", event)
 }
 
-function focusUsers(users) {
+function focusUsers() {
   focusedEventId.value = null
   emit("select-all-users")
 }
 
-function showWindow(id) {
-  selectedEventId.value = id;
-  showEventWindow.value = true;
-}
 
 </script>
