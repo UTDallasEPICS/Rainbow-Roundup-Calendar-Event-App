@@ -1,5 +1,6 @@
 import { auth } from "~/server/auth";
-import fs from "fs";
+import { randomUUID } from "node:crypto";
+import fs from "node:fs/promises";
 import path from "node:path";
 
 export default defineEventHandler(async (event) => {
@@ -9,21 +10,18 @@ export default defineEventHandler(async (event) => {
     setResponseStatus(event, 400);
     return { error: `Please login` };
   }
-  const allowedTypes = ["image/jpeg", "image/png"];
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
-  const MAX_FILE_SIZE = 256 * 1024;
+  const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
   const form = await readMultipartFormData(event);
   const file = form?.find((x) => x.name === "file");
-  const fileDir = path.join(
-    config.uploadDir || "public/uploads",
+  const fileDir = path.resolve(
+    config.uploadStoragePath || " ", //typescript won't accept the env variable alone
+    "profiles",
     session.user.id,
   );
 
-  if (!fs.existsSync(fileDir)) {
-    // Create user directory if it does not exist
-    fs.mkdirSync(fileDir, { recursive: true }); // added recursive parameter to multiple directories if needed (ie when uploads directory is not yet there)
-  }
   if (!file) return (setResponseStatus(event, 400), { error: "No file" });
   if (!file.data?.length)
     return (setResponseStatus(event, 400), { error: "Empty upload" });
@@ -34,22 +32,59 @@ export default defineEventHandler(async (event) => {
     return { error: `File type ${file.type || "unknown"} not allowed` };
   }
 
-  const safeOriginalName = (file.filename || "upload").replace(
-    /[^\w.\-]/g,
-    "_",
-  );
+  const existingUser = await event.context.prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { profilePic: true },
+  });
+  if (!existingUser) {
+    throw createError({ statusCode: 404, statusMessage: "User not found" });
+  }
 
-  const key = "/profile"; // I figured doing this we can ensure there is only one profile picture per user. Browsers can render without extension
-  const filePath = path.join(fileDir, key);
-  fs.writeFileSync(filePath, file.data);
+  const imageId = randomUUID();
+  const filePath = path.join(fileDir, imageId);
+  const fileUrl = `/api/user/${encodeURIComponent(session.user.id)}/profile/${imageId}`;
 
-  const fileUrl = path.join(
-    // public should not be shown during dev, but this is going to be the same in prod!
-    "api",
-    "user",
-    session.user.id,
-    key,
-  );
+  await fs.mkdir(fileDir, { recursive: true });
+  await fs.writeFile(filePath, file.data, { flag: "wx" });
 
-  return { fileUrl: fileUrl };
+  try {
+    await event.context.prisma.user.update({
+      where: { id: session.user.id },
+      data: { profilePic: fileUrl },
+    });
+  } catch (error) {
+    try {
+      await fs.unlink(filePath);
+    } catch (cleanupError) {
+      console.error("Failed to restore profile picture after database error:", cleanupError);
+    }
+    throw error;
+  }
+
+  const profileUrlPrefix = `/api/user/${encodeURIComponent(session.user.id)}/profile/`;
+  const previousImageId = existingUser.profilePic.startsWith(profileUrlPrefix)
+    ? existingUser.profilePic.slice(profileUrlPrefix.length)
+    : null;
+  const previousFilePath =
+    previousImageId && /^[\da-f-]{36}$/i.test(previousImageId)
+      ? path.join(fileDir, previousImageId)
+      : existingUser.profilePic ===
+          `/api/user/${encodeURIComponent(session.user.id)}/profile`
+        ? path.join(fileDir, "profile")
+        : null;
+
+  if (previousFilePath) {
+    try {
+      await fs.unlink(previousFilePath);
+    } catch (cleanupError) {
+      if ((cleanupError as NodeJS.ErrnoException).code !== "ENOENT") {
+        console.error("Failed to remove replaced profile picture:", cleanupError);
+      }
+    }
+  }
+
+  setResponseStatus(event, 201);
+  return {
+    fileUrl,
+  };
 });

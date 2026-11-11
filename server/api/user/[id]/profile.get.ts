@@ -16,24 +16,48 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: "File not found" });
   }
 
-  const fileStream = fs.createReadStream(filePath);
+  //this may need to be checked
+  const header = Buffer.alloc(12);
+  const fileDescriptor = fs.openSync(filePath, "r");
+  let bytesRead: number;
+  try {
+    bytesRead = fs.readSync(fileDescriptor, header, 0, header.length, 0);
+  } finally {
+    fs.closeSync(fileDescriptor);
+  }
 
-  // Set content type based on file extension
-  const ext = path.extname(filePath).toLowerCase();
+  const isPng =
+    bytesRead >= 8 &&
+    header
+      .subarray(0, 8)
+      .equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+  const isJpeg =
+    bytesRead >= 3 &&
+    header[0] === 0xff &&
+    header[1] === 0xd8 &&
+    header[2] === 0xff;
+  const isWebp =
+    bytesRead >= 12 &&
+    header.toString("ascii", 0, 4) === "RIFF" &&
+    header.toString("ascii", 8, 12) === "WEBP";
+  const isGif =
+    bytesRead >= 6 &&
+    ["GIF87a", "GIF89a"].includes(header.toString("ascii", 0, 6));
 
-  // Sets the content type based on the file extension
-  const mime =
-    ext === ".png"
-      ? "image/png"
-      : ext === ".jpg" || ext === ".jpeg"
-        ? "image/jpeg"
-        : ext === ".gif"
-          ? "image/gif"
-          : ext === ".webp"
-            ? "image/webp"
-            : "application/octet-stream";
+  if (!isPng && !isJpeg && !isWebp && !isGif) {
+    throw createError({
+      statusCode: 415,
+      statusMessage: "Stored profile picture has an unsupported format",
+    });
+  }
 
-  setHeader(event, "Content-Type", mime);
-
-  return sendStream(event, fileStream);
+  const contentType = isPng
+    ? "image/png"
+    : isJpeg
+      ? "image/jpeg"
+      : isWebp
+        ? "image/webp"
+        : "image/gif";
+  setHeader(event, "Content-Type", contentType);
+  return sendStream(event, fs.createReadStream(filePath));
 });
