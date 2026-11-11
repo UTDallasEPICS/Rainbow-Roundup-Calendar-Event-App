@@ -126,7 +126,7 @@
                         <label for="photo-upload" class="flex align-center justify-center text-center border-4 border-dashed border-gray-300 text-gray-500 rounded-xl size-24 md:size-48 cursor-pointer" >
                             + Add Photo
                         </label>
-                        <input id="photo-upload" type="file" accept="image/*" class="hidden" @change="handleFileChange">
+                        <input id="photo-upload" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" @change="handleFileChange">
                     </div>
                 </div>
 
@@ -267,16 +267,40 @@ function changeSizeAvailability(variant) {
 }
 
 
-function handleFileChange(event) {
+async function handleFileChange(event) {
   const input = event.target;
-  if (input.files?.[0]) {
-    addPhoto(input.files[0])
+  const file = input.files?.[0];
+  if (!file) return;
+
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+  if (!allowedTypes.includes(file.type)) {
+    alert("Invalid file type. Only JPEG, PNG, WebP, and GIF are allowed.");
+    input.value = "";
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    alert("File too large. Maximum size is 5 MB.");
+    input.value = "";
+    return;
+  }
+
+  try {
+    await addPhoto(file);
+  } catch (error) {
+    alert(
+      error?.data?.statusMessage ||
+        error?.data?.message ||
+        error?.message ||
+        "Merchandise image upload failed.",
+    );
+  } finally {
+    input.value = "";
   }
 }
 
 async function addPhoto(file) {
   const form = new FormData()
-  form.append("image", file)
+  form.append("file", file)
   form.append("itemId", props.item.id)
 
   const {data: res } = await $fetch(`/api/itemPhoto`, {

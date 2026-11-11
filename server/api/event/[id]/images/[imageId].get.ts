@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
   // Construct the file path from the trusted image ID and configured image directory.
   const config = useRuntimeConfig();
   const uploadDirectory = path.resolve(
-    config.public.UPLOAD_STORAGE_PATH || "public/images",
+    config.public.uploadStoragePath || " ", // typescript won't accept the env variable alone
     "events",
   );
   const filePath = path.join(uploadDirectory, image.id);

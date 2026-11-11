@@ -16,7 +16,6 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: "File not found" });
   }
 
-  //this may need to be checked
   const header = Buffer.alloc(12);
   const fileDescriptor = fs.openSync(filePath, "r");
   let bytesRead: number;
@@ -26,6 +25,7 @@ export default defineEventHandler(async (event) => {
     fs.closeSync(fileDescriptor);
   }
 
+  //check format
   const isPng =
     bytesRead >= 8 &&
     header

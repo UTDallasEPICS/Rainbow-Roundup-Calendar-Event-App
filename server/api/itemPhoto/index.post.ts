@@ -1,83 +1,94 @@
-import type { User } from "../../../types/session";
-import { auth } from "~/server/auth";
-import fs from "fs";
+import { randomUUID } from "node:crypto";
+import fs from "node:fs/promises";
 import path from "node:path";
+import { auth } from "~/server/auth";
+import type { User } from "../../../types/session";
 
-export default defineEventHandler(async (event: any) => {
-    const prisma = event.context.prisma;
-    const session = await auth.api.getSession({
-      headers:  event.headers
+export default defineEventHandler(async (event) => {
+  const session = await auth.api.getSession({ headers: event.headers });
+  const user = session?.user as User | undefined;
+  if (!user) {
+    throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
+  }
+  if (user.role !== "SUPER" && user.role !== "ADMIN") {
+    throw createError({
+      statusCode: 403,
+      statusMessage: "Only admins can upload merchandise images",
     });
-    const user = session?.user as User | undefined;
-    const config = useRuntimeConfig();
-    const form = await readMultipartFormData(event);
+  }
 
-    if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
-        throw createError({
-            statusMessage: "Unauthenticated",
-            statusCode: 403,
-        });
-    }
+  const form = await readMultipartFormData(event);
+  if (!form) {
+    throw createError({ statusCode: 400, statusMessage: "No form data" });
+  }
 
-    const itemId = form?.find((key: any) => key.name === "itemId")?.data.toString();
-
-    if (!itemId) {
-        setResponseStatus(event, 400);
-        return { error: "Item ID is required", };
-    }
-
-    const item = await prisma.abstractItem.findUnique({
-        where: { id: itemId, }
+  const fileParts = form.filter((part) => part.filename !== undefined);
+  const file = fileParts.find((part) => part.name === "file");
+  if (fileParts.length !== 1 || !file) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Upload exactly one image using the "file" field',
     });
+  }
 
-    if (!item) {
-        setResponseStatus(event, 404);
-        return { error: "Item record does not exist", };
-    }
+  const itemId = form.find((part) => part.name === "itemId")?.data.toString();
+  if (!itemId) {
+    throw createError({ statusCode: 400, statusMessage: "Item ID is required" });
+  }
 
-    const allowedTypes = ["image/jpeg", "image/png"];
-    const MAX_FILE_SIZE = 256 * 1024; // 256kb
+  const item = await event.context.prisma.abstractItem.findUnique({
+    where: { id: itemId },
+    select: { id: true },
+  });
+  if (!item) {
+    throw createError({ statusCode: 404, statusMessage: "Item not found" });
+  }
 
-    const file = form?.find((key: any) => key.name === "image");
-
-
-    if (!file) return (setResponseStatus(event, 400), { error: "No file" });
-    if (!file.data?.length) return (setResponseStatus(event, 400), { error: "Empty upload" });
-    if (file.data.length > MAX_FILE_SIZE) return (setResponseStatus(event, 400), { error: "File too big" });
-    if (!file.type || !allowedTypes.includes(file.type)) {
-        setResponseStatus(event, 400);
-        return { error: `File type ${file.type || "unknown"} not allowed` };
-    }
-
-    const safeOriginalName = (file.filename || "upload").replace(/[^\w.\-]/g, "_");
-    const key = `/${Date.now()}-${safeOriginalName}`;
-    const fileDir = path.join(
-        config.uploadDir || "public/uploads",
-        user.id
-    );
-    
-    if (!fs.existsSync(fileDir)){ // Create user directory if it does not exist
-        fs.mkdirSync(fileDir, {recursive: true}); // added recursive parameter to multiple directories if needed (ie when uploads directory is not yet there)
-    }
-    const filePath = path.join(
-        fileDir,
-        key
-    );
-
-    fs.writeFileSync(filePath, file.data);
-
-    // Store browser/Stripe URLs with URL separators, regardless of the host OS.
-    const fileUrl = `/${[
-        (process.env.NUXT_NODE_ENV == "dev") ? "uploads" : config.uploadDir,
-        user.id,
-        key.replace(/^[/\\]+/, "")
-    ].filter(Boolean).join("/")}`;
-
-    const itemPhoto = await prisma.itemPhoto.create({
-        data: {
-            url: fileUrl,
-            itemId: itemId,
-        }
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+  const maxFileSize = 5 * 1024 * 1024;
+  if (!file.data.length) {
+    throw createError({ statusCode: 400, statusMessage: "Uploaded image is empty" });
+  }
+  if (file.data.length > maxFileSize) {
+    throw createError({ statusCode: 400, statusMessage: "File too large. Maximum size is 5 MB." });
+  }
+  if (!file.type || !allowedTypes.includes(file.type)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: `File type ${file.type || "unknown"} not allowed`,
     });
+  }
+
+  const config = useRuntimeConfig();
+  const configuredUploadPath: unknown = config.public.uploadStoragePath;
+  const uploadRoot =
+    typeof configuredUploadPath === "string" && configuredUploadPath.trim()
+      ? configuredUploadPath
+      : "public/images";
+  const imageId = randomUUID();
+  const fileDir = path.resolve(uploadRoot, "users", user.id, "images");
+  const filePath = path.join(fileDir, imageId);
+  const fileUrl = `/api/itemPhoto/${encodeURIComponent(user.id)}/${imageId}`;
+
+  await fs.mkdir(fileDir, { recursive: true });
+  await fs.writeFile(filePath, file.data, { flag: "wx" });
+
+  try {
+    const itemPhoto = await event.context.prisma.itemPhoto.create({
+      data: {
+        id: imageId,
+        url: fileUrl,
+        itemId,
+      },
+    });
+    setResponseStatus(event, 201);
     return { data: itemPhoto };
+  } catch (error) {
+    try {
+      await fs.unlink(filePath);
+    } catch (cleanupError) {
+      console.error("Failed to remove merchandise image after database error:", cleanupError);
+    }
+    throw error;
+  }
 });
