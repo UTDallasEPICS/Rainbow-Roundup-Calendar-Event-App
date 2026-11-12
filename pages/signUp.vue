@@ -36,6 +36,27 @@
         </div>
       </div>
 
+      <div>
+        <label class="block text-md font-semibold text-gray-800 mb-2">Number of Kids</label>
+        <input
+          class="w-full px-4 py-3 text-md rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-rr-sky transition" />
+          v-model.number="numberOfKids"
+          type="number"
+          min="0"
+        />
+      </div>
+
+      <div v-for="(_, index) in birthYears" :key="index">
+        <label>Kid {{ index + 1 }} Birth Year</label>
+
+        <input
+          v-model.number="birthYears[index]"
+          type="number"
+          min="1900"
+          :max="new Date().getFullYear()"
+        />
+      </div>
+
       <!-- Already have account -->
       <div class="text-md mt-6 text-center text-gray-600">
         <strong>
@@ -45,6 +66,8 @@
           </NuxtLink>
         </strong>
       </div>
+
+
 
       <!-- Register Button -->
       <button type="submit"
@@ -63,6 +86,9 @@
 <script setup lang="ts">
 
 const router = useRouter();
+const numberOfKids = ref(0)
+const birthYears = ref<number[]>([])
+
 
 const errors = ref({});
 const successMessage = ref("");
@@ -99,4 +125,11 @@ const submitSignupForm = async () => {
 
   }
 };
+
+watch(numberOfKids, (count) => {
+  birthYears.value = Array.from(
+    { length: Math.max(0, count || 0)},
+    (_,i) => birthYears.value[i] ?? new Date().getFullYear()
+  )
+})
 </script>
