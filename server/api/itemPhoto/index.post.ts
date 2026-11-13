@@ -64,7 +64,7 @@ export default defineEventHandler(async (event) => {
   const uploadRoot =
     typeof configuredUploadPath === "string" && configuredUploadPath.trim()
       ? configuredUploadPath
-      : "public/images";
+      : " ";
   const imageId = randomUUID();
   const fileDir = path.resolve(uploadRoot, "users", user.id, "images");
   const filePath = path.join(fileDir, imageId);

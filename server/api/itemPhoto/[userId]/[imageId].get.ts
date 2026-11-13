@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
   const uploadRoot =
     typeof configuredUploadPath === "string" && configuredUploadPath.trim()
       ? configuredUploadPath
-      : "public/images";
+      : " ";
   const filePath = path.resolve(uploadRoot, "users", userId, "images", imageId);
   if (!fs.existsSync(filePath)) {
     throw createError({ statusCode: 404, statusMessage: "Merchandise image file not found" });

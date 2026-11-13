@@ -112,9 +112,9 @@
                 </div>
 
                 <!-- images -->
-                <div v-if="!isNew">
+                <div>
                     <h2 class="w-full text-lg font-semibold text-gray-800">Images
-                        <span class="text-gray-400 text-sm font-normal">Changes to images cannot be reverted.</span>
+                        <span v-if="!isNew" class="text-gray-400 text-sm font-normal">Changes to images cannot be reverted.</span>
                     </h2>
                     <div class="flex gap-3 flex-wrap">
                         <div v-for="image in editedItem.ItemPhotos" :key="image.id">
@@ -122,6 +122,17 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" stroke-width="1.5" stroke="currentColor" class="size-4 absolute"><path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"/> </svg>
                             </button>
                             <img :src="image.url" class="size-24 md:size-48">
+                        </div>
+                        <div v-for="(photo, index) in pendingPhotos" :key="photo.previewUrl" class="relative">
+                            <button
+                                type="button"
+                                class="absolute right-1 top-1 rounded bg-white/90 px-1 text-sm text-gray-700"
+                                aria-label="Remove selected image"
+                                @click="removePendingPhoto(index)"
+                            >
+                                Remove
+                            </button>
+                            <img :src="photo.previewUrl" alt="Selected merchandise image preview" class="size-24 md:size-48 object-cover">
                         </div>
                         <label for="photo-upload" class="flex align-center justify-center text-center border-4 border-dashed border-gray-300 text-gray-500 rounded-xl size-24 md:size-48 cursor-pointer" >
                             + Add Photo
@@ -158,10 +169,10 @@
                 
                 <!-- manage buttons -->
                  <div class="w-full flex justify-center gap-4">
-                    <button class="bg-lime-300 px-4 py-2 mx-1 rounded hover:bg-lime-400 cursor-pointer transition" @click="saveChanges()">
+                    <button :disabled="isSaving" class="bg-lime-300 px-4 py-2 mx-1 rounded hover:bg-lime-400 cursor-pointer transition disabled:cursor-wait disabled:opacity-50" @click="saveChanges()">
                         Save
                     </button>
-                    <button v-if="!isNew" class="bg-gray-300 px-4 py-2 mx-1 rounded hover:bg-gray-400 cursor-pointer transition" @click="cancelEdit()">
+                    <button v-if="!isNew && !createdItemId" class="bg-gray-300 px-4 py-2 mx-1 rounded hover:bg-gray-400 cursor-pointer transition" @click="cancelEdit()">
                         Revert
                     </button>
                     <button v-else class="bg-gray-300 px-4 py-2 mx-1 rounded hover:bg-gray-400 cursor-pointer transition" @click="closeWindow()">
@@ -178,11 +189,12 @@
 const props = defineProps(['item']);
 const emit = defineEmits(["closeWindow", "itemCreated"]);
 
+const createdItemId = ref("");
+const createdItemEmitted = ref(false);
+const isSaving = ref(false);
+const pendingPhotos = ref([]);
 const isNew = computed(() => {
-    if (!props.item || props.item.id == "") {
-        return true
-    }
-    return false
+    return !props.item?.id && !createdItemId.value;
 })
 
 const editedItem = reactive({
@@ -193,9 +205,12 @@ const editedItem = reactive({
     isArchived: props.item.isArchived,
     pickupAvailable: props.item.pickupAvailable,
     ItemVariants: props.item.ItemVariants.map(a => {return {...a}}),
-    ItemPhotos: props.item.ItemPhotos || [],
+    ItemPhotos: [...(props.item.ItemPhotos || [])],
 });
 function closeWindow() {
+    if (isSaving.value) return;
+    emitCreatedItem();
+    clearPendingPhotos();
     emit("closeWindow");
 }
 
@@ -203,6 +218,8 @@ const archived = ref((props.item.isArchived ? "true" : "false"))
 const pickup = ref((props.item.pickupAvailable ? "true" : "false"))
 
 async function saveChanges() {
+    if (isSaving.value) return;
+    isSaving.value = true;
     try {
         editedItem.isArchived = (archived.value == "true" ? true : false)
         editedItem.pickupAvailable = (pickup.value == "true" ? true : false)
@@ -218,8 +235,9 @@ async function saveChanges() {
         }
         else {
 
-            if (!isNew.value) {
-                await $fetch(`/api/item/${props.item.id}`, {
+            const existingItemId = props.item.id || createdItemId.value;
+            if (existingItemId) {
+                await $fetch(`/api/item/${existingItemId}`, {
                     method: "PUT",
                     body: editedItem
                 });
@@ -229,8 +247,13 @@ async function saveChanges() {
                     method: "POST",
                     body: editedItem
                 });
+                createdItemId.value = newItem.data.id;
+                editedItem.id = newItem.data.id;
+                editedItem.ItemVariants = newItem.data.ItemVariants || [];
+            }
 
-                emit('itemCreated', newItem.data)
+            if (createdItemId.value) {
+                await uploadPendingPhotos(createdItemId.value);
             }
 
             props.item.name = editedItem.name
@@ -240,6 +263,7 @@ async function saveChanges() {
             props.item.pickupAvailable = editedItem.pickupAvailable
             props.item.ItemVariants = editedItem.ItemVariants
             props.item.ItemPhotos = editedItem.ItemPhotos
+            emitCreatedItem();
             emit("closeWindow");
         }
     }
@@ -247,6 +271,17 @@ async function saveChanges() {
         console.error("Error saving changes:", error);
         alert("Error saving changes. Please try again.");
     }
+}
+
+function emitCreatedItem() {
+    if (!createdItemId.value || createdItemEmitted.value) return;
+
+    emit("itemCreated", {
+        ...editedItem,
+        ItemVariants: [...editedItem.ItemVariants],
+        ItemPhotos: [...editedItem.ItemPhotos],
+    });
+    createdItemEmitted.value = true;
 }
 
 async function cancelEdit() {
@@ -259,7 +294,7 @@ async function cancelEdit() {
     editedItem.pickupAvailable = props.item.pickupAvailable
     pickup.value = (props.item.pickupAvailable ? "true" : "false")
     editedItem.ItemVariants = props.item.ItemVariants.map(a => {return {...a}}),
-    editedItem.ItemPhotos = props.item.ItemPhotos || []
+    editedItem.ItemPhotos = [...(props.item.ItemPhotos || [])]
 }
 
 function changeSizeAvailability(variant) {
@@ -285,7 +320,14 @@ async function handleFileChange(event) {
   }
 
   try {
-    await addPhoto(file);
+    if (isNew.value) {
+      pendingPhotos.value.push({
+        file,
+        previewUrl: URL.createObjectURL(file),
+      });
+    } else {
+      await addPhoto(file, props.item.id || createdItemId.value);
+    }
   } catch (error) {
     alert(
       error?.data?.statusMessage ||
@@ -298,10 +340,10 @@ async function handleFileChange(event) {
   }
 }
 
-async function addPhoto(file) {
+async function addPhoto(file, itemId) {
   const form = new FormData()
   form.append("file", file)
-  form.append("itemId", props.item.id)
+  form.append("itemId", itemId)
 
   const {data: res } = await $fetch(`/api/itemPhoto`, {
     method: "POST",
@@ -310,7 +352,29 @@ async function addPhoto(file) {
 
   const image = res
   editedItem.ItemPhotos.push(image)
+}
 
+async function uploadPendingPhotos(itemId) {
+  while (pendingPhotos.value.length) {
+    const photo = pendingPhotos.value[0];
+    await addPhoto(photo.file, itemId);
+    URL.revokeObjectURL(photo.previewUrl);
+    pendingPhotos.value.shift();
+  }
+}
+
+function removePendingPhoto(index) {
+  const [photo] = pendingPhotos.value.splice(index, 1);
+  if (photo) {
+    URL.revokeObjectURL(photo.previewUrl);
+  }
+}
+
+function clearPendingPhotos() {
+  for (const photo of pendingPhotos.value) {
+    URL.revokeObjectURL(photo.previewUrl);
+  }
+  pendingPhotos.value = [];
 }
 
 async function deletePhoto(id) {

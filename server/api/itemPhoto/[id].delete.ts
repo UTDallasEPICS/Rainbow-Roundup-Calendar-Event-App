@@ -70,7 +70,7 @@ export default defineEventHandler(async (event) => {
   const uploadRoot =
     typeof configuredUploadPath === "string" && configuredUploadPath.trim()
       ? configuredUploadPath
-      : "public/images";
+      : " ";
   const usersRoot = path.resolve(uploadRoot, "users") + path.sep;
   const filePath = path.resolve(
     uploadRoot,
