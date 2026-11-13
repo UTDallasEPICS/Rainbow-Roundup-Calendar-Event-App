@@ -12,8 +12,16 @@ export interface LocalEventData {
   capacity?: number;
   currentCapacity?: number;
   tags: string[];
+  EventImages?: LocalEventImage[];
   SignUps?: LocalSignUp[];
   isArchived: boolean;
+}
+
+export interface LocalEventImage {
+  id: string;
+  url: string;
+  eventId: string;
+  createdAt: string;
 }
 
 export interface LocalSignUp {
@@ -37,6 +45,7 @@ export interface CombinedEvent extends GoogleEvent {
   capacity?: number;
   currentCapacity?: number;
   tags?: string[];
+  images?: LocalEventImage[];
   signUps?: LocalSignUp[];
   isArchived?: boolean;
 }
@@ -80,6 +89,7 @@ export async function fetchCombinedEvents(): Promise<CombinedEvent[]> {
       capacity: extra?.capacity,
       currentCapacity: extra?.currentCapacity,
       tags: extra?.tags,
+      images: extra?.EventImages ?? [],
       signUps: extra?.SignUps?.slice(0, 3) ?? [], // return only first 3 signups
     };
   });
@@ -100,6 +110,7 @@ export async function fetchCombinedEventById(
       capacity: localExtra?.Event.capacity,
       currentCapacity: localExtra?.Event.currentCapacity,
       tags: localExtra?.Event.tags,
+      images: localExtra?.Event.EventImages ?? [],
       signUps: localExtra?.Event.SignUps ?? [],
       isArchived: localExtra?.Event.isArchived
     };

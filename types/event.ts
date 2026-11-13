@@ -14,7 +14,15 @@ export interface Event {
     isArchived: boolean
     userId: string
 
+    EventImages?: EventImage[]
     SignUps: SignUp[]
+}
+
+export interface EventImage {
+    id: string
+    url: string
+    eventId: string
+    createdAt: string
 }
 
 export interface SignUp {
@@ -37,4 +45,3 @@ export interface User {
     isArchived: boolean
     isBanned: boolean
 }
-

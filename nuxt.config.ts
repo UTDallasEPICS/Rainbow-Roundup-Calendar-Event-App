@@ -12,6 +12,7 @@ export default defineNuxtConfig({
       googlePlaces: '',
       pushVapidPublicKey: '',  // basically sometimes the process.env stuff breaks, so in your .env, nuxt would be expecting a NUXT_PUBLIC_PUSH_VAPID_PUBLIC_KEY
       inquiryEmail: '',
+      uploadStoragePath: '',
     },
     smtpHost: '',
     smtpPort: '',

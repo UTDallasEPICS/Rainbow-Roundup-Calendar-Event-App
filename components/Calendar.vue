@@ -70,6 +70,86 @@
 
             <Map :address="eventForm.location" />
 
+            <section aria-label="Event photos">
+              <h2 class="text-sm font-medium text-gray-800 mb-2">Event Photos</h2>
+              <div
+                class="relative aspect-video w-full overflow-hidden rounded-xl bg-gray-100"
+              >
+                <img
+                  v-if="eventImages.length"
+                  :src="eventImages[activeImageIndex].url"
+                  :alt="`Event photo ${activeImageIndex + 1}`"
+                  class="h-full w-full object-cover"
+                />
+                <div
+                  v-else
+                  class="flex h-full items-center justify-center text-sm text-gray-500"
+                >
+                  Event photos will appear here
+                </div>
+
+                <template v-if="eventImages.length > 1">
+                  <button
+                    type="button"
+                    aria-label="Previous event photo"
+                    class="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 text-gray-800 shadow hover:bg-white"
+                    @click="showPreviousImage"
+                  >
+                    <span aria-hidden="true">&lt;</span>
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Next event photo"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 text-gray-800 shadow hover:bg-white"
+                    @click="showNextImage"
+                  >
+                    <span aria-hidden="true">&gt;</span>
+                  </button>
+                  <div
+                    class="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-2 py-1 text-xs text-white"
+                    aria-live="polite"
+                  >
+                    {{ activeImageIndex + 1 }} / {{ eventImages.length }}
+                  </div>
+                </template>
+              </div>
+              <div class="mt-3 flex gap-2">
+                <input
+                  ref="imageFileInput"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  class="hidden"
+                  @change="handleImageUpload"
+                />
+                <button
+                  type="button"
+                  :disabled="isSubmittingEvent || !!createdEventId"
+                  class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  @click="openImageFilePicker"
+                >
+                  Add images
+                </button>
+                <button
+                  type="button"
+                  :disabled="!eventImages.length || isSubmittingEvent || !!createdEventId"
+                  class="rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  @click="deleteCurrentImage"
+                >
+                  Remove current image
+                </button>
+              </div>
+              <p class="mt-2 text-xs text-gray-500">
+                Image changes are saved when you create the event.
+              </p>
+              <p
+                v-if="imageUploadError"
+                role="alert"
+                class="mt-2 text-sm text-red-600"
+              >
+                {{ imageUploadError }}
+              </p>
+            </section>
+
             <!-- DELETE if we don't end up using google maps API  -->
             <!-- <Map @update:location="updateLocation" /> -->
 
@@ -97,13 +177,15 @@
             <div class="flex justify-end gap-3 mt-4">
               <button
                 type="submit"
+                :disabled="isSubmittingEvent"
                 class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
               >
-                Add
+                {{ isSubmittingEvent ? "Saving…" : createdEventId ? "Retry image upload" : "Add" }}
               </button>
               <button
-                @click="showModal = false"
+                @click="closeCreateEventModal"
                 type="button"
+                :disabled="isSubmittingEvent"
                 class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 transition"
               >
                 Cancel
@@ -140,6 +222,18 @@ const eventForm = ref({
   lat: null,
   lng: null,
 });
+const pendingImageUploads = ref([]);
+const eventImages = computed(() =>
+  pendingImageUploads.value.map((pendingImage) => ({
+    id: pendingImage.id,
+    url: pendingImage.previewUrl,
+  })),
+);
+const activeImageIndex = ref(0);
+const imageFileInput = ref(null);
+const isSubmittingEvent = ref(false);
+const imageUploadError = ref("");
+const createdEventId = ref("");
 
 const selectedEvent = ref(null);
 const rsvpResponse = ref(null);
@@ -317,7 +411,7 @@ onMounted(async () => {
 
 const handleEscapeKey = (e) => {
   if (e.key === "Escape") {
-    showModal.value = false;
+    closeCreateEventModal();
     showEventWindow.value = false;
   }
 };
@@ -334,101 +428,204 @@ onBeforeUnmount(() => {
 });
 
 const submitEvent = async () => {
+  if (isSubmittingEvent.value) return;
+
+  isSubmittingEvent.value = true;
+  imageUploadError.value = "";
+
   try {
-    // Validation for location
-    // if (!eventForm.value.location || eventForm.value.lat === null || eventForm.value.lng === null) {
-    //   alert("Please select a valid location on the map before submitting.");
-    //   return;
-    // }
-    if (!eventForm.value.location) {
-      alert("Please enter a location.");
-      return;
-    }
+    if (!createdEventId.value) {
+      // Validation for location
+      // if (!eventForm.value.location || eventForm.value.lat === null || eventForm.value.lng === null) {
+      //   alert("Please select a valid location on the map before submitting.");
+      //   return;
+      // }
+      if (!eventForm.value.location) {
+        alert("Please enter a location.");
+        return;
+      }
 
-const startTime = new Date(eventForm.value.start);
-    const endTime = new Date(eventForm.value.end);
-    const currentTime = new Date();
-    
-    if (startTime < currentTime) {
-      alert("Event start time cannot be in the past. Please select a future date and time.");
-      return;
-    }
+      const startTime = new Date(eventForm.value.start);
+      const endTime = new Date(eventForm.value.end);
+      const currentTime = new Date();
 
-    if (endTime <= startTime) {
-      alert("Event end time must be after the start time.");
-      return;
-    }
-    // Format start and end time before sending the request
-    const formattedStart = formatDateToISO(
-      eventForm.value.start,
-      eventForm.value.timeZone
-    );
-    const formattedEnd = formatDateToISO(
-      eventForm.value.end,
-      eventForm.value.timeZone
-    );
+      if (startTime < currentTime) {
+        alert("Event start time cannot be in the past. Please select a future date and time.");
+        return;
+      }
 
-    const newEvent = {
-      ...eventForm.value,
-      start: formattedStart,
-      end: formattedEnd,
-    };
+      if (endTime <= startTime) {
+        alert("Event end time must be after the start time.");
+        return;
+      }
+      // Format start and end time before sending the request
+      const formattedStart = formatDateToISO(
+        eventForm.value.start,
+        eventForm.value.timeZone
+      );
+      const formattedEnd = formatDateToISO(
+        eventForm.value.end,
+        eventForm.value.timeZone
+      );
 
-    const googleEvent = await $fetch("/api/google/calendar", {
-      method: "POST",
-      body: newEvent,
-    });
+      const newEvent = {
+        ...eventForm.value,
+        start: formattedStart,
+        end: formattedEnd,
+      };
 
-    const { status } = await $fetch.raw("/api/event", {
-      method: "POST",
-      body: {
-        id: googleEvent.id,
-        title: newEvent.title,
-        description: newEvent?.description,
-        userId: userData?.id || "-1",
-        eventLat: newEvent?.lat,
-        eventLong: newEvent?.lng,
-        location: newEvent.location,
-        startTime: new Date(newEvent?.start),
-        endTime: new Date(newEvent?.end),
-        capacity: newEvent?.capacity,
-      },
-    });
+      const googleEvent = await $fetch("/api/google/calendar", {
+        method: "POST",
+        body: newEvent,
+      });
 
-    if (status != 200) {
+      const { status } = await $fetch.raw("/api/event", {
+        method: "POST",
+        body: {
+          id: googleEvent.id,
+          title: newEvent.title,
+          description: newEvent?.description,
+          userId: userData?.id || "-1",
+          eventLat: newEvent?.lat,
+          eventLong: newEvent?.lng,
+          location: newEvent.location,
+          startTime: new Date(newEvent?.start),
+          endTime: new Date(newEvent?.end),
+          capacity: newEvent?.capacity,
+        },
+      });
+
+      if (status != 200) {
       const deleteGoogleEvent = await $fetch(`/api/google/calendar/${googleEvent.id}`, {
         method: 'DELETE'
       })
       console.log(deleteGoogleEvent)
     }
 
-    // Add event to calendar view
-    calendarOptions.value.events.push({
-      id: googleEvent.id,
-      title: newEvent.title,
-      start: newEvent.start,
-      end: newEvent.end,
-      description: newEvent.description,
-      location: newEvent.location,
-      timeZone: newEvent.timeZone,
-    });
-   
-    showModal.value = false;
-    // Reset form
-    eventForm.value = {
-      title: "",
-      description: "",
-      start: "",
-      end: "",
-      timeZone: "UTC",
-      location: "",
-      lat: null,
-      lng: null,
-    };
+      // Add event to calendar view
+      calendarOptions.value.events.push({
+        id: googleEvent.id,
+        title: newEvent.title,
+        start: newEvent.start,
+        end: newEvent.end,
+        description: newEvent.description,
+        location: newEvent.location,
+        timeZone: newEvent.timeZone,
+      });
+    }
+
+    for (const pendingImage of [...pendingImageUploads.value]) {
+      const formData = new FormData();
+      formData.append("file", pendingImage.file);
+      await $fetch(`/api/event/${encodeURIComponent(createdEventId.value)}/images`, {
+        method: "POST",
+        body: formData,
+      });
+      URL.revokeObjectURL(pendingImage.previewUrl);
+      pendingImageUploads.value = pendingImageUploads.value.filter(
+        (image) => image.id !== pendingImage.id,
+      );
+    }
+
+    closeCreateEventModal(true);
   } catch (error) {
     console.error("Failed to submit event:", error);
+    imageUploadError.value = createdEventId.value
+      ? `Event created, but image upload failed: ${error.data?.statusMessage || error.data?.message || error.message || "Please retry."}`
+      : error.data?.statusMessage || error.data?.message || error.message || "Could not create the event. Please try again.";
+  } finally {
+    isSubmittingEvent.value = false;
   }
 };
+
+function openImageFilePicker() {
+  imageUploadError.value = "";
+  imageFileInput.value?.click();
+}
+
+function handleImageUpload(uploadEvent) {
+  const input = uploadEvent.target;
+  const file = input.files?.[0];
+  if (!file) return;
+
+  imageUploadError.value = "";
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+  if (!allowedTypes.includes(file.type)) {
+    imageUploadError.value =
+      "Invalid file type. Only JPEG, PNG, WebP, and GIF are allowed.";
+    input.value = "";
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    imageUploadError.value = "File too large. Maximum size is 5 MB.";
+    input.value = "";
+    return;
+  }
+
+  pendingImageUploads.value.push({
+    id: `pending-${Date.now()}-${Math.random()}`,
+    file,
+    previewUrl: URL.createObjectURL(file),
+  });
+  activeImageIndex.value = eventImages.value.length - 1;
+  input.value = "";
+}
+
+function deleteCurrentImage() {
+  const image = eventImages.value[activeImageIndex.value];
+  if (!image || isSubmittingEvent.value) return;
+
+  const pendingImage = pendingImageUploads.value.find(
+    (pending) => pending.id === image.id,
+  );
+  if (pendingImage) URL.revokeObjectURL(pendingImage.previewUrl);
+  pendingImageUploads.value = pendingImageUploads.value.filter(
+    (pending) => pending.id !== image.id,
+  );
+  activeImageIndex.value = Math.max(
+    0,
+    Math.min(activeImageIndex.value, eventImages.value.length - 1),
+  );
+}
+
+function showPreviousImage() {
+  if (!eventImages.value.length) return;
+  activeImageIndex.value =
+    (activeImageIndex.value - 1 + eventImages.value.length) %
+    eventImages.value.length;
+}
+
+function showNextImage() {
+  if (!eventImages.value.length) return;
+  activeImageIndex.value =
+    (activeImageIndex.value + 1) % eventImages.value.length;
+}
+
+function closeCreateEventModal(force = false) {
+  if (isSubmittingEvent.value && !force) return;
+
+  showModal.value = false;
+  for (const pendingImage of pendingImageUploads.value) {
+    URL.revokeObjectURL(pendingImage.previewUrl);
+  }
+  pendingImageUploads.value = [];
+  activeImageIndex.value = 0;
+  imageUploadError.value = "";
+  createdEventId.value = "";
+  eventForm.value = {
+    title: "",
+    description: "",
+    start: "",
+    end: "",
+    timeZone: "UTC",
+    capacity: 0,
+    location: "",
+    address: "",
+    lat: null,
+    lng: null,
+  };
+}
 
 const respondToEvent = async (response) => {
   rsvpResponse.value = response;
