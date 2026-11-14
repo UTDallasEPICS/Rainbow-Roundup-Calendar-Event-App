@@ -180,6 +180,13 @@ model PendingUser {
   expires    DateTime @default(now())
 }
 
+model LeadershipTeam {
+  id            String @id @default(uuid())
+  name          String
+  role          String
+  description   String
+}
+
 enum Role {
   USER
   ADMIN
