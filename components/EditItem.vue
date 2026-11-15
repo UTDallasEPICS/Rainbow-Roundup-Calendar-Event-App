@@ -112,9 +112,9 @@
                 </div>
 
                 <!-- images -->
-                <div v-if="!isNew">
+                <div>
                     <h2 class="w-full text-lg font-semibold text-gray-800">Images
-                        <span class="text-gray-400 text-sm font-normal">Changes to images cannot be reverted.</span>
+                        <span v-if="!isNew" class="text-gray-400 text-sm font-normal">Changes to images cannot be reverted.</span>
                     </h2>
                     <div class="flex gap-3 flex-wrap">
                         <div v-for="image in editedItem.ItemPhotos" :key="image.id">
@@ -123,10 +123,21 @@
                             </button>
                             <img :src="image.url" class="size-24 md:size-48">
                         </div>
+                        <div v-for="(photo, index) in pendingPhotos" :key="photo.previewUrl" class="relative">
+                            <button
+                                type="button"
+                                class="absolute right-1 top-1 rounded bg-white/90 px-1 text-sm text-gray-700"
+                                aria-label="Remove selected image"
+                                @click="removePendingPhoto(index)"
+                            >
+                                Remove
+                            </button>
+                            <img :src="photo.previewUrl" alt="Selected merchandise image preview" class="size-24 md:size-48 object-cover">
+                        </div>
                         <label for="photo-upload" class="flex align-center justify-center text-center border-4 border-dashed border-gray-300 text-gray-500 rounded-xl size-24 md:size-48 cursor-pointer" >
                             + Add Photo
                         </label>
-                        <input id="photo-upload" type="file" accept="image/*" class="hidden" @change="handleFileChange">
+                        <input id="photo-upload" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" @change="handleFileChange">
                     </div>
                 </div>
 
@@ -158,10 +169,10 @@
                 
                 <!-- manage buttons -->
                  <div class="w-full flex justify-center gap-4">
-                    <button class="bg-lime-300 px-4 py-2 mx-1 rounded hover:bg-lime-400 cursor-pointer transition" @click="saveChanges()">
+                    <button :disabled="isSaving" class="bg-lime-300 px-4 py-2 mx-1 rounded hover:bg-lime-400 cursor-pointer transition disabled:cursor-wait disabled:opacity-50" @click="saveChanges()">
                         Save
                     </button>
-                    <button v-if="!isNew" class="bg-gray-300 px-4 py-2 mx-1 rounded hover:bg-gray-400 cursor-pointer transition" @click="cancelEdit()">
+                    <button v-if="!isNew && !createdItemId" class="bg-gray-300 px-4 py-2 mx-1 rounded hover:bg-gray-400 cursor-pointer transition" @click="cancelEdit()">
                         Revert
                     </button>
                     <button v-else class="bg-gray-300 px-4 py-2 mx-1 rounded hover:bg-gray-400 cursor-pointer transition" @click="closeWindow()">
@@ -178,11 +189,12 @@
 const props = defineProps(['item']);
 const emit = defineEmits(["closeWindow", "itemCreated"]);
 
+const createdItemId = ref("");
+const createdItemEmitted = ref(false);
+const isSaving = ref(false);
+const pendingPhotos = ref([]);
 const isNew = computed(() => {
-    if (!props.item || props.item.id == "") {
-        return true
-    }
-    return false
+    return !props.item?.id && !createdItemId.value;
 })
 
 const editedItem = reactive({
@@ -193,9 +205,12 @@ const editedItem = reactive({
     isArchived: props.item.isArchived,
     pickupAvailable: props.item.pickupAvailable,
     ItemVariants: props.item.ItemVariants.map(a => {return {...a}}),
-    ItemPhotos: props.item.ItemPhotos || [],
+    ItemPhotos: [...(props.item.ItemPhotos || [])],
 });
 function closeWindow() {
+    if (isSaving.value) return;
+    emitCreatedItem();
+    clearPendingPhotos();
     emit("closeWindow");
 }
 
@@ -203,6 +218,8 @@ const archived = ref((props.item.isArchived ? "true" : "false"))
 const pickup = ref((props.item.pickupAvailable ? "true" : "false"))
 
 async function saveChanges() {
+    if (isSaving.value) return;
+    isSaving.value = true;
     try {
         editedItem.isArchived = (archived.value == "true" ? true : false)
         editedItem.pickupAvailable = (pickup.value == "true" ? true : false)
@@ -218,8 +235,9 @@ async function saveChanges() {
         }
         else {
 
-            if (!isNew.value) {
-                await $fetch(`/api/item/${props.item.id}`, {
+            const existingItemId = props.item.id || createdItemId.value;
+            if (existingItemId) {
+                await $fetch(`/api/item/${existingItemId}`, {
                     method: "PUT",
                     body: editedItem
                 });
@@ -229,8 +247,13 @@ async function saveChanges() {
                     method: "POST",
                     body: editedItem
                 });
+                createdItemId.value = newItem.data.id;
+                editedItem.id = newItem.data.id;
+                editedItem.ItemVariants = newItem.data.ItemVariants || [];
+            }
 
-                emit('itemCreated', newItem.data)
+            if (createdItemId.value) {
+                await uploadPendingPhotos(createdItemId.value);
             }
 
             props.item.name = editedItem.name
@@ -240,6 +263,7 @@ async function saveChanges() {
             props.item.pickupAvailable = editedItem.pickupAvailable
             props.item.ItemVariants = editedItem.ItemVariants
             props.item.ItemPhotos = editedItem.ItemPhotos
+            emitCreatedItem();
             emit("closeWindow");
         }
     }
@@ -247,6 +271,17 @@ async function saveChanges() {
         console.error("Error saving changes:", error);
         alert("Error saving changes. Please try again.");
     }
+}
+
+function emitCreatedItem() {
+    if (!createdItemId.value || createdItemEmitted.value) return;
+
+    emit("itemCreated", {
+        ...editedItem,
+        ItemVariants: [...editedItem.ItemVariants],
+        ItemPhotos: [...editedItem.ItemPhotos],
+    });
+    createdItemEmitted.value = true;
 }
 
 async function cancelEdit() {
@@ -259,7 +294,7 @@ async function cancelEdit() {
     editedItem.pickupAvailable = props.item.pickupAvailable
     pickup.value = (props.item.pickupAvailable ? "true" : "false")
     editedItem.ItemVariants = props.item.ItemVariants.map(a => {return {...a}}),
-    editedItem.ItemPhotos = props.item.ItemPhotos || []
+    editedItem.ItemPhotos = [...(props.item.ItemPhotos || [])]
 }
 
 function changeSizeAvailability(variant) {
@@ -267,17 +302,48 @@ function changeSizeAvailability(variant) {
 }
 
 
-function handleFileChange(event) {
+async function handleFileChange(event) {
   const input = event.target;
-  if (input.files?.[0]) {
-    addPhoto(input.files[0])
+  const file = input.files?.[0];
+  if (!file) return;
+
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+  if (!allowedTypes.includes(file.type)) {
+    alert("Invalid file type. Only JPEG, PNG, WebP, and GIF are allowed.");
+    input.value = "";
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    alert("File too large. Maximum size is 5 MB.");
+    input.value = "";
+    return;
+  }
+
+  try {
+    if (isNew.value) {
+      pendingPhotos.value.push({
+        file,
+        previewUrl: URL.createObjectURL(file),
+      });
+    } else {
+      await addPhoto(file, props.item.id || createdItemId.value);
+    }
+  } catch (error) {
+    alert(
+      error?.data?.statusMessage ||
+        error?.data?.message ||
+        error?.message ||
+        "Merchandise image upload failed.",
+    );
+  } finally {
+    input.value = "";
   }
 }
 
-async function addPhoto(file) {
+async function addPhoto(file, itemId) {
   const form = new FormData()
-  form.append("image", file)
-  form.append("itemId", props.item.id)
+  form.append("file", file)
+  form.append("itemId", itemId)
 
   const {data: res } = await $fetch(`/api/itemPhoto`, {
     method: "POST",
@@ -286,7 +352,29 @@ async function addPhoto(file) {
 
   const image = res
   editedItem.ItemPhotos.push(image)
+}
 
+async function uploadPendingPhotos(itemId) {
+  while (pendingPhotos.value.length) {
+    const photo = pendingPhotos.value[0];
+    await addPhoto(photo.file, itemId);
+    URL.revokeObjectURL(photo.previewUrl);
+    pendingPhotos.value.shift();
+  }
+}
+
+function removePendingPhoto(index) {
+  const [photo] = pendingPhotos.value.splice(index, 1);
+  if (photo) {
+    URL.revokeObjectURL(photo.previewUrl);
+  }
+}
+
+function clearPendingPhotos() {
+  for (const photo of pendingPhotos.value) {
+    URL.revokeObjectURL(photo.previewUrl);
+  }
+  pendingPhotos.value = [];
 }
 
 async function deletePhoto(id) {
