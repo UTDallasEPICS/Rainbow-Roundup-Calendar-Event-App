@@ -62,6 +62,92 @@ async function main() {
     })
   }
 
+  // Seed leadership team for About Us page
+  const kimberlyKantor = await prisma.leadershipTeam.findUnique({
+    where: {
+      name: 'Kimberly Kantor'
+    }
+  })
+
+  if (!kimberlyKantor) {
+    await prisma.leadershipTeam.create
+      ({
+        data: {
+            name: 'Kimberly Kantor',
+            role: 'Executive Director',
+            description: 'Kimberly Kantor is an Adapted Physical Education Consultant for school districts across North Texas (Region X). Focusing on students with special needs in physical education and recreation, she dedicates time to helping students celebrate their accomplishments and showcase their athletic abilities.',
+        }
+      })
+    } 
+  
+  const melodySmith = await prisma.leadershipTeam.findUnique({
+    where: {
+      name: 'Melody Smith'
+    }
+  })
+
+  if (!melodySmith) {
+    await prisma.leadershipTeam.create
+      ({
+        data: {
+            name: 'Melody Smith',
+            role: 'President',
+            description: 'Melody Smith has been an active leader in promoting LGBTQ+ inclusion and awareness in communities across the state.',
+        }
+      })
+    }
+  
+  const ashley = await prisma.leadershipTeam.findUnique({
+    where: {
+      name: 'Ashley'
+    }
+  })
+
+  if (!ashley) {
+    await prisma.leadershipTeam.create
+      ({
+        data: {
+            name: 'Ashley',
+            role: 'Vice President',
+            description: 'Hello All! My name is Ashley, I am married to the love of my life, Elsa and we have 3 beautiful kids. I am a Bachelor prepared RN of 16 years and am currently a Nurse Manager at Parkland Hospital in critical care services. My family and I love the mission and values of Rainbow Roundup and love all the memories we have made.',
+        }
+      })
+    }
+  
+  const raganMcCoy = await prisma.leadershipTeam.findUnique({
+    where: {
+      name: 'Ragan McCoy'
+    }
+  })
+
+  if (!raganMcCoy) {
+    await prisma.leadershipTeam.create
+      ({
+        data: {
+            name: 'Ragan McCoy',
+            role: 'Treasurer',
+            description: 'Ragan is a trusted tax advisor and leads Rainbow Roundup in all financial matters. She has a long history of providing guidance to businesses and individuals in making important decisions related to limiting tax exposure and maximizing cash flow.',
+        }
+      })
+    }
+  
+  const lauraHogan = await prisma.leadershipTeam.findUnique({
+    where: {
+      name: 'Laura Hogan'
+    }
+  })
+
+  if (!lauraHogan) {
+    await prisma.leadershipTeam.create
+      ({
+        data: {
+            name: 'Laura Hogan',
+            role: 'Secretary',
+            description: 'Laura is a trusted leader in the LGBT community and was named a Future Pioneer by the Dallas Voice. Since 2004, she has owned and operated Benchmark Legal Media, which provides creative and practical solutions for litigation technology. Laura has worked with many high profile clients, including Disney, Oprah Winfrey, GM, Viacom and MTV.',
+        }
+      })
+    }
+
   if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'prod') {
     console.log('Environment is not production. Seeding test data...');
     
