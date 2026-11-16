@@ -25,11 +25,11 @@ export default defineEventHandler(async (event) => {
     }
 
     try {
-        const existingItem = await prisma.leadershipTeam.findUnique({
+        const existingTeamMember = await prisma.leadershipTeam.findUnique({
             where: { id },
         });
 
-        if (!existingItem) {
+        if (!existingTeamMember) {
             setResponseStatus(event, 404);
             return {
                 error: "Team Member not found",
