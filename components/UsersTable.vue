@@ -170,7 +170,7 @@ import { ref, computed } from "vue";
 const props = defineProps(['users', 'title']);
 import { authClient } from "~/composables/auth"
 const { data: session } = await authClient.getSession();
-const sessionUser = session.user;
+const sessionUser = session?.user;
 const searchTerm = ref("");
 const sortKey = ref("");
 const sortAsc = ref(true);
@@ -188,7 +188,7 @@ function sortBy(key) {
 }
 
 const sortedUsers = computed(() => {
-  let list = props.users;
+  let list = [...(props.users ?? [])];
   const q = searchTerm.value.trim().toLowerCase();
   if (q) {
     list = list.filter(

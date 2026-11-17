@@ -95,7 +95,7 @@ const selectedReport = ref(null);
 
 
 const sortedReports = computed(() => {
-  let list = props.reports;
+  let list = [...(props.reports ?? [])];
   const q = searchTerm.value.trim().toLowerCase();
   if (q) {
     list = list.filter(
