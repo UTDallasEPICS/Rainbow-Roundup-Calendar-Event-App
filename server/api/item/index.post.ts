@@ -36,7 +36,8 @@ export default defineEventHandler(async (event) => {
         const item = await prisma.abstractItem.create({
             data: {
                 name: body.name,
-                price: body.price,
+                priceDollars: body.priceDollars,
+                priceCents: body.priceCents,
                 description: body.description,
                 isArchived: body.isArchived,
                 pickupAvailable: body.pickupAvailable

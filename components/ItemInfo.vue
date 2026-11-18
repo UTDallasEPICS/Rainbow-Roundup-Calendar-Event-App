@@ -49,7 +49,7 @@
 
       <!-- TITLE & PRICE -->
       <h2 class="text-2xl font-semibold">{{ props.item.name }}</h2>
-      <p class="text-xl text-gray-700 mt-1">${{ props.item.price }}</p>
+      <p class="text-xl text-gray-700 mt-1">${{ Number(props.item.priceDollars) }}.{{ String(props.item.priceCents).padStart(2, '0') }}</p>
 
       <!-- SIZES -->
       <div class="mt-4">
@@ -83,7 +83,7 @@
       <!-- AVAILABILITY -->
       <p class="mt-4 text-sm text-gray-500">
         {{
-          props.item.ItemVariants.some(v => variantIsAvailable(v))
+          props.item.ItemVariants?.some(v => variantIsAvailable(v))
             ? 'In stock'
             : 'Out of stock'
         }}

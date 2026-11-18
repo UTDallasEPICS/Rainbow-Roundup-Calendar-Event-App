@@ -40,7 +40,8 @@ export interface AbstractItem {
   id: string;
   name: string;
   description: string;
-  price: number;
+  priceDollars: number;
+  priceCents: number;
   isArchived: boolean;
   pickupAvailable: boolean;
 
