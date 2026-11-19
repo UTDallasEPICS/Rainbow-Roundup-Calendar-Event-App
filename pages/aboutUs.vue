@@ -25,13 +25,22 @@
       </div>
       <template v-else>
         <div v-for="person in people" :key="person.id" class="flex items-start gap-3">
-          <button
-            type="button"
-            class="mt-6 shrink-0 text-rr-magenta hover:text-rr-purple focus:outline-none"
-            @click="openMemberModal(person)"
-          >
-            <PencilIcon class="h-5 w-5" />
-          </button>
+          <div class="mt-6 shrink-0 flex flex-col items-center gap-2">
+            <button
+              type="button"
+              class="text-rr-magenta hover:text-rr-purple focus:outline-none"
+              @click="openMemberModal(person)"
+            >
+              <PencilIcon class="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              class="justify-self-center rounded-full bg-rr-red px-5 py-2 text-2xl font-bold text-white shadow hover:bg-rr-red"
+              @click="deleteMember(person.id)"
+            >
+              <span>-</span>
+            </button>
+          </div>
           <div class="flex-1 bg-white border-2 border-gray-200 rounded-3xl shadow-xl hover:shadow-2xl transition-shadow">
           <div
             class="flex items-center justify-between p-6 cursor-pointer"
@@ -193,6 +202,22 @@ function updateMember(updatedMember: Omit<Person, 'showBio'>) {
   }
 
   isMemberModalOpen.value = false;
+}
+
+async function deleteMember(memberId: string) {
+  if (confirm("Are you sure you want to delete this member?") == true) {
+    try {
+      const result = await $fetch(`/api/aboutUs/${memberId}`, {
+        method: "DELETE",
+      });
+
+      // Remove the member from the local state
+      people.value = people.value.filter((person) => person.id !== memberId);
+    } catch(err) {
+      alert("Failed to remove member. Please try again.");
+      console.error("Failed to remove member:", err);
+    }
+  }
 }
 </script>
 
