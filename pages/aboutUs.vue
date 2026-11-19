@@ -59,6 +59,7 @@
 import { ref } from "vue";
 
 interface Person {
+  id: string;
   name: string;
   role: string;
   description: string;
@@ -81,6 +82,7 @@ try {
 
   for (const member of members) {
     people.value.push({
+      id: member.id,
       name: member.name,
       role: member.role,
       description: member.description,
