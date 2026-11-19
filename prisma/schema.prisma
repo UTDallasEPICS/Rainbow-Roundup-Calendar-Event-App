@@ -66,8 +66,20 @@ model Event {
   // Relation to SignUps
   SignUps          SignUp[]
 
+  // Images displayed in the event card
+  EventImages      EventImage[]
+
   // holds all the array to be picked up at a particular event
   orders    Order[]  // back relation
+}
+
+model EventImage {
+  id        String   @id @default(uuid())
+  url       String
+  eventId   String
+  createdAt DateTime @default(now())
+
+  Event     Event    @relation(fields: [eventId], references: [id])
 }
 
 model SignUp {

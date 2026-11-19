@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event);
     const subject = body.subject;
     const message = body.message;
-    const users = body.users;
+    const users = body.users; //a users array must be used. Use a different endpoint if the input is specifically name/email
 
     if (!users) {
     throw createError({

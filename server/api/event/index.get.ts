@@ -39,7 +39,9 @@ export default defineEventHandler(async (event) => {
           include: {
             User: { select: { id: true, firstname: true, profilePic: true } },
           },
-        }, // Who signed up
+        },
+        EventImages: true, // Images displayed in the event card
+         // Who signed up
       },
       orderBy: {
         startTime: "desc",
