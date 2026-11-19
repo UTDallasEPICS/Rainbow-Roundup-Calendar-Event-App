@@ -110,7 +110,9 @@ async function saveChanges() {
                 body: editedMember
             });
 
-            emit('memberCreated', newMember.data)
+            // The API returns the created member itself, not a `{ data: ... }`
+            // wrapper. Emitting `.data` created a blank card in the parent.
+            emit('memberCreated', newMember)
         }
 
         props.member.name = editedMember.name

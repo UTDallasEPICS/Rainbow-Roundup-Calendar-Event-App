@@ -108,10 +108,13 @@ const isMemberModalOpen = ref(false);
 
 // fetch team members
 try {
-  const { data: response } = await useFetch<{ data: Person[] }>(
+  const { data: response } = await useFetch<{
+    data: Omit<Person, "showBio">[];
+  }>(
     "/api/aboutUs/",
     { method: "GET" }
   );
+
   const members = response.value?.data ?? [];
 
   for (const member of members) {
