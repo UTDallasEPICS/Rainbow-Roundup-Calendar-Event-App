@@ -1,5 +1,6 @@
 <template>
   <div class="min-h-screen bg-rr-offWhite text-gray-800 font-sans p-6 md:p-12">
+    <EditMember v-if="isMemberModalOpen" :member="selectedMember" @close-window="closeMemberModal()" @member-created="(m) => {addMember(m)}"/>
     <header
       class="bg-rr-sky rounded-3xl shadow-lg text-center px-8 py-14 mb-12 text-black"
     >
@@ -19,7 +20,7 @@
       <template v-else>
         <div
           v-for="person in people"
-          :key="person.name"
+          :key="person.id"
           class="bg-white border-2 border-gray-200 rounded-3xl shadow-xl hover:shadow-2xl transition-shadow"
         >
           <div
@@ -27,6 +28,13 @@
             @click="toggleBio(person)"
           >
             <div class="flex items-center gap-6">
+              <button
+                type="button"
+                class="text-rr-magenta hover:text-rr-purple focus:outline-none"
+                @click="openMemberModal(person)"
+              >
+                <PencilIcon class="h-5 w-5" />
+              </button>
               <div>
                 <h2 class="text-2xl font-bold text-gray-900">
                   {{ person.name }}
@@ -34,9 +42,14 @@
                 <p class="text-lg text-gray-600">{{ person.role }}</p>
               </div>
             </div>
-            <button class="text-3xl text-rr-magenta focus:outline-none">
-              {{ person.showBio ? "▲" : "▼" }}
-            </button>
+            <div class="flex items-center gap-4">
+              <button
+                type="button"
+                class="text-3xl text-rr-magenta focus:outline-none"
+              >
+                {{ person.showBio ? "▲" : "▼" }}
+              </button>
+            </div>
           </div>
           <transition name="fade">
             <div
@@ -47,6 +60,10 @@
             </div>
           </transition>
         </div>
+
+        <button v-if="userData?.role === 'ADMIN' || userData?.role === 'SUPER'" @click="openAddMember()">
+            <span>+</span>
+        </button>
       </template>
     </div>
     <div v-else>
@@ -57,6 +74,11 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { PencilIcon } from "@heroicons/vue/24/outline";
+
+import { authClient } from "~/composables/auth"
+const { data: session } = await authClient.getSession();
+const userData = session?.user;
 
 interface Person {
   id: string;
@@ -71,6 +93,10 @@ const isError = ref(false);
 const errorMessage = ref("");
 
 const people = ref<Person[]>([]);
+
+const selectedMember = ref<Omit<Person, 'showBio'> | null>(null);
+
+const isMemberModalOpen = ref(false);
 
 // fetch team members
 try {
@@ -104,6 +130,46 @@ finally
 const toggleBio = (person: Person) => {
   person.showBio = !person.showBio;
 };
+
+function openAddMember() {
+  const newMember = {
+      id: "",
+      name: "",
+      role: "",
+      description: ""
+    }
+
+    selectedMember.value = newMember;
+
+    
+    isMemberModalOpen.value = true;
+}
+
+function openMemberModal(selected : Person) {
+  selectedMember.value = {
+    id: selected.id,
+    name: selected.name,
+    role: selected.role,
+    description: selected.description
+  };
+  isMemberModalOpen.value = true;
+}
+
+function closeMemberModal() {
+  isMemberModalOpen.value = false;
+}
+
+function addMember(newMember: Omit<Person, 'showBio'>) {
+
+  const newMemberWithShowBio: Person = {
+    ...newMember,
+    showBio: false
+  };
+
+  people.value.push(newMemberWithShowBio);
+
+  isMemberModalOpen.value = false;
+}
 </script>
 
 <style>
