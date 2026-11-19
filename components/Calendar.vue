@@ -495,6 +495,9 @@ const submitEvent = async () => {
         },
       });
 
+      //save new event id
+      createdEventId.value = googleEvent.id;
+
       if (status != 200) {
       const deleteGoogleEvent = await $fetch(`/api/google/calendar/${googleEvent.id}`, {
         method: 'DELETE'
