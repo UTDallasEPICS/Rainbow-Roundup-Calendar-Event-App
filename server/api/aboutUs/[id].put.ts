@@ -10,12 +10,14 @@ export default defineEventHandler(async (event) => {
     })
     const user = session?.user as User | undefined;
 
+    /** 
     if (!user?.role || (user.role !== "SUPER" && user.role !== "ADMIN")) {
         throw createError({
             statusMessage: "Unauthenticated",
             statusCode: 403,
         });
     }
+        */
 
     if (!id) {
         setResponseStatus(event, 400);

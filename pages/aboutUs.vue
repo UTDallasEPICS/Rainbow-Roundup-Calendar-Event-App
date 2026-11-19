@@ -18,23 +18,20 @@
         {{  errorMessage }}
       </div>
       <template v-else>
-        <div
-          v-for="person in people"
-          :key="person.id"
-          class="bg-white border-2 border-gray-200 rounded-3xl shadow-xl hover:shadow-2xl transition-shadow"
-        >
+        <div v-for="person in people" :key="person.id" class="flex items-start gap-3">
+          <button
+            type="button"
+            class="mt-6 shrink-0 text-rr-magenta hover:text-rr-purple focus:outline-none"
+            @click="openMemberModal(person)"
+          >
+            <PencilIcon class="h-5 w-5" />
+          </button>
+          <div class="flex-1 bg-white border-2 border-gray-200 rounded-3xl shadow-xl hover:shadow-2xl transition-shadow">
           <div
             class="flex items-center justify-between p-6 cursor-pointer"
             @click="toggleBio(person)"
           >
             <div class="flex items-center gap-6">
-              <button
-                type="button"
-                class="text-rr-magenta hover:text-rr-purple focus:outline-none"
-                @click="openMemberModal(person)"
-              >
-                <PencilIcon class="h-5 w-5" />
-              </button>
               <div>
                 <h2 class="text-2xl font-bold text-gray-900">
                   {{ person.name }}
@@ -60,9 +57,14 @@
             </div>
           </transition>
         </div>
+        </div>
 
-        <button v-if="userData?.role === 'ADMIN' || userData?.role === 'SUPER'" @click="openAddMember()">
-            <span>+</span>
+        <button
+          type="button"
+          class="justify-self-start rounded-full bg-rr-magenta px-5 py-2 text-2xl font-bold text-white shadow hover:bg-rr-purple"
+          @click="openAddMember()"
+        >
+          <span>+</span>
         </button>
       </template>
     </div>
