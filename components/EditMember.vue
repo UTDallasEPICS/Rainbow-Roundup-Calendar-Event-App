@@ -76,7 +76,7 @@
 
 <script setup>
 const props = defineProps(['member']);
-const emit = defineEmits(["closeWindow", "memberCreated"]);
+const emit = defineEmits(["closeWindow", "memberCreated", "memberUpdated"]);
 
 const isNew = computed(() => {
     if (!props.member || props.member.id == "") {
@@ -102,6 +102,7 @@ async function saveChanges() {
                 method: "PUT",
                 body: editedMember
             });
+            emit("memberUpdated", { ...editedMember });
         }
         else {
             const newMember = await $fetch(`/api/aboutUs/`, {

@@ -1,6 +1,12 @@
 <template>
   <div class="min-h-screen bg-rr-offWhite text-gray-800 font-sans p-6 md:p-12">
-    <EditMember v-if="isMemberModalOpen" :member="selectedMember" @close-window="closeMemberModal()" @member-created="(m) => {addMember(m)}"/>
+    <EditMember
+      v-if="isMemberModalOpen"
+      :member="selectedMember"
+      @close-window="closeMemberModal()"
+      @member-created="addMember"
+      @member-updated="updateMember"
+    />
     <header
       class="bg-rr-sky rounded-3xl shadow-lg text-center px-8 py-14 mb-12 text-black"
     >
@@ -61,7 +67,7 @@
 
         <button
           type="button"
-          class="justify-self-start rounded-full bg-rr-magenta px-5 py-2 text-2xl font-bold text-white shadow hover:bg-rr-purple"
+          class="justify-self-center rounded-full bg-rr-magenta px-5 py-2 text-2xl font-bold text-white shadow hover:bg-rr-purple"
           @click="openAddMember()"
         >
           <span>+</span>
@@ -169,6 +175,19 @@ function addMember(newMember: Omit<Person, 'showBio'>) {
   };
 
   people.value.push(newMemberWithShowBio);
+
+  isMemberModalOpen.value = false;
+}
+
+function updateMember(updatedMember: Omit<Person, 'showBio'>) {
+  const index = people.value.findIndex((person) => person.id === updatedMember.id);
+
+  if (index !== -1) {
+    people.value[index] = {
+      ...people.value[index],
+      ...updatedMember,
+    };
+  }
 
   isMemberModalOpen.value = false;
 }
